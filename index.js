@@ -46,6 +46,14 @@ var defaultConfig = {
         get pathname() { return this.vhost },
         get query() { return this.options }
     },
+    channel: {
+        onError: function(config, ctx, err) {
+            console.error("Oh No", err.message)
+        },
+        onClose: function(config, ctx) {
+            debug('Channel closed', ctx.channel)
+        }
+    },
     exchanges: {
     },
     queues: {
@@ -125,7 +133,6 @@ module.exports = (function() {
             next(err)
         })
     }
-
 
     return {
         init: init

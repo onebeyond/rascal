@@ -8,6 +8,12 @@ describe('Client', function() {
     this.timeout(1000)
     this.slow(500)
 
+    var broker
+
+    afterEach(function(done) {
+        broker.nuke(done)
+    })
+
     it('should publish a text message to an exchange', function(done) {
 
         var namespace = uuid()
@@ -44,6 +50,7 @@ describe('Client', function() {
                 }
             ]
         }, function(err, broker) {
+            stashBroker(broker)
             assert.ifError(err)
             broker.publish('bookings:events', 'booking.created', 'some message', function() {
                 broker.channel.get(namespace + ':booking_system:create', { noAck: true }, function(err, message) {
@@ -91,6 +98,7 @@ describe('Client', function() {
                 }
             ]
         }, function(err, broker) {
+            stashBroker(broker)
             assert.ifError(err)
             broker.publish('bookings:events', 'booking.created', 'some message', function() {
 
@@ -136,4 +144,8 @@ describe('Client', function() {
             })
         })
     })
+
+    function stashBroker(_broker) {
+        broker = _broker
+    }
 })

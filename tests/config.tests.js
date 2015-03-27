@@ -60,6 +60,8 @@ describe('Client', function() {
         })
     })
 
+    it('should create a confirm channel')
+
     it('should create queues by default', function(done) {
 
         var namespace = uuid()
@@ -93,7 +95,7 @@ describe('Client', function() {
         })
     })
 
-    it('should not create queues when specified', function(done) {
+    it.only('should not create queues when specified', function(done) {
 
         var namespace = uuid()
 
