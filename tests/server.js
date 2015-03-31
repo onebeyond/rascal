@@ -40,31 +40,48 @@ var config = _.defaultsDeep({
             vhost: 'v1',
             confirm: true
         }
+    },
+    subscriptions: {
+        'c1': {
+            queue: 'q1',
+            vhost: 'v1'
+        }
     }
 }, defaultConfig)
 
 var sent = 0
+var received = 0
 
 Broker.create(config, function(err, broker) {
     if (err) console.error(err) || process.exit(1)
+
     broker.on('error', function(err) {})
+
     process.on('SIGINT', function() {
         broker.nuke(function() {
             console.log('Sent', sent)
+            console.log('Received', received)
             process.exit()
         })
     })
-    setInterval(function() {
-        broker.publish('p1', 'This is a test message', function(err) {
-            if (err) console.error(err.message)
-            sent++
-        })
-    }, 1000).unref()
-    setInterval(function() {
-        broker.publish('p2', 'This is a test message', function(err) {
-            if (err) console.error(err.message)
-            sent++
-        })
-    }, 1000).unref()
+
+    soakPublication(broker, 'p1')
+    soakPublication(broker, 'p2')
+    broker.subscribe('c1', function(err, message, content) {
+        received++
+    }, function(err) {
+        if (err) console.log(err)
+    })
+
     debug('Come and have a go if you think you\'re hard enough')
 })
+
+
+function soakPublication(broker, publication, interval) {
+    setInterval(function() {
+        broker.publish(publication, 'This is a test message', function(err) {
+            if (err) console.error(err.message)
+            sent++
+        })
+    }, interval || 1000).unref()
+}
