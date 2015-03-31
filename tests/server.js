@@ -11,15 +11,20 @@ var config = _.defaultsDeep({
         'v1': {
             namespace: uuid,
             exchanges: {
-                'e1': {}
+                'e1': {
+                    durable: false
+                }
             },
             queues: {
-                'q1': {}
+                'q1': {
+                    durable: false
+                }
             },
             bindings: {
                 "b1": {
                     source: 'e1',
-                    destination: 'q1'
+                    destination: 'q1',
+                    routingKey: '#'
                 }
             },
         }
@@ -27,21 +32,39 @@ var config = _.defaultsDeep({
     publications: {
         'p1': {
             exchange: 'e1',
-            vhost: 'v1'
+            vhost: 'v1',
+            confirm: true
+        },
+        'p2': {
+            queue: 'q1',
+            vhost: 'v1',
+            confirm: true
         }
     }
 }, defaultConfig)
+
+var sent = 0
 
 Broker.create(config, function(err, broker) {
     if (err) console.error(err) || process.exit(1)
     broker.on('error', function(err) {})
     process.on('SIGINT', function() {
         broker.nuke(function() {
+            console.log('Sent', sent)
             process.exit()
         })
     })
-    var unref = setInterval(function() {
-        broker.publish('p1', 'This is a test message', function() {})
-    }, 1000)
+    setInterval(function() {
+        broker.publish('p1', 'This is a test message', function(err) {
+            if (err) console.error(err.message)
+            sent++
+        })
+    }, 1000).unref()
+    setInterval(function() {
+        broker.publish('p2', 'This is a test message', function(err) {
+            if (err) console.error(err.message)
+            sent++
+        })
+    }, 1000).unref()
     debug('Come and have a go if you think you\'re hard enough')
 })
