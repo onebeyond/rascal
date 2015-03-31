@@ -7,9 +7,9 @@ var uuid = require('node-uuid').v4()
 _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 var config = _.defaultsDeep({
-    namespace: uuid,
     vhosts: {
         'v1': {
+            namespace: uuid,
             exchanges: {
                 'e1': {}
             },
@@ -41,8 +41,7 @@ Broker.create(config, function(err, broker) {
         })
     })
     var unref = setInterval(function() {
-        broker.publish('p1', 'This is a test message', function() {
-        })
+        broker.publish('p1', 'This is a test message', function() {})
     }, 1000)
     debug('Come and have a go if you think you\'re hard enough')
 })
