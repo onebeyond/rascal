@@ -1,250 +1,526 @@
 var debug = require('debug')('amqp-nice:config:tests')
 var assert = require('assert')
-var async = require('async')
-var client = require('..')
-var uuid = require('node-uuid').v4
+var _ = require('lodash')
+var configure = require('../lib/config/configure')
 
-describe('Client', function() {
+describe('Configuration', function() {
 
-    this.timeout(1000)
-    this.slow(500)
+    describe('Vhosts', function() {
 
-    var broker
-    var namespace
+        describe('Connection', function() {
 
-    beforeEach(function() {
-        namespace = uuid()
-    })
+            it('should configure the connection from an object', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: {
+                                slashes: true,
+                                protocol: 'protocol',
+                                hostname: 'hostname',
+                                port: 9000,
+                                vhost: 'vhost',
+                                user: 'user',
+                                password: 'password',
+                                options: {
+                                    heartbeat: 10,
+                                    channelMax: 100
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connection.url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                })
+            })
 
-    afterEach(function(done) {
-        broker.nuke(done)
-    })
+            it('should ignore other connection properties when a url is specified', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: {
+                                url: 'foo',
+                                slashes: true,
+                                protocol: 'protocol',
+                                hostname: 'hostname',
+                                port: 9000,
+                                vhost: 'vhost',
+                                user: 'user',
+                                password: 'password',
+                                options: {
+                                    heartbeat: 10,
+                                    channelMax: 100
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connection.url, 'foo')
+                })
+            })
 
-    it('should initialise a broker using default url', function(done) {
-        client.init(function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assert.equal(broker.config.connection.url, 'amqp://guest:guest@localhost:5672?heartbeat=5')
-            done()
+            it('should decorate the connection config with a loggable url (a)', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: {
+                                slashes: true,
+                                protocol: 'protocol',
+                                hostname: 'hostname',
+                                port: 9000,
+                                vhost: 'vhost',
+                                user: 'user',
+                                password: 'password',
+                                options: {
+                                    heartbeat: 10,
+                                    channelMax: 100
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                })
+            })
+
+            it('should decorate the connection config with a loggable url (b)', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: {
+                                url: 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100'
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                })
+            })
+        })
+
+        describe('Exchanges', function() {
+
+            it('should configure exchanges', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            exchanges: {
+                                e1: {
+                                    assert: false,
+                                    type: 'direct',
+                                    options: {
+                                        durable: false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.exchanges.e1.assert, false)
+                    assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct')
+                    assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false)
+                })
+            })
+
+            it('should inflate exchanges with empty structure', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            exchanges: {
+                                e1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert(_.isObject(config.vhosts.v1.exchanges.e1.options))
+                })
+            })
+
+            it('should decorate exchanges with name and fully qualified name', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            exchanges: {
+                                e1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
+                    assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
+                })
+            })
+
+            it('should prefix fully qualified name with specified namespace', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            namespace: 'foo',
+                            exchanges: {
+                                e1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
+                    assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1')
+                })
+            })
+        })
+
+        describe('Queues', function() {
+
+            it('should configure queues', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                    assert: false,
+                                    type: 'direct',
+                                    options: {
+                                        durable: false
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.queues.q1.assert, false)
+                    assert.equal(config.vhosts.v1.queues.q1.type, 'direct')
+                    assert.equal(config.vhosts.v1.queues.q1.options.durable, false)
+                })
+            })
+
+            it('should inflate queues with empty structure', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert(_.isObject(config.vhosts.v1.queues.q1.options))
+                })
+            })
+
+            it('should decorate queues with name and fully qualified name', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
+                    assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1')
+                })
+            })
+
+            it('should prefix fully qualified name with specified namespace', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            namespace: 'foo',
+                            queues: {
+                                q1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
+                    assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1')
+                })
+            })
+        })
+
+        describe('Bindings', function() {
+
+            it('should configure bindings', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            bindings: {
+                                b1: {
+                                    source: 'e1',
+                                    destination: 'q1',
+                                    routingKey: '#'
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
+                    assert.equal(config.vhosts.v1.bindings.b1.routingKey, '#')
+                })
+            })
+
+            it('should inflate bindings with empty structure', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            bindings: {
+                                b1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert(_.isObject(config.vhosts.v1.bindings.b1.arguments))
+                })
+            })
+
+            it('should decorate bindings with name', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            bindings: {
+                                b1: {
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings.b1.name, 'b1')
+                })
+            })
         })
     })
 
-    it('should initialise a broker using specified url', function(done) {
-        client.init({ connection: { url: 'amqp://localhost:5672' }}, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assert.equal(broker.config.connection.url, 'amqp://localhost:5672')
-            done()
-        })
-    })
+    describe('Publications', function() {
 
-    it('should connect to broker using connection properties', function(done) {
-        client.init({ connection: {
-            protocol: 'amqp',
-            hostname: 'localhost',
-            user: 'guest',
-            password: 'guest',
-            port: 5672,
-            vhost: '/',
-        }}, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assert.equal(broker.config.connection.url, 'amqp://guest:guest@localhost:5672?heartbeat=5')
-            done()
-        })
-    })
+        it('should configure exchange publications', function() {
 
-    it('should create queues by default', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                queues: {
-                    options: {
-                        exclusive: true,
-                        durable: false
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                publications: {
+                    p1: {
+                        vhost: 'v1',
+                        exchange: 'e1',
+                        routingKey: 'r1',
+                        options: {
+                            persistent: true
+                        }
                     }
                 }
-            },
-            queues: {
-                'q1': {},
-                'q2': {},
-                'q3': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            async.each(['q1', 'q2', 'q3'], assertQueuePresent, done)
-        })
-    })
-
-    it('should not create queues when specified', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                queues: {
-                    assert: false,
-                    options: {
-                        exclusive: true,
-                        durable: false
-                    }
-                }
-            },
-            queues: {
-                'q1': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assertQueueAbsent('q1', done)
-        })
-    })
-
-    it('should check queues when specified', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                queues: {
-                    assert: false,
-                    check: true,
-                    options: {
-                        exclusive: true,
-                        durable: false
-                    }
-                }
-            },
-            queues: {
-                'q1': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert(err)
-            assert(/NOT_FOUND/.test(err.message))
-            done()
-        })
-    })
-
-    it('should create exchanges by default', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                exchanges: {
-                    options: {
-                        durable: false
-                    }
-                }
-            },
-            exchanges: {
-                'q1': {},
-                'q2': {},
-                'q3': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            async.each(['q1', 'q2', 'q3'], assertExchangePresent, done)
-        })
-    })
-
-    it('should not create exchanges when specified', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                exchanges: {
-                    assert: false,
-                    options: {
-                        durable: false
-                    }
-                }
-            },
-            exchanges: {
-                'q1': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assertExchangeAbsent('q1', done)
-        })
-    })
-
-    it('should check exchange when specified', function(done) {
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                exchanges: {
-                    assert: false,
-                    check: true,
-                    options: {
-                        durable: false
-                    }
-                }
-            },
-            exchanges: {
-                'q1': {}
-            }
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert(err)
-            assert(/NOT_FOUND/.test(err.message))
-            done()
-        })
-    })
-
-    it('should purge messages when specified')
-
-
-    function stashBroker(_broker) {
-        broker = _broker
-    }
-
-    function assertQueuePresent(name, next) {
-        broker.connection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkQueue(namespace + ':' + name, function(err) {
+            }, function(err, config) {
                 assert.ifError(err)
-                next()
+                assert.equal(config.publications.p1.vhost, 'v1')
+                assert.equal(config.publications.p1.exchange, 'e1')
+                assert.equal(config.publications.p1.routingKey, 'r1')
+                assert.equal(config.publications.p1.options.persistent, true)
             })
         })
-    }
 
-    function assertQueueAbsent(name, next) {
-        broker.connection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkQueue(name, function(err) {
-                assert(err)
-                assert(/NOT_FOUND/.test(err.message))
-                next()
-            }).on('error', function(err) {
-                debug(err.message)
-            })
-        })
-    }
+        it('should configure queue publications', function() {
 
-    function assertExchangePresent(name, next) {
-        broker.connection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkExchange(namespace + ':' + name, function(err) {
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                publications: {
+                    p1: {
+                        vhost: 'v1',
+                        queue: 'q1',
+                        options: {
+                            persistent: true
+                        }
+                    }
+                }
+            }, function(err, config) {
                 assert.ifError(err)
-                next()
+                assert.equal(config.publications.p1.vhost, 'v1')
+                assert.equal(config.publications.p1.queue, 'q1')
+                assert.equal(config.publications.p1.options.persistent, true)
             })
         })
-    }
 
-    function assertExchangeAbsent(name, next) {
-        broker.connection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkExchange(name, function(err) {
-                assert(err)
-                assert(/NOT_FOUND/.test(err.message))
-                next()
-            }).on('error', function(err) {
-                debug(err.message)
+        it('should inflate publications with empty structure', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                publications: {
+                    p1: {
+                        vhost: 'v1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert(_.isObject(config.publications.p1.options))
             })
         })
-    }
+
+        it('should decorate publications with name and destination', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                publications: {
+                    p1: {
+                        vhost: 'v1',
+                        exchange: 'e1'
+                    },
+                    p2: {
+                        vhost: 'v1',
+                        queue: 'q1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.publications.p1.name, 'p1')
+                assert.equal(config.publications.p1.destination, 'e1')
+                assert.equal(config.publications.p2.name, 'p2')
+                assert.equal(config.publications.p2.destination, 'q1')
+            })
+        })
+
+        it('should prefix destinations with the specified namespace', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                        namespace: 'foo'
+                    }
+                },
+                publications: {
+                    p1: {
+                        vhost: 'v1',
+                        exchange: 'e1'
+                    },
+                    p2: {
+                        vhost: 'v1',
+                        queue: 'q1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.publications.p1.name, 'p1')
+                assert.equal(config.publications.p1.destination, 'foo:e1')
+                assert.equal(config.publications.p2.name, 'p2')
+                assert.equal(config.publications.p2.destination, 'foo:q1')
+            })
+        })
+    })
+
+    describe('Subscriptions', function() {
+
+        it('should configure queue subscriptions', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1',
+                        queue: 'q1',
+                        confirm: true,
+                        retry: {
+                            delay: 1000
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.subscriptions.s1.vhost, 'v1')
+                assert.equal(config.subscriptions.s1.queue, 'q1')
+                assert.equal(config.subscriptions.s1.confirm, true)
+                assert.equal(config.subscriptions.s1.retry.delay, 1000)
+            })
+        })
+
+        it('should inflate subscriptions with empty structure', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert(_.isObject(config.subscriptions.s1.options))
+            })
+        })
+
+        it('should decorate subscriptions with name and source', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1',
+                        queue: 'q1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.subscriptions.s1.name, 's1')
+                assert.equal(config.subscriptions.s1.source, 'q1')
+            })
+        })
+
+        it('should prefix sources with the specified namespace', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                        namespace: 'foo'
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1',
+                        queue: 'q1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.subscriptions.s1.name, 's1')
+                assert.equal(config.subscriptions.s1.source, 'foo:q1')
+            })
+        })
+    })
 })

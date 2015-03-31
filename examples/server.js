@@ -21,10 +21,9 @@ var config = _.defaultsDeep({
                 }
             },
             bindings: {
-                "b1": {
+                'b1': {
                     source: 'e1',
-                    destination: 'q1',
-                    routingKey: '#'
+                    destination: 'q1'
                 }
             },
         }
