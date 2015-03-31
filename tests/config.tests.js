@@ -290,7 +290,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert(_.isObject(config.vhosts.v1.bindings.b1.arguments))
+                    assert(_.isObject(config.vhosts.v1.bindings.b1.options))
                 })
             })
 

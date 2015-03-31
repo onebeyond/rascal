@@ -41,7 +41,7 @@ var config = _.defaultsDeep({
         }
     },
     subscriptions: {
-        'c1': {
+        's1': {
             queue: 'q1',
             vhost: 'v1'
         }
@@ -66,7 +66,7 @@ Broker.create(config, function(err, broker) {
 
     soakPublication(broker, 'p1')
     soakPublication(broker, 'p2')
-    broker.subscribe('c1', function(err, message, content) {
+    broker.subscribe('s1', function(err, message, content) {
         received++
     }, function(err) {
         if (err) console.log(err)
