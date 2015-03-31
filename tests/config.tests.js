@@ -1,3 +1,4 @@
+var debug = require('debug')('amqp-nice:config:tests')
 var assert = require('assert')
 var async = require('async')
 var client = require('..')
@@ -9,27 +10,30 @@ describe('Client', function() {
     this.slow(500)
 
     var broker
+    var namespace
+
+    beforeEach(function() {
+        namespace = uuid()
+    })
 
     afterEach(function(done) {
         broker.nuke(done)
     })
 
-    it('should connect to broker using default url', function(done) {
+    it('should initialise a broker using default url', function(done) {
         client.init(function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            assert(broker.connection)
-            assert(broker.connection.createChannel)
+            assert.equal(broker.config.connection.url, 'amqp://guest:guest@localhost:5672?heartbeat=5')
             done()
         })
     })
 
-    it('should connect to broker using specified url', function(done) {
+    it('should initialise a broker using specified url', function(done) {
         client.init({ connection: { url: 'amqp://localhost:5672' }}, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            assert(broker.connection)
-            assert(broker.connection.createChannel)
+            assert.equal(broker.config.connection.url, 'amqp://localhost:5672')
             done()
         })
     })
@@ -45,26 +49,12 @@ describe('Client', function() {
         }}, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            assert(broker.connection)
-            assert(broker.connection.createChannel)
+            assert.equal(broker.config.connection.url, 'amqp://guest:guest@localhost:5672?heartbeat=5')
             done()
         })
     })
-
-    it('should create a channel', function(done) {
-        client.init(function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            assert(broker.channel)
-            done()
-        })
-    })
-
-    it('should create a confirm channel')
 
     it('should create queues by default', function(done) {
-
-        var namespace = uuid()
 
         client.init({
             namespace: namespace,
@@ -77,27 +67,18 @@ describe('Client', function() {
                 }
             },
             queues: {
-                'booking_system:create': {
-                },
-                'booking_system:amend': {
-                },
-                'booking_system:cancel': {
-                }
+                'q1': {},
+                'q2': {},
+                'q3': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            async.series([
-                broker.channel.checkQueue.bind(broker.channel, namespace + ':booking_system:create'),
-                broker.channel.checkQueue.bind(broker.channel, namespace + ':booking_system:amend'),
-                broker.channel.checkQueue.bind(broker.channel, namespace + ':booking_system:cancel')
-            ], done)
+            async.each(['q1', 'q2', 'q3'], assertQueuePresent, done)
         })
     })
 
-    it.only('should not create queues when specified', function(done) {
-
-        var namespace = uuid()
+    it('should not create queues when specified', function(done) {
 
         client.init({
             namespace: namespace,
@@ -111,23 +92,16 @@ describe('Client', function() {
                 }
             },
             queues: {
-                'booking_system:create': {
-                }
+                'q1': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            broker.channel.checkQueue(namespace + ':booking_system:create', function(err) {
-                assert(err)
-                assert(/NOT_FOUND/.test(err.message))
-                done()
-            })
+            assertQueueAbsent('q1', done)
         })
     })
 
     it('should check queues when specified', function(done) {
-
-        var namespace = uuid()
 
         client.init({
             namespace: namespace,
@@ -142,8 +116,7 @@ describe('Client', function() {
                 }
             },
             queues: {
-                'booking_system:create': {
-                }
+                'q1': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
@@ -155,8 +128,6 @@ describe('Client', function() {
 
     it('should create exchanges by default', function(done) {
 
-        var namespace = uuid()
-
         client.init({
             namespace: namespace,
             defaults: {
@@ -167,27 +138,18 @@ describe('Client', function() {
                 }
             },
             exchanges: {
-                'booking:events': {
-                },
-                'booking:commands': {
-                },
-                'booking:errors': {
-                }
+                'q1': {},
+                'q2': {},
+                'q3': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            async.series([
-                broker.channel.checkExchange.bind(broker.channel, namespace + ':booking:events'),
-                broker.channel.checkExchange.bind(broker.channel, namespace + ':booking:commands'),
-                broker.channel.checkExchange.bind(broker.channel, namespace + ':booking:errors')
-            ], done)
+            async.each(['q1', 'q2', 'q3'], assertExchangePresent, done)
         })
     })
 
     it('should not create exchanges when specified', function(done) {
-
-        var namespace = uuid()
 
         client.init({
             namespace: namespace,
@@ -200,23 +162,16 @@ describe('Client', function() {
                 }
             },
             exchanges: {
-                'booking:events': {
-                }
+                'q1': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
             assert.ifError(err)
-            broker.channel.checkExchange(namespace + ':booking:events', function(err) {
-                assert(err)
-                assert(/NOT_FOUND/.test(err.message))
-                done()
-            })
+            assertExchangeAbsent('q1', done)
         })
     })
 
     it('should check exchange when specified', function(done) {
-
-        var namespace = uuid()
 
         client.init({
             namespace: namespace,
@@ -230,8 +185,7 @@ describe('Client', function() {
                 }
             },
             exchanges: {
-                'booking:events': {
-                }
+                'q1': {}
             }
         }, function(err, broker) {
             stashBroker(broker)
@@ -241,48 +195,56 @@ describe('Client', function() {
         })
     })
 
-    it('should bind queues to exchanges', function(done) {
-        var namespace = uuid()
+    it('should purge messages when specified')
 
-        client.init({
-            namespace: namespace,
-            defaults: {
-                exchanges: {
-                    options: {
-                        durable: false
-                    }
-                },
-                queues: {
-                    options: {
-                        exclusive: true,
-                        durable: false
-                    }
-                }
-            },
-            exchanges: {
-                'booking:events': {
-                }
-            },
-            queues: {
-                'booking_system:create': {
-                }
-            },
-            bindings: [
-                {
-                    source: 'booking:events',
-                    destination: 'booking_system:create',
-                    destinationType: 'queue',
-                    routingKey: '#'
-                }
-            ]
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            done()
-        })
-    })
 
     function stashBroker(_broker) {
         broker = _broker
+    }
+
+    function assertQueuePresent(name, next) {
+        broker.connection.createChannel(function(err, channel) {
+            assert.ifError(err)
+            channel.checkQueue(namespace + ':' + name, function(err) {
+                assert.ifError(err)
+                next()
+            })
+        })
+    }
+
+    function assertQueueAbsent(name, next) {
+        broker.connection.createChannel(function(err, channel) {
+            assert.ifError(err)
+            channel.checkQueue(name, function(err) {
+                assert(err)
+                assert(/NOT_FOUND/.test(err.message))
+                next()
+            }).on('error', function(err) {
+                debug(err.message)
+            })
+        })
+    }
+
+    function assertExchangePresent(name, next) {
+        broker.connection.createChannel(function(err, channel) {
+            assert.ifError(err)
+            channel.checkExchange(namespace + ':' + name, function(err) {
+                assert.ifError(err)
+                next()
+            })
+        })
+    }
+
+    function assertExchangeAbsent(name, next) {
+        broker.connection.createChannel(function(err, channel) {
+            assert.ifError(err)
+            channel.checkExchange(name, function(err) {
+                assert(err)
+                assert(/NOT_FOUND/.test(err.message))
+                next()
+            }).on('error', function(err) {
+                debug(err.message)
+            })
+        })
     }
 })

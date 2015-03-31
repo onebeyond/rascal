@@ -1,3 +1,4 @@
+var debug = require('debug')('amqp-nice:publish:tests')
 var assert = require('assert')
 var async = require('async')
 var client = require('..')
@@ -9,14 +10,10 @@ describe('Client', function() {
     this.slow(500)
 
     var broker
+    var namespace
 
-    afterEach(function(done) {
-        broker.nuke(done)
-    })
-
-    it('should publish a text message to an exchange', function(done) {
-
-        var namespace = uuid()
+    beforeEach(function(done) {
+        namespace = uuid()
 
         client.init({
             namespace: namespace,
@@ -34,118 +31,61 @@ describe('Client', function() {
                 }
             },
             exchanges: {
-                'bookings:events': {
-                }
+                'ex1': {}
             },
             queues: {
-                'booking_system:create': {
-                }
+                'q1': {}
             },
-            bindings: [
-                {
-                    source: 'bookings:events',
-                    destination: 'booking_system:create',
+            bindings: {
+                'b1': {
+                    source: 'ex1',
+                    destination: 'q1',
                     destinationType: 'queue',
                     routingKey: '#'
                 }
-            ]
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            broker.publish('bookings:events', 'booking.created', 'some message', function() {
-                broker.channel.get(namespace + ':booking_system:create', { noAck: true }, function(err, message) {
-                    assert.ifError(err)
-                    assert.equal(message.content.toString(), 'some message')
-                    done()
-                })
-            })
-        })
-
-    })
-
-    it('should purge messages when specified', function(done) {
-
-        var namespace = uuid()
-
-        client.init({
-            namespace: namespace,
-            defaults: {
-                exchanges: {
-                    options: {
-                        durable: false
-                    }
+            },
+            publications: {
+                'p1': {
+                    confirm: false,
+                    exchange: 'ex1',
+                    routingKey: 'rk.1',
                 },
-                queues: {
-                    options: {
-                        durable: false
-                    }
+                'p2': {
+                    confirm: true,
+                    exchange: 'ex1',
+                    routingKey: 'rk.2'
+                },
+                'p3': {
+                    confirm: true,
+                    queue: 'q1',
+                    routingKey: 'rk.2'
                 }
-            },
-            exchanges: {
-                'bookings:events': {
-                }
-            },
-            queues: {
-                'booking_system:create': {
-                }
-            },
-            bindings: [
-                {
-                    source: 'bookings:events',
-                    destination: 'booking_system:create',
-                    destinationType: 'queue',
-                    routingKey: '#'
-                }
-            ]
-        }, function(err, broker) {
-            stashBroker(broker)
-            assert.ifError(err)
-            broker.publish('bookings:events', 'booking.created', 'some message', function() {
-
-                client.init({
-                    namespace: namespace,
-                    defaults: {
-                        exchanges: {
-                            options: {
-                                durable: false
-                            }
-                        },
-                        queues: {
-                            purge: true,
-                            options: {
-                                durable: false
-                            }
-                        }
-                    },
-                    exchanges: {
-                        'bookings:events': {
-                        }
-                    },
-                    queues: {
-                        'booking_system:create': {
-                        }
-                    },
-                    bindings: [
-                        {
-                            source: 'bookings:events',
-                            destination: 'booking_system:create',
-                            destinationType: 'queue',
-                            routingKey: '#'
-                        }
-                    ]
-                }, function(err, broker) {
-                    assert.ifError(err)
-                    broker.channel.get(namespace + ':booking_system:create', { noAck: true }, function(err, message) {
-                        assert.ifError(err)
-                        assert(!message)
-                        done()
-                    })
-                })
-            })
+            }
+        }, function(err, _broker) {
+            broker = _broker
+            done(err)
         })
     })
 
-    function stashBroker(_broker) {
-        broker = _broker
+    afterEach(function(done) {
+        broker.nuke(done)
+    })
+
+    it.only('should publish a text message to an exchange using an normal channel', function(done) {
+
+        broker.publish('p1', 'routing.key', 'text message')
+
+        assertMessage('q1', 'text message', done)
+    })
+
+    function assertMessage(queue, message, done) {
+        broker.connction.createChannel(function(err, channel) {
+            assert.ifError(err)
+            channel.get(queue, { noAck: true }, function(err, message) {
+                assert.ifError(err)
+                assert(message)
+                assert.equal(new String(message.content))
+            })
+        })
     }
 })
