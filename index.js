@@ -1,7 +1,7 @@
 'use strict'
 
-var Broker = require('./lib/ampq/Broker')
 var defaults = require('./lib/config/defaults')
+var Broker = require('./lib/amqp/Broker')
 
 module.exports = (function() {
     return {

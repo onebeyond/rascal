@@ -12,21 +12,23 @@ describe('Defaults', function() {
             it('should use the default connection configuration', function() {
                 configure({
                     defaults: {
-                        connection: {
-                            slashes:true,
-                            protocol: 'amqp',
-                            hostname: 'localhost',
-                            user: 'guest',
-                            password: 'guest',
-                            port: '5672',
-                            vhost: '',
-                            options: {
-                                heartbeat: 5
-                            },
-                            retry: {
-                                delay: 1000
+                        vhosts: {
+                            connection: {
+                                slashes:true,
+                                protocol: 'amqp',
+                                hostname: 'localhost',
+                                user: 'guest',
+                                password: 'guest',
+                                port: '5672',
+                                vhost: '',
+                                options: {
+                                    heartbeat: 5
+                                },
+                                retry: {
+                                    delay: 1000
+                                }
                             }
-                        },
+                        }
                     },
                     vhosts: {
                         v1: {
@@ -41,21 +43,23 @@ describe('Defaults', function() {
             it('should permit the defaults to be overriden', function() {
                 configure({
                     defaults: {
-                        connection: {
-                            slashes:true,
-                            protocol: 'amqp',
-                            hostname: 'localhost',
-                            user: 'guest',
-                            password: 'guest',
-                            port: '5672',
-                            vhost: '',
-                            options: {
-                                heartbeat: 10
-                            },
-                            retry: {
-                                delay: 1000
+                        vhosts: {
+                            connection: {
+                                slashes:true,
+                                protocol: 'amqp',
+                                hostname: 'localhost',
+                                user: 'guest',
+                                password: 'guest',
+                                port: '5672',
+                                vhost: '',
+                                options: {
+                                    heartbeat: 10
+                                },
+                                retry: {
+                                    delay: 1000
+                                }
                             }
-                        },
+                        }
                     },
                     vhosts: {
                         v1: {
@@ -77,11 +81,13 @@ describe('Defaults', function() {
             it('should use the default exchange configuration', function() {
                 configure({
                     defaults: {
-                        exchanges: {
-                            assert: true,
-                            type: 'topic',
-                            options: {
-                                durable: true
+                        vhosts: {
+                            exchanges: {
+                                assert: true,
+                                type: 'topic',
+                                options: {
+                                    durable: true
+                                }
                             }
                         }
                     },
@@ -104,11 +110,13 @@ describe('Defaults', function() {
             it('should permit the defaults to be overriden', function() {
                 configure({
                     defaults: {
-                        exchanges: {
-                            assert: true,
-                            type: 'topic',
-                            options: {
-                                durable: true
+                        vhosts: {
+                            exchanges: {
+                                assert: true,
+                                type: 'topic',
+                                options: {
+                                    durable: true
+                                }
                             }
                         }
                     },
@@ -143,10 +151,12 @@ describe('Defaults', function() {
             it('should use the default queue configuration', function() {
                 configure({
                     defaults: {
-                        queues: {
-                            assert: true,
-                            options: {
-                                durable: true
+                        vhosts: {
+                            queues: {
+                                assert: true,
+                                options: {
+                                    durable: true
+                                }
                             }
                         }
                     },
@@ -168,10 +178,12 @@ describe('Defaults', function() {
             it('should permit the defaults to be overriden', function() {
                 configure({
                     defaults: {
-                        queues: {
-                            assert: true,
-                            options: {
-                                durable: true
+                        vhosts: {
+                            queues: {
+                                assert: true,
+                                options: {
+                                    durable: true
+                                }
                             }
                         }
                     },
@@ -204,12 +216,14 @@ describe('Defaults', function() {
             it('should use the default binding configuration', function() {
                 configure({
                     defaults: {
-                        bindings: {
-                            destinationType: 'queue',
-                            routingKey: '#',
-                            options: {
-                                foo: true,
+                        vhosts: {
+                            bindings: {
+                                destinationType: 'queue',
+                                routingKey: '#',
+                                options: {
+                                    foo: true,
 
+                                }
                             }
                         }
                     },
@@ -236,13 +250,16 @@ describe('Defaults', function() {
             it('should permit the defaults to be overriden', function() {
                 configure({
                     defaults: {
-                        bindings: {
-                            destinationType: 'queue',
-                            routingKey: '#',
-                            options: {
-                                foo: true,
+                        vhosts: {
+                            bindings: {
+                                destinationType: 'queue',
+                                routingKey: '#',
+                                options: {
+                                    foo: true,
 
+                                }
                             }
+
                         }
                     },
                     vhosts: {
