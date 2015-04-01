@@ -101,7 +101,7 @@ describe('Configuration', function() {
                 })
             })
 
-            it.only('should generate a namespace when specified', function() {
+            it('should generate a namespace when specified', function() {
                 configure({
                     vhosts: {
                         v1: {
