@@ -192,7 +192,7 @@ describe('Publications', function() {
         })
     })
 
-    it('should publish without a callback', function(done) {
+    it('should publish without overrides or a callback', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -205,6 +205,25 @@ describe('Publications', function() {
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message')
+            setTimeout(function() {
+                amqputils.assertMessage('q1', namespace, 'test message', done)
+            }, 400)
+        })
+    })
+
+    it('should publish with overrides, but no callback', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    queue: 'q1',
+                    confirm: true
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', {})
             setTimeout(function() {
                 amqputils.assertMessage('q1', namespace, 'test message', done)
             }, 400)
