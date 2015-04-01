@@ -1,5 +1,6 @@
 var debug = require('debug')('amqp-nice:config:tests')
 var assert = require('assert')
+var format = require('util').format
 var _ = require('lodash')
 var configure = require('../lib/config/configure')
 
@@ -97,6 +98,25 @@ describe('Configuration', function() {
                 }, function(err, config) {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                })
+            })
+
+            it.only('should generate a namespace when specified', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            namespace: true
+                        },
+                        v2: {
+                            namespace: true
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+
+                    assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
+                    assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v2.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
+                    assert.ok(config.vhosts.v1.namespace != config.vhosts.v2.namespace)
                 })
             })
         })
