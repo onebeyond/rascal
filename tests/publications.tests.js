@@ -172,6 +172,8 @@ describe('Publications', function() {
         })
     })
 
+    it('should publish with a routing key')
+
     it('should allow publish overrides', function(done) {
         createBroker({
             vhosts: vhosts,
