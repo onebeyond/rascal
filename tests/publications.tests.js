@@ -18,6 +18,30 @@ describe('Publications', function() {
 
     var broker = undefined
     var testConnection = undefined
+    var namespace = uuid()
+
+    var vhosts = {
+        v1: {
+            namespace: namespace,
+            exchanges: {
+                e1: {
+                    assert: true
+                }
+            },
+            queues: {
+                q1: {
+                    exclusive: false,
+                    assert: true
+                }
+            },
+            bindings: {
+                b1: {
+                    source: 'e1',
+                    destination: 'q1'
+                }
+            }
+        }
+    }
 
     before(function(done) {
         amqplib.connect(function(err, connection) {
@@ -34,31 +58,8 @@ describe('Publications', function() {
 
     it('should publish text messages to normal exchanges', function(done) {
 
-        var namespace = uuid()
-
         createBroker({
-            vhosts: {
-                v1: {
-                    namespace: namespace,
-                    exchanges: {
-                        e1: {
-                            assert: true
-                        }
-                    },
-                    queues: {
-                        q1: {
-                            exclusive: false,
-                            assert: true
-                        }
-                    },
-                    bindings: {
-                        b1: {
-                            source: 'e1',
-                            destination: 'q1'
-                        }
-                    }
-                }
-            },
+            vhosts: vhosts,
             publications: {
                 p1: {
                     vhost: 'v1',
@@ -66,7 +67,7 @@ describe('Publications', function() {
                 }
             }
         }, function(err, broker) {
-            if (err) return next(err)
+            assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
                 getMessage('q1', namespace, function(err, message) {
@@ -80,9 +81,76 @@ describe('Publications', function() {
     })
 
 
-    it('should publish to confirm exchanges')
-    it('should publish to queues')
-    it('should publish to confirm queues')
+    it('should publish text messages to confirm exchanges', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1',
+                    confirm: true
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, ok) {
+                assert.ifError(err)
+                getMessage('q1', namespace, function(err, message) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    assert.equal(message, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should publish text messages to queues', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, ok) {
+                assert.ifError(err)
+                getMessage('q1', namespace, function(err, message) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    assert.equal(message, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should publish to confirm queues', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    queue: 'q1',
+                    confirm: true
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, ok) {
+                assert.ifError(err)
+                getMessage('q1', namespace, function(err, message) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    assert.equal(message, 'test message')
+                    done()
+                })
+            })
+        })
+    })
 
 
     function createBroker(config, next) {

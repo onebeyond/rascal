@@ -7,6 +7,7 @@ var testConfig = require('../lib/config/tests')
 var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
+var AmqpUtils = require('./utils/amqputils')
 
 _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
@@ -17,12 +18,12 @@ describe('Vhost', function() {
     this.slow(1000)
 
     var broker = undefined
-    var testConnection = undefined
+    var amqputils = undefined
 
     before(function(done) {
         amqplib.connect(function(err, connection) {
             if (err) return done(err)
-            testConnection = connection
+            amqputils = AmqpUtils.init(connection)
             done()
         })
     })
@@ -46,7 +47,7 @@ describe('Vhost', function() {
                 }
             }
         }, function() {
-            assertExchangePresent('e1', namespace, done)
+            amqputils.assertExchangePresent('e1', namespace, done)
         })
     })
 
@@ -64,7 +65,7 @@ describe('Vhost', function() {
                 }
             }
         }, function() {
-            assertQueuePresent('q1', namespace, done)
+            amqputils.assertQueuePresent('q1', namespace, done)
         })
     })
 
@@ -137,14 +138,9 @@ describe('Vhost', function() {
             }
         }, function(err) {
             assert.ifError(err)
-            async.series({
-                publish: publishMessage('e1', namespace, 'test message'),
-                message: getMessage('q1', namespace)
-            }, function(err, results) {
+            amqputils.publishMessage('e1', namespace, 'test message', function(err) {
                 assert.ifError(err)
-                assert.ok(results.message)
-                assert.equal(results.message, 'test message')
-                done()
+                amqputils.assertMessage('q1', namespace, 'test message', done)
             })
         })
     })
@@ -156,49 +152,4 @@ describe('Vhost', function() {
             next(err, broker)
         })
     }
-
-    function checkExchange(present, name, namespace, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkExchange(namespace + ':' + name, function(err, ok) {
-                present ? assert(!err) : assert(!!err)
-                next()
-            })
-        })
-    }
-
-    function checkQueue(present, name, namespace, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkQueue(namespace + ':' + name, function(err, ok) {
-                present ? assert(!err) : assert(!!err)
-                next()
-            })
-        })
-    }
-
-    var publishMessage = _.curry(function(exchange, namespace, message, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.publish(namespace + ':' + exchange, '', new Buffer(message))
-            next()
-        })
-    })
-
-    var getMessage = _.curry(function(queue, namespace, next) {
-         testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.get(namespace + ':' + queue, { noAck: true }, function(err, message) {
-                if (err) return next(err)
-                next(null, message.content.toString())
-            })
-        })
-    })
-
-
-    var assertExchangePresent = checkExchange.bind(null, true)
-    var assertExchangeAbsent = checkExchange.bind(null, false)
-    var assertQueuePresent = checkQueue.bind(null, true)
-    var assertQueueAbsent = checkQueue.bind(null, false)
-
 })
