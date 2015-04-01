@@ -11,7 +11,7 @@ var Broker = require('..').Broker
 _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 
-describe('Vhost', function() {
+describe('Publications', function() {
 
     this.timeout(2000)
     this.slow(1000)
@@ -32,83 +32,7 @@ describe('Vhost', function() {
         done()
     })
 
-    it('should create exchanges', function(done) {
-        var namespace = uuid()
-        createBroker({
-            vhosts: {
-                v1: {
-                    namespace: namespace,
-                    exchanges: {
-                        e1: {
-                            assert: true
-                        }
-                    }
-                }
-            }
-        }, function() {
-            assertExchangePresent('e1', namespace, done)
-        })
-    })
-
-    it('should create queues', function(done) {
-        var namespace = uuid()
-        createBroker({
-            vhosts: {
-                v1: {
-                    namespace: namespace,
-                    queues: {
-                        q1: {
-                            assert: true
-                        }
-                    }
-                }
-            }
-        }, function() {
-            assertQueuePresent('q1', namespace, done)
-        })
-    })
-
-    it('should fail when checking a missing exchange', function(done) {
-
-        createBroker({
-            vhosts: {
-                v1: {
-                    exchanges: {
-                        e1: {
-                            assert: false,
-                            check: true
-                        }
-                    }
-                }
-            }
-        }, function(err) {
-            assert.ok(err)
-            assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message))
-            done()
-        })
-    })
-
-    it('should fail when checking a missing queue', function(done) {
-
-        createBroker({
-            vhosts: {
-                v1: {
-                    queues: {
-                        q1: {
-                            assert: false,
-                            check: true
-                        }
-                    }
-                }
-            }
-        }, function(err) {
-            assert.ok(err)
-            assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message))
-            done()
-        })
-    })
-
-    it('should create bindings', function(done) {
+    it('should publish text messages to normal exchanges', function(done) {
 
         var namespace = uuid()
 
@@ -134,20 +58,32 @@ describe('Vhost', function() {
                         }
                     }
                 }
+            },
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1'
+                }
             }
-        }, function(err) {
-            assert.ifError(err)
-            async.series({
-                publish: publishMessage('e1', namespace, 'test message'),
-                message: getMessage('q1', namespace)
-            }, function(err, results) {
+        }, function(err, broker) {
+            if (err) return next(err)
+            broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                assert.ok(results.message)
-                assert.equal(results.message, 'test message')
-                done()
+                getMessage('q1', namespace, function(err, message) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    assert.equal(message, 'test message')
+                    done()
+                })
             })
         })
     })
+
+
+    it('should publish to confirm exchanges')
+    it('should publish to queues')
+    it('should publish to confirm queues')
+
 
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
