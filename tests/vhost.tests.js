@@ -11,13 +11,14 @@ _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 describe('Vhost', function() {
 
-    this.timeout(1000)
-    this.slow(500)
+    this.timeout(2000)
+    this.slow(1000)
 
     var broker = undefined
 
     after(function(done) {
-        if (broker) broker.nuke(done)
+        if (broker) return broker.nuke(done)
+        done()
     })
 
     it('should create exchanges', function(done) {
@@ -57,13 +58,14 @@ describe('Vhost', function() {
         })
     })
 
-    it('should fail when checking a missing exchange', function(done) {
+    it.only('should fail when checking a missing exchange', function(done) {
 
         createBroker({
             vhosts: {
                 v1: {
                     exchanges: {
                         e1: {
+                            assert: false,
                             check: true
                         }
                     }
@@ -72,6 +74,7 @@ describe('Vhost', function() {
         }, function(err) {
             assert.ok(err)
             assert.equal(/NOT_FOUND/.test(err.message))
+            done()
         })
     })
 
