@@ -3,6 +3,7 @@ var assert = require('assert')
 var _ = require('lodash').runInContext()
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
+var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
 
@@ -58,7 +59,7 @@ describe('Vhost', function() {
         })
     })
 
-    it.only('should fail when checking a missing exchange', function(done) {
+    it('should fail when checking a missing exchange', function(done) {
 
         createBroker({
             vhosts: {
@@ -73,7 +74,7 @@ describe('Vhost', function() {
             }
         }, function(err) {
             assert.ok(err)
-            assert.equal(/NOT_FOUND/.test(err.message))
+            assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message))
             done()
         })
     })
@@ -81,9 +82,8 @@ describe('Vhost', function() {
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
-            assert.ifError(err)
             broker = _broker
-            next(null, broker)
+            next(err, broker)
         })
     }
 
