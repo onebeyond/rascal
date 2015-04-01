@@ -7,6 +7,8 @@ var testConfig = require('../lib/config/tests')
 var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
+var AmqpUtils = require('./utils/amqputils')
+
 
 _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
@@ -17,7 +19,7 @@ describe('Publications', function() {
     this.slow(1000)
 
     var broker = undefined
-    var testConnection = undefined
+    var amqputils = undefined
     var namespace = uuid()
 
     var vhosts = {
@@ -46,7 +48,7 @@ describe('Publications', function() {
     before(function(done) {
         amqplib.connect(function(err, connection) {
             if (err) return done(err)
-            testConnection = connection
+            amqputils = AmqpUtils.init(connection)
             done()
         })
     })
@@ -70,12 +72,7 @@ describe('Publications', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                getMessage('q1', namespace, function(err, message) {
-                    assert.ifError(err)
-                    assert.ok(message)
-                    assert.equal(message, 'test message')
-                    done()
-                })
+                amqputils.assertMessage('q1', namespace, 'test message', done)
             })
         })
     })
@@ -95,12 +92,7 @@ describe('Publications', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err, ok) {
                 assert.ifError(err)
-                getMessage('q1', namespace, function(err, message) {
-                    assert.ifError(err)
-                    assert.ok(message)
-                    assert.equal(message, 'test message')
-                    done()
-                })
+                amqputils.assertMessage('q1', namespace, 'test message', done)
             })
         })
     })
@@ -118,12 +110,7 @@ describe('Publications', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err, ok) {
                 assert.ifError(err)
-                getMessage('q1', namespace, function(err, message) {
-                    assert.ifError(err)
-                    assert.ok(message)
-                    assert.equal(message, 'test message')
-                    done()
-                })
+                amqputils.assertMessage('q1', namespace, 'test message', done)
             })
         })
     })
@@ -142,12 +129,7 @@ describe('Publications', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err, ok) {
                 assert.ifError(err)
-                getMessage('q1', namespace, function(err, message) {
-                    assert.ifError(err)
-                    assert.ok(message)
-                    assert.equal(message, 'test message')
-                    done()
-                })
+                amqputils.assertMessage('q1', namespace, 'test message', done)
             })
         })
     })
