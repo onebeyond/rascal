@@ -124,7 +124,6 @@ describe('Vhost', function() {
                     },
                     queues: {
                         q1: {
-                            exclusive: false,
                             assert: true
                         }
                     },
