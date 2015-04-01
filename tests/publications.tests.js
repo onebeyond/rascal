@@ -192,6 +192,25 @@ describe('Publications', function() {
         })
     })
 
+    it('should publish without a callback', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    queue: 'q1',
+                    confirm: true
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message')
+            setTimeout(function() {
+                amqputils.assertMessage('q1', namespace, 'test message', done)
+            }, 400)
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
@@ -199,49 +218,4 @@ describe('Publications', function() {
             next(err, broker)
         })
     }
-
-    function checkExchange(present, name, namespace, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkExchange(namespace + ':' + name, function(err, ok) {
-                present ? assert(!err) : assert(!!err)
-                next()
-            })
-        })
-    }
-
-    function checkQueue(present, name, namespace, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.checkQueue(namespace + ':' + name, function(err, ok) {
-                present ? assert(!err) : assert(!!err)
-                next()
-            })
-        })
-    }
-
-    var publishMessage = _.curry(function(exchange, namespace, message, next) {
-        testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.publish(namespace + ':' + exchange, '', new Buffer(message))
-            next()
-        })
-    })
-
-    var getMessage = _.curry(function(queue, namespace, next) {
-         testConnection.createChannel(function(err, channel) {
-            assert.ifError(err)
-            channel.get(namespace + ':' + queue, { noAck: true }, function(err, message) {
-                if (err) return next(err)
-                next(null, message.content.toString())
-            })
-        })
-    })
-
-
-    var assertExchangePresent = checkExchange.bind(null, true)
-    var assertExchangeAbsent = checkExchange.bind(null, false)
-    var assertQueuePresent = checkQueue.bind(null, true)
-    var assertQueueAbsent = checkQueue.bind(null, false)
-
 })
