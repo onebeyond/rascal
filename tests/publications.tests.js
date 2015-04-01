@@ -172,6 +172,26 @@ describe('Publications', function() {
         })
     })
 
+    it('should allow publish overrides', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, ok) {
+                assert.ifError(err)
+                setTimeout(function() {
+                    amqputils.assertMessageAbsent('q1', namespace, done)
+                }, 100)
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {

@@ -43,7 +43,7 @@ function init(connection) {
             assert.ifError(err)
             channel.get(namespace + ':' + queue, { noAck: true }, function(err, message) {
                 if (err) return next(err)
-                next(null, message.content.toString())
+                next(null, message ? message.content.toString() : undefined)
             })
         })
     }
@@ -57,12 +57,21 @@ function init(connection) {
         })
     }
 
+    function assertMessageAbsent(queue, namespace, next) {
+        getMessage(queue, namespace, function(err, message) {
+            assert.ifError(err)
+            assert.ok(!message, 'Message was not absent')
+            next()
+        })
+    }
+
     return {
         checkExchange: _.curry(checkExchange),
         checkQueue: _.curry(checkQueue),
         publishMessage: _.curry(publishMessage),
         getMessage: _.curry(getMessage),
         assertMessage: _.curry(assertMessage),
+        assertMessageAbsent: _.curry(assertMessageAbsent),
         assertExchangePresent: checkExchange.bind(null, true),
         assertExchangeAbsent: checkExchange.bind(null, false),
         assertQueuePresent: checkQueue.bind(null, true),
