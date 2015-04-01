@@ -77,7 +77,6 @@ describe('Publications', function() {
         })
     })
 
-
     it('should publish text messages to confirm exchanges', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -134,6 +133,44 @@ describe('Publications', function() {
         })
     })
 
+    it('should publish json messages to normal exchanges', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', { message: 'test message' }, function(err) {
+                assert.ifError(err)
+                amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done)
+            })
+        })
+    })
+
+
+    it('should publish buffer messages to normal exchanges', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', new Buffer('test message'), function(err) {
+                assert.ifError(err)
+                amqputils.assertMessage('q1', namespace, 'test message', done)
+            })
+        })
+    })
 
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
