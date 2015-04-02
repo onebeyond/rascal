@@ -250,7 +250,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 You can bind exchanges to exchanges, or exchanges to queues.
 ```json
 "vhosts": {
-  "v1" {
+  "v1": {
     "exchanges": {
       "e1": {
       }
