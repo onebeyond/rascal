@@ -51,7 +51,7 @@ function init(connection) {
     function assertMessage(queue, namespace, expected, next) {
         getMessage(queue, namespace, function(err, message) {
             assert.ifError(err)
-            assert.ok(message)
+            assert.ok(message, 'Message was not present')
             assert.equal(message, expected)
             next()
         })
@@ -60,7 +60,7 @@ function init(connection) {
     function assertMessageAbsent(queue, namespace, next) {
         getMessage(queue, namespace, function(err, message) {
             assert.ifError(err)
-            assert.ok(!message, 'Message was not absent')
+            assert.ok(!message, 'Message was present')
             next()
         })
     }

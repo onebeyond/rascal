@@ -16,7 +16,7 @@ _.mixin({ 'defaultsDeep': require('merge-defaults') });
 describe('Subscriptions', function() {
 
     this.timeout(2000)
-    this.slow(1000)
+    this.slow(2000)
 
     var broker = undefined
     var amqputils = undefined
@@ -142,7 +142,7 @@ describe('Subscriptions', function() {
                     vhost: 'v1',
                     queue: 'q1',
                     options: {
-                        noAck: false
+                        noAck: true
                     }
                 }
             }
@@ -151,23 +151,21 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                var consumerTag = undefined
                 broker.subscribe('s1', function(err, message, content) {
                     assert.ifError(err)
                     assert.ok(message)
-                    broker.unsubscribe('s1', consumerTag, function(err) {
+                    broker.shutdown(function(err) {
                         assert.ifError(err)
                         amqputils.assertMessageAbsent('q1', namespace, done)
                     })
                 }, function(err, response) {
                     assert.ifError(err)
-                    consumerTag = response.consumerTag
                 })
             })
         })
     })
 
-    it('should not consume unacknowldged acknowledged messages', function(done) {
+    it('should not consume unacknowledged messages', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -192,17 +190,15 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                var consumerTag = undefined
                 broker.subscribe('s1', function(err, message, content) {
                     assert.ifError(err)
                     assert.ok(message)
-                    broker.unsubscribe('s1', consumerTag, function(err) {
+                    broker.shutdown(function(err) {
                         assert.ifError(err)
-                        amqputils.assertMessageAbsent('q1', namespace, done)
+                        amqputils.assertMessage('q1', namespace, 'test message', done)
                     })
                 }, function(err, response) {
                     assert.ifError(err)
-                    consumerTag = response.consumerTag
                 })
             })
         })
