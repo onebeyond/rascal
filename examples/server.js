@@ -54,8 +54,6 @@ var received = 0
 Broker.create(config, function(err, broker) {
     if (err) console.error(err) || process.exit(1)
 
-    broker.on('error', function(err) {})
-
     process.on('SIGINT', function() {
         broker.nuke(function() {
             console.log('Sent', sent)
@@ -82,5 +80,5 @@ function soakPublication(broker, publication, interval) {
             if (err) console.error(err.message)
             sent++
         })
-    }, interval || 1000).unref()
+    }, interval || 100).unref()
 }
