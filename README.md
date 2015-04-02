@@ -278,7 +278,8 @@ Now that you've bound your queues and exchanges, you need to start sending them 
 "publications": {
   "p1": {
     "exchange": "e1",
-    "vhost": "v1"
+    "vhost": "v1",
+    "routingKey": "foo"
   }
 }
 ```
@@ -298,10 +299,10 @@ Rascal supports text, buffers and anything it can JSON.stringify. When publish a
 
 ```javascript
 broker.publish("p1", "some message", callback)
-broker.publish("p1", "some message", "routing.key")
-broker.publish("p1", "some message", "routing.key", callback)
-broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } })
-broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } }, callback) 
+broker.publish("p1", "some message", "foo")
+broker.publish("p1", "some message", "foo", callback)
+broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } })
+broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } }, callback) 
 ```
 The callback parameters are err and the messageid ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
