@@ -1,10 +1,8 @@
 var debug = require('debug')('amqp-nice:server')
-var _ = require('lodash').runInContext()
+var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
 var Broker = require('../lib/amqp/Broker')
 var defaultConfig = require('../lib/config/defaults')
 var uuid = require('node-uuid').v4()
-
-_.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 var config = _.defaultsDeep({
     vhosts: {

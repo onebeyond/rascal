@@ -1,10 +1,9 @@
 var rascal = require('..')
-var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
 var definitions = require('./definitions.json')
 
-var config = _.defaultsDeep(definitions, rascal.defaults)
+var config = rascal.withDefaultConfig(definitions)
 
-rascal.Broker.create(config, function(err, broker) {
+rascal.createBroker(config, function(err, broker) {
   if (err) console.error(err.message) & process.exit(1)
   broker.subscribe('s1', function(err, message, content, next) {
     console.log(content)
