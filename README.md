@@ -144,7 +144,7 @@ Any attributes you add to the "options" sub document will be converted to query 
 }
 ```
 Rascal also supports automatic connection retries. It's enabled in the default config, or you want enable it specifically as follows.
-```
+```json
 "vhosts": {
     "v1": {
         "connection": {
