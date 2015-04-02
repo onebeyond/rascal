@@ -266,7 +266,6 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
 
                 broker.subscribe('s1', function(err, message, content, next) {
-                    console.log
                     assert.ifError(err)
                     assert.ok(message)
                     next(new Error('fail'))
@@ -276,6 +275,42 @@ describe('Subscriptions', function() {
                             amqputils.assertMessageAbsent('q1', namespace, done)
                         })
                     }, 100).unref()
+                }, function(err, response) {
+                    assert.ifError(err)
+                })
+            })
+        })
+    })
+
+    it('should not consume non-acknowledged messages with requeue', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1',
+                    routingKey: 'foo'
+                }
+            },
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, message, content, next) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                    if (messages[message.properties.messageId] < 10) return next(new Error('retry'), { requeue: true })
+                    done()
                 }, function(err, response) {
                     assert.ifError(err)
                 })
