@@ -212,10 +212,7 @@ describe('Subscriptions', function() {
                 p1: {
                     vhost: 'v1',
                     exchange: 'e1',
-                    routingKey: 'foo',
-                    options: {
-
-                    }
+                    routingKey: 'foo'
                 }
             },
             subscriptions: {
@@ -233,6 +230,46 @@ describe('Subscriptions', function() {
                     assert.ifError(err)
                     assert.ok(message)
                     next()
+                    setTimeout(function() {
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessageAbsent('q1', namespace, done)
+                        })
+                    }, 100).unref()
+                }, function(err, response) {
+                    assert.ifError(err)
+                })
+            })
+        })
+    })
+
+    it('should consume non-acknowledged messages by default', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1',
+                    routingKey: 'foo'
+                }
+            },
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, message, content, next) {
+                    console.log
+                    assert.ifError(err)
+                    assert.ok(message)
+                    next(new Error('fail'))
                     setTimeout(function() {
                         broker.shutdown(function(err) {
                             assert.ifError(err)
