@@ -18,10 +18,12 @@ describe('Subscriptions', function() {
     this.timeout(5000)
     this.slow(1000)
 
-    var broker = undefined
-    var amqputils = undefined
-    var namespace = undefined
-    var vhosts = undefined
+    var broker
+    var amqputils
+    var namespace
+    var vhosts
+    var publications
+    var subscriptions
 
     beforeEach(function(done) {
 
@@ -50,6 +52,21 @@ describe('Subscriptions', function() {
             }
         }
 
+        publications = {
+            p1: {
+                vhost: 'v1',
+                exchange: 'e1',
+                routingKey: 'foo'
+            }
+        }
+
+        subscriptions = {
+            s1: {
+                vhost: 'v1',
+                queue: 'q1'
+            }
+        }
+
         amqplib.connect(function(err, connection) {
             if (err) return done(err)
             amqputils = AmqpUtils.init(connection)
@@ -66,19 +83,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo'
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -107,12 +113,7 @@ describe('Subscriptions', function() {
                     routingKey: 'bar'
                 }
             },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -129,16 +130,7 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo',
-                    options: {
-
-                    }
-                }
-            },
+            publications: publications,
             subscriptions: {
                 s1: {
                     vhost: 'v1',
@@ -171,22 +163,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo',
-                    options: {
-
-                    }
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -210,19 +188,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo'
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -249,19 +216,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo'
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -288,19 +244,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo'
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
@@ -326,19 +271,8 @@ describe('Subscriptions', function() {
 
         createBroker({
             vhosts: vhosts,
-            publications: {
-                p1: {
-                    vhost: 'v1',
-                    exchange: 'e1',
-                    routingKey: 'foo'
-                }
-            },
-            subscriptions: {
-                s1: {
-                    vhost: 'v1',
-                    queue: 'q1'
-                }
-            }
+            publications: publications,
+            subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
