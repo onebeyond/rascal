@@ -204,6 +204,48 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should consume acknowledged messages', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1',
+                    routingKey: 'foo',
+                    options: {
+
+                    }
+                }
+            },
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, message, content, next) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    next()
+                    setTimeout(function() {
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessageAbsent('q1', namespace, done)
+                        })
+                    }, 100).unref()
+                }, function(err, response) {
+                    assert.ifError(err)
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {

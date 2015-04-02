@@ -236,6 +236,8 @@ describe('Publications', function() {
         })
     })
 
+    it('should decorate the message with a uuid')
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
