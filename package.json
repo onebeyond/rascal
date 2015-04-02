@@ -23,7 +23,7 @@
     "amqplib",
     "rabbitmq"
   ],
-"repository": {
+  "repository": {
     "type": "git",
     "url": "https://github.com/guidesmiths/rascal.git"
   },
