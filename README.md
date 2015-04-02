@@ -272,7 +272,7 @@ You can bind exchanges to exchanges, or exchanges to queues.
 ```
 When using Rascals defaults, destinationType will default to "queue" and "routingKey" will default to "#" (although this is only applicable for topics anyway)
 
-#### publications
+### publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in. 
 ```json
 "publications": {
@@ -320,7 +320,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 ```
 Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
 
-#### subscriptions
+### subscriptions
 The real fun begins with subscriptions
 ```json
 "subscriptions": {
@@ -346,10 +346,35 @@ For messages which are not auto-acknowledged (the default) calling ```ackOrNack(
 ##### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
 
+### Defaults
+Configuring each vhost, exchange, queue, binding, publication and subscription explicitly wouldn't be much fun. Not only does Rascal ship with default production and test configuration files, but you can also specify your own defaults in your configuration files by adding a "defaults" sub document.
 
-
-
-
-
-
-
+```json
+defaults: {
+    vhosts: {
+        exchanges: {
+            assert: true,
+            type: 'topic'
+        },
+        queues: {
+            assert: true
+        },
+        bindings: {
+            destinationType: 'queue',
+            routingKey: '#'
+        }
+    },
+    publications: {
+        routingKey: '',
+        options: {
+            persistent: true
+        }
+    },
+    subscriptions: {
+        prefetch: 10,
+        retry: {
+            delay: 1000
+        }
+    }
+}
+```
