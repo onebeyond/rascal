@@ -193,7 +193,7 @@ Define any further configuration in an options block
     }
 }
 ```
-Refer to the excellent [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
+Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
 #### Queues
 
@@ -241,4 +241,72 @@ Define any further configuration in an options block
     }
 }
 ```
-Refer to the excellent [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
+Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
+
+#### bindings
+You can bind exchanges to exchanges, or exchanges to queues.
+```json
+"vhosts": {
+  "v1:" {
+    "exchanges": {
+      "e1": {
+      }
+    },
+    "queues": {
+      "q1": {
+      }
+    },
+    "bindings": {
+      "b1": {
+        "source": "e1",
+        "destination": "q1",
+        "destinationType": "queue",
+        "routingKey": "foo"
+      }
+    }
+  }
+}
+```
+When using Rascals defaults, destinationType will default to "queue" and "routingKey" will default to "#" (although this is only applicable for topics anyway)
+
+#### publications
+Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in. 
+```json
+"publications": {
+  "p1": {
+    "exchange": "e1",
+    "vhost": "v1"
+  }
+}
+```
+```javascript
+broker.publish("p1", "some message")
+```
+Rascal supports text, buffers and anything it can stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is heavily overloaded. Other variants are
+
+```javascript
+broker.publish("p1", "some message", callback)
+broker.publish("p1", "some message", "routing.key")
+broker.publish("p1", "some message", "routing.key", callback)
+broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } })
+broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } }, callback) 
+```
+The callback parameters are err and the messageid ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
+
+**It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent**. To achieve this you need to configure the publication to use AMQP confirm channels.
+```json
+"publications": {
+  "p1": {
+    "exchange": "e1",
+    "vhost": "v1",
+    "confirm": true
+  }
+}
+```
+Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
+
+
+
+
+
+
