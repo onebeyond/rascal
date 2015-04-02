@@ -128,18 +128,19 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err) {
+            broker.publish('p1', 'test message', function(err, messageId) {
                 assert.ifError(err)
+                assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId))
+
                 amqputils.getMessage('q1', namespace, function(err, message) {
                     assert.ifError(err)
                     assert.ok(message)
-                    assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(message.properties.messageId), format('%s failed to match expected pattern', message.properties.messageId))
+                    assert.equal(messageId, message.properties.messageId)
                     done()
                 })
             })
         })
     })
-
 
     it('should publish to confirm queues', function(done) {
         createBroker({
@@ -161,7 +162,6 @@ describe('Publications', function() {
     })
 
     it('should publish json messages to normal exchanges', function(done) {
-
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -181,7 +181,6 @@ describe('Publications', function() {
 
 
     it('should publish buffer messages to normal exchanges', function(done) {
-
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -198,8 +197,6 @@ describe('Publications', function() {
             })
         })
     })
-
-    it('should publish with a routing key')
 
     it('should allow publish overrides', function(done) {
         createBroker({
