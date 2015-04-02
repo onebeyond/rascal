@@ -1,0 +1,30 @@
+{
+  "vhosts": {
+    "v1": {
+      "exchanges": {
+        "e1": {}
+      },
+      "queues": {
+        "q1": {}
+      },
+      "bindings": {
+        "b1": {
+          "source": "e1",
+          "destination": "q1"
+        }
+      }
+    }
+  },
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1"
+    }
+  },
+  "subscriptions": {
+    "s1": {
+      "queue": "q1",
+      "vhost": "v1"
+    }
+  }
+}
