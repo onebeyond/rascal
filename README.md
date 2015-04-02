@@ -215,7 +215,7 @@ If you don't want to create queues on initialisation, but still want to validate
 }
 ```
 
-#### purge
+##### purge
 Enable to purge the queue during initialisation. Useful when running automated tests
 ```json
 "vhosts": {
