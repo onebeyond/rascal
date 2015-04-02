@@ -1,6 +1,6 @@
 {
   "name": "rascal",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A friendly wrapper around amqplib with safe defaults",
   "main": "index.js",
   "dependencies": {
@@ -18,7 +18,6 @@
   "scripts": {
     "test": "mocha --recursive tests",
     "test-debug": "mocha --debug-brk --recursive tests"
-
   },
   "keywords": [
     "amqplib",
