@@ -350,31 +350,42 @@ Prefetch limits the number of unacknowledged messages your application can have 
 Configuring each vhost, exchange, queue, binding, publication and subscription explicitly wouldn't be much fun. Not only does Rascal ship with default production and test configuration files, but you can also specify your own defaults in your configuration files by adding a "defaults" sub document.
 
 ```json
-defaults: {
-    vhosts: {
-        exchanges: {
-            assert: true,
-            type: 'topic'
+"defaults": {
+    "vhosts": {
+        "exchanges": {
+            "assert": true,
+            "type": 'topic'
         },
-        queues: {
-            assert: true
+        "queues": {
+            "assert": true
         },
-        bindings: {
-            destinationType: 'queue',
-            routingKey: '#'
+        "bindings": {
+            "destinationType": "queue",
+            "routingKey": "#"
         }
     },
-    publications: {
-        routingKey: '',
-        options: {
-            persistent: true
+    "publications": {
+        "routingKey": "",
+        "options": {
+            "persistent": true
         }
     },
-    subscriptions: {
-        prefetch: 10,
-        retry: {
-            delay: 1000
+    "subscriptions": {
+        "prefetch": 10,
+        "retry": {
+            "delay": 1000
         }
     }
 }
 ```
+## Bonus Features
+### Nuke
+In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
+```json
+afterEach(function(done) {
+    if (broker) return broker.nuke(done)
+    done()
+})
+```
+### Bounce (experimental)
+Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
