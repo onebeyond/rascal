@@ -20,7 +20,7 @@ describe('Vhost', function() {
     var broker = undefined
     var amqputils = undefined
 
-    before(function(done) {
+    beforeEach(function(done) {
         amqplib.connect(function(err, connection) {
             if (err) return done(err)
             amqputils = AmqpUtils.init(connection)
@@ -28,9 +28,9 @@ describe('Vhost', function() {
         })
     })
 
-    after(function(done) {
-        if (broker) return broker.nuke(done)
-        done()
+    afterEach(function(done) {
+        if (!broker) return done()
+        broker.nuke(done)
     })
 
     it('should create exchanges', function(done) {

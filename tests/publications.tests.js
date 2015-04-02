@@ -20,32 +20,36 @@ describe('Publications', function() {
 
     var broker = undefined
     var amqputils = undefined
-    var namespace = uuid()
+    var namespace = undefined
+    var vhosts = undefined
 
-    var vhosts = {
-        v1: {
-            namespace: namespace,
-            exchanges: {
-                e1: {
-                    assert: true
-                }
-            },
-            queues: {
-                q1: {
-                    exclusive: false,
-                    assert: true
-                }
-            },
-            bindings: {
-                b1: {
-                    source: 'e1',
-                    destination: 'q1'
+    beforeEach(function(done) {
+
+        namespace = uuid()
+
+        vhosts = {
+            v1: {
+                namespace: namespace,
+                exchanges: {
+                    e1: {
+                        assert: true
+                    }
+                },
+                queues: {
+                    q1: {
+                        exclusive: false,
+                        assert: true
+                    }
+                },
+                bindings: {
+                    b1: {
+                        source: 'e1',
+                        destination: 'q1'
+                    }
                 }
             }
         }
-    }
 
-    before(function(done) {
         amqplib.connect(function(err, connection) {
             if (err) return done(err)
             amqputils = AmqpUtils.init(connection)
@@ -53,7 +57,7 @@ describe('Publications', function() {
         })
     })
 
-    after(function(done) {
+    afterEach(function(done) {
         if (broker) return broker.nuke(done)
         done()
     })
