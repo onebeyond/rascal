@@ -64,8 +64,9 @@ Broker.create(config, function(err, broker) {
 
     soakPublication(broker, 'p1')
     soakPublication(broker, 'p2')
-    broker.subscribe('s1', function(err, message, content) {
+    broker.subscribe('s1', function(err, message, content, next) {
         received++
+        next()
     }, function(err) {
         if (err) console.log(err)
     })

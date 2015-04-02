@@ -1,7 +1,7 @@
 {
-  "name": "amqp-nice",
+  "name": "rascal",
   "version": "0.1.0",
-  "description": "A friendly wrapper around amqplib",
+  "description": "A friendly wrapper around amqplib with safe defaults",
   "main": "index.js",
   "dependencies": {
     "amqplib": "^0.3.2",
