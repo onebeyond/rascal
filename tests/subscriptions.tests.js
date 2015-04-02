@@ -15,8 +15,8 @@ _.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 describe('Subscriptions', function() {
 
-    this.timeout(2000)
-    this.slow(2000)
+    this.timeout(5000)
+    this.slow(1000)
 
     var broker = undefined
     var amqputils = undefined
@@ -95,6 +95,8 @@ describe('Subscriptions', function() {
     })
 
     it('should filter subscriptions by routing key', function(done) {
+
+        this.slow(2000)
 
         createBroker({
             vhosts: vhosts,
@@ -282,7 +284,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should not consume non-acknowledged messages with requeue', function(done) {
+    it('should requeue messages when requested', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -310,6 +312,47 @@ describe('Subscriptions', function() {
                     assert.ok(message)
                     messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                     if (messages[message.properties.messageId] < 10) return next(new Error('retry'), { requeue: true })
+                    done()
+                }, function(err, response) {
+                    assert.ifError(err)
+                })
+            })
+        })
+    })
+
+    it('should defer requeued messages when requested', function(done) {
+
+        this.slow(3000)
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1',
+                    routingKey: 'foo'
+                }
+            },
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var numberOfMessages = 0
+                var startTime = new Date().getTime()
+                broker.subscribe('s1', function(err, message, content, next) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    numberOfMessages++
+                    if (numberOfMessages < 10) return next(new Error('retry'), { requeue: true, defer: 100 })
+                    var stopTime = new Date().getTime()
+                    assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred')
                     done()
                 }, function(err, response) {
                     assert.ifError(err)
