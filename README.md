@@ -62,6 +62,7 @@ Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/am
 * messages that crash your app will be infinitely retried
 * without prefetch a sudden flood of messages may bust your event loop 
 * dropped connections and borked channels will not be automatically recoved
+* any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
  
 Rascal seeks to solve these problems.
 
@@ -154,6 +155,8 @@ Rascal also supports automatic connection retries. It's enabled in the default c
     }
 }
 ```
+**If you decide against using Rascal's default confirmation and omit the retry configuration, amqplib will emit an error event on connection errors which will crash your application**. Because Rascal obscures access to the amqplib connection you will have no way to handle this error. A future version of Rascal will either expose the connection or handle and re-emit the errors so your application has the option of handling them
+##
 #### Exchanges
 
 ##### assert
