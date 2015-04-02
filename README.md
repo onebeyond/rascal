@@ -60,15 +60,15 @@ Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/am
 
 * messages are not persistent by default and will be lost if your broker restarts
 * messages that crash your app will be infinitely retried
-* without prefetch a sudden flood of messages may bust your event loop 
+* without prefetch a sudden flood of messages may bust your event loop
 * dropped connections and borked channels will not be automatically recoved
 * any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
- 
+
 Rascal seeks to solve these problems.
 
 ## Caveats
 * Rascal currently implements only a small subset of the [amqplib api](http://www.squaremobius.net/amqp.node/doc/channel_api.html). It was written with a strong bias towards moderate volume pub/sub systems for a project with some quite agressive timescales. If you need one of the missing api calls, then your best approach is send us a [PR](https://github.com/guidesmiths/rascal/pulls).
-* Rascal deliberately uses a new channel per publish operation. This is because any time an channel operation encounters an error, the channel becomes unusable, and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case. 
+* Rascal deliberately uses a new channel per publish operation. This is because any time an channel operation encounters an error, the channel becomes unusable, and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
 * Rascal has plenty of automated tests, but is by no means battle hardened (yet).
 * Rascal doesn't currently validate your configuration, leading to some unfriendly error messages if you get things wrong
 
@@ -156,7 +156,7 @@ Rascal also supports automatic connection retries. It's enabled in the default c
 }
 ```
 **If you decide against using Rascal's default confirmation and omit the retry configuration, amqplib will emit an error event on connection errors which will crash your application**. Because Rascal obscures access to the amqplib connection you will have no way to handle this error. A future version of Rascal will either expose the connection or handle and re-emit the errors so your application has the option of handling them
-##
+
 #### Exchanges
 
 ##### assert
@@ -272,8 +272,8 @@ You can bind exchanges to exchanges, or exchanges to queues.
 ```
 When using Rascals defaults, destinationType will default to "queue" and "routingKey" will default to "#" (although this is only applicable for topics anyway)
 
-### publications
-Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in. 
+### Publications
+Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
 ```json
 "publications": {
   "p1": {
@@ -302,7 +302,7 @@ broker.publish("p1", "some message", callback)
 broker.publish("p1", "some message", "foo")
 broker.publish("p1", "some message", "foo", callback)
 broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } })
-broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } }, callback) 
+broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } }, callback)
 ```
 The callback parameters are err and the messageid ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
@@ -320,7 +320,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 ```
 Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
 
-### subscriptions
+### Subscriptions
 The real fun begins with subscriptions
 ```json
 "subscriptions": {
@@ -378,7 +378,9 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
     }
 }
 ```
+
 ## Bonus Features
+
 ### Nuke
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
 ```javascript
@@ -387,8 +389,10 @@ afterEach(function(done) {
     done()
 })
 ```
+
 ### Bounce (experimental)
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
+
 ### Running the tests
 ```bash
 npm test
