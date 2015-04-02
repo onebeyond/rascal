@@ -68,10 +68,10 @@ Rascal seeks to solve these problems.
 
 ## Caveats
 * Rascal currently implements only a small subset of the [amqplib api](http://www.squaremobius.net/amqp.node/doc/channel_api.html). It was written with a strong bias towards moderate volume pub/sub systems for a project with some quite agressive timescales. If you need one of the missing api calls, then your best approach is send us a [PR](https://github.com/guidesmiths/rascal/pulls).
-
 * Rascal deliberately uses a new channel per publish operation. This is because any time an channel operation encounters an error, the channel becomes unusable, and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case. 
-
 * Rascal has plenty of automated tests, but is by no means battle hardened (yet).
+* Rascal doesn't currently validate your configuration, leading to some unfriendly error messages if you get things wrong
+
 
 ## Installation
 ```bash
@@ -250,7 +250,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 You can bind exchanges to exchanges, or exchanges to queues.
 ```json
 "vhosts": {
-  "v1:" {
+  "v1" {
     "exchanges": {
       "e1": {
       }
@@ -285,7 +285,16 @@ Now that you've bound your queues and exchanges, you need to start sending them 
 ```javascript
 broker.publish("p1", "some message")
 ```
-Rascal supports text, buffers and anything it can stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is heavily overloaded. Other variants are
+If you prefer to send messages to a queue
+```json
+"publications": {
+  "p1": {
+    "exchange": "e1",
+    "vhost": "v1"
+  }
+}
+```
+Rascal supports text, buffers and anything it can JSON.stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is heavily overloaded. Other variants are
 
 ```javascript
 broker.publish("p1", "some message", callback)
@@ -294,7 +303,9 @@ broker.publish("p1", "some message", "routing.key", callback)
 broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } })
 broker.publish("p1", "some message", { routingKey: "routing.key", options: { "expiration": 5000 } }, callback) 
 ```
-The callback parameters are err and the messageid ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
+The callback parameters are err and the messageid ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+
+Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
 **It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent**. To achieve this you need to configure the publication to use AMQP confirm channels.
 ```json
@@ -307,6 +318,34 @@ The callback parameters are err and the messageid ```function(err, messageId) {}
 }
 ```
 Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
+
+#### subscriptions
+The real fun begins with subscriptions
+```json
+"subscriptions": {
+  "s1": {
+    "queue": "e1",
+    "vhost": "v1"
+  }
+}
+```
+```javascript
+broker.subscribe("s1", handler)
+```
+Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. For buffers leave it undefined, for text set it to "text/plain" and for JSON "application/json". The ```broker.subscribe``` method is heavily overloaded. Other variants are
+```javascript
+broker.subscribe("s1", handler, callback)
+broker.subscribe("s1", handler, { prefetch: 10 })
+broker.subscribe("s1", handler, { prefetch: 10 }, callback)
+```
+The arguments to the handler are ```function(err, message, content, ackOrNack)```, where err is an error object (perhaps indicating a JSON error), the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
+
+For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
+
+##### prefetch
+Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
+
+
 
 
 
