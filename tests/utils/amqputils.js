@@ -43,7 +43,7 @@ function init(connection) {
             assert.ifError(err)
             channel.get(namespace + ':' + queue, { noAck: true }, function(err, message) {
                 if (err) return next(err)
-                next(null, message ? message.content.toString() : undefined)
+                next(null, message)
             })
         })
     }
@@ -52,7 +52,7 @@ function init(connection) {
         getMessage(queue, namespace, function(err, message) {
             assert.ifError(err)
             assert.ok(message, 'Message was not present')
-            assert.equal(message, expected)
+            assert.equal(message.content.toString(), expected)
             next()
         })
     }

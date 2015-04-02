@@ -63,7 +63,6 @@ describe('Publications', function() {
     })
 
     it('should publish text messages to normal exchanges', function(done) {
-
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -117,6 +116,30 @@ describe('Publications', function() {
             })
         })
     })
+
+    it('should decorate the message with a uuid', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    vhost: 'v1',
+                    exchange: 'e1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+                amqputils.getMessage('q1', namespace, function(err, message) {
+                    assert.ifError(err)
+                    assert.ok(message)
+                    assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(message.properties.messageId), format('%s failed to match expected pattern', message.properties.messageId))
+                    done()
+                })
+            })
+        })
+    })
+
 
     it('should publish to confirm queues', function(done) {
         createBroker({
@@ -235,8 +258,6 @@ describe('Publications', function() {
             }, 400)
         })
     })
-
-    it('should decorate the message with a uuid')
 
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
