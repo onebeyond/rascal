@@ -1,6 +1,6 @@
 # Rascal
 
-Rascal is a config driven wrapper around amqplib with mostly* safe defaults
+Rascal is a config driven wrapper around amqplib with [mostly safe](#Caveats) defaults
 
 ## tl;dr
 
@@ -55,11 +55,46 @@ definitions.json
   }
 }
 ```
+## About
+Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
+
+* messages are not persistent by default and will be lost if your broker restarts
+* messages that crash your app will be infinitely retried
+* without prefetch a sudden flood of messages may bust your event loop 
+* dropped connections and borked channels will not be automatically recoved
+ 
+Rascal seeks to solve these problems.
+
+## Caveats
+* Rascal currently implements only a small subset of the [amqplib api](http://www.squaremobius.net/amqp.node/doc/channel_api.html). It was written with a strong bias towards moderate volume pub/sub systems for a project with some quite agressive timescales. If you need one of the missing api calls, then your best approach is send us a [PR](https://github.com/guidesmiths/rascal/pulls).
+
+* Rascal deliberately uses a new channel per publish operation. This is because any time an channel operation encounters an error, the channel becomes unusable, and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case. 
+
+* Rascal has plenty of automated tests, but is by no means battle hardened (yet).
+
+## Installation
+```bash
+npm install rascal
+```
+
 ## Configuration
 
-Default Test conflab link to rabbit docs
+Rascal provides what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
 
-### vhosts
+```js
+var rascal = require('rascal')
+var definitions = require('./your-config.json')
+var config = rascal.withDefaultConfig(definitions)
+```
+or
+```js
+var rascal = require('rascal')
+var definitions = require('./your-test-config.json')
+var config = rascal.withTestConfig(definitions)
+```
+We advise you to review these defaults before using them in an environment you care about.
+
+### Vhosts
 
 #### namespace
 Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange. By specifying ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
@@ -119,7 +154,7 @@ Rascal also supports automatic connection retries. It's enabled in the default c
     }
 }
 ```
-#### exchanges
+#### Exchanges
 
 ##### assert
 Setting assert to true will cause Rascal to create the exchange on initialisation. If the exchange already exists and has the same configuration (type, durability, etc) everything will be fine, however if the existing exchange has a different configuration an error will be returned. Assert is enabled in the default configuration.
@@ -160,7 +195,7 @@ Define any further configuration in an options block
 ```
 Refer to the excellent [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
-#### queues
+#### Queues
 
 ##### assert
 Setting assert to true will cause Rascal to create the queue on initialisation. If the queue already exists and has the same configuration (durability, etc) everything will be fine, however if the existing queue has a different configuration an error will be returned. Assert is enabled in the default configuration.
