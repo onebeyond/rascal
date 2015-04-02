@@ -381,7 +381,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 ## Bonus Features
 ### Nuke
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
-```json
+```javascript
 afterEach(function(done) {
     if (broker) return broker.nuke(done)
     done()
@@ -389,3 +389,12 @@ afterEach(function(done) {
 ```
 ### Bounce (experimental)
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
+### Running the tests
+```bash
+npm test
+```
+You'll need a RabbitMQ server running locally with default configuration. If that's too much trouble try installing [docker](https://www.docker.com/) and running the following
+```
+docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq
+```
+
