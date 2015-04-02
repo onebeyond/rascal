@@ -9,11 +9,11 @@
     "debug": "^2.1.3",
     "lodash": "^3.6.0",
     "merge-defaults": "^0.2.1",
-    "safe-json-parse": "^4.0.0"
+    "safe-json-parse": "^4.0.0",
+    "node-uuid": "^1.4.3"
   },
   "devDependencies": {
-    "mocha": "^2.2.1",
-    "node-uuid": "^1.4.3"
+    "mocha": "^2.2.1"
   },
   "scripts": {
     "test": "mocha --recursive tests",
@@ -23,6 +23,14 @@
     "amqplib",
     "rabbitmq"
   ],
+"repository": {
+    "type": "git",
+    "url": "https://github.com/guidesmiths/rascal.git"
+  },
+  "bugs": {
+    "url": "https://github.com/guidesmiths/rascal/issues"
+  },
+  "homepage": "https://github.com/guidesmiths/rascal",
   "author": "Stephen Cresswell",
   "license": "ISC"
 }
