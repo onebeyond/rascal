@@ -74,6 +74,7 @@ The simplest way to specify a connection is with a url
         }
     }
 }
+```
 If this doesn't work for you, then you can specify the individual connection details
 ```json
 "vhosts": {
@@ -87,7 +88,7 @@ If this doesn't work for you, then you can specify the individual connection det
             "port": 5672,
             "vhost": "v1",
             "options": {
-                heartbeat: 5
+                "heartbeat": 5
             }
         }
     }
@@ -181,6 +182,7 @@ If you don't want to create queues on initialisation, but still want to validate
 
 #### purge
 Enable to purge the queue during initialisation. Useful when running automated tests
+```json
 "vhosts": {
     "v1": {
         "queues": {
