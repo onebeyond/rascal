@@ -1,20 +1,52 @@
-# amqp-nice
+# Rascal
 
-A friendly wrapper around amqplib, with express/connect like consumer middleware. Very much a work in process
+Rascal is a config driven wrapper around amqplib with safe defaults
 
-## TODO
-prefetch
-raising errors
-stifling error handlers in tests
+## tl;dr
 
-## Configuration
+```javascript
+var rascal = require('rascal')
+var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
 
-## Testing Support
+var config = _.defaultsDeep({
+  vhosts: {
+    v1: {
+      exchanges: {
+        e1: {}
+      queues: {
+        q1: {}
+      }
+      bindings: {
+        b1: {
+          source: 'e1',
+          destination: 'q1'
+        }
+      },
+    }
+  },
+  publications: {
+    p1: {
+      exchange: 'e1',
+      vhost: 'v1'
+    }
+  },
+  subscriptions: {
+    s1: {
+      queue: 'q1',
+      vhost: 'v1'
+    }
+  }    
+}, rascal.defaults)
 
-### Durability and Exclusiveness
+var Broker = rascal.Broker.create(config, function(err, broker) {
+  if (err) process.exit(1)
+  broker.subscribe('s1', function(err, message, content, next) {
+    console.log(content)
+    next()
+  })
+  setInterval(function() {
+        broker.publish('p1', 'This is a test message')
+    }, interval || 100).unref()
+)
+```
 
-### Namespaces
-
-### Purge Queues
-
-### Nuke
