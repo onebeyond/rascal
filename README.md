@@ -354,7 +354,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
     "vhosts": {
         "exchanges": {
             "assert": true,
-            "type": 'topic'
+            "type": "topic"
         },
         "queues": {
             "assert": true
