@@ -295,6 +295,42 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should limit concurrent messages using prefetch', function(done) {
+
+        this.slow(2000)
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1',
+                    prefetch: 5
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            async.times(10, function(index, next) {
+                broker.publish('p1', 'test message', next)
+            }, function(err) {
+                assert.ifError(err)
+                var messages = 0
+                broker.subscribe('s1', function(err, message, content) {
+                    assert.ifError(err)
+                    assert(message)
+                    messages++
+                    if (messages == 5) {
+                        setTimeout(function() {
+                            assert.equal(messages, 5)
+                            done()
+                        }, 500)
+                    }
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
