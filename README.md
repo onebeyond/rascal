@@ -1,6 +1,6 @@
 # Rascal
 
-Rascal is a config driven wrapper around amqplib with safe defaults
+Rascal is a config driven wrapper around amqplib with (mostly*) safe defaults
 
 ## tl;dr
 
@@ -23,7 +23,7 @@ var Broker = rascal.Broker.create(config, function(err, broker) {
 )
 ```
 
-### definitions.json
+definitions.json
 ```json
 {
   "vhosts": {
