@@ -337,7 +337,7 @@ broker.publish("p1", "some message", "foo", callback)
 broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } })
 broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } }, callback)
 ```
-The callback parameters are err and the message id ```function(err, messageId) {}```. Rascal generates this messageId unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+The callback parameters are err and the message id ```function(err, messageId) {}```. Rascal generates this message id unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
