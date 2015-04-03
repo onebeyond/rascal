@@ -341,7 +341,7 @@ The callback parameters are err and the message id ```function(err, messageId) {
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
-**It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent**. To achieve this you need to configure the publication to use AMQP confirm channels.
+**It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent UNLESS you use a confirm channel**.
 ```json
 {
   "publications": {
