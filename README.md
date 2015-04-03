@@ -124,46 +124,52 @@ The simplest way to specify a connection is with a url
 ```
 Alternatively you can specify the individual connection details
 ```json
-"vhosts": {
-    "v1": {
-        "connection": {
-            "slashes": true,
-            "protocol": "amqp",
-            "hostname": "localhost",
-            "user": "guest",
-            "password": "guest",
-            "port": 5672,
-            "vhost": "v1",
-            "options": {
-                "heartbeat": 5
-            }
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "connection": {
+              "slashes": true,
+              "protocol": "amqp",
+              "hostname": "localhost",
+              "user": "guest",
+              "password": "guest",
+              "port": 5672,
+              "vhost": "v1",
+              "options": {
+                  "heartbeat": 5
+              }
+          }
+      }
+  }
+}  
 ```
 Any attributes you add to the "options" sub document will be converted to query parameters. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you need to override
 ```json
-"vhosts": {
-    "v1": {
-        "connection": {
-            "hostname": "example.com",
-            "user": "bob",
-            "password": "secret",
-            "vhost": "v1"
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "connection": {
+              "hostname": "example.com",
+              "user": "bob",
+              "password": "secret",
+              "vhost": "v1"
+          }
+      }
+  }
+}  
 ```
 Rascal also supports automatic connection retries. It's enabled in the default config, or you want enable it specifically as follows.
 ```json
-"vhosts": {
-    "v1": {
-        "connection": {
-            "retry": {
-                "delay": 1000
-            }
-        }
-    }
+{
+  "vhosts": {
+      "v1": {
+          "connection": {
+              "retry": {
+                  "delay": 1000
+              }
+          }
+      }
+  }
 }
 ```
 **If you decide against using Rascal's default confirmation and omit the retry configuration, amqplib will emit an error event on connection errors which will crash your application**. Because Rascal obscures access to the amqplib connection you will have no way to handle this error. A future version of Rascal will either expose the connection or handle and re-emit the errors so your application has the option of handling them
@@ -176,16 +182,18 @@ Setting assert to true will cause Rascal to create the exchange on initialisatio
 ##### check
 If you don't want to create exchanges on initialisation, but still want to validate that they exist set assert to false and check to true
 ```json
-"vhosts": {
-    "v1": {
-        "exchanges": {
-            "e1": {
-                "assert": false,
-                "check": true
-            }
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "exchanges": {
+              "e1": {
+                  "assert": false,
+                  "check": true
+              }
+          }
+      }
+  }
+}  
 ```
 
 ##### type
@@ -194,18 +202,20 @@ Declares the exchange type. Must be one of direct, topic, headers or fanout. The
 ##### options
 Define any further configuration in an options block
 ```json
-"vhosts": {
-    "v1": {
-        "exchanges": {
-            "e1": {
-                "type": "fanout",
-                "options": {
-                    "durable": false
-                }
-            }
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "exchanges": {
+              "e1": {
+                  "type": "fanout",
+                  "options": {
+                      "durable": false
+                  }
+              }
+          }
+      }
+  }
+}  
 ```
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
@@ -217,92 +227,104 @@ Setting assert to true will cause Rascal to create the queue on initialisation. 
 ##### check
 If you don't want to create queues on initialisation, but still want to validate that they exist set assert to false and check to true
 ```json
-"vhosts": {
-    "v1": {
-        "queues": {
-            "q1": {
-                "assert": false,
-                "check": true
-            }
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "queues": {
+              "q1": {
+                  "assert": false,
+                  "check": true
+              }
+          }
+      }
+  }
+}  
 ```
 
 ##### purge
 Enable to purge the queue during initialisation. Useful when running automated tests
 ```json
-"vhosts": {
-    "v1": {
-        "queues": {
-            "q1": {
-                "purge": true
-            }
-        }
-    }
-}
+{
+  "vhosts": {
+      "v1": {
+          "queues": {
+              "q1": {
+                  "purge": true
+              }
+          }
+      }
+  }
+}  
 ```
 
 ##### options
 Define any further configuration in an options block
 ```json
-"queues": {
-    "q1": {
-        "options": {
-            "durable": false,
-            "exclusive": true
-        }
-    }
-}
+{
+  "queues": {
+      "q1": {
+          "options": {
+              "durable": false,
+              "exclusive": true
+          }
+      }
+  }
+}  
 ```
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
 
 #### bindings
 You can bind exchanges to exchanges, or exchanges to queues.
 ```json
-"vhosts": {
-  "v1": {
-    "exchanges": {
-      "e1": {
-      }
-    },
-    "queues": {
-      "q1": {
-      }
-    },
-    "bindings": {
-      "b1": {
-        "source": "e1",
-        "destination": "q1",
-        "destinationType": "queue",
-        "routingKey": "foo"
+{
+  "vhosts": {
+    "v1": {
+      "exchanges": {
+        "e1": {
+        }
+      },
+      "queues": {
+        "q1": {
+        }
+      },
+      "bindings": {
+        "b1": {
+          "source": "e1",
+          "destination": "q1",
+          "destinationType": "queue",
+          "routingKey": "foo"
+        }
       }
     }
   }
-}
+}  
 ```
 When using Rascals defaults, destinationType will default to "queue" and "routingKey" will default to "#" (although this is only applicable for topics anyway)
 
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
 ```json
-"publications": {
-  "p1": {
-    "exchange": "e1",
-    "vhost": "v1",
-    "routingKey": "foo"
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1",
+      "routingKey": "foo"
+    }
   }
-}
+}  
 ```
 ```javascript
 broker.publish("p1", "some message")
 ```
 If you prefer to send messages to a queue
 ```json
-"publications": {
-  "p1": {
-    "exchange": "e1",
-    "vhost": "v1"
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1"
+    }
   }
 }
 ```
@@ -321,25 +343,29 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 
 **It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent**. To achieve this you need to configure the publication to use AMQP confirm channels.
 ```json
-"publications": {
-  "p1": {
-    "exchange": "e1",
-    "vhost": "v1",
-    "confirm": true
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1",
+      "confirm": true
+    }
   }
-}
+}  
 ```
 Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
 
 ### Subscriptions
 The real fun begins with subscriptions
 ```json
-"subscriptions": {
-  "s1": {
-    "queue": "e1",
-    "vhost": "v1"
+{
+  "subscriptions": {
+    "s1": {
+      "queue": "e1",
+      "vhost": "v1"
+    }
   }
-}
+}  
 ```
 ```javascript
 broker.subscribe("s1", handler)
@@ -361,33 +387,35 @@ Prefetch limits the number of unacknowledged messages your application can have 
 Configuring each vhost, exchange, queue, binding, publication and subscription explicitly wouldn't be much fun. Not only does Rascal ship with default production and test configuration files, but you can also specify your own defaults in your configuration files by adding a "defaults" sub document.
 
 ```json
-"defaults": {
-    "vhosts": {
-        "exchanges": {
-            "assert": true,
-            "type": "topic"
-        },
-        "queues": {
-            "assert": true
-        },
-        "bindings": {
-            "destinationType": "queue",
-            "routingKey": "#"
-        }
-    },
-    "publications": {
-        "routingKey": "",
-        "options": {
-            "persistent": true
-        }
-    },
-    "subscriptions": {
-        "prefetch": 10,
-        "retry": {
-            "delay": 1000
-        }
-    }
-}
+{
+  "defaults": {
+      "vhosts": {
+          "exchanges": {
+              "assert": true,
+              "type": "topic"
+          },
+          "queues": {
+              "assert": true
+          },
+          "bindings": {
+              "destinationType": "queue",
+              "routingKey": "#"
+          }
+      },
+      "publications": {
+          "routingKey": "",
+          "options": {
+              "persistent": true
+          }
+      },
+      "subscriptions": {
+          "prefetch": 10,
+          "retry": {
+              "delay": 1000
+          }
+      }
+  }
+}  
 ```
 
 ## Bonus Features
