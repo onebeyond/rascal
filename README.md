@@ -436,8 +436,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
 ```javascript
 afterEach(function(done) {
-    if (broker) return broker.nuke(done)
-    done()
+    broker ? broker.nuke(done) : done()
 })
 ```
 
