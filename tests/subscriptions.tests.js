@@ -79,7 +79,7 @@ describe('Subscriptions', function() {
         broker.nuke(done)
     })
 
-    it('should subscribe to text messages', function(done) {
+    it('should consume to text messages', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -94,6 +94,27 @@ describe('Subscriptions', function() {
                     assert(message)
                     assert.equal(message.properties.contentType, 'text/plain')
                     assert.equal(content, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should consume to JSON messages', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', { message: 'test message' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, message, content) {
+                    assert.ifError(err)
+                    assert(message)
+                    assert.equal(message.properties.contentType, 'application/json')
+                    assert.equal(content.message, 'test message')
                     done()
                 })
             })
