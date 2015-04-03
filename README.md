@@ -370,7 +370,7 @@ The real fun begins with subscriptions
 ```javascript
 broker.subscribe("s1", handler)
 ```
-Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. For buffers leave it undefined, for text set it to "text/plain" and for JSON "application/json". The ```broker.subscribe``` method is heavily overloaded. Other variants are
+Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other contentTypes will be returned as a Buffer. The ```broker.subscribe``` method is heavily overloaded. Other variants are
 ```javascript
 broker.subscribe("s1", handler, callback)
 broker.subscribe("s1", handler, { prefetch: 10 })
