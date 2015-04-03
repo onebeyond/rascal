@@ -101,7 +101,6 @@ describe('Subscriptions', function() {
     })
 
     it('should consume to JSON messages', function(done) {
-
         createBroker({
             vhosts: vhosts,
             publications: publications,
@@ -115,6 +114,27 @@ describe('Subscriptions', function() {
                     assert(message)
                     assert.equal(message.properties.contentType, 'application/json')
                     assert.equal(content.message, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
+
+    it('should consume to Buffer messages', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', new Buffer('test message'), function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, message, content) {
+                    assert.ifError(err)
+                    assert(message)
+                    assert.equal(message.properties.contentType, undefined)
+                    assert.equal(content, 'test message')
                     done()
                 })
             })
