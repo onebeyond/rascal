@@ -122,7 +122,7 @@ The simplest way to specify a connection is with a url
   }
 }
 ```
-If this doesn't work for you, then you can specify the individual connection details
+Alternatively you can specify the individual connection details
 ```json
 "vhosts": {
     "v1": {
