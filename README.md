@@ -61,7 +61,7 @@ Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/am
 * messages are not persistent by default and will be lost if your broker restarts
 * messages that crash your app will be infinitely retried
 * without prefetch a sudden flood of messages may bust your event loop
-* dropped connections and borked channels will not be automatically recoved
+* dropped connections and borked channels will not be automatically recovered
 * any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
 
 Rascal seeks to solve these problems.
