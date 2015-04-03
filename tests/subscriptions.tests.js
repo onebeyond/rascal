@@ -120,7 +120,6 @@ describe('Subscriptions', function() {
         })
     })
 
-
     it('should consume to Buffer messages', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -135,6 +134,33 @@ describe('Subscriptions', function() {
                     assert(message)
                     assert.equal(message.properties.contentType, undefined)
                     assert.equal(content, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
+
+    it('should force the content type when specified', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: 'v1',
+                    queue: 'q1',
+                    contentType: 'text/plain'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', { message: 'test message' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, message, content) {
+                    assert.ifError(err)
+                    assert(message)
+                    assert.equal(message.properties.contentType, 'application/json')
+                    assert.equal(content, '{\"message\":\"test message\"}')
                     done()
                 })
             })
