@@ -143,7 +143,7 @@ Alternatively you can specify the individual connection details
   }
 }  
 ```
-Any attributes you add to the "options" sub document will be converted to query parameters. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you need to override
+Any attributes you add to the "options" sub document will be converted to query parameters. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you want to override
 ```json
 {
   "vhosts": {
