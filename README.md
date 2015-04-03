@@ -98,17 +98,28 @@ We advise you to review these defaults before using them in an environment you c
 ### Vhosts
 
 #### namespace
-Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange. By specifying ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
-
+Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange. 
+```json
+{
+  "vhosts": {
+      "v1": {
+          "namespace": true
+      }
+  }
+}
+```
+If you specify ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
 #### connection
 The simplest way to specify a connection is with a url
 ```json
-"vhosts": {
-    "v1": {
-        "connection": {
-            "url":  "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
-        }
-    }
+{
+  "vhosts": {
+      "v1": {
+          "connection": {
+              "url":  "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
+          }
+      }
+  }
 }
 ```
 If this doesn't work for you, then you can specify the individual connection details
