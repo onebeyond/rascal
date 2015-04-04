@@ -1,6 +1,6 @@
 {
   "vhosts": {
-    "v1": {
+    "/": {
       "exchanges": {
         "e1": {}
       },
@@ -17,14 +17,12 @@
   },
   "publications": {
     "p1": {
-      "exchange": "e1",
-      "vhost": "v1"
+      "exchange": "e1"
     }
   },
   "subscriptions": {
     "s1": {
-      "queue": "q1",
-      "vhost": "v1"
+      "queue": "q1"
     }
   }
 }

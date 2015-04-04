@@ -109,6 +109,7 @@ Running automated tests against shared queues and exchanges is problematic. Mess
 }
 ```
 If you specify ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
+
 #### connection
 The simplest way to specify a connection is with a url
 ```json
@@ -151,8 +152,7 @@ Any attributes you add to the "options" sub document will be converted to query 
           "connection": {
               "hostname": "example.com",
               "user": "bob",
-              "password": "secret",
-              "vhost": "v1"
+              "password": "secret"
           }
       }
   }
@@ -402,6 +402,9 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 {
   "defaults": {
       "vhosts": {
+          "connection": {
+              "vhost": "/"
+          },
           "exchanges": {
               "assert": true,
               "type": "topic"
@@ -415,12 +418,14 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
           }
       },
       "publications": {
+          "vhost": "/",
           "routingKey": "",
           "options": {
               "persistent": true
           }
       },
       "subscriptions": {
+          "vhost": "/",
           "prefetch": 10,
           "retry": {
               "delay": 1000

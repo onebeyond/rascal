@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:config:tests')
+var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var format = require('util').format
 var _ = require('lodash')
@@ -58,6 +58,54 @@ describe('Configuration', function() {
                 }, function(err, config) {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.connection.url, 'foo')
+                })
+            })
+
+            it('should decorate the connection config a vhost if not explicitly specified', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: {
+                                slashes: true,
+                                protocol: 'protocol',
+                                hostname: 'hostname',
+                                port: 9000,
+                                user: 'user',
+                                password: 'password',
+                                options: {
+                                    heartbeat: 10,
+                                    channelMax: 100
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100')
+                })
+            })
+
+            it('should set the pathname to empty string if the vhost is /', function() {
+                configure({
+                    vhosts: {
+                        '/': {
+                            connection: {
+                                slashes: true,
+                                protocol: 'protocol',
+                                hostname: 'hostname',
+                                port: 9000,
+                                user: 'user',
+                                password: 'password',
+                                options: {
+                                    heartbeat: 10,
+                                    channelMax: 100
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts['/'].connection.loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100')
                 })
             })
 

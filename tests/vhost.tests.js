@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:config:tests')
+var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var _ = require('lodash').runInContext()
 var async = require('async')
@@ -37,7 +37,7 @@ describe('Vhost', function() {
         var namespace = uuid()
         createBroker({
             vhosts: {
-                v1: {
+                '/': {
                     namespace: namespace,
                     exchanges: {
                         e1: {
@@ -55,7 +55,7 @@ describe('Vhost', function() {
         var namespace = uuid()
         createBroker({
             vhosts: {
-                v1: {
+                '/': {
                     namespace: namespace,
                     queues: {
                         q1: {
@@ -73,7 +73,7 @@ describe('Vhost', function() {
 
         createBroker({
             vhosts: {
-                v1: {
+                '/': {
                     exchanges: {
                         e1: {
                             assert: false,
@@ -93,7 +93,7 @@ describe('Vhost', function() {
 
         createBroker({
             vhosts: {
-                v1: {
+                '/': {
                     queues: {
                         q1: {
                             assert: false,
@@ -115,7 +115,7 @@ describe('Vhost', function() {
 
         createBroker({
             vhosts: {
-                v1: {
+                '/': {
                     namespace: namespace,
                     exchanges: {
                         e1: {

@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:config:tests')
+var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var _ = require('lodash').runInContext()
 var async = require('async')
@@ -28,7 +28,7 @@ describe('Publications', function() {
         namespace = uuid()
 
         vhosts = {
-            v1: {
+            '/': {
                 namespace: namespace,
                 exchanges: {
                     e1: {
@@ -37,7 +37,6 @@ describe('Publications', function() {
                 },
                 queues: {
                     q1: {
-                        exclusive: false,
                         assert: true
                     }
                 },
@@ -67,7 +66,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     exchange: 'e1'
                 }
             }
@@ -85,7 +83,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     exchange: 'e1',
                     confirm: true
                 }
@@ -104,7 +101,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     queue: 'q1'
                 }
             }
@@ -122,7 +118,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     exchange: 'e1'
                 }
             }
@@ -147,7 +142,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     queue: 'q1',
                     confirm: true
                 }
@@ -166,7 +160,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     exchange: 'e1'
                 }
             }
@@ -185,7 +178,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     exchange: 'e1'
                 }
             }
@@ -203,7 +195,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     queue: 'q1'
                 }
             }
@@ -223,7 +214,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     queue: 'q1',
                     confirm: true
                 }
@@ -242,7 +232,6 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
                     queue: 'q1',
                     confirm: true
                 }

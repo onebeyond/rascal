@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:server')
+var debug = require('debug')('rascal:server')
 var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
 var Broker = require('../lib/amqp/Broker')
 var defaultConfig = require('../lib/config/defaults')
@@ -6,7 +6,7 @@ var uuid = require('node-uuid').v4()
 
 var config = _.defaultsDeep({
     vhosts: {
-        'v1': {
+        '/': {
             namespace: uuid,
             exchanges: {
                 'e1': {
@@ -29,19 +29,16 @@ var config = _.defaultsDeep({
     publications: {
         'p1': {
             exchange: 'e1',
-            vhost: 'v1',
             confirm: true
         },
         'p2': {
             queue: 'q1',
-            vhost: 'v1',
             confirm: true
         }
     },
     subscriptions: {
         's1': {
-            queue: 'q1',
-            vhost: 'v1'
+            queue: 'q1'
         }
     }
 }, defaultConfig)

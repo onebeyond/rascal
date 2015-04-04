@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:config:tests')
+var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var _ = require('lodash').runInContext()
 var async = require('async')
@@ -29,7 +29,7 @@ describe('Subscriptions', function() {
 
         namespace = uuid()
         vhosts = {
-            v1: {
+            '/': {
                 namespace: namespace,
                 exchanges: {
                     e1: {
@@ -38,7 +38,6 @@ describe('Subscriptions', function() {
                 },
                 queues: {
                     q1: {
-                        exclusive: false,
                         assert: true
                     }
                 },
@@ -54,7 +53,7 @@ describe('Subscriptions', function() {
 
         publications = {
             p1: {
-                vhost: 'v1',
+                vhost: '/',
                 exchange: 'e1',
                 routingKey: 'foo'
             }
@@ -62,7 +61,7 @@ describe('Subscriptions', function() {
 
         subscriptions = {
             s1: {
-                vhost: 'v1',
+                vhost: '/',
                 queue: 'q1'
             }
         }
@@ -147,7 +146,7 @@ describe('Subscriptions', function() {
             publications: publications,
             subscriptions: {
                 s1: {
-                    vhost: 'v1',
+                    vhost: '/',
                     queue: 'q1',
                     contentType: 'text/plain'
                 }
@@ -175,7 +174,7 @@ describe('Subscriptions', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    vhost: 'v1',
+                    vhost: '/',
                     exchange: 'e1',
                     routingKey: 'bar'
                 }
@@ -200,7 +199,7 @@ describe('Subscriptions', function() {
             publications: publications,
             subscriptions: {
                 s1: {
-                    vhost: 'v1',
+                    vhost: '/',
                     queue: 'q1',
                     options: {
                         noAck: true
@@ -371,7 +370,7 @@ describe('Subscriptions', function() {
             publications: publications,
             subscriptions: {
                 s1: {
-                    vhost: 'v1',
+                    vhost: '/',
                     queue: 'q1',
                     prefetch: 5
                 }

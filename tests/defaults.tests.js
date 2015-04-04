@@ -1,4 +1,4 @@
-var debug = require('debug')('amqp-nice:config:tests')
+var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var _ = require('lodash')
 var configure = require('../lib/config/configure')
@@ -20,7 +20,6 @@ describe('Defaults', function() {
                                 user: 'guest',
                                 password: 'guest',
                                 port: '5672',
-                                vhost: '',
                                 options: {
                                     heartbeat: 5
                                 },
@@ -36,7 +35,7 @@ describe('Defaults', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.url, 'amqp://guest:guest@localhost:5672?heartbeat=5')
+                    assert.equal(config.vhosts.v1.connection.url, 'amqp://guest:guest@localhost:5672/v1?heartbeat=5')
                 })
             })
 
