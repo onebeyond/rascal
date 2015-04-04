@@ -46,7 +46,7 @@ describe('Subscriptions', function() {
                     b1: {
                         source: 'e1',
                         destination: 'q1',
-                        routingKey: 'foo'
+                        bindingKey: 'foo'
                     }
                 }
             }

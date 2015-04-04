@@ -219,7 +219,7 @@ describe('Defaults', function() {
                         vhosts: {
                             bindings: {
                                 destinationType: 'queue',
-                                routingKey: '#',
+                                bindingKey: '#',
                                 options: {
                                     foo: true,
 
@@ -242,7 +242,7 @@ describe('Defaults', function() {
                     assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
                     assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
                     assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'queue')
-                    assert.equal(config.vhosts.v1.bindings.b1.routingKey, '#')
+                    assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#')
                     assert.equal(config.vhosts.v1.bindings.b1.options.foo, true)
                 })
             })
@@ -253,7 +253,7 @@ describe('Defaults', function() {
                         vhosts: {
                             bindings: {
                                 destinationType: 'queue',
-                                routingKey: '#',
+                                bindingKey: '#',
                                 options: {
                                     foo: true,
 
@@ -269,7 +269,7 @@ describe('Defaults', function() {
                                     source: 'e1',
                                     destination: 'e2',
                                     destinationType: 'exchange',
-                                    routingKey: 'stuff',
+                                    bindingKey: 'stuff',
                                     options: {
                                         foo: false,
                                         bar: true
@@ -283,7 +283,7 @@ describe('Defaults', function() {
                     assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
                     assert.equal(config.vhosts.v1.bindings.b1.destination, 'e2')
                     assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'exchange')
-                    assert.equal(config.vhosts.v1.bindings.b1.routingKey, 'stuff')
+                    assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'stuff')
                     assert.equal(config.vhosts.v1.bindings.b1.options.foo, false)
                     assert.equal(config.vhosts.v1.bindings.b1.options.bar, true)
                 })

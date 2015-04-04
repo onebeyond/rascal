@@ -285,7 +285,7 @@ describe('Configuration', function() {
                                 b1: {
                                     source: 'e1',
                                     destination: 'q1',
-                                    routingKey: '#'
+                                    bindingKey: '#'
                                 }
                             }
                         }
@@ -294,7 +294,7 @@ describe('Configuration', function() {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
                     assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
-                    assert.equal(config.vhosts.v1.bindings.b1.routingKey, '#')
+                    assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#')
                 })
             })
 

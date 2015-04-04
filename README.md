@@ -98,7 +98,7 @@ We advise you to review these defaults before using them in an environment you c
 ### Vhosts
 
 #### namespace
-Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange. 
+Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange.
 ```json
 {
   "vhosts": {
@@ -141,7 +141,7 @@ Alternatively you can specify the individual connection details
           }
       }
   }
-}  
+}
 ```
 Any attributes you add to the "options" sub document will be converted to query parameters. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you want to override
 ```json
@@ -156,7 +156,7 @@ Any attributes you add to the "options" sub document will be converted to query 
           }
       }
   }
-}  
+}
 ```
 Rascal also supports automatic connection retries. It's enabled in the default config, or you want enable it specifically as follows.
 ```json
@@ -193,7 +193,7 @@ If you don't want to create exchanges on initialisation, but still want to valid
           }
       }
   }
-}  
+}
 ```
 
 ##### type
@@ -215,7 +215,7 @@ Define any further configuration in an options block
           }
       }
   }
-}  
+}
 ```
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
@@ -238,7 +238,7 @@ If you don't want to create queues on initialisation, but still want to validate
           }
       }
   }
-}  
+}
 ```
 
 ##### purge
@@ -254,7 +254,7 @@ Enable to purge the queue during initialisation. Useful when running automated t
           }
       }
   }
-}  
+}
 ```
 
 ##### options
@@ -269,7 +269,7 @@ Define any further configuration in an options block
           }
       }
   }
-}  
+}
 ```
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
 
@@ -292,14 +292,14 @@ You can bind exchanges to exchanges, or exchanges to queues.
           "source": "e1",
           "destination": "q1",
           "destinationType": "queue",
-          "routingKey": "foo"
+          "bindingKey": "foo"
         }
       }
     }
   }
-}  
+}
 ```
-When using Rascals defaults, destinationType will default to "queue" and "routingKey" will default to "#" (although this is only applicable for topics anyway)
+When using Rascals defaults, destinationType will default to "queue" and "bindingKey" will default to "#" (although this is only applicable for topics anyway)
 
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
@@ -312,7 +312,7 @@ Now that you've bound your queues and exchanges, you need to start sending them 
       "routingKey": "foo"
     }
   }
-}  
+}
 ```
 ```javascript
 broker.publish("p1", "some message")
@@ -351,7 +351,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
       "confirm": true
     }
   }
-}  
+}
 ```
 Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
 
@@ -365,7 +365,7 @@ The real fun begins with subscriptions
       "vhost": "v1"
     }
   }
-}  
+}
 ```
 ```javascript
 broker.subscribe("s1", handler)
@@ -380,7 +380,7 @@ Rascal supports text, buffers and anything it can JSON.parse, providing the cont
       "contentType": "application/json"
     }
   }
-}  
+}
 ```
 The ```broker.subscribe``` method is heavily overloaded. Other variants are
 ```javascript
@@ -411,7 +411,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
           },
           "bindings": {
               "destinationType": "queue",
-              "routingKey": "#"
+              "bindingKey": "#"
           }
       },
       "publications": {
@@ -427,7 +427,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
           }
       }
   }
-}  
+}
 ```
 
 ## Bonus Features
