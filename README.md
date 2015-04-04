@@ -400,9 +400,6 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 {
   "defaults": {
       "vhosts": {
-          "connection": {
-              "vhost": "/"
-          },
           "exchanges": {
               "assert": true,
               "type": "topic"
