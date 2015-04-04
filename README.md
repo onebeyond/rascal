@@ -1,6 +1,6 @@
 # Rascal
 
-Rascal is a config driven wrapper around amqplib with [mostly safe](#Caveats) defaults
+Rascal is a config driven wrapper around amqplib with [mostly safe](#caveats) defaults
 
 ## tl;dr
 
