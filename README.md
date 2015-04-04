@@ -26,7 +26,7 @@ definitions.json
 ```json
 {
   "vhosts": {
-    "v1": {
+    "/": {
       "exchanges": {
         "e1": {}
       },
@@ -43,14 +43,12 @@ definitions.json
   },
   "publications": {
     "p1": {
-      "exchange": "e1",
-      "vhost": "v1"
+      "exchange": "e1"
     }
   },
   "subscriptions": {
     "s1": {
-      "queue": "q1",
-      "vhost": "v1"
+      "queue": "q1"
     }
   }
 }
