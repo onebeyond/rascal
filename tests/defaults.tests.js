@@ -304,6 +304,10 @@ describe('Defaults', function() {
                 },
                 vhosts: {
                     v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -333,6 +337,10 @@ describe('Defaults', function() {
                 },
                 vhosts: {
                     v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -371,6 +379,10 @@ describe('Defaults', function() {
                 },
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 subscriptions: {
@@ -404,6 +416,10 @@ describe('Defaults', function() {
                 },
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 subscriptions: {

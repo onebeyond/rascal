@@ -397,6 +397,49 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should consume to text messages from a unique queue', function(done) {
+
+        createBroker({
+            vhosts: {
+                '/': {
+                    namespace: namespace,
+                    exchanges: {
+                        e1: {
+                            assert: true
+                        }
+                    },
+                    queues: {
+                        q1: {
+                            assert: true,
+                            unique: true
+                        }
+                    },
+                    bindings: {
+                        b1: {
+                            source: 'e1',
+                            destination: 'q1',
+                            bindingKey: 'foo'
+                        }
+                    }
+                }
+            },
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, message, content) {
+                    assert.ifError(err)
+                    assert(message)
+                    assert.equal(message.properties.contentType, 'text/plain')
+                    assert.equal(content, 'test message')
+                    done()
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {

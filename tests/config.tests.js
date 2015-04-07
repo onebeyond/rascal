@@ -405,6 +405,10 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -431,6 +435,10 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -455,11 +463,16 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        }
                     }
                 },
                 publications: {
                     p1: {
-                        vhost: 'v1'
+                        vhost: 'v1',
+                        exchange: 'e1'
                     }
                 }
             }, function(err, config) {
@@ -473,6 +486,14 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        },
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -494,12 +515,22 @@ describe('Configuration', function() {
             })
         })
 
-        it('should prefix destinations with the specified namespace', function() {
+        it('should replace destination its fully qualified names', function() {
 
             configure({
                 vhosts: {
                     v1: {
-                        namespace: 'foo'
+                        namespace: 'foo',
+                        exchanges: {
+                            e1: {
+                                unique: true
+                            }
+                        },
+                        queues: {
+                            q1: {
+                                unique: true
+                            }
+                        }
                     }
                 },
                 publications: {
@@ -514,10 +545,8 @@ describe('Configuration', function() {
                 }
             }, function(err, config) {
                 assert.ifError(err)
-                assert.equal(config.publications.p1.name, 'p1')
-                assert.equal(config.publications.p1.destination, 'foo:e1')
-                assert.equal(config.publications.p2.name, 'p2')
-                assert.equal(config.publications.p2.destination, 'foo:q1')
+                assert.ok(/foo:e1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p1.destination), format('%s failed to match expected pattern', config.publications.p1.destination))
+                assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination))
             })
         })
     })
@@ -529,6 +558,10 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 subscriptions: {
@@ -555,11 +588,16 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 subscriptions: {
                     s1: {
-                        vhost: 'v1'
+                        vhost: 'v1',
+                        queue: 'q1'
                     }
                 }
             }, function(err, config) {
@@ -573,6 +611,10 @@ describe('Configuration', function() {
             configure({
                 vhosts: {
                     v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
                     }
                 },
                 subscriptions: {
@@ -588,12 +630,17 @@ describe('Configuration', function() {
             })
         })
 
-        it('should prefix sources with the specified namespace', function() {
+        it('should replace source with its fully qualified name', function() {
 
             configure({
                 vhosts: {
                     v1: {
-                        namespace: 'foo'
+                        namespace: 'foo',
+                        queues: {
+                            q1: {
+                                unique: true
+                            }
+                        }
                     }
                 },
                 subscriptions: {
@@ -605,7 +652,7 @@ describe('Configuration', function() {
             }, function(err, config) {
                 assert.ifError(err)
                 assert.equal(config.subscriptions.s1.name, 's1')
-                assert.equal(config.subscriptions.s1.source, 'foo:q1')
+                assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source))
             })
         })
     })
