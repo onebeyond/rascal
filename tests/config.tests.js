@@ -321,6 +321,24 @@ describe('Configuration', function() {
                     assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1')
                 })
             })
+
+            it('should appnd uuid to unique queues', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                    unique: true
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
+                    assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName))
+                })
+            })
         })
 
         describe('Bindings', function() {
