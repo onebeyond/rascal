@@ -397,7 +397,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it.only('should consume to messages from a replyTo queue', function(done) {
+    it('should consume to messages from a replyTo queue', function(done) {
         var replyTo = uuid()
         createBroker({
             vhosts: {
