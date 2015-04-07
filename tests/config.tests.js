@@ -322,13 +322,13 @@ describe('Configuration', function() {
                 })
             })
 
-            it('should appnd uuid to unique queues', function() {
+            it('should append uuid to replyTo queues', function() {
                 configure({
                     vhosts: {
                         v1: {
                             queues: {
                                 q1: {
-                                    unique: true
+                                    replyTo: true
                                 }
                             }
                         }
@@ -523,12 +523,11 @@ describe('Configuration', function() {
                         namespace: 'foo',
                         exchanges: {
                             e1: {
-                                unique: true
                             }
                         },
                         queues: {
                             q1: {
-                                unique: true
+                                replyTo: true
                             }
                         }
                     }
@@ -545,7 +544,7 @@ describe('Configuration', function() {
                 }
             }, function(err, config) {
                 assert.ifError(err)
-                assert.ok(/foo:e1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p1.destination), format('%s failed to match expected pattern', config.publications.p1.destination))
+                assert.equal(config.publications.p1.destination, 'foo:e1')
                 assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination))
             })
         })
@@ -638,7 +637,7 @@ describe('Configuration', function() {
                         namespace: 'foo',
                         queues: {
                             q1: {
-                                unique: true
+                                replyTo: true
                             }
                         }
                     }

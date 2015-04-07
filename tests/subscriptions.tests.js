@@ -397,8 +397,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should consume to text messages from a unique queue', function(done) {
-
+    it('should consume to messages from a replyTo queue', function(done) {
         createBroker({
             vhosts: {
                 '/': {
@@ -411,7 +410,7 @@ describe('Subscriptions', function() {
                     queues: {
                         q1: {
                             assert: true,
-                            unique: true
+                            replyTo: true
                         }
                     },
                     bindings: {
@@ -432,7 +431,6 @@ describe('Subscriptions', function() {
                 broker.subscribe('s1', function(err, message, content) {
                     assert.ifError(err)
                     assert(message)
-                    assert.equal(message.properties.contentType, 'text/plain')
                     assert.equal(content, 'test message')
                     done()
                 })
