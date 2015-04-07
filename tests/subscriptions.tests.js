@@ -397,7 +397,8 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should consume to messages from a replyTo queue', function(done) {
+    it.only('should consume to messages from a replyTo queue', function(done) {
+        var replyTo = uuid()
         createBroker({
             vhosts: {
                 '/': {
@@ -410,14 +411,14 @@ describe('Subscriptions', function() {
                     queues: {
                         q1: {
                             assert: true,
-                            replyTo: true
+                            replyTo: replyTo
                         }
                     },
                     bindings: {
                         b1: {
                             source: 'e1',
                             destination: 'q1',
-                            bindingKey: 'foo'
+                            bindingKey: 'foo.#'
                         }
                     }
                 }
@@ -426,7 +427,7 @@ describe('Subscriptions', function() {
             subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err) {
+            broker.publish('p1', 'test message', replyTo + '.foo.bar', function(err) {
                 assert.ifError(err)
                 broker.subscribe('s1', function(err, message, content) {
                     assert.ifError(err)

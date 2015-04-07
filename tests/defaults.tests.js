@@ -228,6 +228,10 @@ describe('Defaults', function() {
                     },
                     vhosts: {
                         v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
                             bindings: {
                                 b1: {
                                     source: 'e1',

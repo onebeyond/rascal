@@ -347,6 +347,10 @@ describe('Configuration', function() {
                 configure({
                     vhosts: {
                         v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
                             bindings: {
                                 b1: {
                                     source: 'e1',
@@ -368,8 +372,13 @@ describe('Configuration', function() {
                 configure({
                     vhosts: {
                         v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
                             bindings: {
                                 b1: {
+                                    destination: 'q1'
                                 }
                             }
                         }
@@ -384,8 +393,13 @@ describe('Configuration', function() {
                 configure({
                     vhosts: {
                         v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
                             bindings: {
                                 b1: {
+                                    destination: 'q1'
                                 }
                             }
                         }
@@ -393,6 +407,33 @@ describe('Configuration', function() {
                 }, function(err, config) {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.bindings.b1.name, 'b1')
+                })
+            })
+
+            it('should prefix bindingKey with replyTo uuid', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                    replyTo: true
+                                }
+                            },
+                            bindings: {
+                                b1: {
+                                    source: 'e1',
+                                    destination: 'q1',
+                                    destinationType: 'queue',
+                                    bindingKey: 'foo.bar.#'
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
+                    assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey))
                 })
             })
         })
