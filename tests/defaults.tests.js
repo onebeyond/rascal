@@ -1,4 +1,3 @@
-var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var _ = require('lodash')
 var configure = require('../lib/config/configure')

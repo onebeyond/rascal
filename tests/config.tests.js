@@ -1,4 +1,3 @@
-var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
 var format = require('util').format
 var _ = require('lodash')

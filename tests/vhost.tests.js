@@ -1,6 +1,5 @@
-var debug = require('debug')('rascal:config:tests')
 var assert = require('assert')
-var _ = require('lodash').runInContext()
+var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') });
 var async = require('async')
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
@@ -9,7 +8,6 @@ var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
 var AmqpUtils = require('./utils/amqputils')
 
-_.mixin({ 'defaultsDeep': require('merge-defaults') });
 
 
 describe('Vhost', function() {

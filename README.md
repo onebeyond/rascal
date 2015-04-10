@@ -12,9 +12,16 @@ var config = rascal.withDefaultConfig(definitions)
 
 rascal.createBroker(config, function(err, broker) {
   if (err) console.error(err.message) & process.exit(1)
+
+  broker.on('error', function(err) {
+    console.error('Broker error', err)
+  })
+
   broker.subscribe('s1', function(err, message, content, next) {
     console.log(content)
     next()
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
   })
   setInterval(function() {
     broker.publish('p1', 'This is a test message')
@@ -53,6 +60,28 @@ definitions.json
   }
 }
 ```
+## VERY IMPORTANT SECTION ABOUT EVENT HANDLING
+[amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are three places where you should do this
+
+1. Immediately after obtaining a broker instance
+```js
+  broker.on('error', function(err) {
+    console.error('Broker error', err)
+  })
+```
+2. After subscribing to a channel
+```js
+  broker.subscribe('s1', function(err, message, content, next) {
+    next()
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
+  })
+```
+3. After publishing a message
+```js
+```
+
+
 ## About
 Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
 

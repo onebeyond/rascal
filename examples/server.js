@@ -1,4 +1,5 @@
 var debug = require('debug')('rascal:server')
+var format = require('util').format
 var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
 var Broker = require('../lib/amqp/Broker')
 var defaultConfig = require('../lib/config/defaults')
@@ -10,12 +11,16 @@ var config = _.defaultsDeep({
             namespace: uuid,
             exchanges: {
                 'e1': {
-                    durable: false
+                    options: {
+                        durable: false
+                    }
                 }
             },
             queues: {
                 'q1': {
-                    durable: false
+                    options: {
+                        durable: false
+                    }
                 }
             },
             bindings: {
@@ -57,13 +62,19 @@ Broker.create(config, function(err, broker) {
         })
     })
 
+    broker.on('error', function(err) {
+        console.error('Error received from broker', err)
+    })
+
     soakPublication(broker, 'p1')
     soakPublication(broker, 'p2')
     broker.subscribe('s1', function(err, message, content, next) {
         received++
         next()
     }, function(err) {
-        if (err) console.log(err)
+        if (err) console.error(err)
+    }).on('error', function(err) {
+        console.error('Error received from subscriber: s1', err)
     })
 
     debug('Come and have a go if you think you\'re hard enough')
