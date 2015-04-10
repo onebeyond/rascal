@@ -1,6 +1,6 @@
 # Rascal
 
-Rascal is a config driven wrapper around amqplib with [mostly safe](#caveats) defaults
+Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
 
 ## tl;dr
 
@@ -171,7 +171,6 @@ Rascal also supports automatic connection retries. It's enabled in the default c
   }
 }
 ```
-**If you decide against using Rascal's default confirmation and omit the retry configuration, amqplib will emit an error event on connection errors which will crash your application**. Because Rascal obscures access to the amqplib connection you will have no way to handle this error. A future version of Rascal will either expose the connection or handle and re-emit the errors so your application has the option of handling them
 
 #### Exchanges
 
@@ -367,8 +366,12 @@ The real fun begins with subscriptions
 }
 ```
 ```javascript
-broker.subscribe("s1", handler)
+broker.subscribe("s1", handler).on('error', function(err) {
+  console.error('Something bad happened', err)
+})
 ```
+**It's very important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.**
+
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 ```json
 {
@@ -384,15 +387,31 @@ Rascal supports text, buffers and anything it can JSON.parse, providing the cont
 The ```broker.subscribe``` method is heavily overloaded. Other variants are
 ```javascript
 broker.subscribe("s1", handler, callback)
-broker.subscribe("s1", handler, { prefetch: 10 })
-broker.subscribe("s1", handler, { prefetch: 10 }, callback)
+broker.subscribe("s1", handler, { prefetch: 10, retry: false })
+broker.subscribe("s1", handler, { prefetch: 10, retry: false }, callback)
 ```
 The arguments to the handler are ```function(err, message, content, ackOrNack)```, where err is an error object (perhaps indicating a JSON error), the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
 
-##### prefetch
+#### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
+
+#### retry
+If an error occurs on the channel (which will happen if you accidentally acknowledge a message twice), then it becomes unusable and no more messages will be delivered. Rascal listens to the channel's error even and assuming you are using its defaults will automatically attempt to resubscribe to a new channel after a one second delay. You can disable or customise this in your configuration or in the call to subscribe.
+```js
+// Does not retry. This will cause an error to be emitted which unhandled will crash your process. See [Subscriber Events](#subscriber-events)
+broker.subscribe("s1", handler, { prefetch: 10, retry: false }, callback)
+
+// Retries without delay.
+broker.subscribe("s1", handler, { prefetch: 10, retry: true }, callback)
+
+// Retries after a one second interval.
+broker.subscribe("s1", handler, { prefetch: 10, retry: { delay: 1000 } }, callback)
+```
+
+#### Subscriber Events
+[amqplib](https://www.npmjs.com/package/amqplib) emits error events from the channel. These can happen for a number of reasons, but a common cause is because you have acknowledged the message twice. The subscriber will listen for channel errors so it can automatically re-subscribe but still emits them so they can be reported by your application. It's therefore critical that your application listens for these errors to prevent it crashing
 
 ### Defaults
 Configuring each vhost, exchange, queue, binding, publication and subscription explicitly wouldn't be much fun. Not only does Rascal ship with default production and test configuration files, but you can also specify your own defaults in your configuration files by adding a "defaults" sub document.

@@ -439,6 +439,31 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should emit channel errors', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, message, content, next) {
+                    assert.ifError(err)
+                    next()
+                    next()
+                }, {
+                    retry: false
+                })
+                .on('error', function(err) {
+                    assert.ok(err)
+                    assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message)
+                    done()
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
