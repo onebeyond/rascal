@@ -79,6 +79,11 @@ definitions.json
 ```
 3. After publishing a message
 ```js
+  broker.publish('p1', message, function(err) {
+    next()
+  }).on('error', function(err) {
+    console.error('Publisher error', err)
+  })
 ```
 
 
