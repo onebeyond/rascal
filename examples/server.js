@@ -86,6 +86,8 @@ function soakPublication(broker, publication, interval) {
         broker.publish(publication, 'This is a test message', function(err) {
             if (err) console.error(err.message)
             sent++
+        }).on('error', function(err) {
+            console.error(format('Error received from publisher: %s', publication), err)
         })
     }, interval || 100).unref()
 }
