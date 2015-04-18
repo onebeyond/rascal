@@ -463,6 +463,38 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should not consume messages after unsubscribing', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1',
+                    options: {
+                        noAck: true
+                    }
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+
+            broker.subscribe('s1', function(err, message, content) {
+                assert.ok(false, 'Should not receive messages after unsubscribing')
+            }, function(err, response) {
+                assert.ifError(err)
+                broker.unsubscribe('s1', response.consumerTag, function(err) {
+                    assert.ifError(err)
+                    broker.publish('p1', 'test message', function(err) {
+                        assert.ifError(err)
+                        setTimeout(done, 500)
+                    })
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
