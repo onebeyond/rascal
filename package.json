@@ -23,6 +23,7 @@
   },
   "keywords": [
     "amqplib",
+    "amqp",
     "rabbitmq"
   ],
   "repository": {
