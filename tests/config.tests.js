@@ -338,6 +338,29 @@ describe('Configuration', function() {
                     assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName))
                 })
             })
+
+            it('should prefix dead letter exchange argument with specified namespace', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            namespace: 'foo',
+                            queues: {
+                                q1: {
+                                    options: {
+                                        arguments: {
+                                            'x-dead-letter-exchange': 'q1'
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
+                    assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1')
+                })
+            })
         })
 
         describe('Bindings', function() {
