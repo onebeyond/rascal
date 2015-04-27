@@ -11,22 +11,25 @@ var definitions = require('./definitions.json')
 var config = rascal.withDefaultConfig(definitions)
 
 rascal.createBroker(config, function(err, broker) {
-  if (err) console.error(err.message) & process.exit(1)
+    if (err) bail(err)
 
-  broker.on('error', function(err) {
-    console.error('Broker error', err)
-  })
+    broker.subscribe('s1', function(err, subscription) {
+        if (err) bail(err)
 
-  broker.subscribe('s1', function(err, message, content, next) {
-    console.log(content)
-    next()
-  }).on('error', function(err) {
-    console.error('Subscriber error', err)
-  })
-  setInterval(function() {
-    broker.publish('p1', 'This is a test message')
-  }, 100).unref()
+        subscription.on('message', function(message, content, ackOrNack) {
+            console.log(content)
+            ackOrNack()
+        }).on('error', bail)
+    })
+    setInterval(function() {
+        broker.publish('p1', 'This is a test message')
+    }, 100).unref()
 })
+
+function bail(err) {
+    console.error(err)
+    process.exit(1)
+}
 ```
 
 definitions.json
@@ -89,11 +92,12 @@ Rascal seeks to solve these problems.
 ```
 2. After subscribing to a channel
 ```js
-  broker.subscribe('s1', function(err, message, content, next) {
-    next()
-  }).on('error', function(err) {
-    console.error('Subscriber error', err)
-  })
+  broker.subscribe('s1', function(err, subscription) {
+    subscription.on('message', function(message, content, ackOrNack) {
+      // Do stuff with message
+    }).on('error', function(err) {
+      console.error('Subscriber error', err)
+    })
 ```
 3. After publishing a message
 ```js
@@ -399,9 +403,12 @@ The real fun begins with subscriptions
 }
 ```
 ```javascript
-broker.subscribe("s1", handler).on('error', function(err) {
-  console.error('Something bad happened', err)
-})
+  broker.subscribe('s1', function(err, subscription) {
+    subscription.on('message', function(message, content, ackOrNack) {
+      // Do stuff with message
+    }).on('error', function(err) {
+      console.error('Subscriber error', err)
+    })
 ```
 **It's very important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.**
 
@@ -417,13 +424,11 @@ Rascal supports text, buffers and anything it can JSON.parse, providing the cont
   }
 }
 ```
-The ```broker.subscribe``` method is heavily overloaded. Other variants are
+The ```broker.subscribe``` method also accepts an options parameter which will override options specified in config
 ```javascript
-broker.subscribe("s1", handler, callback)
-broker.subscribe("s1", handler, { prefetch: 10, retry: false })
-broker.subscribe("s1", handler, { prefetch: 10, retry: false }, callback)
+broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
-The arguments to the handler are ```function(err, message, content, ackOrNack)```, where err is an error object (perhaps indicating a JSON error), the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
+The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
 
