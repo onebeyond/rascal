@@ -15,7 +15,9 @@ rascal.createBroker(config, function(err, broker) {
         }).on('error', bail)
     })
     setInterval(function() {
-        broker.publish('p1', 'This is a test message')
+        broker.publish('p1', 'This is a test message', function(err, publication) {
+            if (err) bail(err)
+        })
     }, 100).unref()
 })
 

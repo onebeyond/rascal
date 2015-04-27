@@ -81,10 +81,13 @@ Broker.create(config, function(err, broker) {
 
 function soakPublication(broker, publication) {
     setInterval(function() {
-        broker.publish(publication, new Date().toUTCString() + ': This is a test message from ' + publication, function(err) {
+        var message = format('%s: this is a test message from %s', new Date().toUTCString(), publication)
+        broker.publish(publication, message, function(err, publication) {
             if (err) bail(err)
-            sent++
-        }).on('error', bail)
+            publication.on('success', function() {
+                sent++
+            })
+        })
     }, 1000).unref()
 }
 

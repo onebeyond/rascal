@@ -22,7 +22,9 @@ rascal.createBroker(config, function(err, broker) {
         }).on('error', bail)
     })
     setInterval(function() {
-        broker.publish('p1', 'This is a test message')
+        broker.publish('p1', 'This is a test message', function(err, publication) {
+            if (err) bail(err)
+        })
     }, 100).unref()
 })
 
@@ -101,10 +103,10 @@ Rascal seeks to solve these problems.
 ```
 3. After publishing a message
 ```js
-  broker.publish('p1', message, function(err) {
-    next()
-  }).on('error', function(err) {
-    console.error('Publisher error', err)
+  broker.publish('p1', message, function(err, publication) {
+    publication.on('error', function(err) {
+      console.error('Publisher error', err)
+    })
   })
 ```
 
@@ -363,20 +365,30 @@ If you prefer to send messages to a queue
   }
 }
 ```
-Rascal supports text, buffers and anything it can JSON.stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is heavily overloaded. Other variants are
+Rascal supports text, buffers and anything it can JSON.stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
 
 ```javascript
 broker.publish("p1", "some message", callback)
-broker.publish("p1", "some message", "foo")
-broker.publish("p1", "some message", "foo", callback)
-broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } })
-broker.publish("p1", "some message", { routingKey: "foo", options: { "expiration": 5000 } }, callback)
+broker.publish("p1", "some message", "some.routing.key", callback)
+broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { "expiration": 5000 } })
+
 ```
-The callback parameters are err and the message id ```function(err, messageId) {}```. Rascal generates this message id unless you included it in the options object. Another option you should be aware of is the "persistent" option. Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors
+```
+broker.publish("p1", "some message", function(err, publication) {
+  publication.on("success", function(messageId) {
+     console.log("Message id was", messageId)
+  }).on("error", function(err) {
+     console.error("Error was", err.message)
+  })
+})
+```
+
+ On publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
-**It's important to realise that even though the ```broker.publish``` method can take a callback, this offers no guarantee that the message has been sent UNLESS you use a confirm channel**.
+**It's important to realise that even though publication emits a "success" event, this offers no guarantee that the message has been sent UNLESS you use a confirm channel**.
 ```json
 {
   "publications": {
@@ -388,7 +400,6 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
   }
 }
 ```
-Now each publish message will be ack'd or nack'd (in which case an err argument will be passed to the callback) by the server.
 
 ### Subscriptions
 The real fun begins with subscriptions
@@ -403,12 +414,13 @@ The real fun begins with subscriptions
 }
 ```
 ```javascript
-  broker.subscribe('s1', function(err, subscription) {
-    subscription.on('message', function(message, content, ackOrNack) {
-      // Do stuff with message
-    }).on('error', function(err) {
-      console.error('Subscriber error', err)
-    })
+broker.subscribe('s1', function(err, subscription) {
+  subscription.on('message', function(message, content, ackOrNack) {
+    // Do stuff with message
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
+  })
+})
 ```
 **It's very important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.**
 
@@ -449,7 +461,7 @@ broker.subscribe("s1", handler, { prefetch: 10, retry: { delay: 1000 } }, callba
 ```
 
 #### Subscriber Events
-[amqplib](https://www.npmjs.com/package/amqplib) emits error events from the channel. These can happen for a number of reasons, but a common cause is because you have acknowledged the message twice. The subscriber will listen for channel errors so it can automatically re-subscribe but still emits them so they can be reported by your application. It's therefore critical that your application listens for these errors to prevent it crashing
+[amqplib](https://www.npmjs.com/package/amqplib) emits error events from the channel. These can happen for a number of reasons, but a common cause is because you have acknowledged the message twice. The subscriber will listen for channel errors so it can automatically re-subscribe but still emits them so they can be reported by your application. If you don not listen to these events or handle them in a domain they will cause your application to crash.
 
 ### Defaults
 Configuring each vhost, exchange, queue, binding, publication and subscription explicitly wouldn't be much fun. Not only does Rascal ship with default production and test configuration files, but you can also specify your own defaults in your configuration files by adding a "defaults" sub document.
@@ -488,6 +500,18 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 }
 ```
 
+### Cancelling subscriptions
+
+You can cancel subscriptions as follows
+
+```js
+broker.subscribe('s1', function(err, subscription) {
+
+  subscription.cancel(function(err) {
+    console.err(err)
+  })
+})
+```
 ## Bonus Features
 
 ### Nuke
@@ -498,7 +522,7 @@ afterEach(function(done) {
 })
 ```
 
-### Bounce (experimental)
+### Bounce
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
 
 ### Running the tests
