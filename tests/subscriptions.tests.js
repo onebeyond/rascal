@@ -15,7 +15,7 @@ _.mixin({ 'defaultsDeep': require('merge-defaults') });
 describe('Subscriptions', function() {
 
     this.timeout(5000)
-    this.slow(1000)
+    this.slow(undefined)
 
     var broker
     var amqputils
@@ -87,14 +87,14 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    assert.equal(message.properties.contentType, 'text/plain')
-                    assert.equal(content, 'test message')
-                    done()
-                }, function(err, subscription) {
-
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'text/plain')
+                        assert.equal(content, 'test message')
+                        done()
+                    })
                 })
             })
         })
@@ -109,14 +109,14 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', { message: 'test message' }, function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    assert.equal(message.properties.contentType, 'application/json')
-                    assert.equal(content.message, 'test message')
-                    done()
-                }, function(err, subscription) {
-
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'application/json')
+                        assert.equal(content.message, 'test message')
+                        done()
+                    })
                 })
             })
         })
@@ -131,14 +131,14 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', new Buffer('test message'), function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    assert.equal(message.properties.contentType, undefined)
-                    assert.equal(content, 'test message')
-                    done()
-                }, function(err, subscription) {
-
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, undefined)
+                        assert.equal(content, 'test message')
+                        done()
+                    })
                 })
             })
         })
@@ -160,22 +160,20 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', { message: 'test message' }, function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    assert.equal(message.properties.contentType, 'application/json')
-                    assert.equal(content, '{\"message\":\"test message\"}')
-                    done()
-                }, function(err, subscription) {
-
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'application/json')
+                        assert.equal(content, '{\"message\":\"test message\"}')
+                        done()
+                    })
                 })
             })
         })
     })
 
     it('should filter subscriptions by routing key', function(done) {
-
-        this.slow(2000)
 
         createBroker({
             vhosts: vhosts,
@@ -191,10 +189,11 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function() {
-                    assert.ok(false, 'Should not have received any messages')
-                }, function(err, subscription) {
-
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(false, 'Should not have received any messages')
+                    })
                 })
                 setTimeout(done, 500)
             })
@@ -220,15 +219,15 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    broker.shutdown(function(err) {
-                        assert.ifError(err)
-                        amqputils.assertMessageAbsent('q1', namespace, done)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessageAbsent('q1', namespace, done)
+                        })
                     })
-                }, function(err, response) {
-                    assert.ifError(err)
                 })
             })
         })
@@ -245,15 +244,15 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    broker.shutdown(function(err) {
-                        assert.ifError(err)
-                        amqputils.assertMessage('q1', namespace, 'test message', done)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessage('q1', namespace, 'test message', done)
+                        })
                     })
-                }, function(err, response) {
-                    assert.ifError(err)
                 })
             })
         })
@@ -270,24 +269,24 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                broker.subscribe('s1', function(err, message, content, next) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    next()
-                    setTimeout(function() {
-                        broker.shutdown(function(err) {
-                            assert.ifError(err)
-                            amqputils.assertMessageAbsent('q1', namespace, done)
-                        })
-                    }, 100).unref()
-                }, function(err, response) {
-                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        ackOrNack()
+                        setTimeout(function() {
+                            broker.shutdown(function(err) {
+                                assert.ifError(err)
+                                amqputils.assertMessageAbsent('q1', namespace, done)
+                            })
+                        }, 100).unref()
+                    })
                 })
             })
         })
     })
 
-    it('should consume non-acknowledged messages by default', function(done) {
+    it('should consume rejected messages by default', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -298,18 +297,18 @@ describe('Subscriptions', function() {
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
 
-                broker.subscribe('s1', function(err, message, content, next) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    next(new Error('fail'))
-                    setTimeout(function() {
-                        broker.shutdown(function(err) {
-                            assert.ifError(err)
-                            amqputils.assertMessageAbsent('q1', namespace, done)
-                        })
-                    }, 100).unref()
-                }, function(err, response) {
-                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        ackOrNack(new Error('reject'))
+                        setTimeout(function() {
+                            broker.shutdown(function(err) {
+                                assert.ifError(err)
+                                amqputils.assertMessageAbsent('q1', namespace, done)
+                            })
+                        }, 100).unref()
+                    })
                 })
             })
         })
@@ -327,22 +326,20 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
 
                 var messages = {}
-                broker.subscribe('s1', function(err, message, content, next) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                    if (messages[message.properties.messageId] < 10) return next(new Error('retry'), { requeue: true })
-                    done()
-                }, function(err, response) {
-                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), { requeue: true })
+                        done()
+                    })
                 })
             })
         })
     })
 
     it('should defer requeued messages when requested', function(done) {
-
-        this.slow(3000)
 
         createBroker({
             vhosts: vhosts,
@@ -355,24 +352,22 @@ describe('Subscriptions', function() {
 
                 var numberOfMessages = 0
                 var startTime = new Date().getTime()
-                broker.subscribe('s1', function(err, message, content, next) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert.ok(message)
-                    numberOfMessages++
-                    if (numberOfMessages < 10) return next(new Error('retry'), { requeue: true, defer: 100 })
-                    var stopTime = new Date().getTime()
-                    assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred')
-                    done()
-                }, function(err, response) {
-                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        numberOfMessages++
+                        if (numberOfMessages < 10) return ackOrNack(new Error('retry'), { requeue: true, defer: 100 })
+                        var stopTime = new Date().getTime()
+                        assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred')
+                        done()
+                    })
                 })
             })
         })
     })
 
     it('should limit concurrent messages using prefetch', function(done) {
-
-        this.slow(2000)
 
         createBroker({
             vhosts: vhosts,
@@ -391,18 +386,18 @@ describe('Subscriptions', function() {
             }, function(err) {
                 assert.ifError(err)
                 var messages = 0
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    messages++
-                    if (messages == 5) {
-                        setTimeout(function() {
-                            assert.equal(messages, 5)
-                            done()
-                        }, 500)
-                    }
-                }, function(err, subscription) {
-
+                        subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        messages++
+                        if (messages == 5) {
+                            setTimeout(function() {
+                                assert.equal(messages, 5)
+                                done()
+                            }, 500)
+                        }
+                    })
                 })
             })
         })
@@ -440,13 +435,13 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', replyTo + '.foo.bar', function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content) {
+                broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    assert(message)
-                    assert.equal(content, 'test message')
-                    done()
-                }, function(err, subscription) {
-
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(content, 'test message')
+                        done()
+                    })
                 })
             })
         })
@@ -461,14 +456,12 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                var subscription = broker.subscribe('s1', function(err, message, content, next) {
+                broker.subscribe('s1', { retry: false }, function(err, subscription) {
                     assert.ifError(err)
-                    next()
-                    next()
-                }, {
-                    retry: false
-                }, function(err, subscription) {
-                    subscription.on('error', function(err) {
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        ackOrNack()
+                        ackOrNack() // trigger a channel error
+                    }).on('error', function(err) {
                         assert.ok(err)
                         assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message)
                         done()
@@ -494,12 +487,14 @@ describe('Subscriptions', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-
-            broker.subscribe('s1', function(err, message, content) {
-                assert.ok(false, 'Should not receive messages after unsubscribing')
-            }, function(err, subscription, response) {
+            broker.subscribe('s1', function(err, subscription) {
                 assert.ifError(err)
-                broker.unsubscribe('s1', response.consumerTag, function(err) {
+
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(false, 'Should not receive messages after unsubscribing')
+                })
+
+                subscription.cancel(function(err) {
                     assert.ifError(err)
                     broker.publish('p1', 'test message', function(err) {
                         assert.ifError(err)
@@ -509,7 +504,6 @@ describe('Subscriptions', function() {
             })
         })
     })
-
 
     it('should tollerate repeated unsubscription', function(done) {
 
@@ -528,12 +522,10 @@ describe('Subscriptions', function() {
         }, function(err, broker) {
             assert.ifError(err)
 
-            broker.subscribe('s1', function(err, message, content) {
-                assert.ok(false, 'Should not receive messages after unsubscribing')
-            }, function(err, subscription, response) {
+            broker.subscribe('s1', function(err, subscription) {
                 assert.ifError(err)
-                async.times(3, function(index, cb) {
-                    broker.unsubscribe('s1', response.consumerTag, cb)
+                async.timesSeries(3, function(index, cb) {
+                    subscription.cancel(cb)
                 }, done)
             })
         })
