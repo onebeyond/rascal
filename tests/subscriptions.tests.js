@@ -468,13 +468,11 @@ describe('Subscriptions', function() {
                 }, {
                     retry: false
                 }, function(err, subscription) {
-
-                })
-
-                subscription.on('error', function(err) {
-                    assert.ok(err)
-                    assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message)
-                    done()
+                    subscription.on('error', function(err) {
+                        assert.ok(err)
+                        assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message)
+                        done()
+                    })
                 })
             })
         })
@@ -499,7 +497,7 @@ describe('Subscriptions', function() {
 
             broker.subscribe('s1', function(err, message, content) {
                 assert.ok(false, 'Should not receive messages after unsubscribing')
-            }, function(err, response) {
+            }, function(err, subscription, response) {
                 assert.ifError(err)
                 broker.unsubscribe('s1', response.consumerTag, function(err) {
                     assert.ifError(err)
@@ -532,7 +530,7 @@ describe('Subscriptions', function() {
 
             broker.subscribe('s1', function(err, message, content) {
                 assert.ok(false, 'Should not receive messages after unsubscribing')
-            }, function(err, response) {
+            }, function(err, subscription, response) {
                 assert.ifError(err)
                 async.times(3, function(index, cb) {
                     broker.unsubscribe('s1', response.consumerTag, cb)
