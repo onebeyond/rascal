@@ -93,6 +93,8 @@ describe('Subscriptions', function() {
                     assert.equal(message.properties.contentType, 'text/plain')
                     assert.equal(content, 'test message')
                     done()
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -113,6 +115,8 @@ describe('Subscriptions', function() {
                     assert.equal(message.properties.contentType, 'application/json')
                     assert.equal(content.message, 'test message')
                     done()
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -133,6 +137,8 @@ describe('Subscriptions', function() {
                     assert.equal(message.properties.contentType, undefined)
                     assert.equal(content, 'test message')
                     done()
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -160,6 +166,8 @@ describe('Subscriptions', function() {
                     assert.equal(message.properties.contentType, 'application/json')
                     assert.equal(content, '{\"message\":\"test message\"}')
                     done()
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -185,6 +193,8 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 broker.subscribe('s1', function() {
                     assert.ok(false, 'Should not have received any messages')
+                }, function(err, subscription) {
+
                 })
                 setTimeout(done, 500)
             })
@@ -391,6 +401,8 @@ describe('Subscriptions', function() {
                             done()
                         }, 500)
                     }
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -433,6 +445,8 @@ describe('Subscriptions', function() {
                     assert(message)
                     assert.equal(content, 'test message')
                     done()
+                }, function(err, subscription) {
+
                 })
             })
         })
@@ -447,14 +461,17 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', function(err) {
                 assert.ifError(err)
-                broker.subscribe('s1', function(err, message, content, next) {
+                var subscription = broker.subscribe('s1', function(err, message, content, next) {
                     assert.ifError(err)
                     next()
                     next()
                 }, {
                     retry: false
+                }, function(err, subscription) {
+
                 })
-                .on('error', function(err) {
+
+                subscription.on('error', function(err) {
                     assert.ok(err)
                     assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message)
                     done()
