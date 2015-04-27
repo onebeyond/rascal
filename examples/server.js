@@ -52,7 +52,7 @@ var sent = 0
 var received = 0
 
 Broker.create(config, function(err, broker) {
-    if (err) console.error(err) || process.exit(1)
+    if (err) bail(err)
 
     process.on('SIGINT', function() {
         broker.nuke(function() {
@@ -62,32 +62,33 @@ Broker.create(config, function(err, broker) {
         })
     })
 
-    broker.on('error', function(err) {
-        console.error('Error received from broker', err)
-    })
+    broker.on('error', bail)
 
     soakPublication(broker, 'p1')
     soakPublication(broker, 'p2')
-    broker.subscribe('s1', function(err, message, content, next) {
-        received++
-        next()
-    }, function(err) {
-        if (err) console.error(err)
-    }).on('error', function(err) {
-        console.error('Error received from subscriber: s1', err)
+    broker.subscribe('s1', function(err, subscription) {
+        if (err) bail(err)
+        subscription.on('message', function(message, content, ackOrNack) {
+            console.log(content)
+            received++
+            ackOrNack()
+        }).on('error', bail)
     })
 
     debug('Come and have a go if you think you\'re hard enough')
 })
 
 
-function soakPublication(broker, publication, interval) {
+function soakPublication(broker, publication) {
     setInterval(function() {
-        broker.publish(publication, 'This is a test message', function(err) {
-            if (err) console.error(err.message)
+        broker.publish(publication, new Date().toUTCString() + ': This is a test message from ' + publication, function(err) {
+            if (err) bail(err)
             sent++
-        }).on('error', function(err) {
-            console.error(format('Error received from publisher: %s', publication), err)
-        })
-    }, interval || 100).unref()
+        }).on('error', bail)
+    }, 1000).unref()
+}
+
+function bail(err) {
+    console.error(err)
+    process.exit(1)
 }
