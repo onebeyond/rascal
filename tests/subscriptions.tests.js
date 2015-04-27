@@ -77,6 +77,21 @@ describe('Subscriptions', function() {
         broker.nuke(done)
     })
 
+    it('should report unknown subscriptions', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.subscribe('does-not-exist', function(err, subscription) {
+                assert.ok(err)
+                assert.equal(err.message, 'Unknown subscription: does-not-exist')
+                done()
+            })
+        })
+    })
+
     it('should consume to text messages', function(done) {
 
         createBroker({

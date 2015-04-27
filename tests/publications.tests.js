@@ -60,6 +60,24 @@ describe('Publications', function() {
         done()
     })
 
+    it('should report unknown publications', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    exchange: 'e1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('does-not-exist', 'test message', function(err) {
+                assert.ok(err)
+                assert.equal(err.message, 'Unknown publication: does-not-exist')
+                done()
+            })
+        })
+    })
+
     it('should publish text messages to normal exchanges', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -70,9 +88,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, 'test message', done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
+                })
             })
         })
     })
@@ -88,9 +108,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, ok) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, 'test message', done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
+                })
             })
         })
     })
@@ -105,9 +127,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, ok) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, 'test message', done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
+                })
             })
         })
     })
@@ -122,15 +146,17 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, messageId) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId))
+                publication.on('success', function(messageId) {
+                    assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId))
 
-                amqputils.getMessage('q1', namespace, function(err, message) {
-                    assert.ifError(err)
-                    assert.ok(message)
-                    assert.equal(messageId, message.properties.messageId)
-                    done()
+                    amqputils.getMessage('q1', namespace, function(err, message) {
+                        assert.ifError(err)
+                        assert.ok(message)
+                        assert.equal(messageId, message.properties.messageId)
+                        done()
+                    })
                 })
             })
         })
@@ -147,9 +173,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, ok) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, 'test message', done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
+                })
             })
         })
     })
@@ -164,9 +192,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', { message: 'test message' }, function(err) {
+            broker.publish('p1', { message: 'test message' }, function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done)
+                })
             })
         })
     })
@@ -182,9 +212,11 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', new Buffer('test message'), function(err) {
+            broker.publish('p1', new Buffer('test message'), function(err, publication) {
                 assert.ifError(err)
-                amqputils.assertMessage('q1', namespace, 'test message', done)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
+                })
             })
         })
     })
@@ -199,48 +231,14 @@ describe('Publications', function() {
             }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, ok) {
+            broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, publication) {
                 assert.ifError(err)
-                setTimeout(function() {
-                    amqputils.assertMessageAbsent('q1', namespace, done)
-                }, 100)
+                publication.on('success', function(messageId) {
+                    setTimeout(function() {
+                        amqputils.assertMessageAbsent('q1', namespace, done)
+                    }, 100)
+                })
             })
-        })
-    })
-
-    it('should publish without overrides or a callback', function(done) {
-        createBroker({
-            vhosts: vhosts,
-            publications: {
-                p1: {
-                    queue: 'q1',
-                    confirm: true
-                }
-            }
-        }, function(err, broker) {
-            assert.ifError(err)
-            broker.publish('p1', 'test message')
-            setTimeout(function() {
-                amqputils.assertMessage('q1', namespace, 'test message', done)
-            }, 400)
-        })
-    })
-
-    it('should publish with overrides, but no callback', function(done) {
-        createBroker({
-            vhosts: vhosts,
-            publications: {
-                p1: {
-                    queue: 'q1',
-                    confirm: true
-                }
-            }
-        }, function(err, broker) {
-            assert.ifError(err)
-            broker.publish('p1', 'test message', {})
-            setTimeout(function() {
-                amqputils.assertMessage('q1', namespace, 'test message', done)
-            }, 400)
         })
     })
 
