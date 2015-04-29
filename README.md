@@ -451,13 +451,13 @@ Prefetch limits the number of unacknowledged messages your application can have 
 If an error occurs on the channel (which will happen if you accidentally acknowledge a message twice), then it becomes unusable and no more messages will be delivered. Rascal listens to the channel's error even and assuming you are using its defaults will automatically attempt to resubscribe to a new channel after a one second delay. You can disable or customise this in your configuration or in the call to subscribe.
 ```js
 // Does not retry. This will cause an error to be emitted which unhandled will crash your process. See [Subscriber Events](#subscriber-events)
-broker.subscribe("s1", handler, { prefetch: 10, retry: false }, callback)
+broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 
 // Retries without delay.
-broker.subscribe("s1", handler, { prefetch: 10, retry: true }, callback)
+broker.subscribe("s1", { prefetch: 10, retry: true }, callback)
 
 // Retries after a one second interval.
-broker.subscribe("s1", handler, { prefetch: 10, retry: { delay: 1000 } }, callback)
+broker.subscribe("s1", { prefetch: 10, retry: { delay: 1000 } }, callback)
 ```
 
 #### Subscriber Events
