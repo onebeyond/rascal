@@ -444,6 +444,9 @@ The arguments to the on message event handler are ```function(message, content, 
 
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
 
+An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message.
+```ackOrNack(err, { republish: true, defer: 1000, max: 10 })```
+
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
 
