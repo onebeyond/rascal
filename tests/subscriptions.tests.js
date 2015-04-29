@@ -436,6 +436,33 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should cap republishes when requested', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', assert.ifError)
+
+            var count = 0
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    count++
+                    ackOrNack(new Error('republish'), { republish: true, attempts: 5 })
+                })
+            })
+
+            setTimeout(function() {
+                assert.equal(count, 6)
+                done()
+            }, 500)
+
+        })
+    })
+
     it('should defer republishing messages when requested', function(done) {
 
         createBroker({

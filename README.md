@@ -444,7 +444,7 @@ The arguments to the on message event handler are ```function(message, content, 
 
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
 
-An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message. ```ackOrNack(err, { republish: true, defer: 1000, max: 10 })```
+An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message. ```ackOrNack(err, { republish: true, defer: 1000, attempts: 5 })```
 
 There are some subtle implications to republishing that you should be aware of.
 
