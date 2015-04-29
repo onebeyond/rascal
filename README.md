@@ -454,6 +454,8 @@ There are some subtle implications to republishing that you should be aware of.
 
 3. Rascal will publish the copy using a confirm channel, and nack the message with requeue true if the publish fails.
 
+4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. Rascal stashes the original values in a header and restores them back in their rightful place before the consumer receives it
+
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
 

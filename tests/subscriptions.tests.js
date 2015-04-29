@@ -408,7 +408,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should maintain original properties and headers when republished', function(done) {
+    it('should maintain original fields, properties and headers when republished', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -416,20 +416,24 @@ describe('Subscriptions', function() {
             subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }, function(err) {
+            broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }, function(err, publication) {
                 assert.ifError(err)
 
-                var messages = {}
-                broker.subscribe('s1', function(err, subscription) {
-                    assert.ifError(err)
-                    subscription.on('message', function(message, content, ackOrNack) {
-                        assert.ok(message)
-                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { republish: true })
-                        assert.equal(message.properties.headers.rascal.republished, 1)
-                        assert.equal(message.properties.headers.foo, 'bar')
-                        assert.equal(message.properties.deliveryMode, 2)
-                        done()
+                publication.on('success', function(messageId) {
+                    var messages = {}
+                    broker.subscribe('s1', function(err, subscription) {
+                        assert.ifError(err)
+                        subscription.on('message', function(message, content, ackOrNack) {
+                            assert.ok(message)
+                            messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                            if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { republish: true })
+                            assert.equal(message.properties.headers.rascal.republished, 1)
+                            assert.equal(message.properties.headers.foo, 'bar')
+                            assert.equal(message.properties.messageId, messageId)
+                            assert.equal(message.fields.routingKey, 'foo')
+                            assert.equal(message.properties.deliveryMode, 2)
+                            done()
+                        })
                     })
                 })
             })
