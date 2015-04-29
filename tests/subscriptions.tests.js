@@ -354,7 +354,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should defer requeued messages when requested', function(done) {
+    it('should defer requeueing messages when requested', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -382,7 +382,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it.only('should republish messages to queue when requested', function(done) {
+    it('should republish messages to queue when requested', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -400,6 +400,63 @@ describe('Subscriptions', function() {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                         if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish'), { republish: true })
+                        assert.equal(message.properties.headers.rascal.republished, 9)
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should maintain original properties and headers when republished', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }, function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { republish: true })
+                        assert.equal(message.properties.headers.rascal.republished, 1)
+                        assert.equal(message.properties.headers.foo, 'bar')
+                        assert.equal(message.properties.deliveryMode, 2)
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should defer republishing messages when requested', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var numberOfMessages = 0
+                var startTime = new Date().getTime()
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        numberOfMessages++
+                        if (numberOfMessages < 10) return ackOrNack(new Error('republish'), { republish: true, defer: 100 })
+                        var stopTime = new Date().getTime()
+                        assert.ok((stopTime - startTime) >= 900, 'Republish was not deferred')
                         done()
                     })
                 })
