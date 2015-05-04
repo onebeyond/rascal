@@ -32,10 +32,16 @@ describe('Publications', function() {
                 exchanges: {
                     e1: {
                         assert: true
+                    },
+                    e2: {
+                        assert: true
                     }
                 },
                 queues: {
                     q1: {
+                        assert: true
+                    },
+                    q2: {
                         assert: true
                     }
                 },
@@ -43,6 +49,10 @@ describe('Publications', function() {
                     b1: {
                         source: 'e1',
                         destination: 'q1'
+                    },
+                    b2: {
+                        source: 'e2',
+                        destination: 'q2'
                     }
                 }
             }
@@ -237,6 +247,60 @@ describe('Publications', function() {
                     setTimeout(function() {
                         amqputils.assertMessageAbsent('q1', namespace, done)
                     }, 100)
+                })
+            })
+        })
+    })
+
+    it('should forward messages to publications', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    exchange: 'e1'
+                },
+                p2: {
+                    exchange: 'e2'
+                }
+            },
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+
+            var messageId
+
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+
+                subscription.on('message', function(message, content, ackOrNack) {
+                    broker.forward('p2', message, function(err, publication) {
+                        publication.on('success', function() {
+                            ackOrNack()
+
+                            amqputils.getMessage('q2', namespace, function(err, message) {
+                                assert.ifError(err)
+                                assert.ok(message)
+                                assert.equal(message.properties.messageId, messageId)
+                                assert.equal(message.properties.contentType, 'text/plain')
+                                assert.equal(message.content.toString(), 'test message')
+                                assert.equal(message.properties.headers.rascal.forwarded, true)
+                                assert.equal(message.properties.headers.rascal.originalExchange, namespace + ':e1')
+                                done()
+                            })
+                        })
+                    })
+                })
+            })
+
+            broker.publish('p1', 'test message', function(err, publication) {
+                assert.ifError(err)
+                publication.on('success', function(_messageId) {
+                    messageId = _messageId
                 })
             })
         })
