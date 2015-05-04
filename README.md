@@ -431,7 +431,7 @@ The syntax is similar to broker.publish apart from you pass in the original mess
   }
 }
 ```
-** Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages if you use broker.foward **
+**Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages if you use ```broker.foward```**
 
 
 ### Subscriptions
