@@ -350,6 +350,33 @@ You can bind exchanges to exchanges, or exchanges to queues.
 ```
 When using Rascals defaults, destinationType will default to "queue" and "bindingKey" will default to "#" (although this is only applicable for topics anyway)
 
+Should you want to bind a destination to the same source with multiple binding keys, instead of duplicating the configuration you can use the "bindingKeys" shorthand
+```json
+{
+  "vhosts": {
+    "v1": {
+      "exchanges": {
+        "e1": {
+        }
+      },
+      "queues": {
+        "q1": {
+        }
+      },
+      "bindings": {
+        "b1": {
+          "source": "e1",
+          "destination": "q1",
+          "destinationType": "queue",
+          "bindingKeys": ["foo", "bar"]
+        }
+      }
+    }
+  }
+}
+```
+
+
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
 ```json

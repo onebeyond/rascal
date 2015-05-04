@@ -457,6 +457,34 @@ describe('Configuration', function() {
                     assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
                     assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey))
                 })
+            }),
+
+            it('should configure multiple bindings from an array of binding keys', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
+                            bindings: {
+                                b1: {
+                                    source: 'e1',
+                                    destination: 'q1',
+                                    bindingKeys: ['a', 'b']
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings['b1:a'].source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings['b1:a'].destination, 'q1')
+                    assert.equal(config.vhosts.v1.bindings['b1:a'].bindingKey, 'a')
+                    assert.equal(config.vhosts.v1.bindings['b1:b'].source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings['b1:b'].destination, 'q1')
+                    assert.equal(config.vhosts.v1.bindings['b1:b'].bindingKey, 'b')
+                })
             })
         })
     })
