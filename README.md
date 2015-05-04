@@ -84,7 +84,7 @@ Rascal seeks to solve these problems.
 * Rascal has plenty of automated tests, but is by no means battle hardened (yet).
 
 ## VERY IMPORTANT SECTION ABOUT EVENT HANDLING
-[amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are three places where you should do this
+[amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
 
 1. Immediately after obtaining a broker instance
 ```js
@@ -103,7 +103,15 @@ Rascal seeks to solve these problems.
 ```
 3. After publishing a message
 ```js
-  broker.publish('p1', message, function(err, publication) {
+  broker.publish('p1', 'some text', function(err, publication) {
+    publication.on('error', function(err) {
+      console.error('Publisher error', err)
+    })
+  })
+```
+3. After forwarding a message
+```js
+  broker.forward('p1', message, function(err, publication) {
     publication.on('error', function(err) {
       console.error('Publisher error', err)
     })
@@ -374,7 +382,7 @@ broker.publish("p1", "some message", { routingKey: "some.routing.key", options: 
 
 ```
 The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors
-```
+```javascript
 broker.publish("p1", "some message", function(err, publication) {
   publication.on("success", function(messageId) {
      console.log("Message id was", messageId)
@@ -400,6 +408,31 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
   }
 }
 ```
+
+#### Forwarding messages
+Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```
+
+```javascript
+broker.forward("p1", message, function(err, publication) {
+  publication.on("success", function(messageId) {
+     console.log("Message id was", messageId)
+  }).on("error", function(err) {
+     console.error("Error was", err.message)
+  })
+})
+```
+The syntax is similar to broker.publish apart from you pass in the original message you want to be forwarded instead of the message payload. Rascal will copy the original message properties to the forwarded message and decorate the message the following headers:
+
+```json
+{
+  "rascal": {
+    "forwarded": true,
+    "originalExchange": "original:exchange"
+  }
+}
+```
+** Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages if you use broker.foward **
+
 
 ### Subscriptions
 The real fun begins with subscriptions
