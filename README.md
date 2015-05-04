@@ -87,36 +87,40 @@ Rascal seeks to solve these problems.
 [amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
 
 1. Immediately after obtaining a broker instance
-```js
-  broker.on('error', function(err) {
-    console.error('Broker error', err)
-  })
-```
+
+    ```js
+      broker.on('error', function(err) {
+        console.error('Broker error', err)
+      })
+    ```
 2. After subscribing to a channel
-```js
-  broker.subscribe('s1', function(err, subscription) {
-    subscription.on('message', function(message, content, ackOrNack) {
-      // Do stuff with message
-    }).on('error', function(err) {
-      console.error('Subscriber error', err)
-    })
-```
+
+    ```js
+      broker.subscribe('s1', function(err, subscription) {
+        subscription.on('message', function(message, content, ackOrNack) {
+          // Do stuff with message
+        }).on('error', function(err) {
+          console.error('Subscriber error', err)
+        })
+    ```
 3. After publishing a message
-```js
-  broker.publish('p1', 'some text', function(err, publication) {
-    publication.on('error', function(err) {
-      console.error('Publisher error', err)
-    })
-  })
-```
-3. After forwarding a message
-```js
-  broker.forward('p1', message, function(err, publication) {
-    publication.on('error', function(err) {
-      console.error('Publisher error', err)
-    })
-  })
-```
+
+    ```js
+      broker.publish('p1', 'some text', function(err, publication) {
+        publication.on('error', function(err) {
+          console.error('Publisher error', err)
+        })
+      })
+    ```
+4. After forwarding a message
+
+    ```js
+      broker.forward('p1', message, function(err, publication) {
+        publication.on('error', function(err) {
+          console.error('Publisher error', err)
+        })
+      })
+    ```
 
 
 ## Installation
