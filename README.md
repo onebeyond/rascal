@@ -350,7 +350,7 @@ You can bind exchanges to exchanges, or exchanges to queues.
 ```
 When using Rascals defaults, destinationType will default to "queue" and "bindingKey" will default to "#" (although this is only applicable for topics anyway)
 
-Should you want to bind a destination to the same source with multiple binding keys, instead of duplicating the configuration you can use the "bindingKeys" shorthand
+Should you want to bind a destination to the same source with multiple binding keys, instead of duplicating the configuration you can specify an array of binding keys using either the "bindingKey" or "bindingKeys" attribute
 ```json
 {
   "vhosts": {
