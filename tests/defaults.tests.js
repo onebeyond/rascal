@@ -153,7 +153,10 @@ describe('Defaults', function() {
                             queues: {
                                 assert: true,
                                 options: {
-                                    durable: true
+                                    durable: true,
+                                    arguments: {
+                                        'x-dead-letter-exchange': 'dead_letters'
+                                    }
                                 }
                             }
                         }
@@ -170,6 +173,7 @@ describe('Defaults', function() {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.queues.q1.assert, true)
                     assert.equal(config.vhosts.v1.queues.q1.options.durable, true)
+                    assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'dead_letters')
                 })
             })
 
