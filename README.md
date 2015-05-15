@@ -508,39 +508,82 @@ broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
 The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
-For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { strategy: 'nack', options: { requeue: true } })```.
+#### ackOrNack
 
-An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message. ```ackOrNack(err, { strategy: 'republish', options: { attempts: 5 }})```
+For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the following recovery strategies. All strategies accept a 'defer' parameter which can be used to avoid tight loops, e.g.
+```javascript
+ackOrNack(err, { stategy: 'nack', defer: 1000 })
+```
 
-There are some subtle implications to republishing that you should be aware of.
+##### Nack
+
+```javascript
+ackOrNack(err, { strategy: 'nack' })
+```
+Nack causes the message to be discarded or routed to a dead letter exchange if configured. By configuring a dead letter queue to dead letter back to the original exchange after a queue level ttl you can retry messages after a short delay. You can limit the number retires by specifying
+```javascript
+ackOrNack(err, { strategy: 'nack', options: { attempts: 5 }})
+```
+
+If you want prefer to requeue the message call
+```javascript
+ackOrNack(err, { strategy: 'nack', defer: 1000, options: { requeue: true } })
+```
+The defer option is not mandatory, but without it you are likely retry your message thousands of times a second. Even then requeueing is a inadequate strategy for error handling, since the message will be rolled back to the front of the queue and there is no simple way to detect how many times the message has been redelivered.
+
+#### Republish
+```javascript
+ackOrNack(err, { strategy: 'republish' })
+```
+An alternative to nacking to republish the message back to the queue it came from. This can be used as a 'poor-mans' version of the dead-letter delay loop, however it is not recommended due to the following issues:
 
 1. Rascal will copy messages properties from the original message to the republished one. If you set an expiration time on the original message this will also be recopied, effectively resetting it.
 
-2. Rascal wil ack the original message after successfully publishing the copy. This does not take place in a distributed transaction so there is a potential of the original message being rolled back after the copy has been published.
+2. Rascal will ack the original message after successfully publishing the copy. This does not take place in a distributed transaction so there is a potential of the original message being rolled back after the copy has been published (the dead-letter delay loop also suffers from this).
 
-3. Rascal will publish the copy using a confirm channel, and nack the message with requeue true if the publish fails.
+3. Rascal will republish original message using a confirm channel, if the publish fails, the original message will not be nacked (You should mitigate this by chaining recovery strategies).
 
-4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. Rascal stashes the original values in a header and restores them back in their rightful place before the consumer receives it
+4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. This is problematic if you want to replublish to the queue you consumed the message from. Rascal can mitigate restoring the original values before the consumer receives the message.
 
-You can defer ackOrNack strategies to prevent tight message loops ```ackOrNack(err, { strategy: 'nack', defer: 1000, options: { requeue: true } })``` and you can even chain strategies for more advanced error handling,
-```javascript
-broker.subscribe('s1', function(err, subscription) {
-  subscription.on('message', function(message, content, ackOrNack) {
-    // Do stuff with message
-    ackOrNack(err, [{
-      strategy: 'republish',
-      defer: 1000,
-      options: {
-        attempts: 10
-      }
-    }, {
-      strategy: 'nack'
-    }])
-  }).on('error', function(err) {
-    console.error('Subscriber error', err)
-  })
-})
+Instead of republish the message to the same queue you can route it to a different exchange using the same options availble to ```broker.publish```
+```js
+ackOrNack(err, { strategy: 'republish', options: { exchange: 'ex1', routingKey: 'foo' } })
 ```
+However this is also a dumb thing to do as the same results can be achieve using dead letter queues. Where the republish strategy is useful is when you chain it to a dead-letter retry queue...
+
+#### Chaining Recovery Strategies
+```javascript
+ackOrNack(err, [
+  {
+    strategy: 'nack',
+    options: {
+      attempts: 10
+    }
+  }, {
+    strategy: 'republish',
+    options: {
+      vhost: '/'
+      exchange: 'failure'
+    }
+  }, {
+    strategy: 'nack',
+    defer: 1000,
+    options: {
+      requeue: true
+  }
+])
+```
+Assuming that the queue the message was read from was configured with a dead letter exchange that was bound to a dead letter queue with a TTL of 1 minute, configured to dead letter expired messages to the original exchange, here's what would happen...
+
+1. Message is routed to the consumers queue
+2. The consumer encounters an error and nacks the messages with the above configuration
+3. Message message is routed to the dead letter queue
+4. Message sits on the dead leter queue for 1 minute
+5. Message is routed back to the original exchange, and deliered to the consmer queue
+6. Repeat steps 1-5 10 times
+7. Message is republished to the failure queue where a human being will have to deal with it
+8. If the message fails to be republished, it will be rolled back to the consumer queue at 1 second intervals until successfully republished
+
 
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.

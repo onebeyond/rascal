@@ -329,6 +329,147 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should dead letter rejected when specified', function(done) {
+
+        createBroker({
+            vhosts: {
+                '/': {
+                    namespace: namespace,
+                    exchanges: {
+                        e1: {
+                            assert: true
+                        },
+                        e2: {
+                            assert: true
+                        }
+                    },
+                    queues: {
+                        q1: {
+                            assert: true,
+                            options: {
+                                arguments: {
+                                    'x-dead-letter-exchange': 'e2'
+                                }
+                            }
+                        },
+                        q2: {
+                            assert: true
+                        }
+                    },
+                    bindings: {
+                        b1: {
+                            source: 'e1',
+                            destination: 'q1',
+                            bindingKey: 'foo'
+                        },
+                        b2: {
+                            source: 'e2',
+                            destination: 'q2',
+                            bindingKey: 'foo'
+                        }
+                    }
+                }
+            },
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1'
+                },
+                s2: {
+                    vhost: '/',
+                    queue: 'q2'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        ackOrNack(new Error('reject'))
+                    })
+                })
+
+                broker.subscribe('s2', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+   it('should cap dead lettering', function(done) {
+
+        createBroker({
+            vhosts: {
+                '/': {
+                    namespace: namespace,
+                    exchanges: {
+                        e1: {
+                            assert: true
+                        }
+                    },
+                    queues: {
+                        q1: {
+                            assert: true,
+                            options: {
+                                arguments: {
+                                    'x-dead-letter-exchange': 'e1'
+                                }
+                            }
+                        }
+                    },
+                    bindings: {
+                        b1: {
+                            source: 'e1',
+                            destination: 'q1',
+                            bindingKey: 'foo'
+                        }
+                    }
+                }
+            },
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('reject'), {
+                            strategy: 'nack',
+                            options: { attempts: 5 }
+                        }, function() {
+                            if (!message.properties.headers.hasOwnProperty('x-death') || message.properties.headers['x-death'][0].count < 5) return
+                            setTimeout(function() {
+                                assert.equal(message.properties.headers['x-death'][0].count, 5)
+                                done()
+                            }, 500)
+                        })
+                    })
+                })
+
+            })
+        })
+    })
+
     it('should requeue messages when requested', function(done) {
 
         createBroker({
@@ -536,8 +677,10 @@ describe('Subscriptions', function() {
                             strategy: 'nack'
                         }], function() {
                             if (messages[message.properties.messageId] < 6) return
-                            assert.equal(messages[message.properties.messageId], 6)
-                            setTimeout(done, 300)
+                            setTimeout(function() {
+                                assert.equal(messages[message.properties.messageId], 6)
+                                done()
+                            }, 500)
                         })
                     })
                 })
