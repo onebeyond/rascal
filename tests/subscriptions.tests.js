@@ -511,6 +511,40 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should chain recovery strategies', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        ackOrNack(new Error('retry'), [{
+                            strategy: 'republish',
+                            options: {
+                                attempts: 5
+                            }
+                        }, {
+                            strategy: 'nack'
+                        }], function() {
+                            if (messages[message.properties.messageId] < 6) return
+                            assert.equal(messages[message.properties.messageId], 6)
+                            setTimeout(done, 300)
+                        })
+                    })
+                })
+            })
+        })
+    })
+
     it('should limit concurrent messages using prefetch', function(done) {
 
         createBroker({
