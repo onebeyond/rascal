@@ -508,9 +508,9 @@ broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
 The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
-For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { requeue: true })```. You can also delay the requeue by specifying a defer argument, ```ackOrNack(err, { requeue: true, defer: 1000 })```
+For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no error argument will acknowledge it. Calling ```ackOrNack(err)``` will nack the message causing it to be discarded (or potentially sent to a dead letter exchange). If you want to requeue the message call ```ackOrNack(err, { strategy: 'nack', options: { requeue: true } })```.
 
-An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message. ```ackOrNack(err, { republish: true, defer: 1000, attempts: 5 })```
+An alternative to requeueing to republish the message back to the queue it was consumed from. Not only does this give all other messages on the queue a better chance of being processed, but it also enables rascal to set a republished count in the message header. This allows you to configure a republish limit per message. ```ackOrNack(err, { strategy: 'republish', options: { attempts: 5 }})```
 
 There are some subtle implications to republishing that you should be aware of.
 
@@ -521,6 +521,26 @@ There are some subtle implications to republishing that you should be aware of.
 3. Rascal will publish the copy using a confirm channel, and nack the message with requeue true if the publish fails.
 
 4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. Rascal stashes the original values in a header and restores them back in their rightful place before the consumer receives it
+
+You can defer ackOrNack strategies to prevent tight message loops ```ackOrNack(err, { strategy: 'nack', defer: 1000, options: { requeue: true } })``` and you can even chain strategies for more advanced error handling,
+```javascript
+broker.subscribe('s1', function(err, subscription) {
+  subscription.on('message', function(message, content, ackOrNack) {
+    // Do stuff with message
+    ackOrNack(err, [{
+      strategy: 'republish',
+      defer: 1000,
+      options: {
+        attempts: 10
+      }
+    }, {
+      strategy: 'nack'
+    }])
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
+  })
+})
+```
 
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.

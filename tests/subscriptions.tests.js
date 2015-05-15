@@ -346,7 +346,12 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), { requeue: true })
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), {
+                            strategy: 'nack',
+                            options: {
+                                requeue: true
+                            }
+                        })
                         done()
                     })
                 })
@@ -372,7 +377,13 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         numberOfMessages++
-                        if (numberOfMessages < 10) return ackOrNack(new Error('retry'), { requeue: true, defer: 100 })
+                        if (numberOfMessages < 10) return ackOrNack(new Error('retry'), {
+                            strategy: 'nack',
+                            defer: 100,
+                            options: {
+                                requeue: true
+                            }
+                        })
                         var stopTime = new Date().getTime()
                         assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred')
                         done()
@@ -399,7 +410,7 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish'), { republish: true })
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish'), { strategy: 'republish' })
                         assert.equal(message.properties.headers.rascal.republished, 9)
                         done()
                     })
@@ -426,7 +437,7 @@ describe('Subscriptions', function() {
                         subscription.on('message', function(message, content, ackOrNack) {
                             assert.ok(message)
                             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                            if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { republish: true })
+                            if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { strategy: 'republish' })
                             assert.equal(message.properties.headers.rascal.republished, 1)
                             assert.equal(message.properties.headers.foo, 'bar')
                             assert.equal(message.properties.messageId, messageId)
@@ -455,7 +466,12 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 subscription.on('message', function(message, content, ackOrNack) {
                     count++
-                    ackOrNack(new Error('republish'), { republish: true, attempts: 5 })
+                    ackOrNack(new Error('republish'), {
+                        strategy: 'republish',
+                        options: {
+                            attempts: 5
+                        }
+                    })
                 })
             })
 
@@ -485,7 +501,7 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         numberOfMessages++
-                        if (numberOfMessages < 10) return ackOrNack(new Error('republish'), { republish: true, defer: 100 })
+                        if (numberOfMessages < 10) return ackOrNack(new Error('republish'), { strategy: 'republish', defer: 100 })
                         var stopTime = new Date().getTime()
                         assert.ok((stopTime - startTime) >= 900, 'Republish was not deferred')
                         done()
