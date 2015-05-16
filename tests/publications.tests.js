@@ -142,7 +142,7 @@ describe('Publications', function() {
         })
     })
 
-    xit('should decorate the message with a uuid', function(done) {
+    it('should decorate the message with a uuid', function(done) {
         createBroker({
             vhosts: vhosts
         }, function(err, broker) {
@@ -244,7 +244,7 @@ describe('Publications', function() {
         })
     })
 
-    it('should support just in time publications', function(done) {
+    xit('should support just in time publications', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: {
