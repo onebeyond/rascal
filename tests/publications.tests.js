@@ -144,12 +144,15 @@ describe('Publications', function() {
 
     it('should decorate the message with a uuid', function(done) {
         createBroker({
-            vhosts: vhosts
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    exchange: 'e1'
+                }
+            }
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish({
-                queue: 'q1'
-            }, 'test message', function(err, publication) {
+            broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
                 publication.on('success', function(messageId) {
                     assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId))
@@ -239,25 +242,6 @@ describe('Publications', function() {
                     setTimeout(function() {
                         amqputils.assertMessageAbsent('q1', namespace, done)
                     }, 100)
-                })
-            })
-        })
-    })
-
-    xit('should support just in time publications', function(done) {
-        createBroker({
-            vhosts: vhosts,
-            publications: {
-                p1: {
-                    queue: 'q1'
-                }
-            }
-        }, function(err, broker) {
-            assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, publication) {
-                assert.ifError(err)
-                publication.on('success', function(messageId) {
-                    amqputils.assertMessage('q1', namespace, 'test message', done)
                 })
             })
         })
