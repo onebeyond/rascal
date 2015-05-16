@@ -375,7 +375,34 @@ Should you want to bind a destination to the same source with multiple binding k
   }
 }
 ```
-
+If you want to bind to a headers exchange specify the appropriate binding options
+```json
+{
+  "vhosts": {
+    "v1": {
+      "exchanges": {
+        "e1": {
+          "type": "headers"
+        }
+      },
+      "queues": {
+        "q1": {
+        }
+      },
+      "bindings": {
+        "b1": {
+          "source": "e1",
+          "destination": "q1",
+          "options": {
+            "x-match": "all",
+            "foo": "bar"
+          }
+        }
+      }
+    }
+  }
+}
+```
 
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
