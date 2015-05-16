@@ -1,5 +1,5 @@
 var assert = require('assert')
-var _ = require('lodash').runInContext()
+var _ = require('lodash').mixin({ 'defaultsDeep': require('merge-defaults') })
 var async = require('async')
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
@@ -7,10 +7,6 @@ var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
 var AmqpUtils = require('./utils/amqputils')
-
-
-_.mixin({ 'defaultsDeep': require('merge-defaults') });
-
 
 describe('Publications', function() {
 
@@ -146,17 +142,14 @@ describe('Publications', function() {
         })
     })
 
-    it('should decorate the message with a uuid', function(done) {
+    xit('should decorate the message with a uuid', function(done) {
         createBroker({
-            vhosts: vhosts,
-            publications: {
-                p1: {
-                    exchange: 'e1'
-                }
-            }
+            vhosts: vhosts
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err, publication) {
+            broker.publish({
+                queue: 'q1'
+            }, 'test message', function(err, publication) {
                 assert.ifError(err)
                 publication.on('success', function(messageId) {
                     assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId))
@@ -211,7 +204,6 @@ describe('Publications', function() {
         })
     })
 
-
     it('should publish buffer messages to normal exchanges', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -247,6 +239,25 @@ describe('Publications', function() {
                     setTimeout(function() {
                         amqputils.assertMessageAbsent('q1', namespace, done)
                     }, 100)
+                })
+            })
+        })
+    })
+
+    it('should support just in time publications', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    queue: 'q1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, publication) {
+                assert.ifError(err)
+                publication.on('success', function(messageId) {
+                    amqputils.assertMessage('q1', namespace, 'test message', done)
                 })
             })
         })
