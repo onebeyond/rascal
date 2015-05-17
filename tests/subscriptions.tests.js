@@ -444,9 +444,7 @@ describe('Subscriptions', function() {
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                         if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), {
                             strategy: 'nack',
-                            options: {
-                                requeue: true
-                            }
+                            requeue: true
                         })
                         done()
                     })
@@ -476,9 +474,7 @@ describe('Subscriptions', function() {
                         if (numberOfMessages < 10) return ackOrNack(new Error('retry'), {
                             strategy: 'nack',
                             defer: 100,
-                            options: {
-                                requeue: true
-                            }
+                            requeue: true
                         })
                         var stopTime = new Date().getTime()
                         assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred')
@@ -562,12 +558,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 subscription.on('message', function(message, content, ackOrNack) {
                     count++
-                    ackOrNack(new Error('republish'), {
-                        strategy: 'republish',
-                        options: {
-                            attempts: 5
-                        }
-                    })
+                    ackOrNack(new Error('republish'), { strategy: 'republish', attempts: 5 })
                 })
             })
 
@@ -694,7 +685,7 @@ describe('Subscriptions', function() {
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
                     count++
-                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', options: { attempts: 5 } })
+                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', attempts: 5 })
                 })
             })
 
@@ -722,14 +713,10 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        ackOrNack(new Error('retry'), [{
-                            strategy: 'republish',
-                            options: {
-                                attempts: 5
-                            }
-                        }, {
-                            strategy: 'ack'
-                        }], function() {
+                        ackOrNack(new Error('retry'), [
+                            { strategy: 'republish', attempts: 5 },
+                            { strategy: 'ack' }
+                        ], function() {
                             if (messages[message.properties.messageId] < 6) return
                             setTimeout(function() {
                                 assert.equal(messages[message.properties.messageId], 6)
