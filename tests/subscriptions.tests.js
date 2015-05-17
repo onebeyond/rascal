@@ -33,10 +33,16 @@ describe('Subscriptions', function() {
                 exchanges: {
                     e1: {
                         assert: true
+                    },
+                    e2: {
+                        assert: true
                     }
                 },
                 queues: {
                     q1: {
+                        assert: true
+                    },
+                    q2: {
                         assert: true
                     }
                 },
@@ -45,6 +51,11 @@ describe('Subscriptions', function() {
                         source: 'e1',
                         destination: 'q1',
                         bindingKey: 'foo'
+                    },
+                    b2: {
+                        source: 'e2',
+                        destination: 'q2',
+                        bindingKey: 'bar'
                     }
                 }
             }
@@ -55,13 +66,22 @@ describe('Subscriptions', function() {
                 vhost: '/',
                 exchange: 'e1',
                 routingKey: 'foo'
-            }
+            },
+            p2: {
+                vhost: '/',
+                exchange: 'e2',
+                routingKey: 'bar'
+            },
         }
 
         subscriptions = {
             s1: {
                 vhost: '/',
                 queue: 'q1'
+            },
+            s2: {
+                vhost: '/',
+                queue: 'q2'
             }
         }
 
@@ -587,6 +607,38 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should forward messages to publication when requested', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' })
+                    })
+                })
+
+                broker.subscribe('s2', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        ackOrNack()
+                        assert.equal(message.properties.headers.rascal.forwarded, 1)
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
     it('should chain recovery strategies', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -668,12 +720,18 @@ describe('Subscriptions', function() {
                     exchanges: {
                         e1: {
                             assert: true
+                        },
+                        e2: {
+                            assert: true
                         }
                     },
                     queues: {
                         q1: {
                             assert: true,
                             replyTo: replyTo
+                        },
+                        q2: {
+                            assert: true
                         }
                     },
                     bindings: {
