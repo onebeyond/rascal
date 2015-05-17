@@ -36,6 +36,9 @@ describe('Subscriptions', function() {
                     },
                     e2: {
                         assert: true
+                    },
+                    xx: {
+                        assert: true
                     }
                 },
                 queues: {
@@ -72,6 +75,10 @@ describe('Subscriptions', function() {
                 exchange: 'e2',
                 routingKey: 'bar'
             },
+            p3: {
+                vhost: '/',
+                exchange: 'xx'
+            }
         }
 
         subscriptions = {
@@ -350,7 +357,6 @@ describe('Subscriptions', function() {
     })
 
     it('should dead letter rejected when specified', function(done) {
-
         createBroker({
             vhosts: {
                 '/': {
@@ -390,7 +396,7 @@ describe('Subscriptions', function() {
                     }
                 }
             },
-            publications: publications,
+            publications: _.pick(publications, 'p1'),
             subscriptions: {
                 s1: {
                     vhost: '/',
@@ -697,6 +703,33 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should error when forwarding messages to /dev/null', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, publication) {
+                assert.ifError(err)
+                publication.on('success', function(messageId) {
+                    broker.subscribe('s1', function(err, subscription) {
+                        assert.ifError(err)
+                        subscription.on('message', function(message, content, ackOrNack) {
+                            assert.ok(message)
+                            ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' })
+                        }).on('error', function(err) {
+                            assert.ok(err)
+                            assert.equal('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message)
+                            done()
+                        })
+                    })
+                })
+            })
+        })
+    })
+
     it('should chain recovery strategies', function(done) {
         createBroker({
             vhosts: vhosts,
@@ -774,18 +807,12 @@ describe('Subscriptions', function() {
                     exchanges: {
                         e1: {
                             assert: true
-                        },
-                        e2: {
-                            assert: true
                         }
                     },
                     queues: {
                         q1: {
                             assert: true,
                             replyTo: replyTo
-                        },
-                        q2: {
-                            assert: true
                         }
                     },
                     bindings: {
@@ -797,8 +824,8 @@ describe('Subscriptions', function() {
                     }
                 }
             },
-            publications: publications,
-            subscriptions: subscriptions
+            publications: _.pick(publications, 'p1'),
+            subscriptions: _.pick(subscriptions, 's1')
         }, function(err, broker) {
             assert.ifError(err)
             broker.publish('p1', 'test message', replyTo + '.foo.bar', function(err) {
