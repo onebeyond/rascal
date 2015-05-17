@@ -8,6 +8,7 @@
     "async": "^0.9.0",
     "debug": "^2.1.3",
     "forward-emitter": "0.0.1",
+    "husky": "^0.8.0",
     "lodash": "^3.6.0",
     "merge-defaults": "^0.2.1",
     "node-uuid": "^1.4.3",
@@ -18,7 +19,8 @@
   },
   "scripts": {
     "test": "mocha --recursive tests",
-    "test-debug": "mocha --debug-brk --recursive tests"
+    "test-debug": "mocha --debug-brk --recursive tests",
+    "prepush": "npm test"
   },
   "keywords": [
     "amqplib",
