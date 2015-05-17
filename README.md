@@ -468,7 +468,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 ```
 
 #### Forwarding messages
-Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```
+Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to broker.publish apart from you pass in the original message you want to be forwarded instead of the message payload. 
 
 ```javascript
 broker.forward("p1", message, function(err, publication) {
@@ -478,16 +478,6 @@ broker.forward("p1", message, function(err, publication) {
      console.error("Error was", err.message)
   })
 })
-```
-The syntax is similar to broker.publish apart from you pass in the original message you want to be forwarded instead of the message payload. Rascal will copy the original message properties to the forwarded message and decorate the message the following headers:
-
-```json
-{
-  "rascal": {
-    "forwarded": true,
-    "originalExchange": "original:exchange"
-  }
-}
 ```
 **Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using ```broker.foward```**
 
@@ -584,6 +574,8 @@ ackOrNack(err, [
   { strategy: 'nack' }
 ])
 ```
+One use of the forward recovery strategy is to send messages to a wait queue which will dead-letter them after a period of time. [Repeated dead lettering causes some versions of RabbitMQ to crash](https://github.com/rabbitmq/rabbitmq-server/issues/161). If you encounter this issue upgrade RabbitMQ or specify ```xDeathFix: true``` which will delete any x-death headers on the message before forwarding.
+
 ##### Ack
 Acknowledges the message, guaranteeing that it will be discarded in the event you also have a dead letter exchange configured. Sometimes useful in automated tests or when chaining a sequence of other recovery strategies.
 ```js
