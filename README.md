@@ -439,13 +439,15 @@ broker.publish("p1", "some message", "some.routing.key", callback)
 broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { "expiration": 5000 } })
 
 ```
-The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors
+The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors. If you specify the mandatory option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
 ```javascript
 broker.publish("p1", "some message", function(err, publication) {
   publication.on("success", function(messageId) {
      console.log("Message id was", messageId)
   }).on("error", function(err) {
      console.error("Error was", err.message)
+  }).on("return", function(message) {
+     console.warn("Message %s was returned", messageId)
   })
 })
 ```
@@ -468,7 +470,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 ```
 
 #### Forwarding messages
-Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to broker.publish apart from you pass in the original message you want to be forwarded instead of the message payload. 
+Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to broker.publish apart from you pass in the original message you want to be forwarded instead of the message payload.
 
 ```javascript
 broker.forward("p1", message, function(err, publication) {
@@ -476,6 +478,8 @@ broker.forward("p1", message, function(err, publication) {
      console.log("Message id was", messageId)
   }).on("error", function(err) {
      console.error("Error was", err.message)
+  }).on("return", function(message) {
+     console.warn("Message %s was returned", messageId)
   })
 })
 ```
@@ -533,7 +537,7 @@ For messages which are not auto-acknowledged (the default) calling ```ackOrNack(
 ```javascript
 ackOrNack(err, { strategy: 'nack' })
 ```
-Nack causes the message to be discarded or routed to a dead letter exchange if configured. 
+Nack causes the message to be discarded or routed to a dead letter exchange if configured.
 
 ##### Nack with Requeue
 ```javascript

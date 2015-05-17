@@ -31,6 +31,9 @@ describe('Publications', function() {
                     },
                     e2: {
                         assert: true
+                    },
+                    xx: {
+                        assert: true
                     }
                 },
                 queues: {
@@ -242,6 +245,26 @@ describe('Publications', function() {
                     setTimeout(function() {
                         amqputils.assertMessageAbsent('q1', namespace, done)
                     }, 100)
+                })
+            })
+        })
+    })
+
+    it('should report unrouted messages', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    exchange: 'xx'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, publication) {
+                assert.ifError(err)
+                publication.on('return', function(message) {
+                    assert.ok(message)
+                    done()
                 })
             })
         })
