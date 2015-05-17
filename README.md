@@ -598,6 +598,7 @@ ackOrNack(err, [
 ])
 ```
 Far more sophisticated strategies are achievable...
+![Retry BackOff Fail](https://cloud.githubusercontent.com/assets/229672/7668701/78071946-fc3e-11e4-8f34-67fc2db1dada.png "Retry BackOff Fail")
 
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
