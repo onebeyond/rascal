@@ -728,7 +728,7 @@ describe('Subscriptions', function() {
                                 attempts: 5
                             }
                         }, {
-                            strategy: 'nack'
+                            strategy: 'ack'
                         }], function() {
                             if (messages[message.properties.messageId] < 6) return
                             setTimeout(function() {
