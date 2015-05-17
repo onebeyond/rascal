@@ -15,6 +15,7 @@
     "safe-json-parse": "^4.0.0"
   },
   "devDependencies": {
+    "husky": "^0.8.0",
     "mocha": "^2.2.1"
   },
   "scripts": {
