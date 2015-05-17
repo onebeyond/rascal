@@ -653,6 +653,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
       "publications": {
           "vhost": "/",
           "routingKey": "",
+          "confirm": true,
           "options": {
               "persistent": true
           }
