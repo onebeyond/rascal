@@ -730,6 +730,33 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should error unknown recovery strategy', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err, publication) {
+                assert.ifError(err)
+                publication.on('success', function(messageId) {
+                    broker.subscribe('s1', function(err, subscription) {
+                        assert.ifError(err)
+                        subscription.on('message', function(message, content, ackOrNack) {
+                            assert.ok(message)
+                            ackOrNack(new Error('unknown'), { strategy: 'foo' })
+                        }).on('error', function(err) {
+                            assert.ok(err)
+                            assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message)
+                            done()
+                        })
+                    })
+                })
+            })
+        })
+    })
+
     it('should chain recovery strategies', function(done) {
         createBroker({
             vhosts: vhosts,
