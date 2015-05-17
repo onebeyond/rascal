@@ -569,17 +569,25 @@ Before using republish please consider the following:
 4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. This is problematic if you want to replublish to the queue you consumed the message from. Rascal can mitigate restoring the original values before the consumer receives the message.
 
 ##### Forward
-Instead of republish the message to the same queue you can forward it to a Rascal publication
+Instead of republishing the message to the same queue you can forward it to a Rascal publication
 ```js
-ackOrNack(err, { strategy: 'republish', publication: 'retry_exchange'})
+ackOrNack(err, { strategy: 'forward', publication: 'some_exchange'})
 ```
 As with the Republish strategy, you can limit the number of foward attempts. **Whenever you specify a number of attempts you should always chain a fallback strategy**, otherwise if the attempts are exceeded your message will be neither acked or nacked.
 ```javascript
 ackOrNack(err, [
-  { strategy: 'forward', defer: 1000, attempts: 10 },
+  { strategy: 'forward', publication: 'some_exchange', defer: 1000, attempts: 10 },
   { strategy: 'nack' }
 ])
 ```
+You can also override the publication options
+```javascript
+ackOrNack(err, [
+  { strategy: 'forward', publication: 'some_exchange', options: { routingKey: 'custom.routing.key' } },
+  { strategy: 'nack' }
+])
+```
+
 One use of the forward recovery strategy is to send messages to a wait queue which will dead-letter them after a period of time. [Repeated dead lettering causes some versions of RabbitMQ to crash](https://github.com/rabbitmq/rabbitmq-server/issues/161). If you encounter this issue upgrade RabbitMQ or specify ```xDeathFix: true``` which will delete any x-death headers on the message before forwarding.
 
 ##### Ack

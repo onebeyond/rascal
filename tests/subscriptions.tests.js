@@ -47,6 +47,9 @@ describe('Subscriptions', function() {
                     },
                     q2: {
                         assert: true
+                    },
+                    q3: {
+                        assert: true
                     }
                 },
                 bindings: {
@@ -59,6 +62,11 @@ describe('Subscriptions', function() {
                         source: 'e2',
                         destination: 'q2',
                         bindingKey: 'bar'
+                    },
+                    b3: {
+                        source: 'e1',
+                        destination: 'q3',
+                        bindingKey: 'baz'
                     }
                 }
             }
@@ -89,6 +97,10 @@ describe('Subscriptions', function() {
             s2: {
                 vhost: '/',
                 queue: 'q2'
+            },
+            s3: {
+                vhost: '/',
+                queue: 'q3'
             }
         }
 
@@ -623,6 +635,36 @@ describe('Subscriptions', function() {
             })
 
             broker.subscribe('s2', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack()
+                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should override roouting key when forward messages', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', assert.ifError)
+
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', options: { routingKey: 'baz' }} )
+                })
+            })
+
+            broker.subscribe('s3', function(err, subscription) {
                 assert.ifError(err)
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
