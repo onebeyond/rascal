@@ -615,27 +615,94 @@ describe('Subscriptions', function() {
             subscriptions: subscriptions
         }, function(err, broker) {
             assert.ifError(err)
-            broker.publish('p1', 'test message', function(err) {
+            broker.publish('p1', 'test message', assert.ifError)
+
+            broker.subscribe('s1', function(err, subscription) {
                 assert.ifError(err)
-
-                broker.subscribe('s1', function(err, subscription) {
-                    assert.ifError(err)
-                    subscription.on('message', function(message, content, ackOrNack) {
-                        assert.ok(message)
-                        ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' })
-                    })
-                })
-
-                broker.subscribe('s2', function(err, subscription) {
-                    assert.ifError(err)
-                    subscription.on('message', function(message, content, ackOrNack) {
-                        assert.ok(message)
-                        ackOrNack()
-                        assert.equal(message.properties.headers.rascal.forwarded, 1)
-                        done()
-                    })
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' })
                 })
             })
+
+            broker.subscribe('s2', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack()
+                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should maintain original fields, properties and headers when forwarded', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+
+            var messageId
+
+            broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }, function(err, publication) {
+                publication.on('success', function(_messageId) {
+                    messageId = _messageId
+                })
+            })
+
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' })
+                })
+            })
+
+            broker.subscribe('s2', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack()
+                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.foo, 'bar')
+                    assert.equal(message.properties.messageId, messageId)
+                    assert.equal(message.fields.routingKey, 'foo')
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should cap forwards when requested', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', assert.ifError)
+
+            var count = 0
+
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    count++
+                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', options: { attempts: 5 } })
+                })
+            })
+
+            setTimeout(function() {
+                assert.equal(count, 6)
+                done()
+            }, 500)
+
         })
     })
 
