@@ -74,7 +74,7 @@ Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/am
 * Dropped connections and borked channels will not be automatically recovered
 * Any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
 
-Rascal seeks to solve these problems.
+Rascal seeks to either solve these problems, make them easier to deal with or bring them to your attention.
 
 ## Caveats
 * Rascal currently implements only a small subset of the [amqplib api](http://www.squaremobius.net/amqp.node/doc/channel_api.html). It was written with a strong bias towards moderate volume pub/sub systems for a project with some quite agressive timescales. If you need one of the missing api calls, then your best approach is to submit a [PR](https://github.com/guidesmiths/rascal/pulls).
