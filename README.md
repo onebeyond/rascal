@@ -545,7 +545,9 @@ The defer option is not mandatory, but without it you are likely retry your mess
 ```javascript
 ackOrNack(err, { strategy: 'republish', defer: 1000 })
 ```
-An alternative to nacking to republish the message back to the queue it came from. This has the advantage that the message will be resent to the back of the queue, allowing other messages to be processed and potentially fixing errors relating to ordering. Rascal also keeps track of the number of republishes so you can limit the number of attempts. **Whenever you specify a number of attempts you should always chain a fallback strategy**, otherwise if the attempts are exceeded your message will be neither acked or nacked.
+An alternative to nacking to republish the message back to the queue it came from. This has the advantage that the message will be resent to the back of the queue, allowing other messages to be processed and potentially fixing errors relating to ordering.
+
+Rascal keeps track of the number of republishes so you can limit the number of attempts. **Whenever you specify a number of attempts you should always chain a fallback strategy**, otherwise if the attempts are exceeded your message will be neither acked or nacked.
 ```javascript
 ackOrNack(err, [
   { strategy: 'republish', defer: 1000, attempts: 10 },
