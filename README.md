@@ -403,6 +403,47 @@ If you want to bind to a headers exchange specify the appropriate binding option
   }
 }
 ```
+#### Bindings Shortcut Notation
+Binding configuration can get rather verbose, so you short cut the notcation as follows...
+```json
+{
+  "bindings": {
+    "e1 -> q1": {
+    }
+  }
+}
+```
+is equivalent to...
+```json
+{
+  "bindings": {
+    "b1": {
+      "source": "e1",
+      "destination": "q1"
+    }
+  }
+}
+```
+and
+```json
+{
+  "bindings": {
+    "e1 -> q1": {
+    }
+  }
+}
+is equivalent to...
+```json
+{
+  "bindings": {
+    "e1[foo, bar.baz] -> q1": {
+      "source": "e1",
+      "destination": "q1",
+      "bindingKeys": ["foo", "bar.baz"]
+    }
+  }
+}
+```
 
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
