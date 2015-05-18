@@ -390,6 +390,56 @@ describe('Configuration', function() {
                 })
             })
 
+            it('should convert "source -> destination" from binding key', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
+                            bindings: {
+                                'e1 -> q1': {},
+                                'e:1 -> q:1': {},
+                                'e_1 -> q_1': {},
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1')
+                    assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].source, 'e:1')
+                    assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].destination, 'q:1')
+                    assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].source, 'e_1')
+                    assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].destination, 'q_1')
+                })
+            })
+
+            it('should convert "source[binding.key] -> destination" from binding key', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: {
+                                q1: {
+                                }
+                            },
+                            bindings: {
+                                'e1[a] -> q1': {},
+                                'e1[a.b] ->q1': {},
+                                'e1[a,a.b] ->q1': {}
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKeys, 'a')
+                    assert.equal(config.vhosts.v1.bindings['e1[a.b] ->q1'].bindingKeys, 'a.b')
+                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] ->q1'].bindingKeys[0], 'a')
+                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] ->q1'].bindingKeys[1], 'a.b')
+                })
+            })
+
             it('should inflate bindings with empty structure', function() {
                 configure({
                     vhosts: {
