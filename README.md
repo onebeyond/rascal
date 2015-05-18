@@ -428,7 +428,7 @@ and
 ```json
 {
   "bindings": {
-    "e1 -> q1": {
+    "e1[foo, bar.baz] -> q1": {
     }
   }
 }
@@ -436,7 +436,7 @@ is equivalent to...
 ```json
 {
   "bindings": {
-    "e1[foo, bar.baz] -> q1": {
+    "b1": {
       "source": "e1",
       "destination": "q1",
       "bindingKeys": ["foo", "bar.baz"]
