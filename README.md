@@ -432,6 +432,7 @@ and
     }
   }
 }
+```
 is equivalent to...
 ```json
 {
