@@ -426,17 +426,17 @@ describe('Configuration', function() {
                             },
                             bindings: {
                                 'e1[a] -> q1': {},
-                                'e1[a.b] ->q1': {},
-                                'e1[a,a.b] ->q1': {}
+                                'e1[a.b] -> q1': {},
+                                'e1[a,a.b] -> q1': {}
                             }
                         }
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKeys, 'a')
-                    assert.equal(config.vhosts.v1.bindings['e1[a.b] ->q1'].bindingKeys, 'a.b')
-                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] ->q1'].bindingKeys[0], 'a')
-                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] ->q1'].bindingKeys[1], 'a.b')
+                    assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKey, 'a')
+                    assert.equal(config.vhosts.v1.bindings['e1[a.b] -> q1'].bindingKey, 'a.b')
+                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a'].bindingKey, 'a')
+                    assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a.b'].bindingKey, 'a.b')
                 })
             })
 
