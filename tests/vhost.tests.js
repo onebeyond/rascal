@@ -135,7 +135,7 @@ describe('Vhost', function() {
             }
         }, function(err) {
             assert.ifError(err)
-            amqputils.publishMessage('e1', namespace, 'test message', function(err) {
+            amqputils.publishMessage('e1', namespace, 'test message', {}, function(err) {
                 assert.ifError(err)
                 amqputils.assertMessage('q1', namespace, 'test message', done)
             })

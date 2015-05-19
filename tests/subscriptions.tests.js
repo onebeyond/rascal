@@ -198,6 +198,101 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should consume to invalid messages messages when no listener is bound', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('error', function(err) {
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessageAbsent('q1', namespace, done)
+                        })
+                    })
+                })
+            })
+        })
+    })
+
+    it('should not consume an invalid messages messages when a listener is bound', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessage('q1', namespace, 'not json', done)
+                        })
+                    })
+                })
+            })
+        })
+    })
+
+    it('should consume an invalid message when a listener acks it', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        ackOrNack(function() {
+                            setTimeout(function() {
+                                broker.shutdown(function(err) {
+                                    assert.ifError(err)
+                                    amqputils.assertMessageAbsent('q1', namespace, done)
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+
+    it('should consume an invalid message when a listener nacks it', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        ackOrNack(err, function() {
+                            setTimeout(function() {
+                                broker.shutdown(function(err) {
+                                    assert.ifError(err)
+                                    amqputils.assertMessageAbsent('q1', namespace, done)
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
 
     it('should force the content type when specified', function(done) {
         createBroker({
@@ -368,7 +463,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should dead letter rejected when specified', function(done) {
+    it('should reject messages when requested', function(done) {
         createBroker({
             vhosts: {
                 '/': {

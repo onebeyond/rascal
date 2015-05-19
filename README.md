@@ -122,7 +122,6 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
       })
     ```
 
-
 ## Installation
 ```bash
 npm install rascal
@@ -571,8 +570,23 @@ broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
 The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
-#### Message Acknowledgement and Recovery Strategies
+#### Invalid Messages
+If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
+```javascript
+broker.subscribe('s1', function(err, subscription) {
+  subscription.on('message', function(message, content, ackOrNack) {
+    // Do stuff with message
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
+  }).on('invalid_content', function(err, message, ackOrNack)) {
+    console.error('Invalid content', err)
+    ackOrNack(err)
+  })
+})
+```
+If the message has not been auto acknowledged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead.
 
+#### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
 
 ##### Nack (Reject or Dead Letter)

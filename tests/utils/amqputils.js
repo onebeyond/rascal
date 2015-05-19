@@ -30,10 +30,10 @@ function init(connection) {
         })
     }
 
-    function publishMessage(exchange, namespace, message, next) {
+    function publishMessage(exchange, namespace, message, options, next) {
         connection.createChannel(function(err, channel) {
             assert.ifError(err)
-            channel.publish(namespace + ':' + exchange, '', new Buffer(message))
+            channel.publish(namespace + ':' + exchange, options.routingKey, new Buffer(message), options)
             next()
         })
     }
