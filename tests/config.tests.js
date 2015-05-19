@@ -440,7 +440,7 @@ describe('Configuration', function() {
                 })
             })
 
-            it.only('should qualify bindings keys when specified', function() {
+            it('should qualify bindings keys when specified', function() {
                 configure({
                     vhosts: {
                         v1: {
