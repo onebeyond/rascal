@@ -512,7 +512,7 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 ```
 
 #### Forwarding messages
-Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to ```broker.publish``` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained.
+Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to ```broker.publish``` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained. The message will also be CC'd with an additional routingkey of ```<queue>.<routingKey>``` which can be useful for some retry scenarios.
 
 ```javascript
 broker.forward("p1", message, overrides, function(err, publication) {
@@ -694,7 +694,6 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
       },
       "publications": {
           "vhost": "/",
-          "routingKey": "",
           "confirm": true,
           "options": {
               "persistent": true
