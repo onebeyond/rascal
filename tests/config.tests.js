@@ -440,6 +440,35 @@ describe('Configuration', function() {
                 })
             })
 
+            it.only('should qualify bindings keys when specified', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            namespace: 'ns1',
+                            queues: {
+                                q1: {
+                                }
+                            },
+                            bindings: {
+                                b1: {
+                                    source: 'e1',
+                                    destination: 'q1',
+                                    bindingKey: 'q1',
+                                    qualifyBindingKeys: true
+                                },
+                                'e1[q1] -> q1': {
+                                    qualifyBindingKeys: true
+                                }
+                            }
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1')
+                    assert.equal(config.vhosts.v1.bindings['e1[q1] -> q1'].bindingKey, 'ns1:q1')
+                })
+            })
+
             it('should inflate bindings with empty structure', function() {
                 configure({
                     vhosts: {
