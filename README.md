@@ -705,9 +705,12 @@ afterEach(function(done) {
 
 ### Bounce
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
-
+```javascript
+    broker.bounce(done)
+})
 ```
-#### Shorthand Notation
+
+### Shorthand Notation
 Rascal configuration can get rather verbose, so you can use the shorthand notation
 ```json
 {
