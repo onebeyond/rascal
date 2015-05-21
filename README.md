@@ -721,7 +721,7 @@ Rascal configuration can get rather verbose, so you can use the shorthand notati
   "queues": {
     "q1": {},
     "q2": {}
-  }
+  },
   "bindings": {
     "b1": {
       "source": "e1",
