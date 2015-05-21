@@ -187,6 +187,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
+                    console.log(config)
                     assert.equal(config.vhosts.v1.exchanges.e1.assert, false)
                     assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct')
                     assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false)
@@ -241,6 +242,42 @@ describe('Configuration', function() {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
                     assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1')
+                })
+            })
+
+           it('should support array of names configuration', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            exchanges: [ 'e1', 'e2' ]
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.ok(!_.isArray(config.vhosts.v1.exchanges))
+                    assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
+                    assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
+
+                    assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2')
+                    assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2')
+                })
+            })
+
+           it('should support a mixed array of names / objects configuration', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            exchanges: [ 'e1', { name: 'e2' } ]
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.ok(!_.isArray(config.vhosts.v1.exchanges))
+                    assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
+                    assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
+
+                    assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2')
+                    assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2')
                 })
             })
         })
@@ -359,6 +396,24 @@ describe('Configuration', function() {
                     assert.ifError(err)
                     assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
                     assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1')
+                })
+            })
+
+            it('should support a mixed array of names / objects configuration', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: ['q1', 'q2']
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.ok(!_.isArray(config.vhosts.v1.queues))
+                    assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
+                    assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1')
+
+                    assert.equal(config.vhosts.v1.queues.q2.name, 'q2')
+                    assert.equal(config.vhosts.v1.queues.q2.fullyQualifiedName, 'q2')
                 })
             })
         })
@@ -588,6 +643,31 @@ describe('Configuration', function() {
                     assert.equal(config.vhosts.v1.bindings['b1'].source, 'e1')
                     assert.equal(config.vhosts.v1.bindings['b1'].destination, 'q1')
                     assert.equal(config.vhosts.v1.bindings['b1'].bindingKey, 'a')
+                })
+            }),
+
+            it('should support a mixed array of names / objects configuration', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            queues: [
+                                'q1',
+                                'q2'
+                            ],
+                            bindings: [
+                                'e1 -> q1',
+                                'e1 -> q2'
+                            ]
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.ok(!_.isArray(config.vhosts.v1.bindings))
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1')
+
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q2'].source, 'e1')
+                    assert.equal(config.vhosts.v1.bindings['e1 -> q2'].destination, 'q2')
                 })
             })
         })
