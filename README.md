@@ -401,49 +401,6 @@ If you want to bind to a headers exchange specify the appropriate binding option
     }
   }
 }
-```
-#### Bindings Shortcut Notation
-Binding configuration can get rather verbose, so you short cut the notcation as follows...
-```json
-{
-  "bindings": {
-    "e1 -> q1": {
-    }
-  }
-}
-```
-is equivalent to...
-```json
-{
-  "bindings": {
-    "b1": {
-      "source": "e1",
-      "destination": "q1"
-    }
-  }
-}
-```
-and
-```json
-{
-  "bindings": {
-    "e1[foo, bar.baz] -> q1": {
-    }
-  }
-}
-```
-is equivalent to...
-```json
-{
-  "bindings": {
-    "b1": {
-      "source": "e1",
-      "destination": "q1",
-      "bindingKeys": ["foo", "bar.baz"]
-    }
-  }
-}
-```
 
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
@@ -749,7 +706,69 @@ afterEach(function(done) {
 ### Bounce
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
 
-### Running the tests
+```
+#### Shorthand Notation
+Rascal configuration can get rather verbose, so you can use the shorthand notation
+```json
+{
+  "exchanges": {
+    "e1": {},
+    "e2": {}
+  },
+  "queues": {
+    "q1": {},
+    "q2": {}
+  }
+  "bindings": {
+    "b1": {
+      "source": "e1",
+      "destination": "q1"
+    },
+    "b2": {
+      "source": "e1",
+      "destination": "q2",
+      "bindingKeys": ["bk1", "bk2"]
+    }
+  }
+}
+```
+is equivalent to...
+```json
+{
+  "exchanges": ["e1", "e2"],
+  "queues": ["q1", "e2"],
+  "bindings": [
+    "e1 -> q1",
+    "e2[bk1, bk2] -> q2"
+  ]
+}
+```
+If you need to specify exchange, queue or binding parameters you can mix and match string and object configuration...
+```json
+{
+  "exchanges": {
+    "e1": {},
+    "e2" : {
+      "type": "fanout"
+    }
+  ]
+}
+```
+is equivalent to...
+```json
+{
+  "exchanges": [
+    "e1",
+    {
+      "name": "e2",
+      "type": "fanout"
+    }
+  ]
+}
+```
+
+
+## Running the tests
 ```bash
 npm test
 ```
