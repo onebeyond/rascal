@@ -823,6 +823,55 @@ describe('Configuration', function() {
                 assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination))
             })
         })
+
+
+        it('should default the publication vhost to the vhost in the surrounding block', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: ['e1'],
+                        publications: {
+                            p1: {
+                                exchange: 'e1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.p1.vhost, 'v1')
+                assert.equal(config.publications.p1.destination, 'e1')
+            })
+        })
+
+        it('should should merge implicit vhost publications with explicit publications', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: ['e1', 'e2'],
+                        publications: {
+                            p1: {
+                                exchange: 'e1'
+                            }
+                        }
+                    }
+                },
+                publications: {
+                    p2: {
+                        vhost: 'v1',
+                        exchange: 'e2'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.p1.vhost, 'v1')
+                assert.equal(config.publications.p1.exchange, 'e1')
+                assert.equal(config.publications.p2.vhost, 'v1')
+                assert.equal(config.publications.p2.exchange, 'e2')
+            })
+        })
     })
 
     describe('Subscriptions', function() {
@@ -905,7 +954,6 @@ describe('Configuration', function() {
         })
 
         it('should replace source with its fully qualified name', function() {
-
             configure({
                 vhosts: {
                     v1: {
@@ -927,6 +975,54 @@ describe('Configuration', function() {
                 assert.ifError(err)
                 assert.equal(config.subscriptions.s1.name, 's1')
                 assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source))
+            })
+        })
+
+        it('should default the subscription vhost to the vhost in the surrounding block', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1'],
+                        subscriptions: {
+                            s1: {
+                                queue: 'q1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.subscriptions)
+                assert.equal(config.subscriptions.s1.vhost, 'v1')
+                assert.equal(config.subscriptions.s1.queue, 'q1')
+            })
+        })
+
+        it('should should merge implicit vhost subscriptions with explicit subscriptions', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1', 'q2'],
+                        subscriptions: {
+                            s1: {
+                                queue: 'q1'
+                            }
+                        }
+                    }
+                },
+                subscriptions: {
+                    s2: {
+                        queue: 'q2',
+                        vhost: 'v1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.subscriptions)
+                assert.equal(config.subscriptions.s1.vhost, 'v1')
+                assert.equal(config.subscriptions.s1.queue, 'q1')
+                assert.equal(config.subscriptions.s2.vhost, 'v1')
+                assert.equal(config.subscriptions.s2.queue, 'q2')
             })
         })
     })

@@ -408,8 +408,8 @@ Now that you've bound your queues and exchanges, you need to start sending them 
 {
   "publications": {
     "p1": {
-      "exchange": "e1",
       "vhost": "v1",
+      "exchange": "e1",
       "routingKey": "foo"
     }
   }
@@ -423,12 +423,14 @@ If you prefer to send messages to a queue
 {
   "publications": {
     "p1": {
-      "exchange": "e1",
-      "vhost": "v1"
+      "vhost": "v1",
+      "queue": "q1"
     }
   }
 }
 ```
+> To save you entering the vhost you can nest publications inside the vhost block.
+
 Rascal supports text, buffers and anything it can JSON.stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
 
 ```javascript
@@ -582,11 +584,16 @@ Before using republish please consider the following:
 4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. This is problematic if you want to replublish to the queue you consumed the message from. Rascal can mitigate restoring the original values before the consumer receives the message.
 
 ##### Forward
-Instead of republishing the message to the same queue you can forward it to a Rascal publication
+Instead of republishing the message to the same queue you can forward it to a Rascal publication. You should read the section entitled [Forwarding messages](Forwarding_messages) to understand the risks of this.
 ```js
 ackOrNack(err, { strategy: 'forward', publication: 'some_exchange'})
 ```
-As with the Republish strategy, you can limit the number of foward attempts. **Whenever you specify a number of attempts you should always chain a fallback strategy**, otherwise if the attempts are exceeded your message will be neither acked or nacked.
+**Danger**
+As with the Republish strategy, you can limit the number of foward attempts. Whenever you specify a number of attempts you should always chain a fallback strategy, otherwise if the attempts are exceeded your message will be neither acked or nacked.
+
+Furthermore if the message is forwarded but cannot be routed (e.g. due to an incorrect binding), the message will be returned **after** Rascal receives a 'success' event from amqplib. Consequently the message will have been ack'd. Any subsequent fallback strategy which attempts to ack or nack the message will fail, and so the message may lost. The subscription will emit an error event under such circumstances.
+
+
 ```javascript
 ackOrNack(err, [
   { strategy: 'forward', publication: 'some_exchange', defer: 1000, attempts: 10 },
@@ -600,7 +607,6 @@ ackOrNack(err, [
   { strategy: 'nack' }
 ])
 ```
-
 One use of the forward recovery strategy is to send messages to a wait queue which will dead-letter them after a period of time. [Repeated dead lettering causes some versions of RabbitMQ to crash](https://github.com/rabbitmq/rabbitmq-server/issues/161). If you encounter this issue upgrade RabbitMQ or specify ```xDeathFix: true``` which will delete any x-death headers on the message before forwarding.
 
 ##### Ack
