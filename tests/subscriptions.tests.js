@@ -615,8 +615,36 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish'), { strategy: 'republish' })
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish me'), { strategy: 'republish' })
                         assert.equal(message.properties.headers.rascal.republished, 9)
+                        assert.equal(message.properties.headers.rascal.error.message, 'republish me')
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should truncate error messages when republishing', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'republish' })
+                        assert.equal(message.properties.headers.rascal.republished, 9)
+                        assert.equal(message.properties.headers.rascal.error.message.length, 1024)
                         done()
                     })
                 })
@@ -725,7 +753,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
-                    ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' })
+                    ackOrNack(new Error('forward me'), { strategy: 'forward', publication: 'p2' })
                 })
             })
 
@@ -735,13 +763,45 @@ describe('Subscriptions', function() {
                     assert.ok(message)
                     ackOrNack()
                     assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.rascal.error.message, 'forward me')
                     done()
                 })
             })
         })
     })
 
-    it('should override roouting key when forward messages', function(done) {
+    it('should truncate error messages when forwarding', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', assert.ifError)
+
+            broker.subscribe('s1', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'forward', publication: 'p2' })
+                })
+            })
+
+            broker.subscribe('s2', function(err, subscription) {
+                assert.ifError(err)
+                subscription.on('message', function(message, content, ackOrNack) {
+                    assert.ok(message)
+                    ackOrNack()
+                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.rascal.error.message.length, 1024)
+                    done()
+                })
+            })
+        })
+    })
+
+    it('should override routing key when forward messages', function(done) {
 
         createBroker({
             vhosts: vhosts,
