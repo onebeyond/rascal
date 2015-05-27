@@ -401,7 +401,7 @@ If you want to bind to a headers exchange specify the appropriate binding option
     }
   }
 }
-
+```
 ### Publications
 Now that you've bound your queues and exchanges, you need to start sending them messages. This is where publications come in.
 ```json
