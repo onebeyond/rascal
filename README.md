@@ -760,7 +760,7 @@ If you need to specify exchange, queue or binding parameters you can mix and mat
     "e2" : {
       "type": "fanout"
     }
-  ]
+  }
 }
 ```
 is equivalent to...
