@@ -435,6 +435,82 @@ describe('Validation', function() {
         })
     })
 
+    describe('Shovels', function() {
+
+        it('should mandate a subscription', function() {
+            validate({
+                shovels: {
+                    x1: {
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Shovel: x1 is missing a subscription', err.message)
+            })
+        })
+
+        it('should mandate a publication', function() {
+            validate({
+                shovels: {
+                    x1: {
+                        subscription: 's1'
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Shovel: x1 is missing a publication', err.message)
+            })
+        })
+
+        it('should report unknown subscriptions', function() {
+            validate({
+                subscriptions: {
+                },
+                publications: {
+                },
+                shovels: {
+                    x1: {
+                        subscription: 's1',
+                        publication: 'p1'
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Shovel: x1 refers to an unknown subscription: s1', err.message)
+            })
+        })
+
+        it('should report unknown publications', function() {
+            validate({
+                vhosts: {
+                    v1: {
+                        queues: {
+                            q1: {
+                            }
+                        }
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1',
+                        queue: 'q1'
+                    }
+                },
+                publications: {
+                },
+                shovels: {
+                    x1: {
+                        subscription: 's1',
+                        publication: 'p1'
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Shovel: x1 refers to an unknown publication: p1', err.message)
+            })
+        })
+    })
+
     describe('Vocabulary', function() {
 
         it('should report invalid vhost attribute', function() {
@@ -539,6 +615,19 @@ describe('Validation', function() {
             }, function(err) {
                 assert.ok(err)
                 assert.equal('Subscription: s1 refers to an unsupported attribute: invalid', err.message)
+            })
+        })
+
+        it('should report invalid shovel attributes', function() {
+            validate({
+                shovels: {
+                    x1: {
+                        invalid: true
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Shovel: x1 refers to an unsupported attribute: invalid', err.message)
             })
         })
     })

@@ -1026,4 +1026,34 @@ describe('Configuration', function() {
             })
         })
     })
+
+    describe('Shovels', function() {
+
+        it('should decorate subscriptions with name', function() {
+
+            configure({
+                shovels: {
+                    x1: {
+                        subscription: 's1',
+                        publication: 'p1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.shovels.x1.name, 'x1')
+            })
+        })
+
+        it('should convert "subscription -> publication" to shovel', function() {
+                configure({
+                    shovels: [
+                        's1 -> p1'
+                    ]
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.shovels['s1 -> p1'].subscription, 's1')
+                    assert.equal(config.shovels['s1 -> p1'].publication, 'p1')
+                })
+            })
+    })
 })

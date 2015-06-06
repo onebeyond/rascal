@@ -701,21 +701,6 @@ broker.subscribe('s1', function(err, subscription) {
 ```
 ## Bonus Features
 
-### Nuke
-In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
-```javascript
-afterEach(function(done) {
-    broker ? broker.nuke(done) : done()
-})
-```
-
-### Bounce
-Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
-```javascript
-    broker.bounce(done)
-})
-```
-
 ### Shorthand Notation
 Rascal configuration can get rather verbose, so you can use the shorthand notation
 ```json
@@ -776,6 +761,41 @@ is equivalent to...
 }
 ```
 
+### Nuke
+In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
+```javascript
+afterEach(function(done) {
+    broker ? broker.nuke(done) : done()
+})
+```
+
+### Bounce
+Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
+```javascript
+    broker.bounce(done)
+})
+```
+
+### Shovels
+RabbitMQ enables you to transfer messages between brokers using the [Shovel plugin](https://www.rabbitmq.com/shovel.html). You can do something similar with rascal by connecting a subscription to a publication. Shovel relies on rascals 'forward' feature, so all the caveates about duplicate messages apply.
+```json
+{
+  "shovels": {
+    "x1": {
+      "subscription": "s1",
+      "publication": "p1"
+    }
+  }
+}
+```
+or in shorthand
+```json
+{
+  "shovels": [
+    "s1 -> p1"
+  ]
+}
+```
 
 ## Running the tests
 ```bash
