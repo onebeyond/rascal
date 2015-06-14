@@ -616,7 +616,7 @@ describe('Subscriptions', function() {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                         if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish me'), { strategy: 'republish' })
-                        assert.equal(message.properties.headers.rascal.republished, 9)
+                        assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].republished, 9)
                         assert.equal(message.properties.headers.rascal.error.message, 'republish me')
                         done()
                     })
@@ -643,7 +643,7 @@ describe('Subscriptions', function() {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                         if (messages[message.properties.messageId] < 10) return ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'republish' })
-                        assert.equal(message.properties.headers.rascal.republished, 9)
+                        assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].republished, 9)
                         assert.equal(message.properties.headers.rascal.error.message.length, 1024)
                         done()
                     })
@@ -671,7 +671,7 @@ describe('Subscriptions', function() {
                             assert.ok(message)
                             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                             if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { strategy: 'republish' })
-                            assert.equal(message.properties.headers.rascal.republished, 1)
+                            assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].republished, 1)
                             assert.equal(message.properties.headers.foo, 'bar')
                             assert.equal(message.properties.messageId, messageId)
                             assert.equal(message.fields.routingKey, 'foo')
