@@ -615,9 +615,10 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
                         messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
-                        if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('republish me'), { strategy: 'republish' })
+                        if (messages[message.properties.messageId] < 10) return ackOrNack({ message: 'republish me', code: 'red' }, { strategy: 'republish' })
                         assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].republished, 9)
                         assert.equal(message.properties.headers.rascal.error.message, 'republish me')
+                        assert.equal(message.properties.headers.rascal.error.code, 'red')
                         done()
                     })
                 })
@@ -753,7 +754,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
-                    ackOrNack(new Error('forward me'), { strategy: 'forward', publication: 'p2' })
+                    ackOrNack({ message: 'forward me', code: 'red' }, { strategy: 'forward', publication: 'p2' })
                 })
             })
 
@@ -764,6 +765,7 @@ describe('Subscriptions', function() {
                     ackOrNack()
                     assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].forwarded, 1)
                     assert.equal(message.properties.headers.rascal.error.message, 'forward me')
+                    assert.equal(message.properties.headers.rascal.error.code, 'red')
                     done()
                 })
             })
