@@ -762,7 +762,7 @@ describe('Subscriptions', function() {
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
                     ackOrNack()
-                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].forwarded, 1)
                     assert.equal(message.properties.headers.rascal.error.message, 'forward me')
                     done()
                 })
@@ -793,7 +793,7 @@ describe('Subscriptions', function() {
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
                     ackOrNack()
-                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].forwarded, 1)
                     assert.equal(message.properties.headers.rascal.error.message.length, 1024)
                     done()
                 })
@@ -824,7 +824,7 @@ describe('Subscriptions', function() {
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
                     ackOrNack()
-                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                   assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].forwarded, 1)
                     done()
                 })
             })
@@ -861,7 +861,7 @@ describe('Subscriptions', function() {
                 subscription.on('message', function(message, content, ackOrNack) {
                     assert.ok(message)
                     ackOrNack()
-                    assert.equal(message.properties.headers.rascal.forwarded, 1)
+                    assert.equal(message.properties.headers.rascal[broker.qualify('/', 'q1')].forwarded, 1)
                     assert.equal(message.properties.headers.foo, 'bar')
                     assert.equal(message.properties.messageId, messageId)
                     assert.equal(message.fields.routingKey, 'foo')

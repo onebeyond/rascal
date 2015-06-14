@@ -187,7 +187,6 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    console.log(config)
                     assert.equal(config.vhosts.v1.exchanges.e1.assert, false)
                     assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct')
                     assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false)
