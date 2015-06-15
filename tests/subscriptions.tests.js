@@ -740,6 +740,84 @@ describe('Subscriptions', function() {
         })
     })
 
+    it.only('should immediately nack republished messages when requested', function(done) {
+        createBroker({
+            vhosts: {
+                '/': {
+                    namespace: namespace,
+                    exchanges: {
+                        e1: {
+                            assert: true
+                        },
+                        e2: {
+                            assert: true
+                        }
+                    },
+                    queues: {
+                        q1: {
+                            assert: true,
+                            options: {
+                                arguments: {
+                                    'x-dead-letter-exchange': 'e2'
+                                }
+                            }
+                        },
+                        q2: {
+                            assert: true
+                        }
+                    },
+                    bindings: {
+                        b1: {
+                            source: 'e1',
+                            destination: 'q1'
+                        },
+                        b2: {
+                            source: 'e2',
+                            destination: 'q2'
+                        }
+                    }
+                }
+            },
+            publications: _.pick(publications, 'p1'),
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1'
+                },
+                s2: {
+                    vhost: '/',
+                    queue: 'q2'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    var count = 0
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.equal(++count, 1)
+                        assert.ok(message)
+                        ackOrNack(new Error('immediate nack'), {
+                            strategy: 'republish',
+                            immediateNack: true
+                        })
+                    })
+                })
+
+                broker.subscribe('s2', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
     it('should forward messages to publication when requested', function(done) {
 
         createBroker({

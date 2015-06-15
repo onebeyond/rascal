@@ -560,6 +560,8 @@ ackOrNack(err, { strategy: 'nack', defer: 1000, requeue: true })
 ```
 The defer option is not mandatory, but without it you are likely retry your message thousands of times a second. Even then requeueing is a inadequate strategy for error handling, since the message will be rolled back to the front of the queue and there is no simple way to detect how many times the message has been redelivered.
 
+Dead lettering is a good option for invalid messages but with one major flaw - because the message cannot be modified it cannot be annotated with the error details. This makes it difficult to do anything useful with messages once dead lettered.
+
 ##### Republish
 ```javascript
 ackOrNack(err, { strategy: 'republish', defer: 1000 })
@@ -573,6 +575,8 @@ ackOrNack(err, [
   { strategy: 'nack' }
 ])
 ```
+Rascal also annotates the message with detail of the error ```message.properties.headers.rascal.<queue>.error``` which can be useful if you eventually dead letter it.
+
 Before using republish please consider the following:
 
 1. Rascal will copy messages properties from the original message to the republished one. If you set an expiration time on the original message this will also be recopied, effectively resetting it.
@@ -582,6 +586,13 @@ Before using republish please consider the following:
 3. Rascal will republish original message using a confirm channel, if the publish fails, the original message will not be nacked (You should mitigate this by chaining recovery strategies).
 
 4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. This is problematic if you want to replublish to the queue you consumed the message from. Rascal can mitigate restoring the original values before the consumer receives the message.
+
+##### Republish with immediate nack
+As mentioned previously, dead lettering invalid messages is a good strategy with one flaw - since there is no way to modify the message you cannot annotate it with failure details. A solution to this is to republish with attempts = 1 and then nacking it to a dead letter exchange. The problem with this approach is that invalid messages will always be processed twice. To workaround this set immediateNack to true in the recovery options. This will instruct Rascal to nack the message immediately instead of emitting the 'message' event.
+```js
+ackOrNack(err, { strategy: 'republish', immediateNack: true })
+```
+If you ever want to resend the message to the same queue you will have to remove the ```properties.headers.rascal.<queue>.immediateNack``` header first.
 
 ##### Forward
 Instead of republishing the message to the same queue you can forward it to a Rascal publication. You should read the section entitled [Forwarding messages](Forwarding_messages) to understand the risks of this.
