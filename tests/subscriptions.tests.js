@@ -843,7 +843,7 @@ describe('Subscriptions', function() {
                     ackOrNack()
                     assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1)
                     assert.equal(message.properties.headers.CC.length, 1)
-                    assert.equal(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.foo')
+                    assert.equal(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.bar')
                     assert.equal(message.properties.headers.rascal.error.message, 'forward me')
                     assert.equal(message.properties.headers.rascal.error.code, 'red')
                     done()
