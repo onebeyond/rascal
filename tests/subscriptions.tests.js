@@ -740,7 +740,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it.only('should immediately nack republished messages when requested', function(done) {
+    it('should immediately nack republished messages when requested', function(done) {
         createBroker({
             vhosts: {
                 '/': {
