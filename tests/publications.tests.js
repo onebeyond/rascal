@@ -106,7 +106,7 @@ describe('Publications', function() {
         })
     })
 
-    it('should publish text messages to confirm exchanges', function(done) {
+    it('should publish text messages using confirm channels to exchanges', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -171,7 +171,7 @@ describe('Publications', function() {
         })
     })
 
-    it('should publish to confirm queues', function(done) {
+    it('should publish to using confirm channels to queues', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: {
@@ -377,6 +377,64 @@ describe('Publications', function() {
                 publication.on('success', function(_messageId) {
                     messageId = _messageId
                 })
+            })
+        })
+    })
+
+    it('should publish lots of messages using normal channels', function(done) {
+
+        this.timeout(10000)
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    queue: 'q1',
+                    confirm: false
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+
+            async.timesSeries(1000, function(n, cb) {
+                broker.publish('p1', 'test message', function(err, publication) {
+                    assert.ifError(err)
+                    publication.on('success', function(messageId) {
+                        cb()
+                    })
+                })
+            }, function(err) {
+                assert.ifError(err)
+                done()
+            })
+        })
+    })
+
+    it('should publish lots of messages using confirm channels', function(done) {
+
+        this.timeout(20000)
+
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    queue: 'q1',
+                    confirm: true
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+
+            async.timesSeries(1000, function(n, cb) {
+                broker.publish('p1', 'test message', function(err, publication) {
+                    assert.ifError(err)
+                    publication.on('success', function(messageId) {
+                        cb()
+                    })
+                })
+            }, function(err) {
+                assert.ifError(err)
+                done()
             })
         })
     })
