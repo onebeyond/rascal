@@ -741,7 +741,7 @@ is equivalent to...
 ```json
 {
   "exchanges": ["e1", "e2"],
-  "queues": ["q1", "e2"],
+  "queues": ["q1", "q2"],
   "bindings": [
     "e1 -> q1",
     "e2[bk1, bk2] -> q2"
