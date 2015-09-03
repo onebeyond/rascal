@@ -210,6 +210,31 @@ describe('Publications', function() {
         })
     })
 
+    it('should publish messages with custom contentType to normal exchanges', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: {
+                p1: {
+                    exchange: 'e1'
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }, function(err, publication) {
+                assert.ifError(err)
+                publication.on('success', function(messageId) {
+                    amqputils.getMessage('q1', namespace, function(err, message) {
+                        assert.ifError(err)
+                        assert.ok(message, 'Message was not present')
+                        assert.equal(message.properties.contentType, 'application/vnd+custom.contentType.v1')
+                        assert.equal(message.content.toString(), JSON.stringify({ message: 'test message' }))
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
     it('should publish buffer messages to normal exchanges', function(done) {
         createBroker({
             vhosts: vhosts,
