@@ -118,6 +118,9 @@ describe('Vhost', function() {
                     exchanges: {
                         e1: {
                             assert: true
+                        },
+                        e2: {
+                            assert: true
                         }
                     },
                     queues: {
@@ -127,6 +130,11 @@ describe('Vhost', function() {
                     },
                     bindings: {
                         b1: {
+                            source: 'e1',
+                            destination: 'e2',
+                            destinationType: 'exchange'
+                        },
+                        b2: {
                             source: 'e1',
                             destination: 'q1'
                         }
