@@ -1232,6 +1232,37 @@ describe('Subscriptions', function() {
         })
     })
 
+
+    it('should not warn about emitter leaks', function(done) {
+
+        var config = {
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {}
+        }
+
+        _.times(11, function(i) {
+            config.subscriptions['s' + i] = {
+                vhost: '/',
+                queue: 'q1',
+                options: {
+                    noAck: true
+                }
+            }
+        })
+
+        createBroker(config, function(err, broker) {
+            assert.ifError(err)
+
+            _.times(11, function(i) {
+                broker.subscribe('s' + i, function(err, subscription) {
+                    assert.ifError(err)
+                    if (i === 10) done()
+                })
+            })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
