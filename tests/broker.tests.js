@@ -45,17 +45,25 @@ describe('Broker', function() {
     })
 
     it('should provide fully qualified name', function(done) {
-        createBroker({
-            vhosts: vhosts
-        }, function(err, broker) {
+        var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
+        createBroker(config, function(err, broker) {
             assert.ifError(err)
             assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'))
             done()
         })
     })
 
+    it('should not modify configuration', function(done) {
+        var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
+        var json = JSON.stringify(config, null, 2)
+        createBroker(config, function(err, broker) {
+            assert.ifError(err)
+            assert.equal(json, JSON.stringify(config, null, 2))
+            done()
+        })
+    })
+
     function createBroker(config, next) {
-        config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
             broker = _broker
             next(err, broker)
