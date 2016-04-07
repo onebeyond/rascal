@@ -32,6 +32,16 @@ describe('Broker', function() {
                     q1: {
                         assert: true
                     }
+                },
+                subscriptions: {
+                    s1: {
+                        queue: 'q1'
+                    }
+                },
+                publications: {
+                    p1: {
+                        exchange: 'e1'
+                    }
                 }
             }
         }

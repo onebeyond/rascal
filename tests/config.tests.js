@@ -952,6 +952,70 @@ describe('Configuration', function() {
             })
         })
 
+        it('should report duplicate subscriptions', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: {
+                            q1: {
+                            }
+                        },
+                        subscriptions: {
+                            s1: {
+                                queue: 'q1'
+                            }
+                        }
+                    },
+                    v2: {
+                        queues: {
+                            q1: {
+                            }
+                        },
+                        subscriptions: {
+                            s1: {
+                                queue: 'q1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.equal(err.message, 'Duplicate subscription: s1')
+            })
+        })
+
+        it('should report duplicate publications', function() {
+
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: {
+                            e1: {
+                            }
+                        },
+                        publications: {
+                            p1: {
+                                exchange: 'e1'
+                            }
+                        }
+                    },
+                    v2: {
+                        exchanges: {
+                            e1: {
+                            }
+                        },
+                        publications: {
+                            p1: {
+                                exchange: 'e1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.equal(err.message, 'Duplicate publication: p1')
+            })
+        })
+
         it('should replace source with its fully qualified name', function() {
             configure({
                 vhosts: {
