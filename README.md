@@ -81,8 +81,6 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 
 * Rascal deliberately uses a new channel per publish operation. This is because any time a channel operation encounters an error, the channel becomes unusable and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
 
-* Rascal has plenty of automated tests, but is by no means battle hardened (yet).
-
 ## VERY IMPORTANT SECTION ABOUT EVENT HANDLING
 [amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
 
@@ -509,7 +507,7 @@ broker.subscribe('s1', function(err, subscription) {
 ```
 It's **very** important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.
 
-It's also **very** important not to go async between getting the subscriptio and listening for the message or error events. If you do, you risk leaking messages and not handling errors.
+It's also **very** important not to go async between getting the subscription and listening for the message or error events. If you do, you risk leaking messages and not handling errors.
 
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 ```json
@@ -544,6 +542,9 @@ broker.subscribe('s1', function(err, subscription) {
 })
 ```
 If the message has not been auto acknowledged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead.
+
+#### Redeliveries
+If your node app crashes before acknowledging a message, the message will be rolled back. This can cause big problems if there's something in the messages which caused the crash in the first place. Unfortunately RabbitMQ doesn't limit the number of redeliveries per message or provide a per message redelivery count. For this reason Rascal keeps a small in-memory cache of message ids, and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. You should check this header before processing a message and nack the message if the redeliveries are too high (assuming you aren't using a requeue strategy).
 
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.

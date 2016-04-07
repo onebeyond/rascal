@@ -598,6 +598,31 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should count redeliveries', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var errors = 0
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
+                        throw new Error('oh no')
+                    }).on('error', function(err) {
+                        if (errors++ > 10) done(new Error('Redeliveries were not counted'))
+                    })
+                })
+            })
+        })
+    })
+
     it('should republish messages to queue when requested', function(done) {
 
         createBroker({
