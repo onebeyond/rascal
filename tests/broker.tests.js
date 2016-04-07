@@ -73,6 +73,18 @@ describe('Broker', function() {
         })
     })
 
+    it('should nuke', function(done) {
+        var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
+        var json = JSON.stringify(config, null, 2)
+        createBroker(config, function(err, broker) {
+            assert.ifError(err)
+            broker.nuke(function(err) {
+                assert.ifError(err)
+                done()
+            })
+        })
+    })
+
     function createBroker(config, next) {
         Broker.create(config, function(err, _broker) {
             broker = _broker
