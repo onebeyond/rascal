@@ -12,10 +12,10 @@ module.exports = (function() {
         defaultConfig: defaultConfig,
         testConfig: testConfig,
         withDefaultConfig: function(config) {
-            return _.defaultsDeep(config, defaultConfig)
+            return _.defaultsDeep({}, config, defaultConfig)
         },
         withTestConfig: function(config) {
-            return _.defaultsDeep(config, testConfig)
+            return _.defaultsDeep({}, config, testConfig)
         }
     }
 })()
