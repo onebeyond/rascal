@@ -19,7 +19,7 @@ module.exports = {
         ],
 
         // Define queues within the registration vhost
-        // A good naming convension for queues is consumer:entity:action naming convension
+        // A good naming convension for queues is consumer:entity:action
         "queues": {
 
           // Create a queue for saving users
