@@ -9,39 +9,8 @@ We also added a small in memory LRU cache that can be used to detect redeliverie
 
 ## tl;dr
 
-See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples/advanced)
+See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
 
-definitions.json
-```json
-{
-  "vhosts": {
-    "/": {
-      "exchanges": {
-        "e1": {}
-      },
-      "queues": {
-        "q1": {}
-      },
-      "bindings": {
-        "b1": {
-          "source": "e1",
-          "destination": "q1"
-        }
-      }
-    }
-  },
-  "publications": {
-    "p1": {
-      "exchange": "e1"
-    }
-  },
-  "subscriptions": {
-    "s1": {
-      "queue": "q1"
-    }
-  }
-}
-```
 ## About
 Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
 
