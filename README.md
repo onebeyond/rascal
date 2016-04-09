@@ -28,8 +28,8 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Rascal deliberately uses a new channel per publish operation. This is because any time a channel operation encounters an error, the channel becomes unusable and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
 
 * There are two situations when Rascal will drop a message, leading to potential data loss.
-1. When it is unable to parse the message content and the subscriber has no invalid_content listener
-2. When the subscribers redelivery limit has been exceeded and the subscriber has no redeliveries_exceeded listener
+  1. When it is unable to parse the message content and the subscriber has no invalid_content listener
+  2. When the subscribers redelivery limit has been exceeded and the subscriber has no redeliveries_exceeded listener
 
 The reason Rascal drops the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events Rascal your messages should be safe.
 
