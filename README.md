@@ -86,6 +86,13 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 
 * Rascal deliberately uses a new channel per publish operation. This is because any time a channel operation encounters an error, the channel becomes unusable and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
 
+* There are two situations when Rascal will drop a message, leading to potential data loss.
+
+1. When it is unable to parse the message content and the subscriber has no invalid_content listener
+2. When the subscribers redelivery limit has been exceeded and the subscriber has no redeliveries_exceeded listener
+
+The reason Rascal drops the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events Rascal your messages should be safe.
+
 ## VERY IMPORTANT SECTION ABOUT EVENT HANDLING
 [amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
 
@@ -434,7 +441,7 @@ If you prefer to send messages to a queue
 ```
 > To save you entering the vhost you can nest publications inside the vhost block.
 
-Rascal supports text, buffers and anything it can JSON.stringify. When publish a message Rascal sets the contentType message property to "text/plain", "application/json" (it uses this when reading the message too). The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
+Rascal supports text, buffers and anything it can JSON.stringify. The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
 
 ```javascript
 broker.publish("p1", "some message", callback)
@@ -442,7 +449,7 @@ broker.publish("p1", "some message", "some.routing.key", callback)
 broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { "expiration": 5000 } })
 
 ```
-The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors. If you specify the mandatory option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
+The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors. If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
 ```javascript
 broker.publish("p1", "some message", function(err, publication) {
   publication.on("success", function(messageId) {
@@ -455,7 +462,7 @@ broker.publish("p1", "some message", function(err, publication) {
 })
 ```
 
- On publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+ One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
@@ -546,10 +553,26 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto acknowledged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead.
+If the message has not been auto-acknowledged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead. To avoid data loss be sure to configure a dead letter exchange/queue.
 
 #### Redeliveries
-If your node app crashes before acknowledging a message, the message will be rolled back. This can cause big problems if there's something in the messages which caused the crash in the first place. Unfortunately RabbitMQ doesn't limit the number of redeliveries per message or provide a per message redelivery count. For this reason Rascal keeps a small in-memory cache of message ids, and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. You should check this header before processing a message and nack the message if the redeliveries are too high (assuming you aren't using a requeue strategy).
+If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason Rascal keeps a small in-memory cache of message ids, and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits.
+
+The subscriber emits a "redeliveries_exceeded" event whenever the subscriber redeliveries limit is exceeded.
+
+```javascript
+broker.subscribe('s1', function(err, subscription) {
+  subscription.on('message', function(message, content, ackOrNack) {
+    // Do stuff with message
+  }).on('error', function(err) {
+    console.error('Subscriber error', err)
+  }).on('redeliveries_exceeded', function(err, message, ackOrNack)) {
+    console.error('Redeliveries Exceeded', err)
+    ackOrNack(err)
+  })
+})
+```
+If the message has not been auto-acknowdelged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead. To avoid data loss be sure to configure a dead letter exchange/queue.
 
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
@@ -698,7 +721,14 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
           "prefetch": 10,
           "retry": {
               "delay": 1000
+          },
+          "redeliveries": {
+              "cache": {
+                  "size": 1000
+              },
+              "limit": 1000
           }
+        }
       }
   }
 }

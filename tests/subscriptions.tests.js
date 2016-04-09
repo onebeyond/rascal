@@ -198,7 +198,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should consume to invalid messages messages when no listener is bound', function(done) {
+    it('should consume to invalid messages when no listener is bound', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: publications,
@@ -617,6 +617,156 @@ describe('Subscriptions', function() {
                         throw new Error('oh no')
                     }).on('error', function(err) {
                         if (errors++ > 10) done(new Error('Redeliveries were not counted'))
+                    })
+                })
+            })
+        })
+    })
+
+    it('should notify when redeliveries exceeds', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1',
+                    redeliveries: {
+                        limit: 5
+                    }
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var errors = 0
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
+                        throw new Error('oh no')
+                    }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessage('q1', namespace, 'test message', done)
+                        })
+                    }).on('error', function(err) {
+                        if (errors++ > 5) done(new Error('Redeliveries were exceeded'))
+                    })
+                })
+            })
+        })
+    })
+
+
+    it('should not notify when redeliveries limit is 0', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1',
+                    redeliveries: {
+                        limit: 0
+                    }
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var errors = 0
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
+                        throw new Error('oh no')
+                    }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+                        assert(false, 'Redeliveries were exceeded')
+                    }).on('error', function(err) {
+                        if (errors++ > 5) done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should consume to poison messages when no listener is bound', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1',
+                    redeliveries: {
+                        limit: 5
+                    }
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        throw new Error('oh no')
+                    }).on('error', function(err) {
+                        if (!/Message .* has exceeded 5 redeliveries/.test(err.message)) return
+                        broker.shutdown(function(err) {
+                            assert.ifError(err)
+                            amqputils.assertMessageAbsent('q1', namespace, done)
+                        })
+                    })
+                })
+            })
+        })
+    })
+
+
+    it('should consume a poision message when a listener acks it', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: {
+                s1: {
+                    vhost: '/',
+                    queue: 'q1',
+                    redeliveries: {
+                        limit: 5
+                    }
+                }
+            }
+        }, function(err, broker) {
+            assert.ifError(err)
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+
+                    var errors = 0
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        throw new Error('oh no')
+                    }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+                        ackOrNack(function() {
+                            setTimeout(function() {
+                                broker.shutdown(function(err) {
+                                    assert.ifError(err)
+                                    amqputils.assertMessageAbsent('q1', namespace, done)
+                                })
+                            })
+                        })
+                    }).on('error', function(err) {
+                        if (errors++ > 5) done(new Error('Redeliveries were exceeded'))
                     })
                 })
             })
