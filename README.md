@@ -5,7 +5,7 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 ## Changes in 0.11
 Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
 
-We also added a small in memory LRU cache that can be used to detect redeliveries. See the Redeliveries section for more details
+We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the Redeliveries section for more details
 
 ## tl;dr
 
