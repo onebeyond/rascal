@@ -493,7 +493,7 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto-acknowledged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead. To avoid data loss be sure to configure a dead letter exchange/queue.
+If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
 #### Redeliveries
 If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason Rascal keeps a small in-memory cache of message ids, and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits.
@@ -512,7 +512,7 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto-acknowdelged you should ackOrNack it. If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead. To avoid data loss be sure to configure a dead letter exchange/queue.
+If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
