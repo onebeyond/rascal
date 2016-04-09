@@ -30,7 +30,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                    assert.equal(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
                 })
             })
 
@@ -56,7 +56,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.url, 'foo')
+                    assert.equal(config.vhosts.v1.connections[0].url, 'foo')
                 })
             })
 
@@ -80,7 +80,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100')
+                    assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100')
                 })
             })
 
@@ -104,7 +104,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts['/'].connection.loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100')
+                    assert.equal(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100')
                 })
             })
 
@@ -129,7 +129,38 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                    assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                })
+            })
+
+            it('should generate connections from an array', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connections: [
+                                {
+                                    url: 'foo',
+                                },
+                                {
+                                    slashes: true,
+                                    protocol: 'protocol',
+                                    hostname: 'hostname',
+                                    port: 9000,
+                                    vhost: 'vhost',
+                                    user: 'user',
+                                    password: 'password',
+                                    options: {
+                                        heartbeat: 10,
+                                        channelMax: 100
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connections[0].url, 'foo')
+                    assert.equal(config.vhosts.v1.connections[1].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
                 })
             })
 
@@ -144,7 +175,7 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connection.loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                    assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
                 })
             })
 

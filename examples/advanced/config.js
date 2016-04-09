@@ -4,11 +4,14 @@ module.exports = {
 
       "registration": {
 
-        // Define the vhost connection parameters
-        "connection": {
+        // Define the vhost connection parameters. Specify multiple entries for cluster
+        "connections": [
+          {
             "user": "app_user",
-            "password": "password"
-        },
+            "password": "password",
+            "port": 5672
+          }
+        ],
 
         // Define exchanges within the registration vhost
         "exchanges": [

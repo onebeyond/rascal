@@ -21,8 +21,9 @@ module.exports = function(broker) {
             }
             default: {
                 var routingKey = format('registration_service.user.saved.%s', user.username)
-                broker.publish('save_user_succeeded', routingKey, cb)
-                return
+                broker.publish('save_user_succeeded', routingKey, function(err, publication) {
+                    publication.on('success', cb).on('error', console.error)
+                })
             }
         }
     }

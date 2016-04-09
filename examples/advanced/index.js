@@ -7,7 +7,9 @@ var chance = new require('Chance')()
 Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, broker) {
     if (err) bail(err)
 
-    broker.on('error', bail)
+    broker.on('error', function(err) {
+        console.error(err.message)
+    })
 
     _.each(broker.config.subscriptions, function(subscriptionConfig, subscriptionName) {
 
@@ -43,9 +45,12 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
 
         broker.publish('user_event', user, routingKey, function(err, publication) {
             if (err) return console.log(err.message)
-            publication.on('success', function() {
-                // confirmed
-            })
+            publication
+                .on('success', function() {
+                    // confirmed
+                }).on('error', function(err) {
+                    console.error(err.message)
+                })
         })
     }, 1000)
 

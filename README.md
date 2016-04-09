@@ -101,9 +101,9 @@ Running automated tests against shared queues and exchanges is problematic. Mess
 ```json
 {
   "vhosts": {
-      "v1": {
-          "namespace": true
-      }
+    "v1": {
+      "namespace": true
+    }
   }
 }
 ```
@@ -114,11 +114,11 @@ The simplest way to specify a connection is with a url
 ```json
 {
   "vhosts": {
-      "v1": {
-          "connection": {
-              "url":  "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
-          }
+    "v1": {
+      "connection": {
+        "url":  "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
       }
+    }
   }
 }
 ```
@@ -126,20 +126,20 @@ Alternatively you can specify the individual connection details
 ```json
 {
   "vhosts": {
-      "v1": {
-          "connection": {
-              "slashes": true,
-              "protocol": "amqp",
-              "hostname": "localhost",
-              "user": "guest",
-              "password": "guest",
-              "port": 5672,
-              "vhost": "v1",
-              "options": {
-                  "heartbeat": 5
-              }
-          }
+    "v1": {
+      "connection": {
+        "slashes": true,
+        "protocol": "amqp",
+        "hostname": "localhost",
+        "user": "guest",
+        "password": "guest",
+        "port": 5672,
+        "vhost": "v1",
+        "options": {
+            "heartbeat": 5
+        }
       }
+    }
   }
 }
 ```
@@ -147,13 +147,13 @@ Any attributes you add to the "options" sub document will be converted to query 
 ```json
 {
   "vhosts": {
-      "v1": {
-          "connection": {
-              "hostname": "example.com",
-              "user": "bob",
-              "password": "secret"
-          }
+    "v1": {
+      "connection": {
+        "hostname": "example.com",
+        "user": "bob",
+        "password": "secret"
       }
+    }
   }
 }
 ```
@@ -161,16 +161,37 @@ Rascal also supports automatic connection retries. It's enabled in the default c
 ```json
 {
   "vhosts": {
-      "v1": {
-          "connection": {
-              "retry": {
-                  "delay": 1000
-              }
-          }
+    "v1": {
+      "connection": {
+        "retry": {
+          "delay": 1000
+        }
       }
+    }
   }
 }
 ```
+
+#### Cluster Connections
+If you specify an array of connections instead of a single connection object Rascal will pick at Random
+```json
+{
+  "vhosts": {
+    "v1": {
+      "connection": [
+        {
+          "url":  "amqp://guest:guest@example1.com:5672/v1?heartbeat=10"
+        },
+        {
+          "url":  "amqp://guest:guest@example2.com:5672/v1?heartbeat=10"
+        },
+        {
+          "url":  "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
+        }
+      ]
+    }
+  }
+}
 
 #### Exchanges
 
@@ -182,14 +203,14 @@ If you don't want to create exchanges on initialisation, but still want to valid
 ```json
 {
   "vhosts": {
-      "v1": {
-          "exchanges": {
-              "e1": {
-                  "assert": false,
-                  "check": true
-              }
-          }
+    "v1": {
+      "exchanges": {
+        "e1": {
+          "assert": false,
+          "check": true
+        }
       }
+    }
   }
 }
 ```
@@ -202,16 +223,16 @@ Define any further configuration in an options block
 ```json
 {
   "vhosts": {
-      "v1": {
-          "exchanges": {
-              "e1": {
-                  "type": "fanout",
-                  "options": {
-                      "durable": false
-                  }
-              }
+    "v1": {
+      "exchanges": {
+        "e1": {
+          "type": "fanout",
+          "options": {
+            "durable": false
           }
+        }
       }
+    }
   }
 }
 ```
@@ -227,14 +248,14 @@ If you don't want to create queues on initialisation, but still want to validate
 ```json
 {
   "vhosts": {
-      "v1": {
-          "queues": {
-              "q1": {
-                  "assert": false,
-                  "check": true
-              }
-          }
+    "v1": {
+      "queues": {
+        "q1": {
+          "assert": false,
+          "check": true
+        }
       }
+    }
   }
 }
 ```
@@ -244,13 +265,13 @@ Enable to purge the queue during initialisation. Useful when running automated t
 ```json
 {
   "vhosts": {
-      "v1": {
-          "queues": {
-              "q1": {
-                  "purge": true
-              }
-          }
+    "v1": {
+      "queues": {
+        "q1": {
+          "purge": true
+        }
       }
+    }
   }
 }
 ```
@@ -260,12 +281,12 @@ Define any further configuration in an options block
 ```json
 {
   "queues": {
-      "q1": {
-          "options": {
-              "durable": false,
-              "exclusive": true
-          }
+    "q1": {
+      "options": {
+        "durable": false,
+        "exclusive": true
       }
+    }
   }
 }
 ```
