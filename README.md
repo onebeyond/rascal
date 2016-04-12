@@ -773,13 +773,14 @@ is equivalent to...
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
 ```javascript
 afterEach(function(done) {
-    broker ? broker.nuke(done) : done()
+    broker.nuke(done)
 })
 ```
 
 ### Bounce
 Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
 ```javascript
+beforeEach(function(done) {
     broker.bounce(done)
 })
 ```
