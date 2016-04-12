@@ -778,7 +778,7 @@ afterEach(function(done) {
 ```
 
 ### Bounce
-Bounce disconnects and reinistialises the broker. We're hoping to use it for some automated reconnection tests
+Bounce disconnects and reinistialises the broker.
 ```javascript
 beforeEach(function(done) {
     broker.bounce(done)
