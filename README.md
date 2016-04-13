@@ -727,7 +727,7 @@ Rascal configuration can get rather verbose, so you can use the shorthand notati
       "destination": "q1"
     },
     "b2": {
-      "source": "e1",
+      "source": "e2",
       "destination": "q2",
       "bindingKeys": ["bk1", "bk2"]
     }
