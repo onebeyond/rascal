@@ -131,7 +131,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should consume to text messages', function(done) {
+    it('should consume to text/plain messages', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -146,6 +146,60 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert(message)
                         assert.equal(message.properties.contentType, 'text/plain')
+                        assert.equal(content, 'test message')
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should consume to text/other messages', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', {
+                options: {
+                    contentType: 'text/csv',
+                }
+            }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'text/csv')
+                        assert.equal(content, 'test message')
+                        done()
+                    })
+                })
+            })
+        })
+    })
+
+    it('should consume to whatever/whatever messages', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', {
+                options: {
+                    contentType: 'x-foo-bar/blah',
+                }
+            }, function(err) {
+                assert.ifError(err)
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'x-foo-bar/blah')
                         assert.equal(content, 'test message')
                         done()
                     })
