@@ -751,7 +751,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should consume to poison messages when no listener is bound', function(done) {
+    it('should consume a poison messages when no listener is bound', function(done) {
         createBroker({
             vhosts: vhosts,
             publications: publications,
