@@ -28,7 +28,7 @@
     "test": "mocha --recursive tests",
     "test-debug": "mocha --debug-brk --recursive tests",
     "lint": "node_modules/.bin/eslint .",
-    "prepush": "npm test"
+    "prepush": "npm test && npm run lint"
   },
   "keywords": [
     "amqplib",

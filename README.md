@@ -2,10 +2,10 @@
 
 Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
 
-## Changes in 0.11
+## Recent changes
 Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
 
-We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the Redeliveries section for more details.
+We made the redelivery message id store pluggable and changed the default from the in memory LRU cache to a no-op implementation. The in memory LRU cache is still available but not much use since the redeliveries you're most likely to care about are the ones which crashed your node process, however these would also wipe the in memory cache. The plugable cache enables you to store the messages externally using something like Redis. We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the Redeliveries section for more details.
 
 ## tl;dr
 
@@ -27,11 +27,11 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 
 * Rascal deliberately uses a new channel per publish operation. This is because any time a channel operation encounters an error, the channel becomes unusable and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
 
-* There are two situations when Rascal will drop a message, leading to potential data loss.
-  1. When it is unable to parse the message content and the subscriber has no invalid_content listener
-  2. When the subscribers redelivery limit has been exceeded and the subscriber has no redeliveries_exceeded listener
+* There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
+  1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener
+  2. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has no 'redeliveries_exceeded' listener
 
-The reason Rascal drops the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events Rascal your messages should be safe.
+The reason Rascal nacks the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events Rascal your messages should be safe.
 
 ## VERY IMPORTANT SECTION ABOUT EVENT HANDLING
 [amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
@@ -517,9 +517,22 @@ broker.subscribe('s1', function(err, subscription) {
 If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
 #### Redeliveries
-If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason Rascal keeps a small in-memory cache of message ids, and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits.
+If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a message id cache and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application.
 
-The subscriber emits a "redeliveries_exceeded" event whenever the subscriber redeliveries limit is exceeded.
+```json
+subscriptions: {
+    s1: {
+        vhost: '/',
+        queue: 'q1',
+        redeliveries: {
+            cache: {
+                type: 'inMemory',
+                size: 1000
+            }
+        }
+    }
+}
+```
 
 ```javascript
 broker.subscribe('s1', function(err, subscription) {
@@ -533,7 +546,33 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
+If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message without requeue and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
+
+Rascal only provides two (almost useless) cache implementations, ```inMemory``` and ```noCache```. noCache is the default and performs a null op. inMemory keeps enables an in memory LRU cache which may be useful for testing. The inMemory cache isn't useful in production because the infinite redeliveries are usually caused by a message that crashes your node application, which would also clear the cache.
+
+#### Implementing a persistent redeliveries cache
+To make use of the Rascal's redelivery limit feature you need to provide a persistent cache. In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure and slow responses from the underlying store. It's preferable, but not necessary to share a store between every instances of your application. Not doing so means that you may get more redeliveries than specified by the limit, but could yield performance gains in multi-az or high throughput environment.
+
+
+A basic redis based implementation would look like this...
+```js
+var redis = require('redis')
+
+module.exports = function() {
+
+    var cache = redis.createClient('redis')
+
+    return {
+        incrementAndGet: function(key, next) {
+            cache.incr(key, function(err, redeliveries) {
+                if (err) console.warn(err.message)
+                next(null, redeliveries || 1)
+            })
+        }
+    }
+}
+```
+The above should not be used in production since it does not short-circuit on timeouts or connection failures.
 
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
