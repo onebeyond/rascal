@@ -21,14 +21,14 @@
     "chance": "^1.0.1",
     "eslint": "^0.23.0",
     "eslint-config-imperative": "0.0.6",
-    "husky": "^0.8.0",
+    "husky": "^0.11.4",
     "mocha": "^2.2.1"
   },
   "scripts": {
     "test": "mocha --recursive tests",
     "test-debug": "mocha --debug-brk --recursive tests",
     "lint": "node_modules/.bin/eslint .",
-    "prepush": "npm test && npm run lint",
+    "prepush": "npm run lint && npm test",
     "rabbitmq": "docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq"
   },
   "keywords": [

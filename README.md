@@ -5,7 +5,7 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 ## Recent changes
 Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
 
-We made the redelivery message id store pluggable and changed the default from the in memory LRU cache to a no-op implementation. The in memory LRU cache is still available but not much use since the redeliveries you're most likely to care about are the ones which crashed your node process, however these would also wipe the in memory cache. The plugable cache enables you to store the messages externally using something like Redis. We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the Redeliveries section for more details.
+We made the redelivery message id store pluggable and changed the default from the in memory LRU cache to a no-op implementation. The in memory LRU cache is still available but not much use since the redeliveries you're most likely to care about are the ones which crashed your node process, however these would also wipe the in memory cache. The plugable cache enables you to store the messages externally using something like Redis. We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the [Dealing With Redeliveries](dealing-with-redeliveries) section for more details.
 
 ## tl;dr
 
@@ -516,7 +516,7 @@ broker.subscribe('s1', function(err, subscription) {
 ```
 If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
-#### Redeliveries
+#### Dealing With Redeliveries
 If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a message id cache and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application.
 
 ```json
@@ -546,13 +546,11 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message without requeue and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
+If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
-Rascal only provides two (almost useless) cache implementations, ```inMemory``` and ```noCache```. noCache is the default and performs a null op. inMemory keeps enables an in memory LRU cache which may be useful for testing. The inMemory cache isn't useful in production because the infinite redeliveries are usually caused by a message that crashes your node application, which would also clear the cache.
+Rascal only provides two (almost useless) cache implementations, ```inMemory``` and ```noCache```. noCache is the default and performs a null op. inMemory keeps enables an in memory LRU cache which may be useful for testing. The inMemory cache isn't useful in production because the infinite redeliveries are usually caused by a message that crashes your node application, which would also clear the cache. We are working on a [clustered](https://nodejs.org/api/cluster.html) version of the inMemory cache and also a redis backed version, but in the meantime you'll need to write your own based on the [inMemory](https://github.com/guidesmiths/rascal/tree/master/lib/caches/inMemory.js) implementation.
 
-#### Implementing a persistent redeliveries cache
-To make use of the Rascal's redelivery limit feature you need to provide a persistent cache. In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure and slow responses from the underlying store. It's preferable, but not necessary to share a store between every instances of your application. Not doing so means that you may get more redeliveries than specified by the limit, but could yield performance gains in multi-az or high throughput environment.
-
+In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure and slow responses from the underlying store. It's preferable, but not necessary to share a store between every instances of your application. Not doing so means that you may get more redeliveries than specified by the limit, but could yield performance gains in multi-az or high throughput environment.
 
 A basic redis based implementation would look like this...
 ```js
