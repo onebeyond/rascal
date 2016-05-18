@@ -1,8 +1,6 @@
 var assert = require('assert')
 var _ = require('lodash').mixin({ 'defaultsDeep': require('merge-defaults') })
-var async = require('async')
 var testConfig = require('../lib/config/tests')
-var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
 
@@ -12,9 +10,9 @@ describe('Broker', function() {
     this.timeout(2000)
     this.slow(1000)
 
-    var broker = undefined
-    var namespace = undefined
-    var vhosts = undefined
+    var broker
+    var namespace
+    var vhosts
 
     beforeEach(function(done) {
 
@@ -75,7 +73,6 @@ describe('Broker', function() {
 
     it('should nuke', function(done) {
         var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
-        var json = JSON.stringify(config, null, 2)
         createBroker(config, function(err, broker) {
             assert.ifError(err)
             broker.nuke(function(err) {

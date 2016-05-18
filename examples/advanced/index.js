@@ -2,7 +2,8 @@ var Rascal = require('../..')
 var config = require('./config')
 var format = require('util').format
 var _ = require('lodash')
-var chance = new require('Chance')()
+var Chance = require('Chance')
+var chance = new Chance()
 
 Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, broker) {
     if (err) bail(err)

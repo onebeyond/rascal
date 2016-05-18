@@ -1,8 +1,5 @@
 var assert = require('assert')
 var _ = require('lodash')
-var async = require('async')
-var amqplib = require('amqplib/callback_api')
-var format = require('util').format
 
 module.exports = {
     init: init

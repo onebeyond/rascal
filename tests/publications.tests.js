@@ -13,10 +13,10 @@ describe('Publications', function() {
     this.timeout(2000)
     this.slow(1000)
 
-    var broker = undefined
-    var amqputils = undefined
-    var namespace = undefined
-    var vhosts = undefined
+    var broker
+    var amqputils
+    var namespace
+    var vhosts
 
     beforeEach(function(done) {
 
@@ -324,6 +324,7 @@ describe('Publications', function() {
 
                 subscription.on('message', function(message, content, ackOrNack) {
                     broker.forward('p2', message, function(err, publication) {
+                        assert.ifError(err)
                         publication.on('success', function() {
                             ackOrNack()
 
@@ -374,15 +375,13 @@ describe('Publications', function() {
         }, function(err, broker) {
             assert.ifError(err)
 
-            var messageId
-
             broker.subscribe('s1', function(err, subscription) {
                 assert.ifError(err)
 
                 subscription.on('message', function(message, content, ackOrNack) {
 
                     broker.forward('p2', message, function(err, publication) {
-
+                        assert.ifError(err)
                         publication.on('success', function() {
                             ackOrNack()
 
@@ -399,9 +398,6 @@ describe('Publications', function() {
 
             broker.publish('p1', 'test message', function(err, publication) {
                 assert.ifError(err)
-                publication.on('success', function(_messageId) {
-                    messageId = _messageId
-                })
             })
         })
     })

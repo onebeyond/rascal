@@ -3,14 +3,11 @@ var _ = require('lodash').runInContext()
 var async = require('async')
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
-var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
 var AmqpUtils = require('./utils/amqputils')
 
-
 _.mixin({ 'defaultsDeep': require('merge-defaults') });
-
 
 describe('Subscriptions', function() {
 
@@ -164,7 +161,7 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', {
                 options: {
-                    contentType: 'text/csv',
+                    contentType: 'text/csv'
                 }
             }, function(err) {
                 assert.ifError(err)
@@ -191,7 +188,7 @@ describe('Subscriptions', function() {
             assert.ifError(err)
             broker.publish('p1', 'test message', {
                 options: {
-                    contentType: 'x-foo-bar/blah',
+                    contentType: 'x-foo-bar/blah'
                 }
             }, function(err) {
                 assert.ifError(err)
@@ -263,7 +260,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err)
                 broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                    subscription.on('error', function(err) {
+                    subscription.on('error', function() {
                         broker.shutdown(function(err) {
                             assert.ifError(err)
                             amqputils.assertMessageAbsent('q1', namespace, done)
@@ -286,6 +283,7 @@ describe('Subscriptions', function() {
                 broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
                     subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        assert(err)
                         broker.shutdown(function(err) {
                             assert.ifError(err)
                             amqputils.assertMessage('q1', namespace, 'not json', done)
@@ -308,6 +306,7 @@ describe('Subscriptions', function() {
                 broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
                     subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        assert(err)
                         ackOrNack(function() {
                             setTimeout(function() {
                                 broker.shutdown(function(err) {
@@ -334,6 +333,7 @@ describe('Subscriptions', function() {
                 broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
                     subscription.on('invalid_message', function(err, message, ackOrNack) {
+                        assert(err)
                         ackOrNack(err, function() {
                             setTimeout(function() {
                                 broker.shutdown(function(err) {
@@ -702,7 +702,7 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
                         throw new Error('oh no')
-                    }).on('error', function(err) {
+                    }).on('error', function() {
                         if (errors++ > 10) done(new Error('Redeliveries were not counted'))
                     })
                 })
@@ -739,11 +739,12 @@ describe('Subscriptions', function() {
                         if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
                         throw new Error('oh no')
                     }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+                        assert(err)
                         broker.shutdown(function(err) {
                             assert.ifError(err)
                             amqputils.assertMessage('q1', namespace, 'test message', done)
                         })
-                    }).on('error', function(err) {
+                    }).on('error', function() {
                         if (errors++ > 5) done(new Error('Redeliveries were exceeded'))
                     })
                 })
@@ -781,8 +782,8 @@ describe('Subscriptions', function() {
                         if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
                         throw new Error('oh no')
                     }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
-                        assert(false, 'Redeliveries were exceeded')
-                    }).on('error', function(err) {
+                        assert.ifError(err, 'Redeliveries were exceeded')
+                    }).on('error', function() {
                         if (errors++ > 5) done()
                     })
                 })
@@ -820,8 +821,8 @@ describe('Subscriptions', function() {
                         if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done)
                         throw new Error('oh no')
                     }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
-                        assert(false, 'Redeliveries were exceeded')
-                    }).on('error', function(err) {
+                        assert.ifError(err, 'Redeliveries were exceeded')
+                    }).on('error', function() {
                         if (errors++ > 5) done()
                     })
                 })
@@ -895,6 +896,7 @@ describe('Subscriptions', function() {
                     subscription.on('message', function(message, content, ackOrNack) {
                         throw new Error('oh no')
                     }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+                        assert(err)
                         ackOrNack(function() {
                             setTimeout(function() {
                                 broker.shutdown(function(err) {
@@ -903,7 +905,7 @@ describe('Subscriptions', function() {
                                 })
                             })
                         })
-                    }).on('error', function(err) {
+                    }).on('error', function() {
                         if (errors++ > 5) done(new Error('Redeliveries were exceeded'))
                     })
                 })
@@ -1238,6 +1240,7 @@ describe('Subscriptions', function() {
             var messageId
 
             broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }, function(err, publication) {
+                assert.ifError(err)
                 publication.on('success', function(_messageId) {
                     messageId = _messageId
                 })
@@ -1402,10 +1405,10 @@ describe('Subscriptions', function() {
                 var messages = 0
                 broker.subscribe('s1', function(err, subscription) {
                     assert.ifError(err)
-                        subscription.on('message', function(message, content, ackOrNack) {
+                    subscription.on('message', function(message, content, ackOrNack) {
                         assert(message)
                         messages++
-                        if (messages == 5) {
+                        if (messages === 5) {
                             setTimeout(function() {
                                 assert.equal(messages, 5)
                                 done()

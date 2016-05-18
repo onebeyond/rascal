@@ -139,7 +139,7 @@ describe('Configuration', function() {
                         v1: {
                             connections: [
                                 {
-                                    url: 'foo',
+                                    url: 'foo'
                                 },
                                 {
                                     slashes: true,
@@ -194,7 +194,7 @@ describe('Configuration', function() {
 
                     assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
                     assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v2.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
-                    assert.ok(config.vhosts.v1.namespace != config.vhosts.v2.namespace)
+                    assert.ok(config.vhosts.v1.namespace !== config.vhosts.v2.namespace)
                 })
             })
         })
@@ -486,7 +486,7 @@ describe('Configuration', function() {
                             bindings: {
                                 'e1 -> q1': {},
                                 'e:1 -> q:1': {},
-                                'e_1 -> q_1': {},
+                                'e_1 -> q_1': {}
                             }
                         }
                     }

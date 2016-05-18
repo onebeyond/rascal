@@ -1,6 +1,4 @@
 var assert = require('assert')
-var format = require('util').format
-var _ = require('lodash')
 var validate = require('../lib/config/validate')
 
 describe('Validation', function() {

@@ -8,20 +8,22 @@ module.exports = function(broker) {
         console.log(chalk.magenta('Saving user:'), user.username)
 
         // Simulate errors and success
+        var err
         switch (Math.floor(Math.random() * 10)) {
             case 5: {
-                var err = new Error('Connection Timeout')
+                err = new Error('Connection Timeout')
                 err.recoverable = true
                 return cb(err)
             }
             case 7: {
-                var err = new Error('Duplicate Key Violation')
+                err = new Error('Duplicate Key Violation')
                 err.recoverable = false
                 return cb(err)
             }
             default: {
                 var routingKey = format('registration_service.user.saved.%s', user.username)
                 broker.publish('save_user_succeeded', routingKey, function(err, publication) {
+                    if (err) return cb(err)
                     publication.on('success', cb).on('error', console.error)
                 })
             }

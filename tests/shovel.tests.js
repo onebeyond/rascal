@@ -1,13 +1,8 @@
 var assert = require('assert')
 var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') });
-var async = require('async')
-var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
-var format = require('util').format
 var uuid = require('node-uuid').v4
 var Broker = require('..').Broker
-var AmqpUtils = require('./utils/amqputils')
-
 
 describe('Shovel', function() {
 
@@ -95,6 +90,7 @@ describe('Shovel', function() {
             assert.ifError(err)
             broker.publish('p1', 'Test Message', assert.ifError)
             broker.subscribe('s2', function(err, subscription) {
+                assert.ifError(err)
                 subscription.on('message', function(message, content) {
                     done()
                 })

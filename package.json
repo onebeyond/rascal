@@ -28,7 +28,8 @@
     "test": "mocha --recursive tests",
     "test-debug": "mocha --debug-brk --recursive tests",
     "lint": "node_modules/.bin/eslint .",
-    "prepush": "npm test && npm run lint"
+    "prepush": "npm test && npm run lint",
+    "rabbitmq": "docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq"
   },
   "keywords": [
     "amqplib",

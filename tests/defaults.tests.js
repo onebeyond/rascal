@@ -1,5 +1,4 @@
 var assert = require('assert')
-var _ = require('lodash')
 var configure = require('../lib/config/configure')
 
 describe('Defaults', function() {
@@ -223,8 +222,7 @@ describe('Defaults', function() {
                                 destinationType: 'queue',
                                 bindingKey: '#',
                                 options: {
-                                    foo: true,
-
+                                    foo: true
                                 }
                             }
                         }
@@ -261,8 +259,7 @@ describe('Defaults', function() {
                                 destinationType: 'queue',
                                 bindingKey: '#',
                                 options: {
-                                    foo: true,
-
+                                    foo: true
                                 }
                             }
 
