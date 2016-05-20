@@ -5,10 +5,9 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 ## Recent changes
 Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
 
-We made the redelivery message id store pluggable and changed the default from the in memory LRU cache to a no-op implementation. The in memory LRU cache is still available but not much use since the redeliveries you're most likely to care about are the ones which crashed your node process, however these would also wipe the in memory cache. The plugable cache enables you to store the messages externally using something like Redis. We also added a small in memory LRU cache that can be used to detect redeliveries and configure Rascal to automatically nack messages that have been redelivered more than 1000 times. See the [Dealing With Redeliveries](dealing-with-redeliveries) section for more details.
+We made the redelivery counter pluggable and added an implementation designed to work with [clustering](https://nodejs.org/api/cluster.html), so as to survive worker death. See the [Dealing With Redeliveries](dealing-with-redeliveries) section for more details.
 
 ## tl;dr
-
 See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
 
 ## About
@@ -520,13 +519,20 @@ If the message has not been auto-acknowledged you should ackOrNack it. **If you 
 If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a message id cache and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application.
 
 ```json
-subscriptions: {
-    s1: {
-        vhost: '/',
-        queue: 'q1',
-        redeliveries: {
-            limit: 10,
-            cache: 'inMemoryCluster'
+"subscriptions": {
+    "s1": {
+        "vhost": "/",
+        "queue": "q1",
+        "redeliveries": {
+            "limit": 10,
+            "cache": "inMemory"
+        }
+    }
+},
+"redeliveries": {
+    "cache": {
+        "inMemory": {
+            "size": "1000"
         }
     }
 }
@@ -548,12 +554,14 @@ If the message has not been auto-acknowdelged you should ackOrNack it. **If you 
 
 Rascal only provides three cache implementations:
 
-1. noCache - this is the default and does nothing
+1. noCache - this is the default and does nothing.
 2. inMemory - useful only for testing since if your node process crashes, the cache will be vaporised too
 3. inMemoryCluster - like the inMemory, but since the cache resides in the master it survives worker crashes.
 
+Of the three only inMemoryCluster is useful in production, and then only if you are using [clustering](https://nodejs.org/api/cluster.html). See the [advanced example](https://github.com/guidesmiths/rascal/tree/master/examples/advanced) for how to configure it.
+
 #### Implementing your own cache
-In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure and slow responses from the underlying store. It's preferable, but not necessary to share a store between every instances of your application. Not doing so means that you may get more redeliveries than specified by the limit, but could yield performance gains in multi-az or high throughput environment.
+If your application is not clustered, but you still want to protect yourself from redeliveries, you need to implement your own cache backed by something like redis. In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure/slow responses from the underlying store.
 
 A basic redis based implementation would look like this...
 ```js
