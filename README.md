@@ -551,7 +551,7 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue and emit an error event instead, **leading to message loss** if you have not configured a dead letter exchange/queue.
+If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue **leading to message loss if you have not configured a dead letter exchange/queue**.
 
 Rascal provides three cache implementations:
 
