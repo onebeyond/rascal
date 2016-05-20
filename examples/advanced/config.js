@@ -89,12 +89,20 @@ module.exports = {
 
           "save_user": {
             "queue": "registration_service:user:save",
-            "handler": "saveUser.js"
+            "handler": "saveUser.js",
+            "redeliveries": {
+              "limit": 5,
+              "cache": "shared"
+            }
           },
 
           "delete_user": {
             "queue": "registration_service:user:delete",
-            "handler": "deleteUser.js"
+            "handler": "deleteUser.js",
+            "redeliveries": {
+              "limit": 5,
+              "cache": "shared"
+            }
           }
         },
 
@@ -125,7 +133,7 @@ module.exports = {
         }
       }
     },
-  // Definte recovery strategies for different error scenarios
+    // Define recovery strategies for different error scenarios
     "recovery": {
 
       // Deferred retry is a good strategy for temporary (connection timeout) or unknown errors
@@ -149,6 +157,15 @@ module.exports = {
           "immediateNack": true
         }
       ]
+    },
+    // Define cache(s) for counting redeliveries
+    "redeliveries": {
+      "caches": {
+        "shared": {
+          "size": 10,
+          "type": "inMemoryCluster"
+        }
+      }
     }
   }
 }

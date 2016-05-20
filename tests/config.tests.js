@@ -1139,15 +1139,34 @@ describe('Configuration', function() {
         })
 
         it('should convert "subscription -> publication" to shovel', function() {
-                configure({
-                    shovels: [
-                        's1 -> p1'
-                    ]
-                }, function(err, config) {
-                    assert.ifError(err)
-                    assert.equal(config.shovels['s1 -> p1'].subscription, 's1')
-                    assert.equal(config.shovels['s1 -> p1'].publication, 'p1')
-                })
+            configure({
+                shovels: [
+                    's1 -> p1'
+                ]
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.shovels['s1 -> p1'].subscription, 's1')
+                assert.equal(config.shovels['s1 -> p1'].publication, 'p1')
             })
+        })
+    })
+
+    describe('Redelivery Caches', function() {
+
+        it('should decorate cache with name and type', function() {
+
+            configure({
+                redeliveries: {
+                    caches: {
+                        noCache: {},
+                        inMemory: {}
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.redeliveries.caches.noCache.name, 'noCache')
+                assert.equal(config.redeliveries.caches.noCache.type, 'noCache')
+            })
+        })
     })
 })

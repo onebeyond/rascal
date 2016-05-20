@@ -652,29 +652,6 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should fail to initialise when cache type is unknown', function(done) {
-
-        createBroker({
-            vhosts: vhosts,
-            publications: publications,
-            subscriptions: {
-                s1: {
-                    vhost: '/',
-                    queue: 'q1',
-                    redeliveries: {
-                        cache: {
-                            type: 'foo'
-                        }
-                    }
-                }
-            }
-        }, function(err, broker) {
-            assert.ok(err)
-            assert.equal('Unknown cache type: foo', err.message)
-            done()
-        })
-    })
-
     it('should count redeliveries when cache type is specified', function(done) {
 
         createBroker({
@@ -685,9 +662,7 @@ describe('Subscriptions', function() {
                     vhost: '/',
                     queue: 'q1',
                     redeliveries: {
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }
@@ -721,9 +696,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }
@@ -764,9 +737,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 0,
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }
@@ -803,9 +774,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }
@@ -840,9 +809,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }
@@ -878,9 +845,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: {
-                            type: 'inMemory'
-                        }
+                        cache: 'inMemory'
                     }
                 }
             }

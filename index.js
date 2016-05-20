@@ -16,6 +16,7 @@ module.exports = (function() {
         },
         withTestConfig: function(config) {
             return _.defaultsDeep({}, config, testConfig)
-        }
+        },
+        caches: require('./lib/caches')
     }
 })()

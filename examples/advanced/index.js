@@ -4,8 +4,9 @@ var format = require('util').format
 var _ = require('lodash')
 var Chance = require('Chance')
 var chance = new Chance()
+var caches = { inMemoryCluster: Rascal.caches.inMemoryCluster.worker }
 
-Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, broker) {
+Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), { caches: caches }, function(err, broker) {
     if (err) bail(err)
 
     broker.on('error', function(err) {
@@ -26,22 +27,22 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
                                                        : broker.config.recovery.dead_letter)
                     })
                 }).on('content_invalid', function(err, message, content, ackOrNack) {
-                    console.err(err.message)
+                    console.errror('Invalid Content', err.message)
                     ackOrNack(err, config.recovery.dead_letter)
                 }).on('retries_exceeded', function(err, message, content, ackOrNack) {
-                    console.err(err.message)
+                    console.error('Retries Exceeded', err.message)
                     ackOrNack(err, config.recovery.dead_letter)
                 }).on('error', function(err) {
-                    console.log(err)
+                    console.error(err.message)
                 })
         })
     })
 
     // Simulate a web app handling user registrations
     setInterval(function() {
-        var user = { username: chance.first() + '_' + chance.last() }
-        var events = { 0: 'created', 1: 'updated', 2: 'deleted' }
-        var event = events[Math.floor(Math.random() * 3)]
+        var user = { username: chance.first() + '_' + chance.last(), crash: randomInt(10) === 10 }
+        var events = { 1: 'created', 2: 'updated', 3: 'deleted' }
+        var event = events[randomInt(3)]
         var routingKey = format('registration_webapp.user.%s.%s', event, user.username)
 
         broker.publish('user_event', user, routingKey, function(err, publication) {
@@ -62,7 +63,9 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
     })
 })
 
-
+function randomInt(max) {
+    return Math.floor(Math.random() * max) + 1
+}
 
 
 function bail(err) {

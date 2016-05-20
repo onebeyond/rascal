@@ -431,6 +431,33 @@ describe('Validation', function() {
                 assert.equal('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message)
             })
         })
+
+        it('should report unknown caches', function() {
+            validate({
+                vhosts: {
+                    v1: {
+                        queues: {
+                            q1: {}
+                        }
+                    }
+                },
+                subscriptions: {
+                    s1: {
+                        vhost: 'v1',
+                        queue: 'q1',
+                        redeliveries: {
+                            cache: "c1"
+                        }
+                    }
+                },
+                redeliveries: {
+                    caches: {}
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Subscription: s1 refers to an unknown cache: c1 in vhost: v1', err.message)
+            })
+        })
     })
 
     describe('Shovels', function() {
@@ -491,7 +518,10 @@ describe('Validation', function() {
                 subscriptions: {
                     s1: {
                         vhost: 'v1',
-                        queue: 'q1'
+                        queue: 'q1',
+                        redeliveries: {
+                            cache: 'c1'
+                        }
                     }
                 },
                 publications: {
@@ -500,6 +530,11 @@ describe('Validation', function() {
                     x1: {
                         subscription: 's1',
                         publication: 'p1'
+                    }
+                },
+                redeliveries: {
+                    caches: {
+                        c1: {}
                     }
                 }
             }, function(err) {
