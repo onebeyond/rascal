@@ -516,7 +516,7 @@ broker.subscribe('s1', function(err, subscription) {
 If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
 #### Dealing With Redeliveries
-If your node app crashes before acknowledging a message, the message will be rolled back. This will cause a tight infinite loop if there was something wrong with the content of message which caused the crash. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a message id cache and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application.
+If your app crashes before acknowledging a message, the message will be rolled back. It is common for node applications to automatically restart, however if the crash was caused by something in the message content, it will crash and restart indefinitely, thrashing the host. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a redelivery counter and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application. e.g.
 
 ```json
 "subscriptions": {
@@ -525,14 +525,15 @@ If your node app crashes before acknowledging a message, the message will be rol
         "queue": "q1",
         "redeliveries": {
             "limit": 10,
-            "cache": "inMemory"
+            "cache": "<cache name>"
         }
     }
 },
 "redeliveries": {
     "cache": {
-        "inMemory": {
-            "size": "1000"
+        "<cache name>": {
+            "type": "<cache type>",
+            "size": "1000",
         }
     }
 }
@@ -550,9 +551,9 @@ broker.subscribe('s1', function(err, subscription) {
   })
 })
 ```
-If the message has not been auto-acknowdelged you should ackOrNack it. **If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
+If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue and emit an error event instead, **leading to message loss** if you have not configured a dead letter exchange/queue.
 
-Rascal only provides three cache implementations:
+Rascal provides three cache implementations:
 
 1. noCache - this is the default and does nothing.
 2. inMemory - useful only for testing since if your node process crashes, the cache will be vaporised too
