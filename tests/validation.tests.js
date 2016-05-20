@@ -432,7 +432,7 @@ describe('Validation', function() {
             })
         })
 
-        it('should report unknown caches', function() {
+        it('should report unknown counters', function() {
             validate({
                 vhosts: {
                     v1: {
@@ -446,16 +446,16 @@ describe('Validation', function() {
                         vhost: 'v1',
                         queue: 'q1',
                         redeliveries: {
-                            cache: "c1"
+                            counter: "c1"
                         }
                     }
                 },
                 redeliveries: {
-                    caches: {}
+                    counters: {}
                 }
             }, function(err) {
                 assert.ok(err)
-                assert.equal('Subscription: s1 refers to an unknown cache: c1 in vhost: v1', err.message)
+                assert.equal('Subscription: s1 refers to an unknown counter: c1 in vhost: v1', err.message)
             })
         })
     })
@@ -520,7 +520,7 @@ describe('Validation', function() {
                         vhost: 'v1',
                         queue: 'q1',
                         redeliveries: {
-                            cache: 'c1'
+                            counter: 'c1'
                         }
                     }
                 },
@@ -533,7 +533,7 @@ describe('Validation', function() {
                     }
                 },
                 redeliveries: {
-                    caches: {
+                    counters: {
                         c1: {}
                     }
                 }

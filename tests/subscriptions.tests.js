@@ -652,7 +652,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should count redeliveries when cache type is specified', function(done) {
+    it('should count redeliveries when counter type is specified', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -662,7 +662,7 @@ describe('Subscriptions', function() {
                     vhost: '/',
                     queue: 'q1',
                     redeliveries: {
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }
@@ -696,7 +696,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }
@@ -737,7 +737,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 0,
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }
@@ -763,7 +763,7 @@ describe('Subscriptions', function() {
     })
 
 
-    it('should not notify when cache type is not specified', function(done) {
+    it('should not notify when counter type is not specified', function(done) {
 
         createBroker({
             vhosts: vhosts,
@@ -774,7 +774,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }
@@ -809,7 +809,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }
@@ -845,7 +845,7 @@ describe('Subscriptions', function() {
                     queue: 'q1',
                     redeliveries: {
                         limit: 5,
-                        cache: 'inMemory'
+                        counter: 'inMemory'
                     }
                 }
             }

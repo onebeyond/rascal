@@ -92,7 +92,7 @@ module.exports = {
             "handler": "saveUser.js",
             "redeliveries": {
               "limit": 5,
-              "cache": "shared"
+              "counter": "shared"
             }
           },
 
@@ -101,7 +101,7 @@ module.exports = {
             "handler": "deleteUser.js",
             "redeliveries": {
               "limit": 5,
-              "cache": "shared"
+              "counter": "shared"
             }
           }
         },
@@ -158,9 +158,9 @@ module.exports = {
         }
       ]
     },
-    // Define cache(s) for counting redeliveries
+    // Define counter(s) for counting redeliveries
     "redeliveries": {
-      "caches": {
+      "counters": {
         "shared": {
           "size": 10,
           "type": "inMemoryCluster"

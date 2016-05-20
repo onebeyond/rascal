@@ -525,14 +525,14 @@ If your app crashes before acknowledging a message, the message will be rolled b
         "queue": "q1",
         "redeliveries": {
             "limit": 10,
-            "cache": "<cache name>"
+            "counter": "<counter name>"
         }
     }
 },
 "redeliveries": {
-    "cache": {
-        "<cache name>": {
-            "type": "<cache type>",
+    "counter": {
+        "<counter name>": {
+            "type": "<counter type>",
             "size": "1000",
         }
     }
@@ -553,16 +553,16 @@ broker.subscribe('s1', function(err, subscription) {
 ```
 If you do not listen for the redeliveries_exceeded event rascal will nack the message without requeue **leading to message loss if you have not configured a dead letter exchange/queue**.
 
-Rascal provides three cache implementations:
+Rascal provides three counter implementations:
 
-1. noCache - this is the default and does nothing.
-2. inMemory - useful only for testing since if your node process crashes, the cache will be vaporised too
-3. inMemoryCluster - like the inMemory, but since the cache resides in the master it survives worker crashes.
+1. stub - this is the default and does nothing.
+2. inMemory - useful only for testing since if your node process crashes, the counter will be vaporised too
+3. inMemoryCluster - like the inMemory, but since the counter resides in the master it survives worker crashes.
 
 Of the three only inMemoryCluster is useful in production, and then only if you are using [clustering](https://nodejs.org/api/cluster.html). See the [advanced example](https://github.com/guidesmiths/rascal/tree/master/examples/advanced) for how to configure it.
 
-#### Implementing your own cache
-If your application is not clustered, but you still want to protect yourself from redeliveries, you need to implement your own cache backed by something like redis. In times of high message volumes the cache will be hit hard so you should make sure it's fast and resilient to failure/slow responses from the underlying store.
+#### Implementing your own counter
+If your application is not clustered, but you still want to protect yourself from redeliveries, you need to implement your own counter backed by something like redis. In times of high message volumes the counter will be hit hard so you should make sure it's fast and resilient to failure/slow responses from the underlying store.
 
 A basic redis based implementation would look like this...
 ```js
@@ -570,11 +570,11 @@ var redis = require('redis')
 
 module.exports = function() {
 
-    var cache = redis.createClient('redis')
+    var counter = redis.createClient('redis')
 
     return {
         incrementAndGet: function(key, next) {
-            cache.incr(key, function(err, redeliveries) {
+            counter.incr(key, function(err, redeliveries) {
                 if (err) console.warn(err.message)
                 next(null, redeliveries || 1)
             })
@@ -733,7 +733,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
               "delay": 1000
           },
           "redeliveries": {
-              "cache": {
+              "counter": {
                   "size": 1000
               },
               "limit": 1000

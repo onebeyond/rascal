@@ -1,19 +1,19 @@
 var assert = require('assert')
 var async = require('async')
-var inMemory = require('../../lib/caches/inMemory')
+var inMemory = require('../../lib/counters/inMemory')
 
-describe('In Memory Cache', function() {
+describe('In Memory Counter', function() {
 
-    var cache
+    var counter
 
     beforeEach(function() {
-        cache = inMemory({ size: 3 })
+        counter = inMemory({ size: 3 })
     })
 
     it('should return increment and get entries', function(done) {
         var results = {}
         async.eachSeries(['one', 'two', 'one'], function(key, cb) {
-            cache.incrementAndGet(key, function(err, value) {
+            counter.incrementAndGet(key, function(err, value) {
                 if (err) return cb(err)
                 results[key] = value
                 cb()
@@ -26,10 +26,10 @@ describe('In Memory Cache', function() {
         })
     })
 
-    it('should limit the cache size', function(done) {
+    it('should limit the counter size', function(done) {
         var results = {}
         async.eachSeries(['one', 'two', 'three', 'four', 'one'], function(key, cb) {
-            cache.incrementAndGet(key, function(err, value) {
+            counter.incrementAndGet(key, function(err, value) {
                 if (err) return cb(err)
                 results[key] = value
                 cb()

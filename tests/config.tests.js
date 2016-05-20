@@ -1151,21 +1151,23 @@ describe('Configuration', function() {
         })
     })
 
-    describe('Redelivery Caches', function() {
+    describe('Redelivery Counters', function() {
 
-        it('should decorate cache with name and type', function() {
+        it('should decorate counter with name and type', function() {
 
             configure({
                 redeliveries: {
-                    caches: {
-                        noCache: {},
+                    counters: {
+                        stub: {},
                         inMemory: {}
                     }
                 }
             }, function(err, config) {
                 assert.ifError(err)
-                assert.equal(config.redeliveries.caches.noCache.name, 'noCache')
-                assert.equal(config.redeliveries.caches.noCache.type, 'noCache')
+                assert.equal(config.redeliveries.counters.stub.name, 'stub')
+                assert.equal(config.redeliveries.counters.stub.type, 'stub')
+                assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
+                assert.equal(config.redeliveries.counters.inMemory.type, 'inMemory')
             })
         })
     })
