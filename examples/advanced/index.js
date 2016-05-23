@@ -4,9 +4,8 @@ var format = require('util').format
 var _ = require('lodash')
 var Chance = require('Chance')
 var chance = new Chance()
-var counters = { inMemoryCluster: Rascal.counters.inMemoryCluster.worker }
 
-Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), { counters: counters }, function(err, broker) {
+Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, broker) {
     if (err) bail(err)
 
     broker.on('error', function(err) {
