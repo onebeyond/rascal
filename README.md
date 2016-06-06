@@ -172,7 +172,7 @@ Rascal also supports automatic connection retries. It's enabled in the default c
 ```
 
 #### Cluster Connections
-If you specify an array of connections instead of a single connection object Rascal will pick at Random
+If you specify an array of connections instead of a single connection object Rascal will pick one at random
 ```json
 {
   "vhosts": {
@@ -191,6 +191,7 @@ If you specify an array of connections instead of a single connection object Ras
     }
   }
 }
+```
 
 #### Exchanges
 
