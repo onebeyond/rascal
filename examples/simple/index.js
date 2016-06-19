@@ -11,8 +11,7 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config), function(err, broker) {
     subscription.on('message', function(message, content, ackOrNack) {
       console.log(content)
       ackOrNack()
-    })
-    subscription.on('error', console.error)
+    }).on('error', console.error)
   })
 
   setInterval(function() {
