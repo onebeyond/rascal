@@ -10,8 +10,7 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config), function(err, broker) {
       console.log(content)
       ackOrNack()
     }).on('error', console.error)
-  })
-  broker.on('error', console.error)
+  }).on('error', console.error)
 
   setInterval(function() {
     broker.publish('demo_pub', new Date().toISOString() + ': hello world', function(err, publication) {
