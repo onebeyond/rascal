@@ -114,9 +114,7 @@ The simplest way to specify a connection is with a url
 {
   "vhosts": {
     "v1": {
-      "connection": {
-        "url":  "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
-      }
+      "connection": "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
     }
   }
 }
@@ -178,15 +176,9 @@ If you specify an array of connections instead of a single connection object Ras
   "vhosts": {
     "v1": {
       "connection": [
-        {
-          "url":  "amqp://guest:guest@example1.com:5672/v1?heartbeat=10"
-        },
-        {
-          "url":  "amqp://guest:guest@example2.com:5672/v1?heartbeat=10"
-        },
-        {
-          "url":  "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
-        }
+        "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
+        "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
+        "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
       ]
     }
   }
