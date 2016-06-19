@@ -34,6 +34,19 @@ describe('Configuration', function() {
                 })
             })
 
+            it('should configure the connection from a string', function() {
+                configure({
+                    vhosts: {
+                        v1: {
+                            connection: "amqp://localhost"
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.connections[0].url, 'amqp://localhost')
+                })
+            })
+
             it('should ignore other connection properties when a url is specified', function() {
                 configure({
                     vhosts: {
