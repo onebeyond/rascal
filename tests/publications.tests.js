@@ -404,7 +404,7 @@ describe('Publications', function() {
 
     it('should publish lots of messages using normal channels', function(done) {
 
-        this.timeout(10000)
+        this.timeout(20000)
 
         createBroker({
             vhosts: vhosts,
