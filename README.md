@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/guidesmiths/rascal.png)](https://travis-ci.org/guidesmiths/rascal)
 # Rascal
 
 Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
