@@ -1290,7 +1290,7 @@ describe('Subscriptions', function() {
         })
     })
 
-    it('should error unknown recovery strategy', function(done) {
+    it('should error on unknown recovery strategy', function(done) {
 
         createBroker({
             vhosts: vhosts,
