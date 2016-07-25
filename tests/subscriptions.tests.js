@@ -1407,6 +1407,34 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should nack messages when all recovery strategies have been attempted', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+
+                var messages = {}
+                broker.subscribe('s1', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert.ok(message)
+                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
+                        ackOrNack(new Error('retry'), [], function() {
+                            broker.shutdown(function(err) {
+                                assert.ifError(err)
+                                amqputils.assertMessageAbsent('q1', namespace, done)
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    })
+
     it('should limit concurrent messages using prefetch', function(done) {
 
         createBroker({
