@@ -947,6 +947,67 @@ describe('Configuration', function() {
             })
         })
 
+
+        it('should create a publication for each queue', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1']
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.q1.vhost, 'v1')
+                assert.equal(config.publications.q1.destination, 'q1')
+            })
+        })
+
+        it('should not override an explicit vhost publication with a default queue publication', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1'],
+                        publications: {
+                            q1: {
+                                queue: 'q1',
+                                routingKey: 'r1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.q1.vhost, 'v1')
+                assert.equal(config.publications.q1.destination, 'q1')
+                assert.equal(config.publications.q1.routingKey, 'r1')
+            })
+        })
+
+        it('should default queue publication should not conflict with an explicit root level', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1']
+                    }
+                },
+                publications: {
+                    q1: {
+                        queue: 'q1',
+                        vhost: 'v1',
+                        routingKey: 'r1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.q1.vhost, 'v1')
+                assert.equal(config.publications.q1.destination, 'q1')
+                assert.equal(config.publications.q1.routingKey, 'r1')
+            })
+        })
+
         it('should should merge implicit vhost publications with explicit publications', function() {
             configure({
                 vhosts: {

@@ -392,7 +392,7 @@ If you prefer to send messages to a queue
   }
 }
 ```
-> To save you entering the vhost you can nest publications inside the vhost block.
+> To save you entering the vhost you can nest publications inside the vhost block. Rascal also creates default publications for every queue and exchange so providing you don't need to specify any additional options you don't need to include a publications block at all.
 
 Rascal supports text, buffers and anything it can JSON.stringify. The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
 
