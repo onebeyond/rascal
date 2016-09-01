@@ -867,7 +867,6 @@ describe('Configuration', function() {
             })
         })
 
-
         it('should default the publication vhost to the vhost in the surrounding block', function() {
             configure({
                 vhosts: {
@@ -885,6 +884,66 @@ describe('Configuration', function() {
                 assert.ok(!config.vhosts.v1.publications)
                 assert.equal(config.publications.p1.vhost, 'v1')
                 assert.equal(config.publications.p1.destination, 'e1')
+            })
+        })
+
+        it('should create a publication for each exchange', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: ['e1']
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.e1.vhost, 'v1')
+                assert.equal(config.publications.e1.destination, 'e1')
+            })
+        })
+
+        it('should not override an explicit vhost publication with a default exchange publication', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: ['e1'],
+                        publications: {
+                            e1: {
+                                exchange: 'e1',
+                                routingKey: 'r1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.e1.vhost, 'v1')
+                assert.equal(config.publications.e1.destination, 'e1')
+                assert.equal(config.publications.e1.routingKey, 'r1')
+            })
+        })
+
+        it('should default exchange publication should not conflict with an explicit root level', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        exchanges: ['e1']
+                    }
+                },
+                publications: {
+                    e1: {
+                        exchange: 'e1',
+                        vhost: 'v1',
+                        routingKey: 'r1'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.publications)
+                assert.equal(config.publications.e1.vhost, 'v1')
+                assert.equal(config.publications.e1.destination, 'e1')
+                assert.equal(config.publications.e1.routingKey, 'r1')
             })
         })
 
