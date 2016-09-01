@@ -1332,11 +1332,11 @@ describe('Subscriptions', function() {
                     assert.ifError(err)
                     subscription.on('message', function(message, content, ackOrNack) {
                         assert.ok(message)
-                        messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                         ackOrNack(new Error('retry'), [
                             { strategy: 'republish', attempts: 5 },
                             { strategy: 'ack' }
                         ], function() {
+                            messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1
                             if (messages[message.properties.messageId] < 6) return
                             setTimeout(function() {
                                 assert.equal(messages[message.properties.messageId], 6)
