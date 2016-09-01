@@ -492,6 +492,8 @@ broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
 The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
 
+> As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
+
 #### Invalid Messages
 If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
 ```javascript

@@ -947,7 +947,6 @@ describe('Configuration', function() {
             })
         })
 
-
         it('should create a publication for each queue', function() {
             configure({
                 vhosts: {
@@ -1005,6 +1004,66 @@ describe('Configuration', function() {
                 assert.equal(config.publications.q1.vhost, 'v1')
                 assert.equal(config.publications.q1.destination, 'q1')
                 assert.equal(config.publications.q1.routingKey, 'r1')
+            })
+        })
+
+        it('should create a subscription for each queue', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1']
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.subscriptions)
+                assert.equal(config.subscriptions.q1.vhost, 'v1')
+                assert.equal(config.subscriptions.q1.source, 'q1')
+            })
+        })
+
+        it('should not override an explicit vhost subscription with a default queue subscription', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1'],
+                        subscriptions: {
+                            q1: {
+                                queue: 'q1',
+                                routingKey: 'r1'
+                            }
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.subscriptions)
+                assert.equal(config.subscriptions.q1.vhost, 'v1')
+                assert.equal(config.subscriptions.q1.source, 'q1')
+                assert.equal(config.subscriptions.q1.routingKey, 'r1')
+            })
+        })
+
+        it('should default queue subscription should not conflict with an explicit root level', function() {
+            configure({
+                vhosts: {
+                    v1: {
+                        queues: ['q1']
+                    }
+                },
+                subscriptions: {
+                    q1: {
+                        queue: 'q1',
+                        vhost: 'v1',
+                        contentType: 'text/plain'
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.ok(!config.vhosts.v1.subscriptions)
+                assert.equal(config.subscriptions.q1.vhost, 'v1')
+                assert.equal(config.subscriptions.q1.source, 'q1')
+                assert.equal(config.subscriptions.q1.contentType, 'text/plain')
             })
         })
 
