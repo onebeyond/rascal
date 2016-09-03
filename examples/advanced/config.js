@@ -1,7 +1,8 @@
 module.exports = {
   "rascal": {
     "vhosts": {
-
+      
+      // Define the name of the vhost
       "registration": {
 
         // Define the vhost connection parameters. Specify multiple entries for cluster
