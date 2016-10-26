@@ -28,8 +28,8 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
                 }).on('content_invalid', function(err, message, content, ackOrNack) {
                     console.errror('Invalid Content', err.message)
                     ackOrNack(err, config.recovery.dead_letter)
-                }).on('retries_exceeded', function(err, message, content, ackOrNack) {
-                    console.error('Retries Exceeded', err.message)
+                }).on('redeliveries_exceeded', function(err, message, content, ackOrNack) {
+                    console.error('Redeliveries Exceeded', err.message)
                     ackOrNack(err, config.recovery.dead_letter)
                 }).on('error', function(err) {
                     console.error(err.message)
