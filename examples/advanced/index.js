@@ -22,8 +22,7 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
                 .on('message', function(message, content, ackOrNack) {
                     handler(content, function(err) {
                         if (!err) return ackOrNack()
-                        ackOrNack(err, err.recoverable ? broker.config.recovery.deferred_retry
-                                                       : broker.config.recovery.dead_letter)
+                        ackOrNack(err, err.recoverable ? broker.config.recovery.deferred_retry : broker.config.recovery.dead_letter)
                     })
                 }).on('content_invalid', function(err, message, content, ackOrNack) {
                     console.errror('Invalid Content', err.message)
