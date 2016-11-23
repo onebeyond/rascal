@@ -3,7 +3,7 @@ var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')
 var format = require('util').format
-var uuid = require('node-uuid').v4
+var uuid = require('uuid').v4
 var Broker = require('..').Broker
 var AmqpUtils = require('./utils/amqputils')
 
