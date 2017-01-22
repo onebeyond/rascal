@@ -4,33 +4,38 @@
   "description": "A friendly wrapper around amqplib with (mostly) safe defaults",
   "main": "index.js",
   "dependencies": {
-    "amqplib": "^0.4.2",
-    "async": "^0.9.0",
-    "debug": "^2.1.3",
+    "amqplib": "^0.5.1",
+    "async": "^2.1.4",
+    "debug": "^2.6.0",
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
-    "lodash": "^3.9.3",
-    "lru-cache": "^4.0.1",
+    "lodash": "^4.17.4",
+    "lru-cache": "^4.0.2",
     "merge-defaults": "^0.2.1",
     "safe-json-parse": "^4.0.0",
     "stashback": "^0.1.2",
-    "uuid": "^3.0.0",
-    "xregexp": "^2.0.0"
+    "uuid": "^3.0.1",
+    "xregexp": "^3.1.1"
   },
   "devDependencies": {
     "chalk": "^1.1.3",
     "chance": "^1.0.1",
-    "eslint": "^0.23.0",
-    "eslint-config-imperative": "0.0.6",
-    "husky": "^0.11.4",
-    "mocha": "^2.2.1"
+    "codeclimate-test-reporter": "^0.4.0",
+    "eslint": "^3.12.2",
+    "eslint-config-imperative": "^1.0.0",
+    "eslint-plugin-imperative": "^1.0.0",
+    "husky": "^0.13.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.2.0"
   },
   "scripts": {
-    "test": "mocha --recursive tests",
-    "test-debug": "mocha --debug-brk --recursive tests",
-    "lint": "node_modules/.bin/eslint .",
+    "test": "mocha",
+    "test-debug": "mocha --debug-brk",
+    "lint": "eslint .",
     "prepush": "npm run lint && npm test",
-    "docker": "docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
+    "docker": "docker run -d -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
+    "istanbul": "istanbul cover --report html --report lcov _mocha",
+    "codeclimate": "codeclimate-test-reporter < coverage/lcov.info"
   },
   "keywords": [
     "amqplib",
@@ -44,7 +49,7 @@
   "bugs": {
     "url": "https://github.com/guidesmiths/rascal/issues"
   },
-  "homepage": "https://github.com/guidesmiths/rascal",
+  "homepage": "https://guidesmiths.github.io/rascal/",
   "author": "Stephen Cresswell",
   "license": "ISC"
 }

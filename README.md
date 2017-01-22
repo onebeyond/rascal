@@ -1,6 +1,14 @@
-[![Build Status](https://travis-ci.org/guidesmiths/rascal.png)](https://travis-ci.org/guidesmiths/rascal)
 # Rascal
 Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
+
+[![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
+[![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
+[![Build Status](https://img.shields.io/travis/guidesmiths/rascal/master.svg)](https://travis-ci.org/guidesmiths/rascal)
+[![Code Climate](https://codeclimate.com/github/guidesmiths/rascal/badges/gpa.svg)](https://codeclimate.com/github/guidesmiths/rascal)
+[![Test Coverage](https://codeclimate.com/github/guidesmiths/rascal/badges/coverage.svg)](https://codeclimate.com/github/guidesmiths/rascal/coverage)
+[![Code Style](https://img.shields.io/badge/code%20style-imperative-brightgreen.svg)](https://github.com/guidesmiths/eslint-config-imperative)
+[![Dependency Status](https://david-dm.org/guidesmiths/rascal.svg)](https://david-dm.org/guidesmiths/rascal)
+[![devDependencies Status](https://david-dm.org/guidesmiths/rascal/dev-status.svg)](https://david-dm.org/guidesmiths/rascal?type=dev)
 
 ## Recent changes
 Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
