@@ -92,7 +92,8 @@ describe('Publications', function() {
             vhosts: vhosts,
             publications: {
                 p1: {
-                    exchange: 'e1'
+                    exchange: 'e1',
+                    confirm: false
                 }
             }
         }, function(err, broker) {
