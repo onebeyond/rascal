@@ -32,8 +32,6 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 ## Caveats
 * Rascal currently implements only a small subset of the [amqplib api](http://www.squaremobius.net/amqp.node/channel_api.html). It was written with a strong bias towards moderate volume pub/sub systems for a project with some quite agressive timescales. If you need one of the missing api calls, then your best approach is to submit a [PR](https://github.com/guidesmiths/rascal/pulls).
 
-* Rascal deliberately uses a new channel per publish operation. This is because any time a channel operation encounters an error, the channel becomes unusable and must be replaced. In an asynchronous environment such as node you are likely to have passed the channel reference to multiple callbacks, meaning that for every channel error, multiple publish operations will fail. The negative of the new channel per publish operation, is a little extra overhead and the chance of busting the maxium number of channels (the default is 65K). We urge you to test Rascal with realistic peak production loads to ensure this isn't the case.
-
 * There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
   1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener
   2. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has no 'redeliveries_exceeded' listener
@@ -188,6 +186,18 @@ If you specify an array of connections instead of a single connection object Ras
         "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
         "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
       ]
+    }
+  }
+}
+```
+
+#### Channel pooling
+Rascal pools channels it uses for publishing messages. It creates a two pools per vhost - one for confirm channels, and other one for "regular" channels. Default maximum pool size for these is 1. If you think it is a limiting factor in your publishing code, the value can be changed through config.
+```json
+{
+  "vhosts": {
+    "v1": {
+      "channelPoolSize": 3
     }
   }
 }
