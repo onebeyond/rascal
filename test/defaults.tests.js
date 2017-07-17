@@ -73,6 +73,44 @@ describe('Defaults', function() {
             })
         })
 
+        describe('Channel pooling', function() {
+
+            it('should use the default channel pool size', function() {
+                configure({
+                    defaults: {
+                        vhosts: {
+                            channelPoolSize: 3
+                        }
+                    },
+                    vhosts: {
+                        v1: {
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.channelPoolSize, 3)
+                })
+            })
+
+            it('should permit the defaults to be overriden', function() {
+                configure({
+                    defaults: {
+                        vhosts: {
+                            channelPoolSize: 3
+                        }
+                    },
+                    vhosts: {
+                        v1: {
+                            channelPoolSize: 5
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.channelPoolSize, 5)
+                })
+            })
+        })
+
         describe('Exchanges', function() {
 
             it('should use the default exchange configuration', function() {
