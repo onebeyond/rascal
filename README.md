@@ -10,11 +10,6 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 [![Dependency Status](https://david-dm.org/guidesmiths/rascal.svg)](https://david-dm.org/guidesmiths/rascal)
 [![devDependencies Status](https://david-dm.org/guidesmiths/rascal/dev-status.svg)](https://david-dm.org/guidesmiths/rascal?type=dev)
 
-## Recent changes
-Prior to version 0.11 rascal modified the supplied config object, by expanding shortcut notation and pulling subscriptions and publications out of their vhosts block. This could lead to some hard to diagnose bugs in testsuites that created and nuked the broker multiple times. From 0.11 onwards the original config object is left intact, and a frozen version of the modified config available from ```broker.config```
-
-We made the redelivery counter pluggable and added an implementation designed to work with [clustering](https://nodejs.org/api/cluster.html), so as to survive worker death. See the [Dealing With Redeliveries](#dealing-with-redeliveries) section for more details.
-
 ## tl;dr
 See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
 
