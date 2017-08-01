@@ -73,6 +73,48 @@ describe('Defaults', function() {
             })
         })
 
+        describe('Channel pooling', function() {
+
+            it('should use the default publications channel pool sizes', function() {
+                configure({
+                    defaults: {
+                        vhosts: {
+                            publicationChannelPools: {
+                                regularPoolSize: 2,
+                                confirmPoolSize: 3
+                            }
+                        }
+                    },
+                    vhosts: {
+                        v1: {
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2)
+                    assert.equal(config.vhosts.v1.publicationChannelPools.confirmPoolSize, 3)
+                })
+            })
+
+            it('should permit the defaults to be overriden', function() {
+                configure({
+                    defaults: {
+                        vhosts: {
+                            channelPoolSize: 3
+                        }
+                    },
+                    vhosts: {
+                        v1: {
+                            channelPoolSize: 5
+                        }
+                    }
+                }, function(err, config) {
+                    assert.ifError(err)
+                    assert.equal(config.vhosts.v1.channelPoolSize, 5)
+                })
+            })
+        })
+
         describe('Exchanges', function() {
 
             it('should use the default exchange configuration', function() {

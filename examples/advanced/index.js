@@ -1,6 +1,5 @@
 var Rascal = require('../..')
 var config = require('./config')
-var format = require('util').format
 var _ = require('lodash')
 var Chance = require('Chance')
 var chance = new Chance()

@@ -559,6 +559,21 @@ describe('Validation', function() {
             })
         })
 
+        it('should report invalid publication channel pool attributes', function() {
+            validate({
+                vhosts: {
+                    v1: {
+                        publicationChannelPools: {
+                            invalid: true
+                        }
+                    }
+                }
+            }, function(err) {
+                assert.ok(err)
+                assert.equal('Publication channel pool in vhost: v1 refers to an unsupported attribute: invalid', err.message)
+            })
+        })
+
         it('should report invalid connection attributes', function() {
             validate({
                 vhosts: {
