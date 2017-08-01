@@ -75,11 +75,14 @@ describe('Defaults', function() {
 
         describe('Channel pooling', function() {
 
-            it('should use the default channel pool size', function() {
+            it('should use the default publications channel pool sizes', function() {
                 configure({
                     defaults: {
                         vhosts: {
-                            channelPoolSize: 3
+                            publicationChannelPools: {
+                                regularPoolSize: 2,
+                                confirmPoolSize: 3
+                            }
                         }
                     },
                     vhosts: {
@@ -88,7 +91,8 @@ describe('Defaults', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.channelPoolSize, 3)
+                    assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2)
+                    assert.equal(config.vhosts.v1.publicationChannelPools.confirmPoolSize, 3)
                 })
             })
 
