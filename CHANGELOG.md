@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.3.1]
+### Added
+- Channel pooling (makes publishing much faster)
+
+### Updated
+- Dependencies
+
 ## [1.2.1]
 ### Updated
 - Used wrong argument in callback
