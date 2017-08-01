@@ -197,7 +197,10 @@ Rascal pools channels it uses for publishing messages. It creates a two pools pe
 {
   "vhosts": {
     "v1": {
-      "channelPoolSize": 3
+      "publicationChannelPools": {
+        "regularPoolSize": 1,
+        "confirmPoolSize": 1
+      }
     }
   }
 }
