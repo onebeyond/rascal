@@ -1,5 +1,10 @@
 # Change Log
 
+## [1.4.0]
+### Added
+- Listing to connection close events as per #18
+- Fixed bug with configuration which caused vhost config errors to be masked
+
 ## [1.3.1]
 ### Added
 - Channel pooling (makes publishing much faster)
