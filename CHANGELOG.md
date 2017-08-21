@@ -1,5 +1,9 @@
 # Change Log
 
+## [1.4.1]
+### Fixed
+- confirmPoolSize option as per https://github.com/guidesmiths/rascal/pull/19
+
 ## [1.4.0]
 ### Added
 - Listing to connection close events as per #18
