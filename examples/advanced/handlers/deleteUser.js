@@ -1,4 +1,5 @@
 var chalk = require('chalk')
+var format = require('util').format
 
 module.exports = function(broker) {
     return function(user, cb) {

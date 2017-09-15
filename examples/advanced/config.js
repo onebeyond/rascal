@@ -1,7 +1,7 @@
 module.exports = {
   "rascal": {
     "vhosts": {
-      
+
       // Define the name of the vhost
       "registration": {
 
@@ -10,7 +10,10 @@ module.exports = {
           {
             "user": "app_user",
             "password": "password",
-            "port": 5672
+            "port": 5672,
+            "options": {
+              "heartbeat": 1
+            }
           }
         ],
 

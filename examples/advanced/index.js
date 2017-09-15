@@ -3,6 +3,7 @@ var config = require('./config')
 var _ = require('lodash')
 var Chance = require('Chance')
 var chance = new Chance()
+var format = require('util').format
 
 Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, broker) {
     if (err) bail(err)
@@ -13,9 +14,12 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
 
     _.each(broker.config.subscriptions, function(subscriptionConfig, subscriptionName) {
 
+        if (!subscriptionConfig.handler) return;
+
         var handler = require('./handlers/' + subscriptionConfig.handler)(broker)
 
         broker.subscribe(subscriptionName, function(err, subscription) {
+
             if (err) return bail(err)
             subscription
                 .on('message', function(message, content, ackOrNack) {
@@ -23,12 +27,12 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
                         if (!err) return ackOrNack()
                         ackOrNack(err, err.recoverable ? broker.config.recovery.deferred_retry : broker.config.recovery.dead_letter)
                     })
-                }).on('content_invalid', function(err, message, content, ackOrNack) {
-                    console.errror('Invalid Content', err.message)
-                    ackOrNack(err, config.recovery.dead_letter)
-                }).on('redeliveries_exceeded', function(err, message, content, ackOrNack) {
+                }).on('invalid_content', function(err, message, ackOrNack) {
+                    console.error('Invalid Content', err.message)
+                    ackOrNack(err, broker.config.recovery.dead_letter)
+                }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
                     console.error('Redeliveries Exceeded', err.message)
-                    ackOrNack(err, config.recovery.dead_letter)
+                    ackOrNack(err, broker.config.recovery.dead_letter)
                 }).on('error', function(err) {
                     console.error(err.message)
                 })
