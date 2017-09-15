@@ -15,17 +15,6 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 
 1.4.0 added a 'close' event listener, which would automatically reconnect following the broker closing the connection. In some situations both a 'close' event and 'error' event are emitted causing Rascal to create two new connections. This [may](https://github.com/squaremo/amqp.node/issues/271) be responsible for unknown delivery tag errors.
 
-## [1.4.0]
-### Added
-- Listing to connection close events as per #18
-- Fixed bug with configuration which caused vhost config errors to be masked
-
-## [1.3.1]
-### Added
-- Channel pooling (makes publishing much faster)
-
-
-
 ## tl;dr
 See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
 
