@@ -31,6 +31,7 @@
   },
   "scripts": {
     "test": "mocha",
+    "test-w": "mocha --watch",
     "test-debug": "mocha --debug-brk",
     "lint": "eslint .",
     "prepush": "npm run lint && npm run codeclimate",

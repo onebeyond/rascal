@@ -1,5 +1,15 @@
 # Change Log
 
+## [2.1.0]
+### Added
+- Default publications and subscriptions are marked with an autoCreated flag
+
+### Changed
+- Default publications and subscriptions are are qualified with the vhost
+
+### Deprecated
+- Unqualified publications and subscriptions have been deprecated. A console.warn is logged once per subscription and publication but can be disabled by setting RASCAL_DISABLE_ALL_DEPRECATION_WARNINGS=true or RASCAL_DISABLE_UNQUALIFIED_NAME_DEPRECATION_WARNING=true
+
 ## [2.0.0]
 ### Fixed
 - Connection pool was leaking connections following a connection error. With a pool size of 1, this locked up all publishers

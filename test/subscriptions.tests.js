@@ -98,6 +98,11 @@ describe('Subscriptions', function() {
             s3: {
                 vhost: '/',
                 queue: 'q3'
+            },
+            s4: {
+                vhost: '/',
+                queue: 'q1',
+                deprecated: true
             }
         }
 
@@ -124,6 +129,29 @@ describe('Subscriptions', function() {
                 assert.ok(err)
                 assert.equal(err.message, 'Unknown subscription: does-not-exist')
                 done()
+            })
+        })
+    })
+
+    it('should report deprecated subscriptions', function(done) {
+
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: subscriptions
+        }, function(err, broker) {
+            assert.ifError(err)
+            broker.publish('p1', 'test message', function(err) {
+                assert.ifError(err)
+                broker.subscribe('s4', function(err, subscription) {
+                    assert.ifError(err)
+                    subscription.on('message', function(message, content, ackOrNack) {
+                        assert(message)
+                        assert.equal(message.properties.contentType, 'text/plain')
+                        assert.equal(content, 'test message')
+                        done()
+                    })
+                })
             })
         })
     })

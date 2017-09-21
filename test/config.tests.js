@@ -887,9 +887,12 @@ describe('Configuration', function() {
             })
         })
 
-        it('should create a publication for each exchange', function() {
+        it('should create a default publication for each exchange', function() {
             configure({
                 vhosts: {
+                    '/': {
+                        exchanges: ['e1']
+                    },
                     v1: {
                         exchanges: ['e1']
                     }
@@ -897,8 +900,21 @@ describe('Configuration', function() {
             }, function(err, config) {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.publications)
+
                 assert.equal(config.publications.e1.vhost, 'v1')
                 assert.equal(config.publications.e1.destination, 'e1')
+                assert.equal(config.publications.e1.autoCreated, true)
+                assert.equal(config.publications.e1.deprecated, true)
+
+                assert.equal(config.publications['/e1'].vhost, '/')
+                assert.equal(config.publications['/e1'].destination, 'e1')
+                assert.equal(config.publications['/e1'].autoCreated, true)
+                assert.equal(config.publications['/e1'].deprecated, undefined)
+
+                assert.equal(config.publications['v1/e1'].vhost, 'v1')
+                assert.equal(config.publications['v1/e1'].destination, 'e1')
+                assert.equal(config.publications['v1/e1'].autoCreated, true)
+                assert.equal(config.publications['v1/e1'].deprecated, undefined)
             })
         })
 
@@ -924,7 +940,7 @@ describe('Configuration', function() {
             })
         })
 
-        it('should default exchange publication should not conflict with an explicit root level', function() {
+        it('should not override an explicit root level exchange publication with a default exchange publication', function() {
             configure({
                 vhosts: {
                     v1: {
@@ -947,9 +963,12 @@ describe('Configuration', function() {
             })
         })
 
-        it('should create a publication for each queue', function() {
+        it('should create a default publication for each queue', function() {
             configure({
                 vhosts: {
+                    '/': {
+                        queues: ['q1']
+                    },
                     v1: {
                         queues: ['q1']
                     }
@@ -957,8 +976,21 @@ describe('Configuration', function() {
             }, function(err, config) {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.publications)
+
                 assert.equal(config.publications.q1.vhost, 'v1')
                 assert.equal(config.publications.q1.destination, 'q1')
+                assert.equal(config.publications.q1.autoCreated, true)
+                assert.equal(config.publications.q1.deprecated, true)
+
+                assert.equal(config.publications['/q1'].vhost, '/')
+                assert.equal(config.publications['/q1'].destination, 'q1')
+                assert.equal(config.publications['/q1'].autoCreated, true)
+                assert.equal(config.publications['/q1'].deprecated, undefined)
+
+                assert.equal(config.publications['v1/q1'].vhost, 'v1')
+                assert.equal(config.publications['v1/q1'].destination, 'q1')
+                assert.equal(config.publications['v1/q1'].autoCreated, true)
+                assert.equal(config.publications['v1/q1'].deprecated, undefined)
             })
         })
 
@@ -984,7 +1016,7 @@ describe('Configuration', function() {
             })
         })
 
-        it('should default queue publication should not conflict with an explicit root level', function() {
+        it('should not override an explicit root level publication with a default queue publication', function() {
             configure({
                 vhosts: {
                     v1: {
@@ -1007,9 +1039,12 @@ describe('Configuration', function() {
             })
         })
 
-        it('should create a subscription for each queue', function() {
+        it('should create a default subscription for each queue', function() {
             configure({
                 vhosts: {
+                    '/': {
+                        queues: ['q1']
+                    },
                     v1: {
                         queues: ['q1']
                     }
@@ -1017,8 +1052,21 @@ describe('Configuration', function() {
             }, function(err, config) {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.subscriptions)
+
                 assert.equal(config.subscriptions.q1.vhost, 'v1')
                 assert.equal(config.subscriptions.q1.source, 'q1')
+                assert.equal(config.subscriptions.q1.autoCreated, true)
+                assert.equal(config.subscriptions.q1.deprecated, true)
+
+                assert.equal(config.subscriptions['/q1'].vhost, '/')
+                assert.equal(config.subscriptions['/q1'].source, 'q1')
+                assert.equal(config.subscriptions['/q1'].autoCreated, true)
+                assert.equal(config.subscriptions['/q1'].deprecated, undefined)
+
+                assert.equal(config.subscriptions['v1/q1'].vhost, 'v1')
+                assert.equal(config.subscriptions['v1/q1'].source, 'q1')
+                assert.equal(config.subscriptions['v1/q1'].autoCreated, true)
+                assert.equal(config.subscriptions['v1/q1'].deprecated, undefined)
             })
         })
 
@@ -1044,7 +1092,7 @@ describe('Configuration', function() {
             })
         })
 
-        it('should default queue subscription should not conflict with an explicit root level', function() {
+        it('should not override and explicit root level subscription with a default queue subscription', function() {
             configure({
                 vhosts: {
                     v1: {
