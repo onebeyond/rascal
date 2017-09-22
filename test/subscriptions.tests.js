@@ -1681,6 +1681,27 @@ describe('Subscriptions', function() {
         })
     })
 
+    it('should attach the subscription vhost to message properties', function(done) {
+      createBroker({
+          vhosts: vhosts,
+          publications: publications,
+          subscriptions: subscriptions
+      }, function(err, broker) {
+          assert.ifError(err)
+          broker.publish('p1', 'test message', function(err) {
+              assert.ifError(err)
+              broker.subscribe('s1', function(err, subscription) {
+                  assert.ifError(err)
+                  subscription.on('message', function(message, content, ackOrNack) {
+                      assert(message.properties)
+                      assert.equal(message.properties.headers.rascal.originalVhost, '/')
+                      done()
+                  })
+              })
+          })
+      })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {
