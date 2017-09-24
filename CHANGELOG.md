@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.2.0]
+### Added
+- Decorate inbound messages with originalVhost header
+
 ## [2.1.0]
 ### Added
 - Default publications and subscriptions are marked with an autoCreated flag
