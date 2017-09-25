@@ -10,7 +10,7 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 [![Dependency Status](https://david-dm.org/guidesmiths/rascal.svg)](https://david-dm.org/guidesmiths/rascal)
 [![devDependencies Status](https://david-dm.org/guidesmiths/rascal/dev-status.svg)](https://david-dm.org/guidesmiths/rascal?type=dev)
 
-## Deprication Warnings
+## Deprecation Warnings
 1.3.1 added channel pooling, which contained a bug in the connection error handler. Connections were not drained from the pool, resulting in blocking all publications, and adding a message to the channel request queue until your process ran out of memory.
 
 1.4.0 added a 'close' event listener, which would automatically reconnect following the broker closing the connection. In some situations both a 'close' event and 'error' event are emitted causing Rascal to create two new connections. This [may](https://github.com/squaremo/amqp.node/issues/271) be responsible for unknown delivery tag errors.
