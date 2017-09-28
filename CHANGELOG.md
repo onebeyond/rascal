@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.3.0]
+### Added
+- Broker.unsubscribeAll to remove subscriptons. Mostly useful for automated tests
+
 ## [2.2.0]
 ### Added
 - Decorate inbound messages with originalVhost header
