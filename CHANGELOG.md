@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.3.1]
+### Updated
+- Updated dependences
+
 ## [2.3.0]
 ### Added
 - Broker.unsubscribeAll to remove subscriptons. Mostly useful for automated tests

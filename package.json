@@ -6,7 +6,7 @@
   "dependencies": {
     "amqplib": "^0.5.1",
     "async": "^2.5.0",
-    "debug": "^2.6.8",
+    "debug": "^3.1.0",
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
     "generic-pool": "^2.5.4",
@@ -14,7 +14,7 @@
     "lru-cache": "^4.1.1",
     "merge-defaults": "^0.2.1",
     "safe-json-parse": "^4.0.0",
-    "stashback": "^1.0.0",
+    "stashback": "^1.0.2",
     "uuid": "^3.1.0",
     "xregexp": "^3.2.0"
   },
