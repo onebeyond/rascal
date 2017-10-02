@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.3.2]
+### Updated
+- Use self instead of this for code which called broker.nuke without binding context
+
 ## [2.3.1]
 ### Updated
 - Updated dependences
