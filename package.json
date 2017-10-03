@@ -9,7 +9,7 @@
     "debug": "^3.1.0",
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
-    "generic-pool": "^2.5.4",
+    "generic-pool": "^3.1.8",
     "lodash": "^4.17.4",
     "lru-cache": "^4.1.1",
     "merge-defaults": "^0.2.1",
@@ -27,7 +27,7 @@
     "eslint-plugin-imperative": "^2.0.0",
     "husky": "^0.14.3",
     "istanbul": "^0.4.5",
-    "mocha": "^3.5.0"
+    "mocha": "^4.0.0"
   },
   "greenkeeper": {
     "ignore": [
