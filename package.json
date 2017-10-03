@@ -29,9 +29,14 @@
     "istanbul": "^0.4.5",
     "mocha": "^3.5.0"
   },
+  "greenkeeper": {
+    "ignore": [
+      "generic-pool"
+    ]
+  },
   "scripts": {
-    "test": "mocha",
-    "test-w": "mocha --watch",
+    "test": "mocha ./test",
+    "test-w": "mocha ./test --watch",
     "test-debug": "mocha --debug-brk",
     "lint": "eslint .",
     "prepush": "npm run lint && npm run codeclimate",
