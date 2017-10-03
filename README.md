@@ -1,4 +1,6 @@
 # Rascal
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/guidesmiths/rascal.svg)](https://greenkeeper.io/)
 Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
