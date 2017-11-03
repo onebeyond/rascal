@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.5.0]
+### Fixed
+- Subscriber session could attempt to ack/nack messages using a closed channel. Leaving the channel open for 1 minute after cancelling subscription.
+
 ## [2.4.0]
 ### Added
 - Socket options can be specified in the vhost connection configuration. Connection timeout defaults to 1 minute.

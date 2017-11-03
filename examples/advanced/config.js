@@ -13,6 +13,9 @@ module.exports = {
             "port": 5672,
             "options": {
               "heartbeat": 1
+            },
+            socketOptions: {
+                timeout: 1000
             }
           }
         ],
