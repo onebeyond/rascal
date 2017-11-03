@@ -1,6 +1,12 @@
 module.exports = {
     vhosts: {
         "/": {
+            connection: {
+                heartbeat: 1,
+                socketOptions: {
+                    timeout: 1000
+                }
+            },
             exchanges: ["demo_ex"],
             queues: ["demo_q"],
             bindings: [

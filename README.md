@@ -139,13 +139,16 @@ Alternatively you can specify the individual connection details
         "vhost": "v1",
         "options": {
             "heartbeat": 5
+        },
+        "socketOptions": {
+            "timeout": 10000
         }
       }
     }
   }
 }
 ```
-Any attributes you add to the "options" sub document will be converted to query parameters. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you want to override
+Any attributes you add to the "options" sub document will be converted to query parameters. Any attributes you add in the "socketOptions" sub document will be passed directly to amqplib's connect method (which hands them off to `net` or `tls`. Providing you merge your configuration with the default configuration ```rascal.withDefaultConfig(config)``` you need only specify the attributes you want to override
 ```json
 {
   "vhosts": {

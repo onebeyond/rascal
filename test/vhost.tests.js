@@ -28,6 +28,26 @@ describe('Vhost', function() {
         broker.nuke(done)
     })
 
+    it('should timeout connections', function(done) {
+        var namespace = uuid()
+        createBroker({
+            vhosts: {
+                '/': {
+                    connection: {
+                        host: '10.255.255.1',
+                        socketOptions: {
+                            timeout: 100
+                        }
+                    },
+                    namespace: namespace
+                }
+            }
+        }, function(err) {
+            assert.equal(err.message, 'connect ETIMEDOUT')
+            done();
+        })
+    })
+
     it('should create exchanges', function(done) {
         var namespace = uuid()
         createBroker({

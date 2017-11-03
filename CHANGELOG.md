@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.4.0]
+### Added
+- Socket options can be specified in the vhost connection configuration. Connection timeout defaults to 1 minute.
+
 ## [2.3.2]
 ### Updated
 - Use self instead of this for code which called broker.nuke without binding context
