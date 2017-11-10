@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.8.0]
+### Fixed
+- Workaround for non deterministic amqplib connection handling, see https://github.com/squaremo/amqp.node/issues/388
+
 ## [2.7.0]
 ### Added
 - AckOrNack emits/returns an error if an attempt was made to ack/nack a message using a closed channel
