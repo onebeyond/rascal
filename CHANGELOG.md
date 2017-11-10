@@ -3,6 +3,7 @@
 ## [2.7.0]
 ### Added
 - AckOrNack emits/returns an error if an attempt was made to ack/nack a message using a closed channel
+- Adjusting default connection_timeout and channel_max url parameters
 
 ## [2.6.0]
 ### Added
