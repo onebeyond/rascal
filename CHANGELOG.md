@@ -2,7 +2,7 @@
 
 ## [2.7.0]
 ### Added
-- Session emits an error if an attempt was made to ack/nack a message using a closed channel
+- AckOrNack emits/returns an error if an attempt was made to ack/nack a message using a closed channel
 
 ## [2.6.0]
 ### Added
