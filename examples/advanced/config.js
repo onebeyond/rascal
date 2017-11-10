@@ -3,13 +3,13 @@ module.exports = {
     "vhosts": {
 
       // Define the name of the vhost
-      "registration": {
+      "/": {
 
         // Define the vhost connection parameters. Specify multiple entries for cluster
         "connections": [
           {
-            "user": "app_user",
-            "password": "password",
+            "user": "guest",
+            "password": "guest",
             "port": 5672,
             "options": {
               "heartbeat": 1

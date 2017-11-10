@@ -1,5 +1,10 @@
 # Change Log
 
+## [2.6.0]
+### Added
+- Exponential backoff for re-connections and channel re-subscriptions
+- Fixed typo in deprecation warning
+
 ## [2.5.0]
 ### Fixed
 - Subscriber session could attempt to ack/nack messages using a closed channel. Leaving the channel open for 1 minute after cancelling subscription.

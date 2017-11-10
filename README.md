@@ -169,13 +169,35 @@ Rascal also supports automatic connection retries. It's enabled in the default c
     "v1": {
       "connection": {
         "retry": {
-          "delay": 1000
+          "min": 1000,
+          "max": 60000,
+          "factor": 2,
+          "strategy": "exponential"
         }
       }
     }
   }
 }
 ```
+or
+```json
+{
+  "vhosts": {
+    "v1": {
+      "connection": {
+        "retry": {
+          "min": 1000,
+          "max": 5000,
+          "strategy": "linear"
+        }
+      }
+    }
+  }
+}
+```
+The exponential configuration will cause rascal to retry the connection at exponentially increasing intervals to a maximum of one minute. The intervals are adjusted by a random amount so that if you have multiple services they will not all reconnect at the same time.
+
+The linear configuration will cause rascal to retry the connection at linearly increasing intervals, between one and five seconds.
 
 #### Cluster Connections
 If you specify an array of connections instead of a single connection object Rascal will pick one at random
