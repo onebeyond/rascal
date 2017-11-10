@@ -1702,6 +1702,60 @@ describe('Subscriptions', function() {
       })
     })
 
+    it('should emit an error if trying to ack a message after unsubscribing', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } })
+        }, function(err, broker) {
+          assert.ifError(err)
+          broker.publish('p1', 'test message', function(err) {
+              assert.ifError(err)
+              broker.subscribe('s1', function(err, subscription) {
+                  assert.ifError(err)
+                  subscription.on('message', function(message, content, ackOrNack) {
+                      subscription.cancel(function(err) {
+                          assert.ifError(err)
+                          setTimeout(function() {
+                              ackOrNack()
+                          }, 200)
+                      })
+                  }).on('error', function(err) {
+                      assert.equal(err.message, 'The channel has been closed. Unable to ack message')
+                      done()
+                  })
+              })
+          })
+        })
+    })
+
+    it('should emit an error if trying to nack a message after unsubscribing', function(done) {
+        createBroker({
+            vhosts: vhosts,
+            publications: publications,
+            subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } })
+        }, function(err, broker) {
+          assert.ifError(err)
+          broker.publish('p1', 'test message', function(err) {
+              assert.ifError(err)
+              broker.subscribe('s1', function(err, subscription) {
+                  assert.ifError(err)
+                  subscription.on('message', function(message, content, ackOrNack) {
+                      subscription.cancel(function(err) {
+                          assert.ifError(err)
+                          setTimeout(function() {
+                              ackOrNack(new Error('Oh Noes!'))
+                          }, 200)
+                      })
+                  }).on('error', function(err) {
+                      assert.equal(err.message, 'The channel has been closed. Unable to nack message')
+                      done()
+                  })
+              })
+          })
+        })
+    })
+
     function createBroker(config, next) {
         config = _.defaultsDeep(config, testConfig)
         Broker.create(config, function(err, _broker) {

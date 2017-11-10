@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.7.0]
+### Added
+- Session emits an error if an attempt was made to ack/nack a message using a closed channel
+
 ## [2.6.0]
 ### Added
 - Exponential backoff for re-connections and channel re-subscriptions
