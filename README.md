@@ -200,7 +200,7 @@ The exponential configuration will cause rascal to retry the connection at expon
 The linear configuration will cause rascal to retry the connection at linearly increasing intervals, between one and five seconds.
 
 #### Cluster Connections
-If you specify an array of connections instead of a single connection object Rascal will pick one at random
+If you specify an array of connections instead of a single connection object Rascal will order then randomly at startup, and cycle through until it obtains a connection or exhausts all hosts.
 ```json
 {
   "vhosts": {
