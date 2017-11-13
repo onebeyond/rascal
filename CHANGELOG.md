@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.9.0]
+### Fixed
+- Randomising vhost connections on startup rather than on each connection request
+
 ## [2.8.0]
 ### Fixed
 - Workaround for non deterministic amqplib connection handling, see https://github.com/squaremo/amqp.node/issues/388
