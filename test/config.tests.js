@@ -2,6 +2,7 @@ var assert = require('assert')
 var format = require('util').format
 var _ = require('lodash')
 var configure = require('../lib/config/configure')
+var url = require('url')
 
 describe('Configuration', function() {
 
@@ -152,12 +153,12 @@ describe('Configuration', function() {
                         v1: {
                             connections: [
                                 {
-                                    url: 'foo'
+                                    url: 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100'
                                 },
                                 {
                                     slashes: true,
                                     protocol: 'protocol',
-                                    hostname: 'hostname',
+                                    hostname: 'beta',
                                     port: 9000,
                                     vhost: 'vhost',
                                     user: 'user',
@@ -172,9 +173,113 @@ describe('Configuration', function() {
                     }
                 }, function(err, config) {
                     assert.ifError(err)
-                    assert.equal(config.vhosts.v1.connections[0].url, 'foo')
-                    assert.equal(config.vhosts.v1.connections[1].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
+                    var connections = _.sortBy(config.vhosts.v1.connections, 'url')
+                    assert.equal(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100')
+                    assert.equal(connections[1].url, 'protocol://user:password@beta:9000/vhost?heartbeat=10&channelMax=100')
                 })
+            })
+
+            it('should randomise the order of connections, but maintain order across vhosts by host', function() {
+                var results = []
+                for (var i = 0; i < 10; i++) {
+                    configure({
+                        vhosts: {
+                            v1: {
+                                connections: [
+                                    {
+                                        url: 'protocol://user:password@alpha:9000/v1?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        url: 'protocol://user:password@alpha:9001/v1?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        slashes: true,
+                                        protocol: 'protocol',
+                                        hostname: 'beta',
+                                        port: 9000,
+                                        vhost: 'v1',
+                                        user: 'user',
+                                        password: 'password',
+                                        options: {
+                                            heartbeat: 10,
+                                            channelMax: 100
+                                        }
+                                    },
+                                    {
+                                        url: 'protocol://user:password@zeta:9000/v1?heartbeat=10&channelMax=100'
+                                    }
+                                ]
+                            },
+                            v2: {
+                                connections: [
+                                    {
+                                        url: 'protocol://user:password@alpha:9000/v2?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        url: 'protocol://user:password@alpha:9001/v2?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        slashes: true,
+                                        protocol: 'protocol',
+                                        hostname: 'beta',
+                                        port: 9000,
+                                        vhost: 'v2',
+                                        user: 'user',
+                                        password: 'password',
+                                        options: {
+                                            heartbeat: 10,
+                                            channelMax: 100
+                                        }
+                                    },
+                                    {
+                                        url: 'protocol://user:password@zeta:9000/v2?heartbeat=10&channelMax=100'
+                                    }
+                                ]
+                            },
+                            v3: {
+                                connections: [
+                                    {
+                                        url: 'protocol://user:password@alpha:9000/v3?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        url: 'protocol://user:password@alpha:9001/v3?heartbeat=10&channelMax=100'
+                                    },
+                                    {
+                                        slashes: true,
+                                        protocol: 'protocol',
+                                        hostname: 'beta',
+                                        port: 9000,
+                                        vhost: 'v3',
+                                        user: 'user',
+                                        password: 'password',
+                                        options: {
+                                            heartbeat: 10,
+                                            channelMax: 100
+                                        }
+                                    },
+                                    {
+                                        url: 'protocol://user:password@zeta:9000/v3?heartbeat=10&channelMax=100'
+                                    }
+                                ]
+                            }
+                        }
+                    }, function(err, config) {
+                        assert.ifError(err)
+                        assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v2.connections[0].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v3.connections[0].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v2.connections[1].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v3.connections[1].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v2.connections[2].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v3.connections[2].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v2.connections[3].url).host)
+                        assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v3.connections[3].url).host)
+
+                        results.push(_.map(config.vhosts.v1.connections, function(connection) {
+                            return url.parse(connection.url).host
+                        }).join(','))
+                    })
+                }
+                assert.ok(_.uniq(results).length > 1)
             })
 
             it('should decorate the connection config with a loggable url (b)', function() {
