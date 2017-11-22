@@ -604,7 +604,9 @@ describe('Configuration', function() {
                             bindings: {
                                 'e1 -> q1': {},
                                 'e:1 -> q:1': {},
-                                'e_1 -> q_1': {}
+                                'e_1 -> q_1': {},
+                                'e.1 -> q.1': {},
+                                'e-1 -> q-1': {}
                             }
                         }
                     }
@@ -616,6 +618,12 @@ describe('Configuration', function() {
                     assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].destination, 'q:1')
                     assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].source, 'e_1')
                     assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].destination, 'q_1')
+
+                    assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].source, 'e.1')
+                    assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].destination, 'q.1')
+
+                    assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].source, 'e-1')
+                    assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].destination, 'q-1')
                 })
             })
 

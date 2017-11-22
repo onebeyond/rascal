@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.11.0]
+### Fixed
+- Support for queue and exchange names containeing period and hyphens
+
 ## [2.10.0]
 ### Fixed
 - Workaround for non deterministic amqplib channel handling, see https://github.com/squaremo/amqp.node/issues/388
