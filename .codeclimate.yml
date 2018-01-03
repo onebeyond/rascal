@@ -3,7 +3,11 @@ engines:
     enabled: false
   duplication:
     enabled: false
-
+checks:
+  method-complexity:
+    enabled: false
+  method-lines:
+    enabled: false
 ratings:
   paths:
   - index.js
