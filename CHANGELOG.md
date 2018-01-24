@@ -1,5 +1,17 @@
 # Change Log
 
+## [2.12.0]
+### No changes
+- Update dependencies
+
+## [2.11.3]
+### No changes
+- npm issue
+
+## [2.11.2]
+### No changes
+- npm issue
+
 ## [2.11.1]
 ### Fixed
 - Fixed undefined error in Vhost.bounce
