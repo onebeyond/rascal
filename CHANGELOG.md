@@ -1,5 +1,9 @@
 # Change Log
 
+## [2.11.1]
+### Fixed
+- Fixed undefined error in Vhost.bounce
+
 ## [2.11.0]
 ### Fixed
 - Support for queue and exchange names containeing period and hyphens
