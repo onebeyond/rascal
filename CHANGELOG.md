@@ -3,6 +3,7 @@
 ## [2.12.0]
 ### No changes
 - Update dependencies
+- Update dev dependencies
 
 ## [2.11.3]
 ### No changes
