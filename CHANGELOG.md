@@ -1,16 +1,20 @@
 # Change Log
 
+## [2.12.1]
+### Updates
+- Fixed bug that prevented publication from emitting channel errors
+
 ## [2.12.0]
-### No changes
+### updates
 - Update dependencies
 - Update dev dependencies
 
 ## [2.11.3]
-### No changes
+### updates
 - npm issue
 
 ## [2.11.2]
-### No changes
+### updates
 - npm issue
 
 ## [2.11.1]
