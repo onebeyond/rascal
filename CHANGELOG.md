@@ -1,11 +1,15 @@
 # Change Log
 
+## [2.12.2]
+### Updates
+- Update dependencies (fixes hoek vulnerability)
+
 ## [2.12.1]
 ### Updates
 - Fixed bug that prevented publication from emitting channel errors
 
 ## [2.12.0]
-### updates
+### Updates
 - Update dependencies
 - Update dev dependencies
 
