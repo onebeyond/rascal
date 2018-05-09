@@ -10,7 +10,7 @@
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
     "generic-pool": "^2.5.4",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.10",
     "lru-cache": "^4.1.1",
     "merge-defaults": "^0.2.1",
     "safe-json-parse": "^4.0.0",
