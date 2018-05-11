@@ -7,8 +7,6 @@ var uuid = require('uuid').v4
 var Broker = require('..').Broker
 var AmqpUtils = require('./utils/amqputils')
 
-_.mixin({ 'defaultsDeep': require('merge-defaults') });
-
 describe('Subscriptions', function() {
 
     this.timeout(5000)

@@ -1,6 +1,6 @@
 'use strict'
 
-var _ = require('lodash').runInContext().mixin({ 'defaultsDeep': require('merge-defaults') })
+var _ = require('lodash')
 var defaultConfig = require('./lib/config/defaults')
 var testConfig = require('./lib/config/tests')
 var Broker = require('./lib/amqp/Broker')
