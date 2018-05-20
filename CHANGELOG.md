@@ -4,6 +4,7 @@
 ### Updates
 - Using lodash defaultsDeep instead of merge-defaults (fixes hoek vulnerability). The behaviour seems consistent but releasing as a breaking change as a precaution.
 - Unqualified default publications and subscriptions are no longer supported. See https://github.com/guidesmiths/rascal/issues/20
+- Testing on node 10
 
 ## 2.12.2
 ### Updates
