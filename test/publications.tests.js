@@ -1,5 +1,5 @@
 var assert = require('assert')
-var _ = require('lodash').mixin({ 'defaultsDeep': require('merge-defaults') })
+var _ = require('lodash')
 var async = require('async')
 var amqplib = require('amqplib/callback_api')
 var testConfig = require('../lib/config/tests')

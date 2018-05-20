@@ -1,5 +1,5 @@
 var assert = require('assert')
-var _ = require('lodash').mixin({ 'defaultsDeep': require('merge-defaults') })
+var _ = require('lodash')
 var testConfig = require('../lib/config/tests')
 var uuid = require('uuid').v4
 var Broker = require('..').Broker
