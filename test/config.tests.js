@@ -1014,11 +1014,6 @@ describe('Configuration', function() {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.publications)
 
-                assert.equal(config.publications.e1.vhost, 'v1')
-                assert.equal(config.publications.e1.destination, 'e1')
-                assert.equal(config.publications.e1.autoCreated, true)
-                assert.equal(config.publications.e1.deprecated, true)
-
                 assert.equal(config.publications['/e1'].vhost, '/')
                 assert.equal(config.publications['/e1'].destination, 'e1')
                 assert.equal(config.publications['/e1'].autoCreated, true)
@@ -1090,11 +1085,6 @@ describe('Configuration', function() {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.publications)
 
-                assert.equal(config.publications.q1.vhost, 'v1')
-                assert.equal(config.publications.q1.destination, 'q1')
-                assert.equal(config.publications.q1.autoCreated, true)
-                assert.equal(config.publications.q1.deprecated, true)
-
                 assert.equal(config.publications['/q1'].vhost, '/')
                 assert.equal(config.publications['/q1'].destination, 'q1')
                 assert.equal(config.publications['/q1'].autoCreated, true)
@@ -1165,11 +1155,6 @@ describe('Configuration', function() {
             }, function(err, config) {
                 assert.ifError(err)
                 assert.ok(!config.vhosts.v1.subscriptions)
-
-                assert.equal(config.subscriptions.q1.vhost, 'v1')
-                assert.equal(config.subscriptions.q1.source, 'q1')
-                assert.equal(config.subscriptions.q1.autoCreated, true)
-                assert.equal(config.subscriptions.q1.deprecated, true)
 
                 assert.equal(config.subscriptions['/q1'].vhost, '/')
                 assert.equal(config.subscriptions['/q1'].source, 'q1')
