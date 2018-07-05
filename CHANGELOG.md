@@ -1,5 +1,8 @@
 # Change Log
 
+## 3.1.1
+- Fix channelMax default
+
 ## 3.1.0
 ###  Added
 - Handling of redelivery counter errors and timeouts
