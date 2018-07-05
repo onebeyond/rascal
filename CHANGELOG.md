@@ -1,5 +1,9 @@
 # Change Log
 
+## 3.1.0
+###  Added
+- Handling of redelivery counter errors and timeouts
+
 ## 3.0.0
 ### Updates
 - Using lodash defaultsDeep instead of merge-defaults (fixes hoek vulnerability). The behaviour seems consistent but releasing as a breaking change as a precaution.
@@ -20,11 +24,11 @@
 - Update dev dependencies
 
 ## 2.11.3
-### updates
+### Updates
 - npm issue
 
 ## 2.11.2
-### updates
+### Updates
 - npm issue
 
 ## 2.11.1

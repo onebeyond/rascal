@@ -34,7 +34,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 
 * There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
   1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener
-  2. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has no 'redeliveries_exceeded' listener
+  2. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has neither a 'redeliveries_error' nor a 'redeliveries_exceeded' listener
 
 The reason Rascal nacks the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events, your messages should be safe.
 
@@ -602,7 +602,7 @@ broker.subscribe('s1', function(err, subscription) {
   }).on('error', function(err) {
     console.error('Subscriber error', err)
   }).on('redeliveries_exceeded', function(err, message, ackOrNack)) {
-    console.error('Redeliveries Exceeded', err)
+    console.error('Redeliveries exceeded', err)
     ackOrNack(err)
   })
 })
@@ -620,25 +620,7 @@ Of the three only inMemoryCluster is useful in production, and then only if you 
 #### Implementing your own counter
 If your application is not clustered, but you still want to protect yourself from redeliveries, you need to implement your own counter backed by something like redis. In times of high message volumes the counter will be hit hard so you should make sure it's fast and resilient to failure/slow responses from the underlying store.
 
-A basic redis based implementation would look like this...
-```js
-var redis = require('redis')
-
-module.exports = function() {
-
-    var counter = redis.createClient('redis')
-
-    return {
-        incrementAndGet: function(key, next) {
-            counter.incr(key, function(err, redeliveries) {
-                if (err) console.warn(err.message)
-                next(null, redeliveries || 1)
-            })
-        }
-    }
-}
-```
-The above should not be used in production since it does not short-circuit on timeouts or connection failures.
+See [here](https://www.npmjs.com/package/rascal-redis-counter) for a redis backed counter.
 
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
@@ -933,4 +915,3 @@ You'll need a RabbitMQ server running locally with default configuration. If tha
 ```
 docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq
 ```
-
