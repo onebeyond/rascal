@@ -1,4 +1,6 @@
 # Change Log
+## 3.1.2
+- Fix redelivery counter defaults
 
 ## 3.1.1
 - Fix channelMax default

@@ -1508,5 +1508,6 @@ describe('Configuration', function() {
                 assert.equal(config.redeliveries.counters.inMemory.type, 'inMemory')
             })
         })
+
     })
 })

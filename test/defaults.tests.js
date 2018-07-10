@@ -493,4 +493,61 @@ describe('Defaults', function() {
             })
         })
     })
+
+    describe('Redeliveries', function() {
+
+        it('should apply default config based on counter type', function() {
+            configure({
+                defaults: {
+                    redeliveries: {
+                        counters: {
+                            inMemory:   {
+                                size: 99
+                            }
+                        }
+                    }
+                },
+                redeliveries: {
+                    counters: {
+                        stub: {},
+                        inMemory: {
+                            type: 'inMemory'
+                        }
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.redeliveries.counters.stub.name, 'stub')
+                assert.equal(config.redeliveries.counters.stub.size, undefined)
+                assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
+                assert.equal(config.redeliveries.counters.inMemory.size, 99)
+            })
+        })
+
+        it('should apply default config based on counter name', function() {
+            configure({
+                defaults: {
+                    redeliveries: {
+                        counters: {
+                            inMemory:   {
+                                size: 99
+                            }
+                        }
+                    }
+                },
+                redeliveries: {
+                    counters: {
+                        stub: {},
+                        inMemory: {}
+                    }
+                }
+            }, function(err, config) {
+                assert.ifError(err)
+                assert.equal(config.redeliveries.counters.stub.name, 'stub')
+                assert.equal(config.redeliveries.counters.stub.size, undefined)
+                assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
+                assert.equal(config.redeliveries.counters.inMemory.size, 99)
+            })
+        })
+    })
 })
