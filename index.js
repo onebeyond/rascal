@@ -1,5 +1,3 @@
-'use strict'
-
 var _ = require('lodash')
 var defaultConfig = require('./lib/config/defaults')
 var testConfig = require('./lib/config/tests')
