@@ -493,6 +493,29 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 }
 ```
 
+#### Encrypting messages
+Rascal can be configured to automatically encrypt outbound messages.
+```json
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1",
+      "confirm": true,
+      "encryption": "well-known-v1"
+    }
+  },
+  "encryption": {
+    "well-known-v1": {
+      "key": "f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315",
+      "ivLength": 16,
+      "algorithm": "aes-256-cbc"
+    }
+  }
+}
+```
+Rascal will set the content type for encrypted messages to 'application/octet-stream'. It stashes the original content type in a header. Providing you use a correctly configured [subscription](#subscriptions), the message will be automatically decrypted, and normal content handling applied.
+
 #### Forwarding messages
 Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to ```broker.publish``` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained. The message will also be CC'd with an additional routingkey of ```<queue>.<routingKey>``` which can be useful for some retry scenarios.
 
@@ -570,6 +593,28 @@ broker.subscribe('s1', function(err, subscription) {
 })
 ```
 If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
+
+
+#### Decrypting messages
+Rascal can be configured to automatically decrypt inbound messages.
+```json
+{
+  "subscriptions": {
+    "s1": {
+      "queue": "e1",
+      "vhost": "v1"
+    }
+  },
+  "encryption": {
+    "well-known-v1": {
+      "key": "f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315",
+      "ivLength": 16,
+      "algorithm": "aes-256-cbc"
+    }
+  }
+}
+```
+Any message that was published using the "well-known-v1" encryption profile will be automatically decrypted by the subscriber.
 
 #### Dealing With Redeliveries
 If your app crashes before acknowledging a message, the message will be rolled back. It is common for node applications to automatically restart, however if the crash was caused by something in the message content, it will crash and restart indefinitely, thrashing the host. Unfortunately RabbitMQ doesn't allow you to limit the number of redeliveries per message or provide a redelivery count. For this reason subscribers can be configured with a redelivery counter and will update the ```message.properties.headers.rascal.redeliveries``` header with the number of hits. If the number of redeliveries exceeds the subscribers limit, the subscriber will emit a "redeliveries_exceeded" event, and can be handled by your application. e.g.

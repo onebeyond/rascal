@@ -1,4 +1,9 @@
 # Change Log
+
+## Unreleased
+### Added
+- Transparent encryption / decryption
+
 ## 3.1.3
 ### Updates
 - Modernise code style

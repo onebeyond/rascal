@@ -1240,6 +1240,36 @@ describe('Configuration', function() {
         assert.equal(config.publications.p2.exchange, 'e2');
       });
     });
+
+    it('should hoist referenced encryption profiles', function(done) {
+      configure({
+        vhosts: {
+          v1: {
+            queues: ['q1'],
+            publications: {
+              p1: {
+                queue: 'q1',
+                encryption: 'well-known',
+              },
+            },
+          },
+        },
+        encryption: {
+          'well-known': {
+            key: 'key',
+            ivLength: 16,
+            algorithm: 'algo',
+          },
+        },
+      }, function(err, config) {
+        assert.ifError(err);
+        assert.equal(config.publications.p1.encryption.name, 'well-known');
+        assert.equal(config.publications.p1.encryption.key, 'key');
+        assert.equal(config.publications.p1.encryption.ivLength, 16);
+        assert.equal(config.publications.p1.encryption.algorithm, 'algo');
+        done();
+      });
+    });
   });
 
   describe('Subscriptions', function() {
@@ -1455,6 +1485,34 @@ describe('Configuration', function() {
         assert.equal(config.subscriptions.s1.queue, 'q1');
         assert.equal(config.subscriptions.s2.vhost, 'v1');
         assert.equal(config.subscriptions.s2.queue, 'q2');
+      });
+    });
+
+    it('should hoist referenced encryption profiles', function(done) {
+      configure({
+        vhosts: {
+          v1: {
+            queues: ['q1'],
+            subscriptions: {
+              s1: {
+                queue: 'q1',
+              },
+            },
+          },
+        },
+        encryption: {
+          'well-known': {
+            key: 'key',
+            ivLength: 16,
+            algorithm: 'algo',
+          },
+        },
+      }, function(err, config) {
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.encryption['well-known'].key, 'key');
+        assert.equal(config.subscriptions.s1.encryption['well-known'].ivLength, 16);
+        assert.equal(config.subscriptions.s1.encryption['well-known'].algorithm, 'algo');
+        done();
       });
     });
   });

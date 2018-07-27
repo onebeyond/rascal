@@ -75,7 +75,7 @@ describe('Validation', function() {
       });
     });
 
-    it('should report unknown sounce exchanges (a)', function() {
+    it('should report unknown source exchanges (a)', function() {
       validate({
         vhosts: {
           v1: {
@@ -228,7 +228,6 @@ describe('Validation', function() {
         assert.equal('Publication: p1 has an exchange and a queue', err.message);
       });
     });
-
 
     it('should report unknown vhosts (a)', function() {
       validate({
@@ -446,7 +445,7 @@ describe('Validation', function() {
             vhost: 'v1',
             queue: 'q1',
             redeliveries: {
-              counter: "c1",
+              counter: 'c1',
             },
           },
         },
@@ -676,6 +675,51 @@ describe('Validation', function() {
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unsupported attribute: invalid', err.message);
+      });
+    });
+  });
+
+  describe('Encryption', function() {
+
+    it('should mandate a key', function() {
+      validate({
+        encryption: {
+          'invalid': {
+            name: 'name',
+          },
+        },
+      }, function(err) {
+        assert.ok(err);
+        assert.equal('Encryption profile: invalid is missing a key', err.message);
+      });
+    });
+
+    it('should mandate an algorithm', function() {
+      validate({
+        encryption: {
+          'invalid': {
+            name: 'name',
+            key: 'key',
+          },
+        },
+      }, function(err) {
+        assert.ok(err);
+        assert.equal('Encryption profile: invalid is missing an algorithm', err.message);
+      });
+    });
+
+    it('should mandate iv ivLength', function() {
+      validate({
+        encryption: {
+          'invalid': {
+            name: 'name',
+            key: 'key',
+            algorithm: 'rot13',
+          },
+        },
+      }, function(err) {
+        assert.ok(err);
+        assert.equal('Encryption profile: invalid is missing ivLength', err.message);
       });
     });
   });

@@ -1754,6 +1754,128 @@ describe('Subscriptions', function() {
     });
   });
 
+  it('should symetrically decrypt messages', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          queue: 'q1',
+          encryption: {
+            name: 'well-known',
+            key: 'f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+            ivLength: 16,
+            algorithm: 'aes-256-cbc',
+          },
+        },
+      },
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+          encryption: {
+            'well-known': {
+              key: 'f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+              ivLength: 16,
+              algorithm: 'aes-256-cbc',
+            },
+          },
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', function(err) {
+        assert.ifError(err);
+        broker.subscribe('s1', function(err, subscription) {
+          assert.ifError(err);
+          subscription.on('message', function(message, content, ackOrNack) {
+            assert(message);
+            assert.equal(message.properties.contentType, 'application/octet-stream');
+            assert.equal(content, 'test message');
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it('should report invalid_content when missing encryption profile', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          queue: 'q1',
+          encryption: {
+            name: 'not-well-known',
+            key: 'f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+            ivLength: 16,
+            algorithm: 'aes-256-cbc',
+          },
+        },
+      },
+      subscriptions: {
+        s1: {
+          queue: 'q1',
+          encryption: {},
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', function(err) {
+        assert.ifError(err);
+        broker.subscribe('s1', function(err, subscription) {
+          assert.ifError(err);
+          subscription.on('invalid_content', function(err, message, ackOrNack) {
+            assert.equal(err.message, 'Unknown encryption profile: not-well-known');
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it('should fail with invalid content when encryption errors', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          queue: 'q1',
+          encryption: {
+            name: 'well-known',
+            key: 'f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+            ivLength: 16,
+            algorithm: 'aes-256-cbc',
+          },
+        },
+      },
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+          encryption: {
+            'well-known': {
+              key: 'a81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+              ivLength: 16,
+              algorithm: 'aes-256-cbc',
+            },
+          },
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', function(err) {
+        assert.ifError(err);
+        broker.subscribe('s1', function(err, subscription) {
+          assert.ifError(err);
+          subscription.on('invalid_content', function(err, message, ackOrNack) {
+            assert(err.message.match(/bad decrypt/));
+            done();
+          });
+        });
+      });
+    });
+  });
+
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, function(err, _broker) {

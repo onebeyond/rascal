@@ -481,6 +481,41 @@ describe('Publications', function() {
     });
   });
 
+  it('should symetrically encrypt messages', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          queue: 'q1',
+          encryption: {
+            name: 'well-known',
+            key: 'f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+            ivLength: 16,
+            algorithm: 'aes-256-cbc',
+          },
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+
+      broker.publish('p1', 'test message', function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          amqputils.getMessage('q1', namespace, function(err, message) {
+            assert.ifError(err);
+            assert.ok(message);
+            assert.equal(messageId, message.properties.messageId);
+            assert.equal('well-known', message.properties.headers.rascal.encryption.name);
+            assert.equal(32, message.properties.headers.rascal.encryption.iv.length);
+            assert.equal('text/plain', message.properties.headers.rascal.encryption.originalContentType);
+            assert.equal('application/octet-stream', message.properties.contentType);
+            done();
+          });
+        });
+      });
+    });
+  });
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, function(err, _broker) {
