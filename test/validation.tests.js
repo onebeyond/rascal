@@ -11,10 +11,10 @@ describe('Validation', function() {
           v1: {
             bindings: {
               b1: {
-              }
-            }
-          }
-        }
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a source', err.message);
@@ -27,11 +27,11 @@ describe('Validation', function() {
           v1: {
             bindings: {
               b1: {
-                source: 'e1'
-              }
-            }
-          }
-        }
+                source: 'e1',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a destination', err.message);
@@ -45,11 +45,11 @@ describe('Validation', function() {
             bindings: {
               b1: {
                 source: 'e1',
-                destination: 'q1'
-              }
-            }
-          }
-        }
+                destination: 'q1',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a destination type', err.message);
@@ -64,11 +64,11 @@ describe('Validation', function() {
               b1: {
                 source: 'e1',
                 destination: 'q1',
-                destinationType: 'foo'
-              }
-            }
-          }
-        }
+                destinationType: 'foo',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 has an invalid destination type: foo', err.message);
@@ -83,11 +83,11 @@ describe('Validation', function() {
               b1: {
                 source: 'e1',
                 destination: 'q1',
-                destinationType: 'queue'
-              }
-            }
-          }
-        }
+                destinationType: 'queue',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
@@ -104,11 +104,11 @@ describe('Validation', function() {
               b1: {
                 source: 'e1',
                 destination: 'q1',
-                destinationType: 'queue'
-              }
-            }
-          }
-        }
+                destinationType: 'queue',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
@@ -121,17 +121,17 @@ describe('Validation', function() {
           v1: {
             exchanges: {
               e1: {
-              }
+              },
             },
             bindings: {
               b1: {
                 source: 'e1',
                 destination: 'e2',
-                destinationType: 'exchange'
-              }
-            }
-          }
-        }
+                destinationType: 'exchange',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e2', err.message);
@@ -144,17 +144,17 @@ describe('Validation', function() {
           v1: {
             exchanges: {
               e1: {
-              }
+              },
             },
             bindings: {
               b1: {
                 source: 'e1',
                 destination: 'q1',
-                destinationType: 'queue'
-              }
-            }
-          }
-        }
+                destinationType: 'queue',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
@@ -167,7 +167,7 @@ describe('Validation', function() {
           v1: {
             exchanges: {
               e1: {
-              }
+              },
             },
             queues: {
             },
@@ -175,11 +175,11 @@ describe('Validation', function() {
               b1: {
                 source: 'e1',
                 destination: 'q1',
-                destinationType: 'queue'
-              }
-            }
-          }
-        }
+                destinationType: 'queue',
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
@@ -193,8 +193,8 @@ describe('Validation', function() {
       validate({
         publications: {
           p1: {
-          }
-        }
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 is missing a vhost', err.message);
@@ -205,9 +205,9 @@ describe('Validation', function() {
       validate({
         publications: {
           p1: {
-            vhost: 'v1'
-          }
-        }
+            vhost: 'v1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 is missing an exchange or a queue', err.message);
@@ -220,9 +220,9 @@ describe('Validation', function() {
           p1: {
             vhost: 'v1',
             exchange: 'e1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 has an exchange and a queue', err.message);
@@ -235,9 +235,9 @@ describe('Validation', function() {
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown vhost: v1', err.message);
@@ -251,9 +251,9 @@ describe('Validation', function() {
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown vhost: v1', err.message);
@@ -264,14 +264,14 @@ describe('Validation', function() {
       validate({
         vhosts: {
           v1: {
-          }
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
@@ -283,15 +283,15 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             exchanges: {
-            }
-          }
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
@@ -302,14 +302,14 @@ describe('Validation', function() {
       validate({
         vhosts: {
           v1: {
-          }
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
@@ -321,15 +321,15 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             queues: {
-            }
-          }
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
@@ -343,8 +343,8 @@ describe('Validation', function() {
       validate({
         subscriptions: {
           s1: {
-          }
-        }
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 is missing a vhost', err.message);
@@ -355,9 +355,9 @@ describe('Validation', function() {
       validate({
         subscriptions: {
           s1: {
-            vhost: 'v1'
-          }
-        }
+            vhost: 'v1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 is missing a queue', err.message);
@@ -369,9 +369,9 @@ describe('Validation', function() {
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown vhost: v1', err.message);
@@ -385,9 +385,9 @@ describe('Validation', function() {
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown vhost: v1', err.message);
@@ -398,14 +398,14 @@ describe('Validation', function() {
       validate({
         vhosts: {
           v1: {
-          }
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
@@ -417,15 +417,15 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             queues: {
-            }
-          }
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
@@ -437,22 +437,22 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             queues: {
-              q1: {}
-            }
-          }
+              q1: {},
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
             queue: 'q1',
             redeliveries: {
-              counter: "c1"
-            }
-          }
+              counter: "c1",
+            },
+          },
         },
         redeliveries: {
-          counters: {}
-        }
+          counters: {},
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown counter: c1 in vhost: v1', err.message);
@@ -466,8 +466,8 @@ describe('Validation', function() {
       validate({
         shovels: {
           x1: {
-          }
-        }
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 is missing a subscription', err.message);
@@ -478,9 +478,9 @@ describe('Validation', function() {
       validate({
         shovels: {
           x1: {
-            subscription: 's1'
-          }
-        }
+            subscription: 's1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 is missing a publication', err.message);
@@ -496,9 +496,9 @@ describe('Validation', function() {
         shovels: {
           x1: {
             subscription: 's1',
-            publication: 'p1'
-          }
-        }
+            publication: 'p1',
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unknown subscription: s1', err.message);
@@ -511,32 +511,32 @@ describe('Validation', function() {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
             queue: 'q1',
             redeliveries: {
-              counter: 'c1'
-            }
-          }
+              counter: 'c1',
+            },
+          },
         },
         publications: {
         },
         shovels: {
           x1: {
             subscription: 's1',
-            publication: 'p1'
-          }
+            publication: 'p1',
+          },
         },
         redeliveries: {
           counters: {
-            c1: {}
-          }
-        }
+            c1: {},
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unknown publication: p1', err.message);
@@ -550,9 +550,9 @@ describe('Validation', function() {
       validate({
         vhosts: {
           v1: {
-            invalid: true
-          }
-        }
+            invalid: true,
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Vhost: v1 refers to an unsupported attribute: invalid', err.message);
@@ -564,10 +564,10 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             publicationChannelPools: {
-              invalid: true
-            }
-          }
-        }
+              invalid: true,
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication channel pool in vhost: v1 refers to an unsupported attribute: invalid', err.message);
@@ -579,10 +579,10 @@ describe('Validation', function() {
         vhosts: {
           v1: {
             connection: {
-              invalid: true
-            }
-          }
-        }
+              invalid: true,
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Vhost: v1 connection refers to an unsupported attribute: invalid', err.message);
@@ -595,11 +595,11 @@ describe('Validation', function() {
           v1: {
             exchanges: {
               e1: {
-                invalid: true
-              }
-            }
-          }
-        }
+                invalid: true,
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Exchange: e1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
@@ -612,11 +612,11 @@ describe('Validation', function() {
           v1: {
             queues: {
               q1: {
-                invalid: true
-              }
-            }
-          }
-        }
+                invalid: true,
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Queue: q1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
@@ -629,11 +629,11 @@ describe('Validation', function() {
           v1: {
             bindings: {
               b1: {
-                invalid: true
-              }
-            }
-          }
-        }
+                invalid: true,
+              },
+            },
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
@@ -644,9 +644,9 @@ describe('Validation', function() {
       validate({
         publications: {
           p1: {
-            invalid: true
-          }
-        }
+            invalid: true,
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unsupported attribute: invalid', err.message);
@@ -657,9 +657,9 @@ describe('Validation', function() {
       validate({
         subscriptions: {
           s1: {
-            invalid: true
-          }
-        }
+            invalid: true,
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unsupported attribute: invalid', err.message);
@@ -670,9 +670,9 @@ describe('Validation', function() {
       validate({
         shovels: {
           x1: {
-            invalid: true
-          }
-        }
+            invalid: true,
+          },
+        },
       }, function(err) {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unsupported attribute: invalid', err.message);

@@ -15,6 +15,6 @@ module.exports = (function() {
     withTestConfig: function(config) {
       return _.defaultsDeep({}, config, testConfig);
     },
-    counters: require('./lib/counters')
+    counters: require('./lib/counters'),
   };
 })();

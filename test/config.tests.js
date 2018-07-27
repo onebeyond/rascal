@@ -24,11 +24,11 @@ describe('Configuration', function() {
                 password: 'password',
                 options: {
                   heartbeat: 10,
-                  channelMax: 100
-                }
-              }
-            }
-          }
+                  channelMax: 100,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100');
@@ -39,9 +39,9 @@ describe('Configuration', function() {
         configure({
           vhosts: {
             v1: {
-              connection: "amqp://localhost"
-            }
-          }
+              connection: "amqp://localhost",
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'amqp://localhost');
@@ -63,11 +63,11 @@ describe('Configuration', function() {
                 password: 'password',
                 options: {
                   heartbeat: 10,
-                  channelMax: 100
-                }
-              }
-            }
-          }
+                  channelMax: 100,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'foo');
@@ -87,11 +87,11 @@ describe('Configuration', function() {
                 password: 'password',
                 options: {
                   heartbeat: 10,
-                  channelMax: 100
-                }
-              }
-            }
-          }
+                  channelMax: 100,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100');
@@ -111,11 +111,11 @@ describe('Configuration', function() {
                 password: 'password',
                 options: {
                   heartbeat: 10,
-                  channelMax: 100
-                }
-              }
-            }
-          }
+                  channelMax: 100,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100');
@@ -136,11 +136,11 @@ describe('Configuration', function() {
                 password: 'password',
                 options: {
                   heartbeat: 10,
-                  channelMax: 100
-                }
-              }
-            }
-          }
+                  channelMax: 100,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
@@ -153,7 +153,7 @@ describe('Configuration', function() {
             v1: {
               connections: [
                 {
-                  url: 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100'
+                  url: 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100',
                 },
                 {
                   slashes: true,
@@ -165,12 +165,12 @@ describe('Configuration', function() {
                   password: 'password',
                   options: {
                     heartbeat: 10,
-                    channelMax: 100
-                  }
-                }
-              ]
-            }
-          }
+                    channelMax: 100,
+                  },
+                },
+              ],
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           var connections = _.sortBy(config.vhosts.v1.connections, 'url');
@@ -187,10 +187,10 @@ describe('Configuration', function() {
               v1: {
                 connections: [
                   {
-                    url: 'protocol://user:password@alpha:9000/v1?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9000/v1?heartbeat=10&channelMax=100',
                   },
                   {
-                    url: 'protocol://user:password@alpha:9001/v1?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9001/v1?heartbeat=10&channelMax=100',
                   },
                   {
                     slashes: true,
@@ -202,21 +202,21 @@ describe('Configuration', function() {
                     password: 'password',
                     options: {
                       heartbeat: 10,
-                      channelMax: 100
-                    }
+                      channelMax: 100,
+                    },
                   },
                   {
-                    url: 'protocol://user:password@zeta:9000/v1?heartbeat=10&channelMax=100'
-                  }
-                ]
+                    url: 'protocol://user:password@zeta:9000/v1?heartbeat=10&channelMax=100',
+                  },
+                ],
               },
               v2: {
                 connections: [
                   {
-                    url: 'protocol://user:password@alpha:9000/v2?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9000/v2?heartbeat=10&channelMax=100',
                   },
                   {
-                    url: 'protocol://user:password@alpha:9001/v2?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9001/v2?heartbeat=10&channelMax=100',
                   },
                   {
                     slashes: true,
@@ -228,21 +228,21 @@ describe('Configuration', function() {
                     password: 'password',
                     options: {
                       heartbeat: 10,
-                      channelMax: 100
-                    }
+                      channelMax: 100,
+                    },
                   },
                   {
-                    url: 'protocol://user:password@zeta:9000/v2?heartbeat=10&channelMax=100'
-                  }
-                ]
+                    url: 'protocol://user:password@zeta:9000/v2?heartbeat=10&channelMax=100',
+                  },
+                ],
               },
               v3: {
                 connections: [
                   {
-                    url: 'protocol://user:password@alpha:9000/v3?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9000/v3?heartbeat=10&channelMax=100',
                   },
                   {
-                    url: 'protocol://user:password@alpha:9001/v3?heartbeat=10&channelMax=100'
+                    url: 'protocol://user:password@alpha:9001/v3?heartbeat=10&channelMax=100',
                   },
                   {
                     slashes: true,
@@ -254,15 +254,15 @@ describe('Configuration', function() {
                     password: 'password',
                     options: {
                       heartbeat: 10,
-                      channelMax: 100
-                    }
+                      channelMax: 100,
+                    },
                   },
                   {
-                    url: 'protocol://user:password@zeta:9000/v3?heartbeat=10&channelMax=100'
-                  }
-                ]
-              }
-            }
+                    url: 'protocol://user:password@zeta:9000/v3?heartbeat=10&channelMax=100',
+                  },
+                ],
+              },
+            },
           }, function(err, config) {
             assert.ifError(err);
             assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v2.connections[0].url).host);
@@ -287,10 +287,10 @@ describe('Configuration', function() {
           vhosts: {
             v1: {
               connection: {
-                url: 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100'
-              }
-            }
-          }
+                url: 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100',
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
@@ -301,12 +301,12 @@ describe('Configuration', function() {
         configure({
           vhosts: {
             v1: {
-              namespace: true
+              namespace: true,
             },
             v2: {
-              namespace: true
-            }
-          }
+              namespace: true,
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
 
@@ -328,12 +328,12 @@ describe('Configuration', function() {
                   assert: false,
                   type: 'direct',
                   options: {
-                    durable: false
-                  }
-                }
-              }
-            }
-          }
+                    durable: false,
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.assert, false);
@@ -348,10 +348,10 @@ describe('Configuration', function() {
             v1: {
               exchanges: {
                 e1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.exchanges.e1.options));
@@ -364,10 +364,10 @@ describe('Configuration', function() {
             v1: {
               exchanges: {
                 e1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
@@ -382,10 +382,10 @@ describe('Configuration', function() {
               namespace: 'foo',
               exchanges: {
                 e1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
@@ -397,9 +397,9 @@ describe('Configuration', function() {
         configure({
           vhosts: {
             v1: {
-              exchanges: [ 'e1', 'e2' ]
-            }
-          }
+              exchanges: [ 'e1', 'e2' ],
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.exchanges));
@@ -415,9 +415,9 @@ describe('Configuration', function() {
         configure({
           vhosts: {
             v1: {
-              exchanges: [ 'e1', { name: 'e2' } ]
-            }
-          }
+              exchanges: [ 'e1', { name: 'e2' } ],
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.exchanges));
@@ -441,12 +441,12 @@ describe('Configuration', function() {
                   assert: false,
                   type: 'direct',
                   options: {
-                    durable: false
-                  }
-                }
-              }
-            }
-          }
+                    durable: false,
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.assert, false);
@@ -461,10 +461,10 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.queues.q1.options));
@@ -477,10 +477,10 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
@@ -495,10 +495,10 @@ describe('Configuration', function() {
               namespace: 'foo',
               queues: {
                 q1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
@@ -512,11 +512,11 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                  replyTo: true
-                }
-              }
-            }
-          }
+                  replyTo: true,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
@@ -533,13 +533,13 @@ describe('Configuration', function() {
                 q1: {
                   options: {
                     arguments: {
-                      'x-dead-letter-exchange': 'q1'
-                    }
-                  }
-                }
-              }
-            }
-          }
+                      'x-dead-letter-exchange': 'q1',
+                    },
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
@@ -551,9 +551,9 @@ describe('Configuration', function() {
         configure({
           vhosts: {
             v1: {
-              queues: ['q1', 'q2']
-            }
-          }
+              queues: ['q1', 'q2'],
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.queues));
@@ -574,17 +574,17 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
                   destination: 'q1',
-                  bindingKey: '#'
-                }
-              }
-            }
-          }
+                  bindingKey: '#',
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
@@ -599,17 +599,17 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 'e1 -> q1': {},
                 'e:1 -> q:1': {},
                 'e_1 -> q_1': {},
                 'e.1 -> q.1': {},
-                'e-1 -> q-1': {}
-              }
-            }
-          }
+                'e-1 -> q-1': {},
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1');
@@ -633,15 +633,15 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 'e1[a] -> q1': {},
                 'e1[a.b] -> q1': {},
-                'e1[a,a.b] -> q1': {}
-              }
-            }
-          }
+                'e1[a,a.b] -> q1': {},
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKey, 'a');
@@ -658,21 +658,21 @@ describe('Configuration', function() {
               namespace: 'ns1',
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
                   destination: 'q1',
                   bindingKey: 'q1',
-                  qualifyBindingKeys: true
+                  qualifyBindingKeys: true,
                 },
                 'e1[q1] -> q1': {
-                  qualifyBindingKeys: true
-                }
-              }
-            }
-          }
+                  qualifyBindingKeys: true,
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1');
@@ -686,15 +686,15 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
-                  destination: 'q1'
-                }
-              }
-            }
-          }
+                  destination: 'q1',
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.bindings.b1.options));
@@ -707,15 +707,15 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
-                  destination: 'q1'
-                }
-              }
-            }
-          }
+                  destination: 'q1',
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.name, 'b1');
@@ -728,19 +728,19 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                  replyTo: true
-                }
+                  replyTo: true,
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
                   destination: 'q1',
                   destinationType: 'queue',
-                  bindingKey: 'foo.bar.#'
-                }
-              }
-            }
-          }
+                  bindingKey: 'foo.bar.#',
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
@@ -755,17 +755,17 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
                   destination: 'q1',
-                  bindingKeys: ['a', 'b']
-                }
-              }
-            }
-          }
+                  bindingKeys: ['a', 'b'],
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['b1:a'].source, 'e1');
@@ -783,17 +783,17 @@ describe('Configuration', function() {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
                   destination: 'q1',
-                  bindingKey: ['a']
-                }
-              }
-            }
-          }
+                  bindingKey: ['a'],
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['b1'].source, 'e1');
@@ -808,14 +808,14 @@ describe('Configuration', function() {
             v1: {
               queues: [
                 'q1',
-                'q2'
+                'q2',
               ],
               bindings: [
                 'e1 -> q1',
-                'e1 -> q2'
-              ]
-            }
-          }
+                'e1 -> q2',
+              ],
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.bindings));
@@ -838,9 +838,9 @@ describe('Configuration', function() {
           v1: {
             exchanges: {
               e1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
@@ -848,10 +848,10 @@ describe('Configuration', function() {
             exchange: 'e1',
             routingKey: 'r1',
             options: {
-              persistent: true
-            }
-          }
-        }
+              persistent: true,
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -868,19 +868,19 @@ describe('Configuration', function() {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
             queue: 'q1',
             options: {
-              persistent: true
-            }
-          }
-        }
+              persistent: true,
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -896,16 +896,16 @@ describe('Configuration', function() {
           v1: {
             exchanges: {
               e1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert(_.isObject(config.publications.p1.options));
@@ -919,24 +919,24 @@ describe('Configuration', function() {
           v1: {
             exchanges: {
               e1: {
-              }
+              },
             },
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
+            exchange: 'e1',
           },
           p2: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.name, 'p1');
@@ -954,25 +954,25 @@ describe('Configuration', function() {
             namespace: 'foo',
             exchanges: {
               e1: {
-              }
+              },
             },
             queues: {
               q1: {
-                replyTo: true
-              }
-            }
-          }
+                replyTo: true,
+              },
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
+            exchange: 'e1',
           },
           p2: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.destination, 'foo:e1');
@@ -987,11 +987,11 @@ describe('Configuration', function() {
             exchanges: ['e1'],
             publications: {
               p1: {
-                exchange: 'e1'
-              }
-            }
-          }
-        }
+                exchange: 'e1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1004,12 +1004,12 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           '/': {
-            exchanges: ['e1']
+            exchanges: ['e1'],
           },
           v1: {
-            exchanges: ['e1']
-          }
-        }
+            exchanges: ['e1'],
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1034,11 +1034,11 @@ describe('Configuration', function() {
             publications: {
               e1: {
                 exchange: 'e1',
-                routingKey: 'r1'
-              }
-            }
-          }
-        }
+                routingKey: 'r1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1052,16 +1052,16 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           v1: {
-            exchanges: ['e1']
-          }
+            exchanges: ['e1'],
+          },
         },
         publications: {
           e1: {
             exchange: 'e1',
             vhost: 'v1',
-            routingKey: 'r1'
-          }
-        }
+            routingKey: 'r1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1075,12 +1075,12 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           '/': {
-            queues: ['q1']
+            queues: ['q1'],
           },
           v1: {
-            queues: ['q1']
-          }
-        }
+            queues: ['q1'],
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1105,11 +1105,11 @@ describe('Configuration', function() {
             publications: {
               q1: {
                 queue: 'q1',
-                routingKey: 'r1'
-              }
-            }
-          }
-        }
+                routingKey: 'r1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1123,16 +1123,16 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           v1: {
-            queues: ['q1']
-          }
+            queues: ['q1'],
+          },
         },
         publications: {
           q1: {
             queue: 'q1',
             vhost: 'v1',
-            routingKey: 'r1'
-          }
-        }
+            routingKey: 'r1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1146,12 +1146,12 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           '/': {
-            queues: ['q1']
+            queues: ['q1'],
           },
           v1: {
-            queues: ['q1']
-          }
-        }
+            queues: ['q1'],
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
@@ -1176,11 +1176,11 @@ describe('Configuration', function() {
             subscriptions: {
               q1: {
                 queue: 'q1',
-                routingKey: 'r1'
-              }
-            }
-          }
-        }
+                routingKey: 'r1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
@@ -1194,16 +1194,16 @@ describe('Configuration', function() {
       configure({
         vhosts: {
           v1: {
-            queues: ['q1']
-          }
+            queues: ['q1'],
+          },
         },
         subscriptions: {
           q1: {
             queue: 'q1',
             vhost: 'v1',
-            contentType: 'text/plain'
-          }
-        }
+            contentType: 'text/plain',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
@@ -1220,17 +1220,17 @@ describe('Configuration', function() {
             exchanges: ['e1', 'e2'],
             publications: {
               p1: {
-                exchange: 'e1'
-              }
-            }
-          }
+                exchange: 'e1',
+              },
+            },
+          },
         },
         publications: {
           p2: {
             vhost: 'v1',
-            exchange: 'e2'
-          }
-        }
+            exchange: 'e2',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
@@ -1251,9 +1251,9 @@ describe('Configuration', function() {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
@@ -1261,10 +1261,10 @@ describe('Configuration', function() {
             queue: 'q1',
             confirm: true,
             retry: {
-              delay: 1000
-            }
-          }
-        }
+              delay: 1000,
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
@@ -1281,16 +1281,16 @@ describe('Configuration', function() {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert(_.isObject(config.subscriptions.s1.options));
@@ -1304,16 +1304,16 @@ describe('Configuration', function() {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.name, 's1');
@@ -1328,26 +1328,26 @@ describe('Configuration', function() {
           v1: {
             queues: {
               q1: {
-              }
+              },
             },
             subscriptions: {
               s1: {
-                queue: 'q1'
-              }
-            }
+                queue: 'q1',
+              },
+            },
           },
           v2: {
             queues: {
               q1: {
-              }
+              },
             },
             subscriptions: {
               s1: {
-                queue: 'q1'
-              }
-            }
-          }
-        }
+                queue: 'q1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.equal(err.message, 'Duplicate subscription: s1');
       });
@@ -1360,26 +1360,26 @@ describe('Configuration', function() {
           v1: {
             exchanges: {
               e1: {
-              }
+              },
             },
             publications: {
               p1: {
-                exchange: 'e1'
-              }
-            }
+                exchange: 'e1',
+              },
+            },
           },
           v2: {
             exchanges: {
               e1: {
-              }
+              },
             },
             publications: {
               p1: {
-                exchange: 'e1'
-              }
-            }
-          }
-        }
+                exchange: 'e1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.equal(err.message, 'Duplicate publication: p1');
       });
@@ -1392,17 +1392,17 @@ describe('Configuration', function() {
             namespace: 'foo',
             queues: {
               q1: {
-                replyTo: true
-              }
-            }
-          }
+                replyTo: true,
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.name, 's1');
@@ -1417,11 +1417,11 @@ describe('Configuration', function() {
             queues: ['q1'],
             subscriptions: {
               s1: {
-                queue: 'q1'
-              }
-            }
-          }
-        }
+                queue: 'q1',
+              },
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
@@ -1437,17 +1437,17 @@ describe('Configuration', function() {
             queues: ['q1', 'q2'],
             subscriptions: {
               s1: {
-                queue: 'q1'
-              }
-            }
-          }
+                queue: 'q1',
+              },
+            },
+          },
         },
         subscriptions: {
           s2: {
             queue: 'q2',
-            vhost: 'v1'
-          }
-        }
+            vhost: 'v1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
@@ -1467,9 +1467,9 @@ describe('Configuration', function() {
         shovels: {
           x1: {
             subscription: 's1',
-            publication: 'p1'
-          }
-        }
+            publication: 'p1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.shovels.x1.name, 'x1');
@@ -1479,8 +1479,8 @@ describe('Configuration', function() {
     it('should convert "subscription -> publication" to shovel', function() {
       configure({
         shovels: [
-          's1 -> p1'
-        ]
+          's1 -> p1',
+        ],
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.shovels['s1 -> p1'].subscription, 's1');
@@ -1497,9 +1497,9 @@ describe('Configuration', function() {
         redeliveries: {
           counters: {
             stub: {},
-            inMemory: {}
-          }
-        }
+            inMemory: {},
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.redeliveries.counters.stub.name, 'stub');

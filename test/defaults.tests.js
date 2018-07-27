@@ -19,18 +19,18 @@ describe('Defaults', function() {
                 password: 'guest',
                 port: '5672',
                 options: {
-                  heartbeat: 5
+                  heartbeat: 5,
                 },
                 retry: {
-                  delay: 1000
-                }
-              }
-            }
+                  delay: 1000,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
-            }
-          }
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'amqp://guest:guest@localhost:5672/v1?heartbeat=5');
@@ -50,22 +50,22 @@ describe('Defaults', function() {
                 port: '5672',
                 vhost: '',
                 options: {
-                  heartbeat: 10
+                  heartbeat: 10,
                 },
                 retry: {
-                  delay: 1000
-                }
-              }
-            }
+                  delay: 1000,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
               connection: {
                 user: 'foo',
-                password: 'bar'
-              }
-            }
-          }
+                password: 'bar',
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'amqp://foo:bar@localhost:5672?heartbeat=10');
@@ -81,14 +81,14 @@ describe('Defaults', function() {
             vhosts: {
               publicationChannelPools: {
                 regularPoolSize: 2,
-                confirmPoolSize: 3
-              }
-            }
+                confirmPoolSize: 3,
+              },
+            },
           },
           vhosts: {
             v1: {
-            }
-          }
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2);
@@ -100,14 +100,14 @@ describe('Defaults', function() {
         configure({
           defaults: {
             vhosts: {
-              channelPoolSize: 3
-            }
+              channelPoolSize: 3,
+            },
           },
           vhosts: {
             v1: {
-              channelPoolSize: 5
-            }
-          }
+              channelPoolSize: 5,
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.channelPoolSize, 5);
@@ -125,19 +125,19 @@ describe('Defaults', function() {
                 assert: true,
                 type: 'topic',
                 options: {
-                  durable: true
-                }
-              }
-            }
+                  durable: true,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
               exchanges: {
                 e1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.assert, true);
@@ -154,10 +154,10 @@ describe('Defaults', function() {
                 assert: true,
                 type: 'topic',
                 options: {
-                  durable: true
-                }
-              }
-            }
+                  durable: true,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
@@ -168,12 +168,12 @@ describe('Defaults', function() {
                   type: 'direct',
                   options: {
                     durable: false,
-                    autoDelete: true
-                  }
-                }
-              }
-            }
-          }
+                    autoDelete: true,
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.assert, false);
@@ -196,20 +196,20 @@ describe('Defaults', function() {
                 options: {
                   durable: true,
                   arguments: {
-                    'x-dead-letter-exchange': 'dead_letters'
-                  }
-                }
-              }
-            }
+                    'x-dead-letter-exchange': 'dead_letters',
+                  },
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
               queues: {
                 q1: {
-                }
-              }
-            }
-          }
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.assert, true);
@@ -225,10 +225,10 @@ describe('Defaults', function() {
               queues: {
                 assert: true,
                 options: {
-                  durable: true
-                }
-              }
-            }
+                  durable: true,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
@@ -238,12 +238,12 @@ describe('Defaults', function() {
                   check: true,
                   options: {
                     durable: false,
-                    autoDelete: true
-                  }
-                }
-              }
-            }
-          }
+                    autoDelete: true,
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.assert, false);
@@ -264,25 +264,25 @@ describe('Defaults', function() {
                 destinationType: 'queue',
                 bindingKey: '#',
                 options: {
-                  foo: true
-                }
-              }
-            }
+                  foo: true,
+                },
+              },
+            },
           },
           vhosts: {
             v1: {
               queues: {
                 q1: {
-                }
+                },
               },
               bindings: {
                 b1: {
                   source: 'e1',
-                  destination: 'q1'
-                }
-              }
-            }
-          }
+                  destination: 'q1',
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
@@ -301,11 +301,11 @@ describe('Defaults', function() {
                 destinationType: 'queue',
                 bindingKey: '#',
                 options: {
-                  foo: true
-                }
-              }
+                  foo: true,
+                },
+              },
 
-            }
+            },
           },
           vhosts: {
             v1: {
@@ -317,12 +317,12 @@ describe('Defaults', function() {
                   bindingKey: 'stuff',
                   options: {
                     foo: false,
-                    bar: true
-                  }
-                }
-              }
-            }
-          }
+                    bar: true,
+                  },
+                },
+              },
+            },
+          },
         }, function(err, config) {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
@@ -344,24 +344,24 @@ describe('Defaults', function() {
           publications: {
             routingKey: '',
             options: {
-              persistent: true
-            }
-          }
+              persistent: true,
+            },
+          },
         },
         vhosts: {
           v1: {
             exchanges: {
               e1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
             vhost: 'v1',
-            exchange: 'e1'
-          }
-        }
+            exchange: 'e1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -377,17 +377,17 @@ describe('Defaults', function() {
           publications: {
             routingKey: '',
             options: {
-              persistent: true
-            }
-          }
+              persistent: true,
+            },
+          },
         },
         vhosts: {
           v1: {
             exchanges: {
               e1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         publications: {
           p1: {
@@ -395,10 +395,10 @@ describe('Defaults', function() {
             exchange: 'e1',
             routingKey: 'stuff',
             options: {
-              persistent: false
-            }
-          }
-        }
+              persistent: false,
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -415,28 +415,28 @@ describe('Defaults', function() {
         defaults: {
           subscriptions: {
             options: {
-              foo: true
+              foo: true,
             },
             prefetch: 100,
             retry: {
-              delay: 1000
-            }
-          }
+              delay: 1000,
+            },
+          },
         },
         vhosts: {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
             vhost: 'v1',
-            queue: 'q1'
-          }
-        }
+            queue: 'q1',
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
@@ -452,21 +452,21 @@ describe('Defaults', function() {
         defaults: {
           subscriptions: {
             options: {
-              foo: true
+              foo: true,
             },
             prefetch: 100,
             retry: {
-              delay: 1000
-            }
-          }
+              delay: 1000,
+            },
+          },
         },
         vhosts: {
           v1: {
             queues: {
               q1: {
-              }
-            }
-          }
+              },
+            },
+          },
         },
         subscriptions: {
           s1: {
@@ -474,14 +474,14 @@ describe('Defaults', function() {
             queue: 'q1',
             options: {
               foo: false,
-              bar: true
+              bar: true,
             },
             prefetch: false,
             retry: {
-              delay: 2000
-            }
-          }
-        }
+              delay: 2000,
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
@@ -502,19 +502,19 @@ describe('Defaults', function() {
           redeliveries: {
             counters: {
               inMemory:   {
-                size: 99
-              }
-            }
-          }
+                size: 99,
+              },
+            },
+          },
         },
         redeliveries: {
           counters: {
             stub: {},
             inMemory: {
-              type: 'inMemory'
-            }
-          }
-        }
+              type: 'inMemory',
+            },
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.redeliveries.counters.stub.name, 'stub');
@@ -530,17 +530,17 @@ describe('Defaults', function() {
           redeliveries: {
             counters: {
               inMemory:   {
-                size: 99
-              }
-            }
-          }
+                size: 99,
+              },
+            },
+          },
         },
         redeliveries: {
           counters: {
             stub: {},
-            inMemory: {}
-          }
-        }
+            inMemory: {},
+          },
+        },
       }, function(err, config) {
         assert.ifError(err);
         assert.equal(config.redeliveries.counters.stub.name, 'stub');

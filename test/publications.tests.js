@@ -27,34 +27,34 @@ describe('Publications', function() {
         namespace: namespace,
         exchanges: {
           e1: {
-            assert: true
+            assert: true,
           },
           e2: {
-            assert: true
+            assert: true,
           },
           xx: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         queues: {
           q1: {
-            assert: true
+            assert: true,
           },
           q2: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         bindings: {
           b1: {
             source: 'e1',
-            destination: 'q1'
+            destination: 'q1',
           },
           b2: {
             source: 'e2',
-            destination: 'q2'
-          }
-        }
-      }
+            destination: 'q2',
+          },
+        },
+      },
     };
 
     amqplib.connect(function(err, connection) {
@@ -74,9 +74,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'e1'
-        }
-      }
+          exchange: 'e1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('does-not-exist', 'test message', function(err) {
@@ -93,9 +93,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           exchange: 'e1',
-          deprecated: true
-        }
-      }
+          deprecated: true,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -113,9 +113,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           exchange: 'e1',
-          confirm: false
-        }
-      }
+          confirm: false,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -133,9 +133,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           exchange: 'e1',
-          confirm: true
-        }
-      }
+          confirm: true,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -152,9 +152,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          queue: 'q1'
-        }
-      }
+          queue: 'q1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -171,9 +171,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'e1'
-        }
-      }
+          exchange: 'e1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -198,9 +198,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           queue: 'q1',
-          confirm: true
-        }
-      }
+          confirm: true,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -217,9 +217,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'e1'
-        }
-      }
+          exchange: 'e1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err, publication) {
@@ -236,9 +236,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'e1'
-        }
-      }
+          exchange: 'e1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }, function(err, publication) {
@@ -261,9 +261,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'e1'
-        }
-      }
+          exchange: 'e1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', new Buffer('test message'), function(err, publication) {
@@ -280,9 +280,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          queue: 'q1'
-        }
-      }
+          queue: 'q1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, publication) {
@@ -301,9 +301,9 @@ describe('Publications', function() {
       vhosts: vhosts,
       publications: {
         p1: {
-          exchange: 'xx'
-        }
-      }
+          exchange: 'xx',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, publication) {
@@ -322,19 +322,19 @@ describe('Publications', function() {
       publications: {
         p1: {
           exchange: 'e1',
-          routingKey: 'rk1'
+          routingKey: 'rk1',
         },
         p2: {
           exchange: 'e2',
-          routingKey: 'rk2'
-        }
+          routingKey: 'rk2',
+        },
       },
       subscriptions: {
         s1: {
           vhost: '/',
-          queue: 'q1'
-        }
-      }
+          queue: 'q1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -381,18 +381,18 @@ describe('Publications', function() {
       publications: {
         p1: {
           exchange: 'e1',
-          routingKey: 'rk1'
+          routingKey: 'rk1',
         },
         p2: {
-          exchange: 'e2'
-        }
+          exchange: 'e2',
+        },
       },
       subscriptions: {
         s1: {
           vhost: '/',
-          queue: 'q1'
-        }
-      }
+          queue: 'q1',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -432,9 +432,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           queue: 'q1',
-          confirm: false
-        }
-      }
+          confirm: false,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -461,9 +461,9 @@ describe('Publications', function() {
       publications: {
         p1: {
           queue: 'q1',
-          confirm: true
-        }
-      }
+          confirm: true,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
 

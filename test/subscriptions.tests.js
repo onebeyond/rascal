@@ -27,81 +27,81 @@ describe('Subscriptions', function() {
         namespace: namespace,
         exchanges: {
           e1: {
-            assert: true
+            assert: true,
           },
           e2: {
-            assert: true
+            assert: true,
           },
           xx: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         queues: {
           q1: {
-            assert: true
+            assert: true,
           },
           q2: {
-            assert: true
+            assert: true,
           },
           q3: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         bindings: {
           b1: {
             source: 'e1',
             destination: 'q1',
-            bindingKey: 'foo'
+            bindingKey: 'foo',
           },
           b2: {
             source: 'e2',
             destination: 'q2',
-            bindingKey: 'bar'
+            bindingKey: 'bar',
           },
           b3: {
             source: 'e1',
             destination: 'q3',
-            bindingKey: 'baz'
-          }
-        }
-      }
+            bindingKey: 'baz',
+          },
+        },
+      },
     };
 
     publications = {
       p1: {
         vhost: '/',
         exchange: 'e1',
-        routingKey: 'foo'
+        routingKey: 'foo',
       },
       p2: {
         vhost: '/',
         exchange: 'e2',
-        routingKey: 'bar'
+        routingKey: 'bar',
       },
       p3: {
         vhost: '/',
-        exchange: 'xx'
-      }
+        exchange: 'xx',
+      },
     };
 
     subscriptions = {
       s1: {
         vhost: '/',
-        queue: 'q1'
+        queue: 'q1',
       },
       s2: {
         vhost: '/',
-        queue: 'q2'
+        queue: 'q2',
       },
       s3: {
         vhost: '/',
-        queue: 'q3'
+        queue: 'q3',
       },
       s4: {
         vhost: '/',
         queue: 'q1',
-        deprecated: true
-      }
+        deprecated: true,
+      },
     };
 
     amqplib.connect(function(err, connection) {
@@ -120,7 +120,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.subscribe('does-not-exist', function(err, subscription) {
@@ -136,7 +136,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -159,7 +159,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -182,13 +182,13 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', {
         options: {
-          contentType: 'text/csv'
-        }
+          contentType: 'text/csv',
+        },
       }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
@@ -209,13 +209,13 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', {
         options: {
-          contentType: 'x-foo-bar/blah'
-        }
+          contentType: 'x-foo-bar/blah',
+        },
       }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
@@ -235,7 +235,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err) {
@@ -257,7 +257,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', new Buffer('test message'), function(err) {
@@ -279,7 +279,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -301,7 +301,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -324,7 +324,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -347,7 +347,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -374,7 +374,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -405,9 +405,9 @@ describe('Subscriptions', function() {
         s1: {
           vhost: '/',
           queue: 'q1',
-          contentType: 'text/plain'
-        }
-      }
+          contentType: 'text/plain',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err) {
@@ -433,10 +433,10 @@ describe('Subscriptions', function() {
         p1: {
           vhost: '/',
           exchange: 'e1',
-          routingKey: 'bar'
-        }
+          routingKey: 'bar',
+        },
       },
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -462,10 +462,10 @@ describe('Subscriptions', function() {
           vhost: '/',
           queue: 'q1',
           options: {
-            noAck: true
-          }
-        }
-      }
+            noAck: true,
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -490,7 +490,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -515,7 +515,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -543,7 +543,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -573,50 +573,50 @@ describe('Subscriptions', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
+              assert: true,
             },
             e2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           queues: {
             q1: {
               assert: true,
               options: {
                 arguments: {
-                  'x-dead-letter-exchange': 'e2'
-                }
-              }
+                  'x-dead-letter-exchange': 'e2',
+                },
+              },
             },
             q2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           bindings: {
             b1: {
               source: 'e1',
               destination: 'q1',
-              bindingKey: 'foo'
+              bindingKey: 'foo',
             },
             b2: {
               source: 'e2',
               destination: 'q2',
-              bindingKey: 'foo'
-            }
-          }
-        }
+              bindingKey: 'foo',
+            },
+          },
+        },
       },
       publications: _.pick(publications, 'p1'),
       subscriptions: {
         s1: {
           vhost: '/',
-          queue: 'q1'
+          queue: 'q1',
         },
         s2: {
           vhost: '/',
-          queue: 'q2'
-        }
-      }
+          queue: 'q2',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -646,7 +646,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -660,7 +660,7 @@ describe('Subscriptions', function() {
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), {
               strategy: 'nack',
-              requeue: true
+              requeue: true,
             });
             done();
           });
@@ -674,7 +674,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -690,7 +690,7 @@ describe('Subscriptions', function() {
             if (numberOfMessages < 10) return ackOrNack(new Error('retry'), {
               strategy: 'nack',
               defer: 100,
-              requeue: true
+              requeue: true,
             });
             var stopTime = new Date().getTime();
             assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred');
@@ -711,10 +711,10 @@ describe('Subscriptions', function() {
           vhost: '/',
           queue: 'q1',
           redeliveries: {
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -745,10 +745,10 @@ describe('Subscriptions', function() {
           queue: 'q1',
           redeliveries: {
             limit: 5,
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -786,10 +786,10 @@ describe('Subscriptions', function() {
           queue: 'q1',
           redeliveries: {
             limit: 0,
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -823,10 +823,10 @@ describe('Subscriptions', function() {
           queue: 'q1',
           redeliveries: {
             limit: 5,
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -858,10 +858,10 @@ describe('Subscriptions', function() {
           queue: 'q1',
           redeliveries: {
             limit: 5,
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -894,10 +894,10 @@ describe('Subscriptions', function() {
           queue: 'q1',
           redeliveries: {
             limit: 5,
-            counter: 'inMemory'
-          }
-        }
-      }
+            counter: 'inMemory',
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       assert.ifError(err);
@@ -932,7 +932,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -960,7 +960,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -987,7 +987,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }, function(err, publication) {
@@ -1019,7 +1019,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1046,7 +1046,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1076,48 +1076,48 @@ describe('Subscriptions', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
+              assert: true,
             },
             e2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           queues: {
             q1: {
               assert: true,
               options: {
                 arguments: {
-                  'x-dead-letter-exchange': 'e2'
-                }
-              }
+                  'x-dead-letter-exchange': 'e2',
+                },
+              },
             },
             q2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           bindings: {
             b1: {
               source: 'e1',
-              destination: 'q1'
+              destination: 'q1',
             },
             b2: {
               source: 'e2',
-              destination: 'q2'
-            }
-          }
-        }
+              destination: 'q2',
+            },
+          },
+        },
       },
       publications: _.pick(publications, 'p1'),
       subscriptions: {
         s1: {
           vhost: '/',
-          queue: 'q1'
+          queue: 'q1',
         },
         s2: {
           vhost: '/',
-          queue: 'q2'
-        }
-      }
+          queue: 'q2',
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1131,7 +1131,7 @@ describe('Subscriptions', function() {
             assert.ok(message);
             ackOrNack(new Error('immediate nack'), {
               strategy: 'republish',
-              immediateNack: true
+              immediateNack: true,
             });
           });
         });
@@ -1152,7 +1152,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1186,7 +1186,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1217,7 +1217,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1247,7 +1247,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -1288,7 +1288,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1317,7 +1317,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -1344,7 +1344,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -1370,7 +1370,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1383,7 +1383,7 @@ describe('Subscriptions', function() {
             assert.ok(message);
             ackOrNack(new Error('retry'), [
               { strategy: 'republish', attempts: 5 },
-              { strategy: 'ack' }
+              { strategy: 'ack' },
             ], function() {
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 6) return;
@@ -1402,7 +1402,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1430,7 +1430,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1443,7 +1443,7 @@ describe('Subscriptions', function() {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             ackOrNack(new Error('Oh Noes'), [
-              { strategy: 'ack' }
+              { strategy: 'ack' },
             ], function() {
               broker.shutdown(function(err) {
                 assert.ifError(err);
@@ -1460,7 +1460,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1493,9 +1493,9 @@ describe('Subscriptions', function() {
         s1: {
           vhost: '/',
           queue: 'q1',
-          prefetch: 5
-        }
-      }
+          prefetch: 5,
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       async.times(10, function(index, next) {
@@ -1528,26 +1528,26 @@ describe('Subscriptions', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           queues: {
             q1: {
               assert: true,
-              replyTo: replyTo
-            }
+              replyTo: replyTo,
+            },
           },
           bindings: {
             b1: {
               source: 'e1',
               destination: 'q1',
-              bindingKey: 'foo.#'
-            }
-          }
-        }
+              bindingKey: 'foo.#',
+            },
+          },
+        },
       },
       publications: _.pick(publications, 'p1'),
-      subscriptions: _.pick(subscriptions, 's1')
+      subscriptions: _.pick(subscriptions, 's1'),
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', replyTo + '.foo.bar', function(err) {
@@ -1568,7 +1568,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1598,10 +1598,10 @@ describe('Subscriptions', function() {
           vhost: '/',
           queue: 'q1',
           options: {
-            noAck: true
-          }
-        }
-      }
+            noAck: true,
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
       broker.subscribe('s1', function(err, subscription) {
@@ -1632,10 +1632,10 @@ describe('Subscriptions', function() {
           vhost: '/',
           queue: 'q1',
           options: {
-            noAck: true
-          }
-        }
-      }
+            noAck: true,
+          },
+        },
+      },
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -1654,7 +1654,7 @@ describe('Subscriptions', function() {
     var config = {
       vhosts: vhosts,
       publications: publications,
-      subscriptions: {}
+      subscriptions: {},
     };
 
     _.times(11, function(i) {
@@ -1662,8 +1662,8 @@ describe('Subscriptions', function() {
         vhost: '/',
         queue: 'q1',
         options: {
-          noAck: true
-        }
+          noAck: true,
+        },
       };
     });
 
@@ -1683,7 +1683,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1704,7 +1704,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } })
+      subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1731,7 +1731,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: vhosts,
       publications: publications,
-      subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } })
+      subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {

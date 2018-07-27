@@ -25,47 +25,47 @@ describe('Broker', function () {
         namespace: namespace,
         exchanges: {
           e1: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         queues: {
           q1: {
-            assert: true
-          }
+            assert: true,
+          },
         },
         subscriptions: {
           s1: {
-            queue: 'q1'
-          }
+            queue: 'q1',
+          },
         },
         publications: {
           p1: {
-            exchange: 'e1'
-          }
+            exchange: 'e1',
+          },
         },
         bindings: {
           b1: {
             source: 'e1',
-            destination: 'q1'
-          }
-        }
+            destination: 'q1',
+          },
+        },
 
-      }
+      },
     };
 
     publications = {
       p1: {
         vhost: '/',
         exchange: 'e1',
-        routingKey: 'foo'
-      }
+        routingKey: 'foo',
+      },
     };
 
     subscriptions = {
       s1: {
         vhost: '/',
-        queue: 'q1'
-      }
+        queue: 'q1',
+      },
     };
 
     done();
@@ -109,7 +109,7 @@ describe('Broker', function () {
   it('should cancel subscriptions', function (done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions
+      subscriptions: subscriptions,
     }, testConfig);
 
     createBroker(config, function (err, broker) {

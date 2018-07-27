@@ -21,61 +21,61 @@ describe('Shovel', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
+              assert: true,
             },
             e2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           queues: {
             q1: {
-              assert: true
+              assert: true,
             },
             q2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           bindings: {
             b1: {
               source: 'e1',
               destination: 'q1',
-              bindingKey: 'foo'
+              bindingKey: 'foo',
             },
             b2: {
               source: 'e2',
               destination: 'q2',
-              bindingKey: 'bar'
-            }
-          }
-        }
+              bindingKey: 'bar',
+            },
+          },
+        },
       },
       publications: {
         p1: {
           exchange: 'e1',
-          routingKey: 'foo'
+          routingKey: 'foo',
         },
         p2: {
           exchange: 'e2',
-          routingKey: 'bar'
-        }
+          routingKey: 'bar',
+        },
       },
       subscriptions: {
         s1: {
-          queue: 'q1'
+          queue: 'q1',
         },
         s2: {
           queue: 'q2',
           options: {
-            noAck: true
-          }
-        }
+            noAck: true,
+          },
+        },
       },
       shovels: {
         x1: {
           subscription: 's1',
-          publication: 'p2'
-        }
-      }
+          publication: 'p2',
+        },
+      },
     };
     done();
   });

@@ -36,12 +36,12 @@ describe('Vhost', function() {
           connection: {
             host: '10.255.255.1',
             socketOptions: {
-              timeout: 100
-            }
+              timeout: 100,
+            },
           },
-          namespace: namespace
-        }
-      }
+          namespace: namespace,
+        },
+      },
     }, function(err) {
       assert.equal(err.message, 'connect ETIMEDOUT');
       done();
@@ -56,11 +56,11 @@ describe('Vhost', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
-            }
-          }
-        }
-      }
+              assert: true,
+            },
+          },
+        },
+      },
     }, function() {
       amqputils.assertExchangePresent('e1', namespace, done);
     });
@@ -74,11 +74,11 @@ describe('Vhost', function() {
           namespace: namespace,
           queues: {
             q1: {
-              assert: true
-            }
-          }
-        }
-      }
+              assert: true,
+            },
+          },
+        },
+      },
     }, function() {
       amqputils.assertQueuePresent('q1', namespace, done);
     });
@@ -92,11 +92,11 @@ describe('Vhost', function() {
           exchanges: {
             e1: {
               assert: false,
-              check: true
-            }
-          }
-        }
-      }
+              check: true,
+            },
+          },
+        },
+      },
     }, function(err) {
       assert.ok(err);
       assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
@@ -112,11 +112,11 @@ describe('Vhost', function() {
           queues: {
             q1: {
               assert: false,
-              check: true
-            }
-          }
-        }
-      }
+              check: true,
+            },
+          },
+        },
+      },
     }, function(err) {
       assert.ok(err);
       assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
@@ -134,30 +134,30 @@ describe('Vhost', function() {
           namespace: namespace,
           exchanges: {
             e1: {
-              assert: true
+              assert: true,
             },
             e2: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           queues: {
             q1: {
-              assert: true
-            }
+              assert: true,
+            },
           },
           bindings: {
             b1: {
               source: 'e1',
               destination: 'e2',
-              destinationType: 'exchange'
+              destinationType: 'exchange',
             },
             b2: {
               source: 'e1',
-              destination: 'q1'
-            }
-          }
-        }
-      }
+              destination: 'q1',
+            },
+          },
+        },
+      },
     }, function(err) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, 'test message', {}, function(err) {

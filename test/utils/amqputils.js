@@ -2,7 +2,7 @@ var assert = require('assert');
 var _ = require('lodash');
 
 module.exports = {
-  init: init
+  init: init,
 };
 
 function init(connection) {
@@ -72,6 +72,6 @@ function init(connection) {
     assertExchangePresent: checkExchange.bind(null, true),
     assertExchangeAbsent: checkExchange.bind(null, false),
     assertQueuePresent: checkQueue.bind(null, true),
-    assertQueueAbsent: checkQueue.bind(null, false)
+    assertQueueAbsent: checkQueue.bind(null, false),
   };
 }
