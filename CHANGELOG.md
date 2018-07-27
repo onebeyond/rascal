@@ -1,5 +1,5 @@
 # Change Log
-## Unreleased
+## 3.1.3
 ### Updates
 - Modernise code style
 
