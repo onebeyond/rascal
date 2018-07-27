@@ -1,24 +1,24 @@
-var assert = require('assert')
-var _ = require('lodash')
-var testConfig = require('../lib/config/tests')
-var uuid = require('uuid').v4
-var Broker = require('..').Broker
+var assert = require('assert');
+var _ = require('lodash');
+var testConfig = require('../lib/config/tests');
+var uuid = require('uuid').v4;
+var Broker = require('..').Broker;
 
 
 describe('Broker', function () {
 
-  this.timeout(2000)
-  this.slow(1000)
+  this.timeout(2000);
+  this.slow(1000);
 
-  var broker
-  var namespace
-  var vhosts
-  var publications
-  var subscriptions
+  var broker;
+  var namespace;
+  var vhosts;
+  var publications;
+  var subscriptions;
 
   beforeEach(function (done) {
 
-    namespace = uuid()
+    namespace = uuid();
 
     vhosts = {
       '/': {
@@ -51,7 +51,7 @@ describe('Broker', function () {
         }
 
       }
-    }
+    };
 
     publications = {
       p1: {
@@ -59,89 +59,89 @@ describe('Broker', function () {
         exchange: 'e1',
         routingKey: 'foo'
       }
-    }
+    };
 
     subscriptions = {
       s1: {
         vhost: '/',
         queue: 'q1'
       }
-    }
+    };
 
-    done()
-  })
+    done();
+  });
 
   afterEach(function (done) {
-    if (broker) return broker.nuke(done)
-    done()
-  })
+    if (broker) return broker.nuke(done);
+    done();
+  });
 
   it('should provide fully qualified name', function (done) {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function (err, broker) {
-      assert.ifError(err)
-      assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'))
-      done()
-    })
-  })
+      assert.ifError(err);
+      assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
+      done();
+    });
+  });
 
   it('should not modify configuration', function (done) {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
-    var json = JSON.stringify(config, null, 2)
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    var json = JSON.stringify(config, null, 2);
     createBroker(config, function (err, broker) {
-      assert.ifError(err)
-      assert.equal(json, JSON.stringify(config, null, 2))
-      done()
-    })
-  })
+      assert.ifError(err);
+      assert.equal(json, JSON.stringify(config, null, 2));
+      done();
+    });
+  });
 
   it('should nuke', function (done) {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig)
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function (err, broker) {
-      assert.ifError(err)
+      assert.ifError(err);
       broker.nuke(function (err) {
-        assert.ifError(err)
-        done()
-      })
-    })
-  })
+        assert.ifError(err);
+        done();
+      });
+    });
+  });
 
   it('should cancel subscriptions', function (done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions
-    }, testConfig)
+    }, testConfig);
 
     createBroker(config, function (err, broker) {
-      assert.ifError(err)
+      assert.ifError(err);
 
       broker.subscribe('s1', function (err, subscription) {
-        assert.ifError(err)
+        assert.ifError(err);
 
         subscription.on('message', function (message, content, ackOrNack) {
           subscription.cancel(function (err) {
-            done(err)
+            done(err);
           });
-          assert(false, 'No message should have been received')
-        })
+          assert(false, 'No message should have been received');
+        });
 
         broker.unsubscribeAll(function (err) {
-          assert.ifError(err)
+          assert.ifError(err);
 
           broker.publish('p1', 'test message', function (err) {
-            assert.ifError(err)
-            setTimeout(done, 500)
-          })
-        })
-      })
-    })
-  })
+            assert.ifError(err);
+            setTimeout(done, 500);
+          });
+        });
+      });
+    });
+  });
 
 
   function createBroker(config, next) {
     Broker.create(config, function (err, _broker) {
-      broker = _broker
-      next(err, broker)
-    })
+      broker = _broker;
+      next(err, broker);
+    });
   }
-})
+});

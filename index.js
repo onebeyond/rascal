@@ -1,7 +1,7 @@
-var _ = require('lodash')
-var defaultConfig = require('./lib/config/defaults')
-var testConfig = require('./lib/config/tests')
-var Broker = require('./lib/amqp/Broker')
+var _ = require('lodash');
+var defaultConfig = require('./lib/config/defaults');
+var testConfig = require('./lib/config/tests');
+var Broker = require('./lib/amqp/Broker');
 
 module.exports = (function() {
   return {
@@ -10,11 +10,11 @@ module.exports = (function() {
     defaultConfig: defaultConfig,
     testConfig: testConfig,
     withDefaultConfig: function(config) {
-      return _.defaultsDeep({}, config, defaultConfig)
+      return _.defaultsDeep({}, config, defaultConfig);
     },
     withTestConfig: function(config) {
-      return _.defaultsDeep({}, config, testConfig)
+      return _.defaultsDeep({}, config, testConfig);
     },
     counters: require('./lib/counters')
-  }
-})()
+  };
+})();

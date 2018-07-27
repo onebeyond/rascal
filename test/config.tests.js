@@ -1,8 +1,8 @@
-var assert = require('assert')
-var format = require('util').format
-var _ = require('lodash')
-var configure = require('../lib/config/configure')
-var url = require('url')
+var assert = require('assert');
+var format = require('util').format;
+var _ = require('lodash');
+var configure = require('../lib/config/configure');
+var url = require('url');
 
 describe('Configuration', function() {
 
@@ -30,10 +30,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should configure the connection from a string', function() {
         configure({
@@ -43,10 +43,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://localhost')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://localhost');
+        });
+      });
 
       it('should ignore other connection properties when a url is specified', function() {
         configure({
@@ -69,10 +69,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].url, 'foo')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].url, 'foo');
+        });
+      });
 
       it('should decorate the connection config a vhost if not explicitly specified', function() {
         configure({
@@ -93,10 +93,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should set the pathname to empty string if the vhost is /', function() {
         configure({
@@ -117,10 +117,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should decorate the connection config with a loggable url (a)', function() {
         configure({
@@ -142,10 +142,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should generate connections from an array', function() {
         configure({
@@ -172,15 +172,15 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          var connections = _.sortBy(config.vhosts.v1.connections, 'url')
-          assert.equal(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100')
-          assert.equal(connections[1].url, 'protocol://user:password@beta:9000/vhost?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          var connections = _.sortBy(config.vhosts.v1.connections, 'url');
+          assert.equal(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100');
+          assert.equal(connections[1].url, 'protocol://user:password@beta:9000/vhost?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should randomise the order of connections, but maintain order across vhosts by host', function() {
-        var results = []
+        var results = [];
         for (var i = 0; i < 10; i++) {
           configure({
             vhosts: {
@@ -264,23 +264,23 @@ describe('Configuration', function() {
               }
             }
           }, function(err, config) {
-            assert.ifError(err)
-            assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v2.connections[0].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v3.connections[0].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v2.connections[1].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v3.connections[1].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v2.connections[2].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v3.connections[2].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v2.connections[3].url).host)
-            assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v3.connections[3].url).host)
+            assert.ifError(err);
+            assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v2.connections[0].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v3.connections[0].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v2.connections[1].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, url.parse(config.vhosts.v3.connections[1].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v2.connections[2].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, url.parse(config.vhosts.v3.connections[2].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v2.connections[3].url).host);
+            assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v3.connections[3].url).host);
 
             results.push(_.map(config.vhosts.v1.connections, function(connection) {
-              return url.parse(connection.url).host
-            }).join(','))
-          })
+              return url.parse(connection.url).host;
+            }).join(','));
+          });
         }
-        assert.ok(_.uniq(results).length > 1)
-      })
+        assert.ok(_.uniq(results).length > 1);
+      });
 
       it('should decorate the connection config with a loggable url (b)', function() {
         configure({
@@ -292,10 +292,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
+        });
+      });
 
       it('should generate a namespace when specified', function() {
         configure({
@@ -308,14 +308,14 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
+          assert.ifError(err);
 
-          assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
-          assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v2.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace))
-          assert.ok(config.vhosts.v1.namespace !== config.vhosts.v2.namespace)
-        })
-      })
-    })
+          assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace));
+          assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v2.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace));
+          assert.ok(config.vhosts.v1.namespace !== config.vhosts.v2.namespace);
+        });
+      });
+    });
 
     describe('Exchanges', function() {
 
@@ -335,12 +335,12 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.exchanges.e1.assert, false)
-          assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct')
-          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false)
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges.e1.assert, false);
+          assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct');
+          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false);
+        });
+      });
 
       it('should inflate exchanges with empty structure', function() {
         configure({
@@ -353,10 +353,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert(_.isObject(config.vhosts.v1.exchanges.e1.options))
-        })
-      })
+          assert.ifError(err);
+          assert(_.isObject(config.vhosts.v1.exchanges.e1.options));
+        });
+      });
 
       it('should decorate exchanges with name and fully qualified name', function() {
         configure({
@@ -369,11 +369,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
-          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
+          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1');
+        });
+      });
 
       it('should prefix fully qualified name with specified namespace', function() {
         configure({
@@ -387,11 +387,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
-          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
+          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1');
+        });
+      });
 
       it('should support array of names configuration', function() {
         configure({
@@ -401,15 +401,15 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.ok(!_.isArray(config.vhosts.v1.exchanges))
-          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
-          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
+          assert.ifError(err);
+          assert.ok(!_.isArray(config.vhosts.v1.exchanges));
+          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
+          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1');
 
-          assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2')
-          assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2')
-        })
-      })
+          assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2');
+          assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2');
+        });
+      });
 
       it('should support a mixed array of names / objects configuration', function() {
         configure({
@@ -419,16 +419,16 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.ok(!_.isArray(config.vhosts.v1.exchanges))
-          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1')
-          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1')
+          assert.ifError(err);
+          assert.ok(!_.isArray(config.vhosts.v1.exchanges));
+          assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
+          assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1');
 
-          assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2')
-          assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2')
-        })
-      })
-    })
+          assert.equal(config.vhosts.v1.exchanges.e2.name, 'e2');
+          assert.equal(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2');
+        });
+      });
+    });
 
     describe('Queues', function() {
 
@@ -448,12 +448,12 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.assert, false)
-          assert.equal(config.vhosts.v1.queues.q1.type, 'direct')
-          assert.equal(config.vhosts.v1.queues.q1.options.durable, false)
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.assert, false);
+          assert.equal(config.vhosts.v1.queues.q1.type, 'direct');
+          assert.equal(config.vhosts.v1.queues.q1.options.durable, false);
+        });
+      });
 
       it('should inflate queues with empty structure', function() {
         configure({
@@ -466,10 +466,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert(_.isObject(config.vhosts.v1.queues.q1.options))
-        })
-      })
+          assert.ifError(err);
+          assert(_.isObject(config.vhosts.v1.queues.q1.options));
+        });
+      });
 
       it('should decorate queues with name and fully qualified name', function() {
         configure({
@@ -482,11 +482,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
-          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
+          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1');
+        });
+      });
 
       it('should prefix fully qualified name with specified namespace', function() {
         configure({
@@ -500,11 +500,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
-          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
+          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1');
+        });
+      });
 
       it('should append uuid to replyTo queues', function() {
         configure({
@@ -518,11 +518,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
-          assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName))
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
+          assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName));
+        });
+      });
 
       it('should prefix dead letter exchange argument with specified namespace', function() {
         configure({
@@ -541,11 +541,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
-          assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
+          assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1');
+        });
+      });
 
       it('should support a mixed array of names / objects configuration', function() {
         configure({
@@ -555,16 +555,16 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.ok(!_.isArray(config.vhosts.v1.queues))
-          assert.equal(config.vhosts.v1.queues.q1.name, 'q1')
-          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1')
+          assert.ifError(err);
+          assert.ok(!_.isArray(config.vhosts.v1.queues));
+          assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
+          assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1');
 
-          assert.equal(config.vhosts.v1.queues.q2.name, 'q2')
-          assert.equal(config.vhosts.v1.queues.q2.fullyQualifiedName, 'q2')
-        })
-      })
-    })
+          assert.equal(config.vhosts.v1.queues.q2.name, 'q2');
+          assert.equal(config.vhosts.v1.queues.q2.fullyQualifiedName, 'q2');
+        });
+      });
+    });
 
     describe('Bindings', function() {
 
@@ -586,12 +586,12 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
-          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
+          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#');
+        });
+      });
 
       it('should convert "source -> destination" from binding key', function() {
         configure({
@@ -611,21 +611,21 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].source, 'e:1')
-          assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].destination, 'q:1')
-          assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].source, 'e_1')
-          assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].destination, 'q_1')
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].source, 'e:1');
+          assert.equal(config.vhosts.v1.bindings['e:1 -> q:1'].destination, 'q:1');
+          assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].source, 'e_1');
+          assert.equal(config.vhosts.v1.bindings['e_1 -> q_1'].destination, 'q_1');
 
-          assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].source, 'e.1')
-          assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].destination, 'q.1')
+          assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].source, 'e.1');
+          assert.equal(config.vhosts.v1.bindings['e.1 -> q.1'].destination, 'q.1');
 
-          assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].source, 'e-1')
-          assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].destination, 'q-1')
-        })
-      })
+          assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].source, 'e-1');
+          assert.equal(config.vhosts.v1.bindings['e-1 -> q-1'].destination, 'q-1');
+        });
+      });
 
       it('should convert "source[binding.key] -> destination" from binding key', function() {
         configure({
@@ -643,13 +643,13 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKey, 'a')
-          assert.equal(config.vhosts.v1.bindings['e1[a.b] -> q1'].bindingKey, 'a.b')
-          assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a'].bindingKey, 'a')
-          assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a.b'].bindingKey, 'a.b')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKey, 'a');
+          assert.equal(config.vhosts.v1.bindings['e1[a.b] -> q1'].bindingKey, 'a.b');
+          assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a'].bindingKey, 'a');
+          assert.equal(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a.b'].bindingKey, 'a.b');
+        });
+      });
 
       it('should qualify bindings keys when specified', function() {
         configure({
@@ -674,11 +674,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1')
-          assert.equal(config.vhosts.v1.bindings['e1[q1] -> q1'].bindingKey, 'ns1:q1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1');
+          assert.equal(config.vhosts.v1.bindings['e1[q1] -> q1'].bindingKey, 'ns1:q1');
+        });
+      });
 
       it('should inflate bindings with empty structure', function() {
         configure({
@@ -696,10 +696,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert(_.isObject(config.vhosts.v1.bindings.b1.options))
-        })
-      })
+          assert.ifError(err);
+          assert(_.isObject(config.vhosts.v1.bindings.b1.options));
+        });
+      });
 
       it('should decorate bindings with name', function() {
         configure({
@@ -717,10 +717,10 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.name, 'b1')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.name, 'b1');
+        });
+      });
 
       it('should prefix bindingKey with replyTo uuid', function() {
         configure({
@@ -742,11 +742,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
-          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
-          assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey))
-        })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
+          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
+          assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey));
+        });
       }),
 
       it('should configure multiple bindings from an array of binding keys', function() {
@@ -767,15 +767,15 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings['b1:a'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['b1:a'].destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings['b1:a'].bindingKey, 'a')
-          assert.equal(config.vhosts.v1.bindings['b1:b'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['b1:b'].destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings['b1:b'].bindingKey, 'b')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings['b1:a'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['b1:a'].destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings['b1:a'].bindingKey, 'a');
+          assert.equal(config.vhosts.v1.bindings['b1:b'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['b1:b'].destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings['b1:b'].bindingKey, 'b');
+        });
+      });
 
       it('should configure single bindings from an array of binding keys', function() {
         configure({
@@ -795,11 +795,11 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings['b1'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['b1'].destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings['b1'].bindingKey, 'a')
-        })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings['b1'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['b1'].destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings['b1'].bindingKey, 'a');
+        });
       }),
 
       it('should support a mixed array of names / objects configuration', function() {
@@ -817,17 +817,17 @@ describe('Configuration', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.ok(!_.isArray(config.vhosts.v1.bindings))
-          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1')
+          assert.ifError(err);
+          assert.ok(!_.isArray(config.vhosts.v1.bindings));
+          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1');
 
-          assert.equal(config.vhosts.v1.bindings['e1 -> q2'].source, 'e1')
-          assert.equal(config.vhosts.v1.bindings['e1 -> q2'].destination, 'q2')
-        })
-      })
-    })
-  })
+          assert.equal(config.vhosts.v1.bindings['e1 -> q2'].source, 'e1');
+          assert.equal(config.vhosts.v1.bindings['e1 -> q2'].destination, 'q2');
+        });
+      });
+    });
+  });
 
   describe('Publications', function() {
 
@@ -853,13 +853,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.exchange, 'e1')
-        assert.equal(config.publications.p1.routingKey, 'r1')
-        assert.equal(config.publications.p1.options.persistent, true)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.exchange, 'e1');
+        assert.equal(config.publications.p1.routingKey, 'r1');
+        assert.equal(config.publications.p1.options.persistent, true);
+      });
+    });
 
     it('should configure queue publications', function() {
 
@@ -882,12 +882,12 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.queue, 'q1')
-        assert.equal(config.publications.p1.options.persistent, true)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.queue, 'q1');
+        assert.equal(config.publications.p1.options.persistent, true);
+      });
+    });
 
     it('should inflate publications with empty structure', function() {
 
@@ -907,10 +907,10 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert(_.isObject(config.publications.p1.options))
-      })
-    })
+        assert.ifError(err);
+        assert(_.isObject(config.publications.p1.options));
+      });
+    });
 
     it('should decorate publications with name and destination', function() {
 
@@ -938,13 +938,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.name, 'p1')
-        assert.equal(config.publications.p1.destination, 'e1')
-        assert.equal(config.publications.p2.name, 'p2')
-        assert.equal(config.publications.p2.destination, 'q1')
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.name, 'p1');
+        assert.equal(config.publications.p1.destination, 'e1');
+        assert.equal(config.publications.p2.name, 'p2');
+        assert.equal(config.publications.p2.destination, 'q1');
+      });
+    });
 
     it('should replace destination its fully qualified names', function() {
 
@@ -974,11 +974,11 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.destination, 'foo:e1')
-        assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination))
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.destination, 'foo:e1');
+        assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination));
+      });
+    });
 
     it('should default the publication vhost to the vhost in the surrounding block', function() {
       configure({
@@ -993,12 +993,12 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.destination, 'e1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.destination, 'e1');
+      });
+    });
 
     it('should create a default publication for each exchange', function() {
       configure({
@@ -1011,20 +1011,20 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
 
-        assert.equal(config.publications['/e1'].vhost, '/')
-        assert.equal(config.publications['/e1'].destination, 'e1')
-        assert.equal(config.publications['/e1'].autoCreated, true)
-        assert.equal(config.publications['/e1'].deprecated, undefined)
+        assert.equal(config.publications['/e1'].vhost, '/');
+        assert.equal(config.publications['/e1'].destination, 'e1');
+        assert.equal(config.publications['/e1'].autoCreated, true);
+        assert.equal(config.publications['/e1'].deprecated, undefined);
 
-        assert.equal(config.publications['v1/e1'].vhost, 'v1')
-        assert.equal(config.publications['v1/e1'].destination, 'e1')
-        assert.equal(config.publications['v1/e1'].autoCreated, true)
-        assert.equal(config.publications['v1/e1'].deprecated, undefined)
-      })
-    })
+        assert.equal(config.publications['v1/e1'].vhost, 'v1');
+        assert.equal(config.publications['v1/e1'].destination, 'e1');
+        assert.equal(config.publications['v1/e1'].autoCreated, true);
+        assert.equal(config.publications['v1/e1'].deprecated, undefined);
+      });
+    });
 
     it('should not override an explicit vhost publication with a default exchange publication', function() {
       configure({
@@ -1040,13 +1040,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.e1.vhost, 'v1')
-        assert.equal(config.publications.e1.destination, 'e1')
-        assert.equal(config.publications.e1.routingKey, 'r1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.e1.vhost, 'v1');
+        assert.equal(config.publications.e1.destination, 'e1');
+        assert.equal(config.publications.e1.routingKey, 'r1');
+      });
+    });
 
     it('should not override an explicit root level exchange publication with a default exchange publication', function() {
       configure({
@@ -1063,13 +1063,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.e1.vhost, 'v1')
-        assert.equal(config.publications.e1.destination, 'e1')
-        assert.equal(config.publications.e1.routingKey, 'r1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.e1.vhost, 'v1');
+        assert.equal(config.publications.e1.destination, 'e1');
+        assert.equal(config.publications.e1.routingKey, 'r1');
+      });
+    });
 
     it('should create a default publication for each queue', function() {
       configure({
@@ -1082,20 +1082,20 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
 
-        assert.equal(config.publications['/q1'].vhost, '/')
-        assert.equal(config.publications['/q1'].destination, 'q1')
-        assert.equal(config.publications['/q1'].autoCreated, true)
-        assert.equal(config.publications['/q1'].deprecated, undefined)
+        assert.equal(config.publications['/q1'].vhost, '/');
+        assert.equal(config.publications['/q1'].destination, 'q1');
+        assert.equal(config.publications['/q1'].autoCreated, true);
+        assert.equal(config.publications['/q1'].deprecated, undefined);
 
-        assert.equal(config.publications['v1/q1'].vhost, 'v1')
-        assert.equal(config.publications['v1/q1'].destination, 'q1')
-        assert.equal(config.publications['v1/q1'].autoCreated, true)
-        assert.equal(config.publications['v1/q1'].deprecated, undefined)
-      })
-    })
+        assert.equal(config.publications['v1/q1'].vhost, 'v1');
+        assert.equal(config.publications['v1/q1'].destination, 'q1');
+        assert.equal(config.publications['v1/q1'].autoCreated, true);
+        assert.equal(config.publications['v1/q1'].deprecated, undefined);
+      });
+    });
 
     it('should not override an explicit vhost publication with a default queue publication', function() {
       configure({
@@ -1111,13 +1111,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.q1.vhost, 'v1')
-        assert.equal(config.publications.q1.destination, 'q1')
-        assert.equal(config.publications.q1.routingKey, 'r1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.q1.vhost, 'v1');
+        assert.equal(config.publications.q1.destination, 'q1');
+        assert.equal(config.publications.q1.routingKey, 'r1');
+      });
+    });
 
     it('should not override an explicit root level publication with a default queue publication', function() {
       configure({
@@ -1134,13 +1134,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.q1.vhost, 'v1')
-        assert.equal(config.publications.q1.destination, 'q1')
-        assert.equal(config.publications.q1.routingKey, 'r1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.q1.vhost, 'v1');
+        assert.equal(config.publications.q1.destination, 'q1');
+        assert.equal(config.publications.q1.routingKey, 'r1');
+      });
+    });
 
     it('should create a default subscription for each queue', function() {
       configure({
@@ -1153,20 +1153,20 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.subscriptions)
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.subscriptions);
 
-        assert.equal(config.subscriptions['/q1'].vhost, '/')
-        assert.equal(config.subscriptions['/q1'].source, 'q1')
-        assert.equal(config.subscriptions['/q1'].autoCreated, true)
-        assert.equal(config.subscriptions['/q1'].deprecated, undefined)
+        assert.equal(config.subscriptions['/q1'].vhost, '/');
+        assert.equal(config.subscriptions['/q1'].source, 'q1');
+        assert.equal(config.subscriptions['/q1'].autoCreated, true);
+        assert.equal(config.subscriptions['/q1'].deprecated, undefined);
 
-        assert.equal(config.subscriptions['v1/q1'].vhost, 'v1')
-        assert.equal(config.subscriptions['v1/q1'].source, 'q1')
-        assert.equal(config.subscriptions['v1/q1'].autoCreated, true)
-        assert.equal(config.subscriptions['v1/q1'].deprecated, undefined)
-      })
-    })
+        assert.equal(config.subscriptions['v1/q1'].vhost, 'v1');
+        assert.equal(config.subscriptions['v1/q1'].source, 'q1');
+        assert.equal(config.subscriptions['v1/q1'].autoCreated, true);
+        assert.equal(config.subscriptions['v1/q1'].deprecated, undefined);
+      });
+    });
 
     it('should not override an explicit vhost subscription with a default queue subscription', function() {
       configure({
@@ -1182,13 +1182,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.subscriptions)
-        assert.equal(config.subscriptions.q1.vhost, 'v1')
-        assert.equal(config.subscriptions.q1.source, 'q1')
-        assert.equal(config.subscriptions.q1.routingKey, 'r1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.subscriptions);
+        assert.equal(config.subscriptions.q1.vhost, 'v1');
+        assert.equal(config.subscriptions.q1.source, 'q1');
+        assert.equal(config.subscriptions.q1.routingKey, 'r1');
+      });
+    });
 
     it('should not override and explicit root level subscription with a default queue subscription', function() {
       configure({
@@ -1205,13 +1205,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.subscriptions)
-        assert.equal(config.subscriptions.q1.vhost, 'v1')
-        assert.equal(config.subscriptions.q1.source, 'q1')
-        assert.equal(config.subscriptions.q1.contentType, 'text/plain')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.subscriptions);
+        assert.equal(config.subscriptions.q1.vhost, 'v1');
+        assert.equal(config.subscriptions.q1.source, 'q1');
+        assert.equal(config.subscriptions.q1.contentType, 'text/plain');
+      });
+    });
 
     it('should should merge implicit vhost publications with explicit publications', function() {
       configure({
@@ -1232,15 +1232,15 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.publications)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.exchange, 'e1')
-        assert.equal(config.publications.p2.vhost, 'v1')
-        assert.equal(config.publications.p2.exchange, 'e2')
-      })
-    })
-  })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.publications);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.exchange, 'e1');
+        assert.equal(config.publications.p2.vhost, 'v1');
+        assert.equal(config.publications.p2.exchange, 'e2');
+      });
+    });
+  });
 
   describe('Subscriptions', function() {
 
@@ -1266,13 +1266,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.subscriptions.s1.vhost, 'v1')
-        assert.equal(config.subscriptions.s1.queue, 'q1')
-        assert.equal(config.subscriptions.s1.confirm, true)
-        assert.equal(config.subscriptions.s1.retry.delay, 1000)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.vhost, 'v1');
+        assert.equal(config.subscriptions.s1.queue, 'q1');
+        assert.equal(config.subscriptions.s1.confirm, true);
+        assert.equal(config.subscriptions.s1.retry.delay, 1000);
+      });
+    });
 
     it('should inflate subscriptions with empty structure', function() {
 
@@ -1292,10 +1292,10 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert(_.isObject(config.subscriptions.s1.options))
-      })
-    })
+        assert.ifError(err);
+        assert(_.isObject(config.subscriptions.s1.options));
+      });
+    });
 
     it('should decorate subscriptions with name and source', function() {
 
@@ -1315,11 +1315,11 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.subscriptions.s1.name, 's1')
-        assert.equal(config.subscriptions.s1.source, 'q1')
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.name, 's1');
+        assert.equal(config.subscriptions.s1.source, 'q1');
+      });
+    });
 
     it('should report duplicate subscriptions', function() {
 
@@ -1349,9 +1349,9 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.equal(err.message, 'Duplicate subscription: s1')
-      })
-    })
+        assert.equal(err.message, 'Duplicate subscription: s1');
+      });
+    });
 
     it('should report duplicate publications', function() {
 
@@ -1381,9 +1381,9 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.equal(err.message, 'Duplicate publication: p1')
-      })
-    })
+        assert.equal(err.message, 'Duplicate publication: p1');
+      });
+    });
 
     it('should replace source with its fully qualified name', function() {
       configure({
@@ -1404,11 +1404,11 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.subscriptions.s1.name, 's1')
-        assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source))
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.name, 's1');
+        assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source));
+      });
+    });
 
     it('should default the subscription vhost to the vhost in the surrounding block', function() {
       configure({
@@ -1423,12 +1423,12 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.subscriptions)
-        assert.equal(config.subscriptions.s1.vhost, 'v1')
-        assert.equal(config.subscriptions.s1.queue, 'q1')
-      })
-    })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.subscriptions);
+        assert.equal(config.subscriptions.s1.vhost, 'v1');
+        assert.equal(config.subscriptions.s1.queue, 'q1');
+      });
+    });
 
     it('should should merge implicit vhost subscriptions with explicit subscriptions', function() {
       configure({
@@ -1449,15 +1449,15 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.ok(!config.vhosts.v1.subscriptions)
-        assert.equal(config.subscriptions.s1.vhost, 'v1')
-        assert.equal(config.subscriptions.s1.queue, 'q1')
-        assert.equal(config.subscriptions.s2.vhost, 'v1')
-        assert.equal(config.subscriptions.s2.queue, 'q2')
-      })
-    })
-  })
+        assert.ifError(err);
+        assert.ok(!config.vhosts.v1.subscriptions);
+        assert.equal(config.subscriptions.s1.vhost, 'v1');
+        assert.equal(config.subscriptions.s1.queue, 'q1');
+        assert.equal(config.subscriptions.s2.vhost, 'v1');
+        assert.equal(config.subscriptions.s2.queue, 'q2');
+      });
+    });
+  });
 
   describe('Shovels', function() {
 
@@ -1471,10 +1471,10 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.shovels.x1.name, 'x1')
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.shovels.x1.name, 'x1');
+      });
+    });
 
     it('should convert "subscription -> publication" to shovel', function() {
       configure({
@@ -1482,12 +1482,12 @@ describe('Configuration', function() {
           's1 -> p1'
         ]
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.shovels['s1 -> p1'].subscription, 's1')
-        assert.equal(config.shovels['s1 -> p1'].publication, 'p1')
-      })
-    })
-  })
+        assert.ifError(err);
+        assert.equal(config.shovels['s1 -> p1'].subscription, 's1');
+        assert.equal(config.shovels['s1 -> p1'].publication, 'p1');
+      });
+    });
+  });
 
   describe('Redelivery Counters', function() {
 
@@ -1501,13 +1501,13 @@ describe('Configuration', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.redeliveries.counters.stub.name, 'stub')
-        assert.equal(config.redeliveries.counters.stub.type, 'stub')
-        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
-        assert.equal(config.redeliveries.counters.inMemory.type, 'inMemory')
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.redeliveries.counters.stub.name, 'stub');
+        assert.equal(config.redeliveries.counters.stub.type, 'stub');
+        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory');
+        assert.equal(config.redeliveries.counters.inMemory.type, 'inMemory');
+      });
+    });
 
-  })
-})
+  });
+});

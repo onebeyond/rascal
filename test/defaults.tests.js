@@ -1,5 +1,5 @@
-var assert = require('assert')
-var configure = require('../lib/config/configure')
+var assert = require('assert');
+var configure = require('../lib/config/configure');
 
 describe('Defaults', function() {
 
@@ -32,10 +32,10 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://guest:guest@localhost:5672/v1?heartbeat=5')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://guest:guest@localhost:5672/v1?heartbeat=5');
+        });
+      });
 
       it('should permit the defaults to be overriden', function() {
         configure({
@@ -67,11 +67,11 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://foo:bar@localhost:5672?heartbeat=10')
-        })
-      })
-    })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].url, 'amqp://foo:bar@localhost:5672?heartbeat=10');
+        });
+      });
+    });
 
     describe('Channel pooling', function() {
 
@@ -90,11 +90,11 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2)
-          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPoolSize, 3)
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2);
+          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPoolSize, 3);
+        });
+      });
 
       it('should permit the defaults to be overriden', function() {
         configure({
@@ -109,11 +109,11 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.channelPoolSize, 5)
-        })
-      })
-    })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.channelPoolSize, 5);
+        });
+      });
+    });
 
     describe('Exchanges', function() {
 
@@ -139,12 +139,12 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.exchanges.e1.assert, true)
-          assert.equal(config.vhosts.v1.exchanges.e1.type, 'topic')
-          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, true)
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges.e1.assert, true);
+          assert.equal(config.vhosts.v1.exchanges.e1.type, 'topic');
+          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, true);
+        });
+      });
 
       it('should permit the defaults to be overriden', function() {
         configure({
@@ -175,15 +175,15 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.exchanges.e1.assert, false)
-          assert.equal(config.vhosts.v1.exchanges.e1.check, true)
-          assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct')
-          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false)
-          assert.equal(config.vhosts.v1.exchanges.e1.options.autoDelete, true)
-        })
-      })
-    })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges.e1.assert, false);
+          assert.equal(config.vhosts.v1.exchanges.e1.check, true);
+          assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct');
+          assert.equal(config.vhosts.v1.exchanges.e1.options.durable, false);
+          assert.equal(config.vhosts.v1.exchanges.e1.options.autoDelete, true);
+        });
+      });
+    });
 
     describe('Queues', function() {
 
@@ -211,12 +211,12 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.assert, true)
-          assert.equal(config.vhosts.v1.queues.q1.options.durable, true)
-          assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'dead_letters')
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.assert, true);
+          assert.equal(config.vhosts.v1.queues.q1.options.durable, true);
+          assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'dead_letters');
+        });
+      });
 
       it('should permit the defaults to be overriden', function() {
         configure({
@@ -245,14 +245,14 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.queues.q1.assert, false)
-          assert.equal(config.vhosts.v1.queues.q1.check, true)
-          assert.equal(config.vhosts.v1.queues.q1.options.durable, false)
-          assert.equal(config.vhosts.v1.queues.q1.options.autoDelete, true)
-        })
-      })
-    })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.queues.q1.assert, false);
+          assert.equal(config.vhosts.v1.queues.q1.check, true);
+          assert.equal(config.vhosts.v1.queues.q1.options.durable, false);
+          assert.equal(config.vhosts.v1.queues.q1.options.autoDelete, true);
+        });
+      });
+    });
 
     describe('Bindings', function() {
 
@@ -284,14 +284,14 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
-          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1')
-          assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'queue')
-          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#')
-          assert.equal(config.vhosts.v1.bindings.b1.options.foo, true)
-        })
-      })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
+          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'queue');
+          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, '#');
+          assert.equal(config.vhosts.v1.bindings.b1.options.foo, true);
+        });
+      });
 
       it('should permit the defaults to be overriden', function() {
         configure({
@@ -324,17 +324,17 @@ describe('Defaults', function() {
             }
           }
         }, function(err, config) {
-          assert.ifError(err)
-          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1')
-          assert.equal(config.vhosts.v1.bindings.b1.destination, 'e2')
-          assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'exchange')
-          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'stuff')
-          assert.equal(config.vhosts.v1.bindings.b1.options.foo, false)
-          assert.equal(config.vhosts.v1.bindings.b1.options.bar, true)
-        })
-      })
-    })
-  })
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
+          assert.equal(config.vhosts.v1.bindings.b1.destination, 'e2');
+          assert.equal(config.vhosts.v1.bindings.b1.destinationType, 'exchange');
+          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'stuff');
+          assert.equal(config.vhosts.v1.bindings.b1.options.foo, false);
+          assert.equal(config.vhosts.v1.bindings.b1.options.bar, true);
+        });
+      });
+    });
+  });
 
   describe('Publications', function() {
 
@@ -363,13 +363,13 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.destination, 'e1')
-        assert.equal(config.publications.p1.routingKey, '')
-        assert.equal(config.publications.p1.options.persistent, true)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.destination, 'e1');
+        assert.equal(config.publications.p1.routingKey, '');
+        assert.equal(config.publications.p1.options.persistent, true);
+      });
+    });
 
     it('should permit the defaults to be overriden', function() {
       configure({
@@ -400,14 +400,14 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.publications.p1.vhost, 'v1')
-        assert.equal(config.publications.p1.destination, 'e1')
-        assert.equal(config.publications.p1.routingKey, 'stuff')
-        assert.equal(config.publications.p1.options.persistent, false)
-      })
-    })
-  })
+        assert.ifError(err);
+        assert.equal(config.publications.p1.vhost, 'v1');
+        assert.equal(config.publications.p1.destination, 'e1');
+        assert.equal(config.publications.p1.routingKey, 'stuff');
+        assert.equal(config.publications.p1.options.persistent, false);
+      });
+    });
+  });
 
   describe('Subscriptions', function() {
     it('should use the default subscription configuration', function() {
@@ -438,14 +438,14 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.subscriptions.s1.vhost, 'v1')
-        assert.equal(config.subscriptions.s1.source, 'q1')
-        assert.equal(config.subscriptions.s1.prefetch, 100)
-        assert.equal(config.subscriptions.s1.retry.delay, 1000)
-        assert.equal(config.subscriptions.s1.options.foo, true)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.vhost, 'v1');
+        assert.equal(config.subscriptions.s1.source, 'q1');
+        assert.equal(config.subscriptions.s1.prefetch, 100);
+        assert.equal(config.subscriptions.s1.retry.delay, 1000);
+        assert.equal(config.subscriptions.s1.options.foo, true);
+      });
+    });
 
     it('should permit the defaults to be overriden', function() {
       configure({
@@ -483,16 +483,16 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.subscriptions.s1.vhost, 'v1')
-        assert.equal(config.subscriptions.s1.source, 'q1')
-        assert.equal(config.subscriptions.s1.prefetch, false)
-        assert.equal(config.subscriptions.s1.retry.delay, 2000)
-        assert.equal(config.subscriptions.s1.options.foo, false)
-        assert.equal(config.subscriptions.s1.options.bar, true)
-      })
-    })
-  })
+        assert.ifError(err);
+        assert.equal(config.subscriptions.s1.vhost, 'v1');
+        assert.equal(config.subscriptions.s1.source, 'q1');
+        assert.equal(config.subscriptions.s1.prefetch, false);
+        assert.equal(config.subscriptions.s1.retry.delay, 2000);
+        assert.equal(config.subscriptions.s1.options.foo, false);
+        assert.equal(config.subscriptions.s1.options.bar, true);
+      });
+    });
+  });
 
   describe('Redeliveries', function() {
 
@@ -516,13 +516,13 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.redeliveries.counters.stub.name, 'stub')
-        assert.equal(config.redeliveries.counters.stub.size, undefined)
-        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
-        assert.equal(config.redeliveries.counters.inMemory.size, 99)
-      })
-    })
+        assert.ifError(err);
+        assert.equal(config.redeliveries.counters.stub.name, 'stub');
+        assert.equal(config.redeliveries.counters.stub.size, undefined);
+        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory');
+        assert.equal(config.redeliveries.counters.inMemory.size, 99);
+      });
+    });
 
     it('should apply default config based on counter name', function() {
       configure({
@@ -542,12 +542,12 @@ describe('Defaults', function() {
           }
         }
       }, function(err, config) {
-        assert.ifError(err)
-        assert.equal(config.redeliveries.counters.stub.name, 'stub')
-        assert.equal(config.redeliveries.counters.stub.size, undefined)
-        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory')
-        assert.equal(config.redeliveries.counters.inMemory.size, 99)
-      })
-    })
-  })
-})
+        assert.ifError(err);
+        assert.equal(config.redeliveries.counters.stub.name, 'stub');
+        assert.equal(config.redeliveries.counters.stub.size, undefined);
+        assert.equal(config.redeliveries.counters.inMemory.name, 'inMemory');
+        assert.equal(config.redeliveries.counters.inMemory.size, 99);
+      });
+    });
+  });
+});
