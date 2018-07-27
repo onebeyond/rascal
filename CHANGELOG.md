@@ -1,8 +1,14 @@
 # Change Log
+## Unreleased
+### Updates
+- Modernise code style
+
 ## 3.1.2
+### Updates
 - Fix redelivery counter defaults
 
 ## 3.1.1
+### Updates
 - Fix channelMax default
 
 ## 3.1.0

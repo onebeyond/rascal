@@ -4,17 +4,17 @@ var testConfig = require('./lib/config/tests')
 var Broker = require('./lib/amqp/Broker')
 
 module.exports = (function() {
-    return {
-        Broker: Broker,
-        createBroker: Broker.create,
-        defaultConfig: defaultConfig,
-        testConfig: testConfig,
-        withDefaultConfig: function(config) {
-            return _.defaultsDeep({}, config, defaultConfig)
-        },
-        withTestConfig: function(config) {
-            return _.defaultsDeep({}, config, testConfig)
-        },
-        counters: require('./lib/counters')
-    }
+  return {
+    Broker: Broker,
+    createBroker: Broker.create,
+    defaultConfig: defaultConfig,
+    testConfig: testConfig,
+    withDefaultConfig: function(config) {
+      return _.defaultsDeep({}, config, defaultConfig)
+    },
+    withTestConfig: function(config) {
+      return _.defaultsDeep({}, config, testConfig)
+    },
+    counters: require('./lib/counters')
+  }
 })()
