@@ -605,7 +605,7 @@ Rascal can be configured to automatically decrypt inbound messages.
 ```json
 {
   "vhosts": {
-    "v1:: {
+    "v1": {
       "queues": ["e1"]
     }
   },
