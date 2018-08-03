@@ -118,7 +118,7 @@ module.exports = {
 
           // Always publish a notification of success (it's useful for testing if nothing else)
           "save_user_succeeded": {
-            "exchange": "service"
+            "exchange": "service",
           },
           "delete_user_succeeded": {
             "exchange": "service"
@@ -135,7 +135,8 @@ module.exports = {
           // Publication for generating user create, update and delete messages
           // This would probably be the job of another application (e.g. a web application)
           "user_event": {
-            "exchange": "service"
+            "exchange": "service",
+            "encryption": "well-known-v1"
           }
         }
       }
@@ -172,6 +173,13 @@ module.exports = {
           "size": 10,
           "type": "inMemoryCluster"
         }
+      }
+    },
+    "encryption": {
+      "well-known-v1": {
+        "key": "f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315",
+        "ivLength": 16,
+        "algorithm": "aes-256-cbc"
       }
     }
   }
