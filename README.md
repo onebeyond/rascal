@@ -1,5 +1,5 @@
 # Rascal
-Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib) with [mostly safe](#caveats) defaults
+Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib).
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
 [![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
@@ -16,6 +16,17 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 1.4.0 added a 'close' event listener, which would automatically reconnect following the broker closing the connection. In some situations both a 'close' event and 'error' event are emitted causing Rascal to create two new connections. This [may](https://github.com/squaremo/amqp.node/issues/271) be responsible for unknown delivery tag errors.
 
 ## tl;dr
+* Configurable vhosts, exchanges, queues, bindings, producers and consumers
+* Cluster support
+* Transparent content parsing
+* Transparent encryption / decryption
+* Automatic reconnection and resubscription
+* Advanced error handling
+* Redelivery protection
+* Channel pooling
+* Safe defaults
+* TDD support
+
 See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
 
 ## About
