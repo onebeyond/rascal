@@ -497,6 +497,11 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 Rascal can be configured to automatically encrypt outbound messages.
 ```json
 {
+  "vhosts": {
+    "v1": {
+      "exchanges": ["e1"]
+    }
+  },
   "publications": {
     "p1": {
       "exchange": "e1",
@@ -599,6 +604,11 @@ If the message has not been auto-acknowledged you should ackOrNack it. **If you 
 Rascal can be configured to automatically decrypt inbound messages.
 ```json
 {
+  "vhosts": {
+    "v1:: {
+      "queues": ["e1"]
+    }
+  },
   "subscriptions": {
     "s1": {
       "queue": "e1",
