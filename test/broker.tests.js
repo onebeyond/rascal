@@ -16,7 +16,7 @@ describe('Broker', function () {
   var publications;
   var subscriptions;
 
-  beforeEach(function (done) {
+  beforeEach(function(done) {
 
     namespace = uuid();
 
@@ -71,12 +71,12 @@ describe('Broker', function () {
     done();
   });
 
-  afterEach(function (done) {
+  afterEach(function(done) {
     if (broker) return broker.nuke(done);
     done();
   });
 
-  it('should provide fully qualified name', function (done) {
+  it('should provide fully qualified name', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function (err, broker) {
       assert.ifError(err);
@@ -85,7 +85,7 @@ describe('Broker', function () {
     });
   });
 
-  it('should not modify configuration', function (done) {
+  it('should not modify configuration', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     var json = JSON.stringify(config, null, 2);
     createBroker(config, function (err, broker) {
@@ -95,7 +95,7 @@ describe('Broker', function () {
     });
   });
 
-  it('should nuke', function (done) {
+  it('should nuke', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function (err, broker) {
       assert.ifError(err);
@@ -106,7 +106,7 @@ describe('Broker', function () {
     });
   });
 
-  it('should cancel subscriptions', function (done) {
+  it('should cancel subscriptions', function(done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
