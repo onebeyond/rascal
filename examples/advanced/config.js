@@ -118,10 +118,11 @@ module.exports = {
 
           // Always publish a notification of success (it's useful for testing if nothing else)
           "save_user_succeeded": {
-            "exchange": "service",
+            "exchange": "service"
           },
           "delete_user_succeeded": {
-            "exchange": "service"
+            "exchange": "service",
+            "encryption": "well-known-v1"
           },
 
           // Forward messages to the 1 minute delay queue when retrying
@@ -136,6 +137,9 @@ module.exports = {
           // This would probably be the job of another application (e.g. a web application)
           "user_event": {
             "exchange": "service",
+            // Specifying an encryption profile in the publication will cause the message content to be encrypted
+            // The profile name and iv are added as headers, and used to automatically decrypt messages,
+            // providing the consumer configuration has a matching profile.
             "encryption": "well-known-v1"
           }
         }
@@ -175,6 +179,7 @@ module.exports = {
         }
       }
     },
+    // Define encryption profiles
     "encryption": {
       "well-known-v1": {
         "key": "f81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315",
