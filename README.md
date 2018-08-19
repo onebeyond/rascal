@@ -227,7 +227,7 @@ If you specify an array of connections instead of a single connection object Ras
 ```
 
 #### Management connection configuration
-** Please note: this functionality is mainly useful in test environments, since it does not create users or grant them permissions to vhosts **
+**Please note: this functionality is mainly useful in test environments, since it does not create users or grant them permissions to vhosts**
 
 The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal uses the RabbitMQ management API to achieve a similar result. The `management` connection configuration is derived from defaults and the vhost connection, but can be explicitly specified as follows...
 ```
