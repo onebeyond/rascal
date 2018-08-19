@@ -261,16 +261,16 @@ Rascal uses [request](https://github.com/request/request) under the hood, and an
     "v1": {
       "connections": [
         {
-          url: "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
-          management: "http://guest:guest@example1.com:15672"
+          "url": "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@example1.com:15672"
         },
         {
-          url: "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
-          management: "http://guest:guest@example2.com:15672"
+          "url": "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@example2.com:15672"
         },
         {
-          url: "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
-          management: "http://guest:guest@example2.com:15672"
+          "url": "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@example2.com:15672"
         }
       ]
     }
