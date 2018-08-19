@@ -4,6 +4,9 @@
 ### Added
 - Assert vhosts into exhistence using the RabbitMQ management API
 
+### Updated
+- Changed new Buffer() to Buffer.from to silence Node 10 deprecation warning
+
 ## 3.2.0
 ### Added
 - Transparent encryption / decryption

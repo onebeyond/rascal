@@ -266,7 +266,7 @@ describe('Publications', function() {
       },
     }, function(err, broker) {
       assert.ifError(err);
-      broker.publish('p1', new Buffer('test message'), function(err, publication) {
+      broker.publish('p1', Buffer.from('test message'), function(err, publication) {
         assert.ifError(err);
         publication.on('success', function(messageId) {
           amqputils.assertMessage('q1', namespace, 'test message', done);

@@ -260,7 +260,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      broker.publish('p1', new Buffer('test message'), function(err) {
+      broker.publish('p1', Buffer.from('test message'), function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
@@ -282,7 +282,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
@@ -304,7 +304,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
@@ -327,7 +327,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
@@ -350,7 +350,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
@@ -377,7 +377,7 @@ describe('Subscriptions', function() {
       subscriptions: subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
-      amqputils.publishMessage('e1', namespace, new Buffer('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
