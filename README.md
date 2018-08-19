@@ -216,11 +216,87 @@ If you specify an array of connections instead of a single connection object Ras
 {
   "vhosts": {
     "v1": {
-      "connection": [
+      "connections": [
         "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
         "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
         "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
       ]
+    }
+  }
+}
+```
+
+#### Management connection configuration
+** Please note: this functionality is mainly useful in test environments, since it does not create users or grant them permissions to vhosts **
+
+The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal uses the RabbitMQ management API to achieve a similar result. The `management` connection configuration is derived from defaults and the vhost connection, but can be explicitly specified as follows...
+```
+```json
+{
+  "vhosts": {
+    "v1": {
+      "connection": {
+        "hostname": "example.com",
+        "user": "bob",
+        "password": "secret",
+        "management": {
+          "protocol": "https",
+          "pathname": "prefix",
+          "user": "admin",
+          "password": "super-secret",
+          "options": {
+            "timeout": 1000,
+          }
+        }
+      }
+    }
+  }
+}
+```
+Rascal uses [request](https://github.com/request/request) under the hood, and any management options will be passed straight through. URL configuration is supported too.
+
+```json
+{
+  "vhosts": {
+    "v1": {
+      "connections": {
+        {
+          url: "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
+          management: "http://guest:guest@example1.com:15672",
+        },
+        {
+          url: "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
+          management: "http://guest:guest@example2.com:15672",
+        },
+        {
+          url: "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
+          management: "http://guest:guest@example2.com:15672",
+        }
+      }
+    }
+  }
+}
+```
+
+#### assert
+When set to true, Rascal will create the vhost is one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker, and for the management user to have necessary permissions.
+```json
+{
+  "vhosts": {
+    "v1": {
+      "assert": true
+    }
+  }
+}
+```
+
+#### check
+When set to true, Rascal will check that the vhost exists using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker, and for the management user to have necessary permissions.
+```json
+{
+  "vhosts": {
+    "v1": {
+      "check": true
     }
   }
 }
@@ -240,6 +316,12 @@ Rascal pools channels it uses for publishing messages. It creates a two pools pe
   }
 }
 ```
+
+#### assert
+The AMQP protocol doesn't support assertion or confirmation of vhosts, however the RabbitMQ management API does. By setting `assert` to `true` and specifying a management connection, you can automatically create the vhost if it does not exist.
+
+#### check
+The AMQP protocol doesn't support assertion or confirmation of vhosts, however the RabbitMQ management API does. By setting `check` to `true` and specifying a management connection, you can error if the vhost does not exist.
 
 #### Exchanges
 

@@ -3,10 +3,17 @@ module.exports = {
     "vhosts": {
 
       // Define the name of the vhost
-      "/": {
+      "customer-vhost": {
 
-        // Define the vhost connection parameters. Specify multiple entries for cluster
+        // Creates the vhost if it doesn't exist (requires the RabbitMQ management plugin to be installed)
+        "assert": true,
+
+        // Define the vhost connection parameters. Specify multiple entries for cluster.
+        // Rascal will randomise the list, and cycle through the entries until it finds one that works
         "connections": [
+          {
+            "url": "amqp://does-not-exist-1b9935d9-5066-4b13-84dc-a8e2bb618154:5672/customer-vhost"
+          },
           {
             "user": "guest",
             "password": "guest",

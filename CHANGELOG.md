@@ -1,6 +1,10 @@
 # Change Log
 
-## 3.2.0 
+## 3.3.0
+### Added
+- Assert vhosts into exhistence using the RabbitMQ management API
+
+## 3.2.0
 ### Added
 - Transparent encryption / decryption
 

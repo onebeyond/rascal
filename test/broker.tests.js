@@ -2,6 +2,7 @@ var assert = require('assert');
 var _ = require('lodash');
 var testConfig = require('../lib/config/tests');
 var uuid = require('uuid').v4;
+var format = require('util').format;
 var Broker = require('..').Broker;
 
 
@@ -74,6 +75,65 @@ describe('Broker', function () {
   afterEach(function(done) {
     if (broker) return broker.nuke(done);
     done();
+  });
+
+  it('should assert vhosts', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].assert = true;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function (err, broker) {
+      assert.ifError(err);
+      done();
+    });
+  });
+
+  it('should fail when checking vhosts that dont exist', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].check = true;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function (err, broker) {
+      assert.ok(err);
+      assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
+      done();
+    });
+  });
+
+  it('should not fail when checking vhosts that do exist', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].assert = true;
+    customVhosts[vhostName].check = true;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function (err, broker) {
+      assert.ifError(err);
+      done();
+    });
+  });
+
+  it('should delete vhosts', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].assert = true;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function (err, broker) {
+      assert.ifError(err);
+      broker.nuke(function(err) {
+        assert.ifError(err);
+        config.vhosts[vhostName].assert = false;
+        config.vhosts[vhostName].check = true;
+        createBroker(config, function (err, broker) {
+          assert.ok(err);
+          assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
+          done();
+        });
+      });
+    });
   });
 
   it('should provide fully qualified name', function(done) {
