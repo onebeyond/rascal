@@ -279,7 +279,7 @@ Rascal uses [request](https://github.com/request/request) under the hood, and an
 ```
 
 #### assert
-When set to true, Rascal will create the vhost is one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker, and for the management user to have necessary permissions.
+When set to true, Rascal will create the vhost if one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker and for the management user to have necessary permissions.
 ```json
 {
   "vhosts": {
@@ -291,7 +291,7 @@ When set to true, Rascal will create the vhost is one doesn't exist using the Ra
 ```
 
 #### check
-When set to true, Rascal will check that the vhost exists using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker, and for the management user to have necessary permissions.
+When set to true, Rascal will check that the vhost exists using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker and for the management user to have necessary permissions.
 ```json
 {
   "vhosts": {
