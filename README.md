@@ -63,6 +63,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
       broker.subscribe('s1', function(err, subscription) {
+        if (err) throw new Error('Rascal config error: ', err.message)
         subscription.on('message', function(message, content, ackOrNack) {
           // Do stuff with message
         }).on('error', function(err) {
@@ -73,6 +74,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
       broker.publish('p1', 'some text', function(err, publication) {
+        if (err) throw new Error('Rascal config error: ', err.message)
         publication.on('error', function(err) {
           console.error('Publisher error', err)
         })
@@ -82,6 +84,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
       broker.forward('p1', message, function(err, publication) {
+        if (err) throw new Error('Rascal config error: ', err.message)
         publication.on('error', function(err) {
           console.error('Publisher error', err)
         })
