@@ -19,7 +19,7 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 Rascal adds the following to [amqplib](https://www.npmjs.com/package/amqplib)
 
 * Config driven vhosts, exchanges, queues, bindings, producers and consumers
-* Cluster support
+* Cluster connection support
 * Transparent content parsing
 * Transparent encryption / decryption
 * Automatic reconnection and resubscription
