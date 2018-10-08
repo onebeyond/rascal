@@ -524,7 +524,7 @@ describe('Publications', function() {
           queue: 'q1',
           encryption: {
             name: 'well-known',
-            key: 'not-long-enough',
+            key: 'aa',
             ivLength: 16,
             algorithm: 'aes-256-cbc',
           },
