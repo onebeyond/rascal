@@ -1,9 +1,7 @@
 # Change Log
-## 3.3.1
+## 3.2.1
 ### Fixed
 - Catch and return encryption errors via publish callback
-
-## 3.3.0
 ### Added
 - Assert vhosts into exhistence using the RabbitMQ management API
 
