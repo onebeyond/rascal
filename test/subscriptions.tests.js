@@ -1853,7 +1853,7 @@ describe('Subscriptions', function() {
           queue: 'q1',
           encryption: {
             'well-known': {
-              key: 'a81db52a3b2c717fe65d9a3b7dd04d2a08793e1a28e3083db3ea08db56e7c315',
+              key: 'not-long-enough',
               ivLength: 16,
               algorithm: 'aes-256-cbc',
             },
@@ -1867,7 +1867,7 @@ describe('Subscriptions', function() {
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
           subscription.on('invalid_content', function(err, message, ackOrNack) {
-            assert(err.message.match(/bad decrypt/));
+            assert.equal(err.message, 'Invalid key length');
             done();
           });
         });

@@ -516,6 +516,30 @@ describe('Publications', function() {
     });
   });
 
+  it('should report encryption errors', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          queue: 'q1',
+          encryption: {
+            name: 'well-known',
+            key: 'not-long-enough',
+            ivLength: 16,
+            algorithm: 'aes-256-cbc',
+          },
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+
+      broker.publish('p1', 'test message', function(err, publication) {
+        assert.equal(err.message, 'Invalid key length');
+        done();
+      });
+    });
+  });
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, function(err, _broker) {

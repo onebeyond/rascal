@@ -1,4 +1,7 @@
 # Change Log
+## 3.3.1
+### Fixed
+- Catch and return encryption errors via publish callback
 
 ## 3.3.0
 ### Added
