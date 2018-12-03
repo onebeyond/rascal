@@ -1,4 +1,9 @@
 # Change Log
+
+## 3.2.3
+### Updated
+- amqplib version to 0.5.3
+
 ## 3.2.2
 ### Added
 - Some additional debug
@@ -17,15 +22,15 @@
 - Transparent encryption / decryption
 
 ## 3.1.3
-### Updates
+### Updated
 - Modernise code style
 
 ## 3.1.2
-### Updates
+### Updated
 - Fix redelivery counter defaults
 
 ## 3.1.1
-### Updates
+### Updated
 - Fix channelMax default
 
 ## 3.1.0
@@ -33,30 +38,30 @@
 - Handling of redelivery counter errors and timeouts
 
 ## 3.0.0
-### Updates
+### Updated
 - Using lodash defaultsDeep instead of merge-defaults (fixes hoek vulnerability). The behaviour seems consistent but releasing as a breaking change as a precaution.
 - Unqualified default publications and subscriptions are no longer supported. See https://github.com/guidesmiths/rascal/issues/20
 - Testing on node 10
 
 ## 2.12.2
-### Updates
+### Updated
 - Update dependencies (fixes hoek vulnerability)
 
 ## 2.12.1
-### Updates
+### Updated
 - Fixed bug that prevented publication from emitting channel errors
 
 ## 2.12.0
-### Updates
+### Updated
 - Update dependencies
 - Update dev dependencies
 
 ## 2.11.3
-### Updates
+### Updated
 - npm issue
 
 ## 2.11.2
-### Updates
+### Updated
 - npm issue
 
 ## 2.11.1

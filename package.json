@@ -4,7 +4,7 @@
   "description": "A friendly wrapper around amqplib with (mostly) safe defaults",
   "main": "index.js",
   "dependencies": {
-    "amqplib": "^0.5.2",
+    "amqplib": "^0.5.3",
     "async": "^2.6.0",
     "debug": "^3.1.0",
     "deep-freeze": "0.0.1",
