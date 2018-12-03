@@ -3,6 +3,7 @@
 ## 3.2.3
 ### Updated
 - amqplib version to 0.5.3
+- test on Node 11
 
 ## 3.2.2
 ### Added
