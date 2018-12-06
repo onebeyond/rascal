@@ -701,7 +701,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should count redeliveries when counter type is specified', function(done) {
+  it('should count redeliveries', function(done) {
 
     createBroker({
       vhosts: vhosts,
@@ -734,7 +734,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should notify when redeliveries exceeds', function(done) {
+  it('should notify when redeliveries limit is exceeded', function(done) {
 
     createBroker({
       vhosts: vhosts,
@@ -758,7 +758,6 @@ describe('Subscriptions', function() {
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
           subscription.on('message', function(message, content, ackOrNack) {
-            if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done);
             throw new Error('oh no');
           }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
             assert(err);
@@ -774,45 +773,7 @@ describe('Subscriptions', function() {
     });
   });
 
-
-  it('should not notify when redeliveries limit is 0', function(done) {
-
-    createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: {
-        s1: {
-          vhost: '/',
-          queue: 'q1',
-          redeliveries: {
-            limit: 0,
-            counter: 'inMemory',
-          },
-        },
-      },
-    }, function(err, broker) {
-      assert.ifError(err);
-      broker.publish('p1', 'test message', function(err) {
-        assert.ifError(err);
-
-        var errors = 0;
-        broker.subscribe('s1', function(err, subscription) {
-          assert.ifError(err);
-          subscription.on('message', function(message, content, ackOrNack) {
-            if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done);
-            throw new Error('oh no');
-          }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
-            assert.ifError(err, 'Redeliveries were exceeded');
-          }).on('error', function() {
-            if (errors++ > 5) done();
-          });
-        });
-      });
-    });
-  });
-
-
-  it('should not notify when counter type is not specified', function(done) {
+  it('should notify when redeliveries error is exceeded', function(done) {
 
     createBroker({
       vhosts: vhosts,
@@ -836,12 +797,15 @@ describe('Subscriptions', function() {
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
           subscription.on('message', function(message, content, ackOrNack) {
-            if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel(done);
             throw new Error('oh no');
-          }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
-            assert.ifError(err, 'Redeliveries were exceeded');
+          }).on('redeliveries_error', function(err, message, ackOrNack) {
+            assert(err);
+            broker.shutdown(function(err) {
+              assert.ifError(err);
+              amqputils.assertMessage('q1', namespace, 'test message', done);
+            });
           }).on('error', function() {
-            if (errors++ > 5) done();
+            if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
           });
         });
       });
