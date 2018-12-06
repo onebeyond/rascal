@@ -619,7 +619,7 @@ Rascal can be configured to automatically encrypt outbound messages.
 Rascal will set the content type for encrypted messages to 'application/octet-stream'. It stashes the original content type in a header. Providing you use a correctly configured [subscription](#subscriptions), the message will be automatically decrypted, and normal content handling applied.
 
 #### Forwarding messages
-Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferming messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to ```broker.publish``` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained. The message will also be CC'd with an additional routingkey of ```<queue>.<routingKey>``` which can be useful for some retry scenarios.
+Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferring messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via ```broker.forward```. The syntax is similar to ```broker.publish``` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained. The message will also be CC'd with an additional routingkey of ```<queue>.<routingKey>``` which can be useful for some retry scenarios.
 
 ```javascript
 broker.forward("p1", message, overrides, function(err, publication) {
@@ -869,7 +869,20 @@ ackOrNack(err, [
 ])
 ```
 Far more sophisticated strategies are achievable...
-![Retry BackOff Fail](https://cloud.githubusercontent.com/assets/229672/7668701/78071946-fc3e-11e4-8f34-67fc2db1dada.png "Retry BackOff Fail")
+![Retry BackOff Fail](https://user-images.githubusercontent.com/229672/49589770-2359d080-f962-11e8-957e-8d5368561afd.png "Retry BackOff Fail")
+
+1. Producer publishes a message with the routing key "a.b.c" to the "jobs" topic exchange
+2. The message is routed to the "incoming" queue. The "incoming" queue is configured with a dead letter exchange.
+3. The message is consumed from the queue. An error occurs, triggering the recovery process.
+4. The message is decorated with two CC routing keys, "delay.5m" and "incoming.a.b.c", and published to the delay exchange
+5. The message is routed to the "5-minute" queue, which is configured to dead letter the message after five minutes.
+6. After five minutes the message is dead lettered to the "retry" topic exchange.
+7. The message is routed back to the original queue using the CC routing key "incoming.a.b.c"
+
+This process will repeat ten times. On the tenth iteration
+
+8. The consumer dead letters the message, routing it to the "dead-letters" exchange
+9. The message is routed to the "dead-letters" queue
 
 #### prefetch
 Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
