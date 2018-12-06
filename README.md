@@ -658,7 +658,7 @@ broker.subscribe('s1', function(err, subscription) {
 ```
 It's **very** important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.
 
-It's also **very** important not to go async between getting the subscription and listening for the message or error events. If you do, you risk leaking messages and not handling errors.
+Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you do, you risk leaking messages and not handling errors.
 
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 ```json

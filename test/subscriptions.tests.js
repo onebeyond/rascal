@@ -177,6 +177,29 @@ describe('Subscriptions', function() {
     });
   });
 
+  it('should not consume messages before a listener is bound', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: subscriptions,
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', function(err) {
+        assert.ifError(err);
+        broker.subscribe('s1', function(err, subscription) {
+          assert.ifError(err);
+          setTimeout(function() {
+            subscription.on('message', function(message, content, ackOrNack) {
+              assert(message);
+              assert.equal(content, 'test message');
+              done();
+            });
+          }, 500);
+        });
+      });
+    });
+  });
+
   it('should consume to text/other messages', function(done) {
 
     createBroker({
@@ -275,7 +298,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to invalid messages when no listener is bound', function(done) {
+  it('should not consume invalid messages when no invalid content/message listener is bound', function(done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -286,7 +309,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('error', function() {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('error', function() {
             broker.shutdown(function(err) {
               assert.ifError(err);
               amqputils.assertMessageAbsent('q1', namespace, done);
@@ -308,7 +333,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_content', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_content', function(err, message, ackOrNack) {
             assert(err);
             broker.shutdown(function(err) {
               assert.ifError(err);
@@ -331,7 +358,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_message', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_message', function(err, message, ackOrNack) {
             assert(err);
             broker.shutdown(function(err) {
               assert.ifError(err);
@@ -354,7 +383,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_content', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_content', function(err, message, ackOrNack) {
             assert(err);
             ackOrNack(function() {
               setTimeout(function() {
@@ -381,7 +412,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_content', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_content', function(err, message, ackOrNack) {
             assert(err);
             ackOrNack(err, function() {
               setTimeout(function() {
@@ -774,7 +807,6 @@ describe('Subscriptions', function() {
   });
 
   it('should notify when redeliveries error is exceeded', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1788,7 +1820,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_content', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_content', function(err, message, ackOrNack) {
             assert.equal(err.message, 'Unknown encryption profile: not-well-known');
             done();
           });
@@ -1830,7 +1864,9 @@ describe('Subscriptions', function() {
         assert.ifError(err);
         broker.subscribe('s1', function(err, subscription) {
           assert.ifError(err);
-          subscription.on('invalid_content', function(err, message, ackOrNack) {
+          subscription.on('message', function() {
+            assert.ok(false, 'Message should not have been delivered');
+          }).on('invalid_content', function(err, message, ackOrNack) {
             assert.equal(err.message, 'Invalid key length');
             done();
           });
