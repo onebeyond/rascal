@@ -2,6 +2,8 @@
 
 ## 3.2.3
 ### Updated
+- Fix connection handler leak caused by re-subscription
+- Fix channel leak when channel.consume fails
 - amqplib version to 0.5.3
 - test on Node 11
 
