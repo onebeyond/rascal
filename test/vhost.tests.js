@@ -43,7 +43,7 @@ describe('Vhost', function() {
         },
       },
     }, function(err) {
-      assert.equal(err.message, 'connect ETIMEDOUT');
+      assert.ok(err.message.match('connect ETIMEDOUT'));
       done();
     });
   });

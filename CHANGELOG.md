@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+### Updated
+- Connection failure error message
+
 ## 3.2.3
 ### Updated
 - Fix connection handler leak caused by re-subscription
