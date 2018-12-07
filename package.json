@@ -1,6 +1,6 @@
 {
   "name": "rascal",
-  "version": "3.2.3",
+  "version": "4.0.0",
   "description": "A friendly wrapper around amqplib with (mostly) safe defaults",
   "main": "index.js",
   "dependencies": {
