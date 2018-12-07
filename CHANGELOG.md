@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 4.0.0
 ### Updated
 - Improved connection failure error message
 - It is possible to go async between broker.subscribe and subscription.on('message'). This unlocks the possibility of promise support.
