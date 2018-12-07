@@ -9,7 +9,7 @@ module.exports = (function() {
     Broker: Broker,
     BrokerAsPromised: BrokerAsPromised,
     createBroker: Broker.create,
-    createBrokerAsPromsied: BrokerAsPromised.create,
+    createBrokerAsPromised: BrokerAsPromised.create,
     defaultConfig: defaultConfig,
     testConfig: testConfig,
     withDefaultConfig: function(config) {
