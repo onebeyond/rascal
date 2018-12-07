@@ -45,7 +45,7 @@ Rascal.Broker.create(config, function(err, broker) {
 ```js
 const Rascal = require('rascal');
 const broker = await Rascal.BrokerAsPromised.create(config)
-const subscription = broker.subscribe('s1')
+const subscription = await broker.subscribe('s1')
 ```
 
 ## About
