@@ -1024,7 +1024,7 @@ Far more sophisticated strategies are achievable...
 6. After five minutes the message is dead lettered to the "retry" topic exchange.
 7. The message is routed back to the original queue using the CC routing key "incoming.a.b.c"
 
-This process will repeat ten times. On the tenth iteration
+Steps 3 - 7 will repeat up to `attempts` times. If all attempts fail...
 
 8. The consumer dead letters the message, routing it to the "dead-letters" exchange
 9. The message is routed to the "dead-letters" queue
