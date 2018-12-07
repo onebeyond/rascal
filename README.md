@@ -1109,7 +1109,7 @@ You can cancel subscriptions as follows
 
 ```js
 broker.subscribe('s1', function(err, subscription) {
-
+  if (err) throw err // subscription didn't exist
   subscription.cancel(function(err) {
     console.err(err)
   })
