@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.1.0
+### Added
+- Publisher error events are passed the messageId where possible
+
 ## 4.0.0
 ### Updated
 - Improved connection failure error message

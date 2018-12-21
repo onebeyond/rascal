@@ -110,8 +110,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     ```js
     broker.publish('p1', 'some text', function(err, publication) {
       if (err) throw new Error('Rascal config error: ', err.message)
-      publication.on('error', function(err) {
-        console.error('Publisher error', err)
+      publication.on('error', function(err, messageId) {
+        console.error('Publisher error', err, messageId)
       })
     })
     ```
@@ -119,8 +119,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     ```js
     try {
       const publication = await broker.publish('p1', 'some text')
-      publication.on('error', function(err) {
-        console.error('Publisher error', err)
+      publication.on('error', function(err, messageId) {
+        console.error('Publisher error', err, messageId)
       })
     } catch(err) {
       throw new Error('Rascal config error: ', err.message)
@@ -132,8 +132,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     ```js
     broker.forward('p1', message, function(err, publication) {
       if (err) throw new Error('Rascal config error: ', err.message)
-      publication.on('error', function(err) {
-        console.error('Publisher error', err)
+      publication.on('error', function(err, messageId) {
+        console.error('Publisher error', err, messageId)
       })
     })
     ```
@@ -141,8 +141,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     ```js
     try {
       const publication = await broker.forward('p1', message)
-      publication.on('error', function(err) {
-        console.error('Publisher error', err)
+      publication.on('error', function(err, messageId) {
+        console.error('Publisher error', err, messageId)
       })
     } catch(err) {
       throw new Error('Rascal config error: ', err.message)
@@ -613,26 +613,29 @@ Rascal supports text, buffers and anything it can JSON.stringify. The ```broker.
 ```js
 broker.publish("p1", "some message", callback)
 broker.publish("p1", "some message", "some.routing.key", callback)
-broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { "expiration": 5000 } })
+broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { messageId: "foo", "expiration": 5000 } })
 ```
 
 ```js
 await broker.publish("p1", "some message")
 await broker.publish("p1", "some message")
-await broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { "expiration": 5000 } })
+await broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { messageId: "foo", "expiration": 5000 } })
 ```
 
 
-The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors. If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
+The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain the Rascal generated message id and the "error" event to handle errors. When possible rascal will additionally pass the messageId to error handlers.
+
+If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
+
 ```js
 broker.publish("p1", "some message", function(err, publication) {
   if (err) throw err; // publication didn't exist
   publication.on("success", function(messageId) {
      console.log("Message id was", messageId)
-  }).on("error", function(err) {
+  }).on("error", function(err, messageId) {
      console.error("Error was", err.message)
   }).on("return", function(message) {
-     console.warn("Message %s was returned", messageId)
+     console.warn("Message %s was returned", message.properties.messageId)
   })
 })
 ```
@@ -642,10 +645,10 @@ try {
   const publication = await broker.publish("p1", "some message")
   publication.on("success", function(messageId) {
     console.log("Message id was", messageId)
-  }).on("error", function(err) {
+  }).on("error", function(err, messageId) {
      console.error("Error was", err.message)
-  }).on("return", function(message) {
-     console.warn("Message %s was returned", messageId)
+  }).on("return", function(messageId) {
+     console.warn("Message %s was returned", message.properties.messageId)
   })
 } catch (err) {
   // publication didn't exist
@@ -705,10 +708,10 @@ broker.forward("p1", message, overrides, function(err, publication) {
   if (err) throw err // publication didn't exist
   publication.on("success", function(messageId) {
      console.log("Message id was", messageId)
-  }).on("error", function(err) {
+  }).on("error", function(err, messageId) {
      console.error("Error was", err.message)
   }).on("return", function(message) {
-     console.warn("Message %s was returned", messageId)
+     console.warn("Message %s was returned", message.properties.messageId)
   })
 })
 ```
@@ -718,10 +721,10 @@ try {
   const publication = await broker.forward("p1", message, overrides)
   publication.on("success", function(messageId) {
      console.log("Message id was", messageId)
-  }).on("error", function(err) {
+  }).on("error", function(err, messageId) {
      console.error("Error was", err.message)
   }).on("return", function(message) {
-     console.warn("Message %s was returned", messageId)
+     console.warn("Message %s was returned", message.properties.messageId)
   })
 } catch(err) {
   // publication didn't exist

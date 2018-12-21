@@ -192,6 +192,68 @@ describe('Publications', function() {
     });
   });
 
+  it('should honour messageId when specified', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          exchange: 'e1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', { options: { messageId: 'wibble' } }, function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          assert.equal('wibble', messageId);
+
+          amqputils.getMessage('q1', namespace, function(err, message) {
+            assert.ifError(err);
+            assert.ok(message);
+            assert.equal('wibble', message.properties.messageId);
+            done();
+          });
+        });
+      });
+    });
+  });
+
+  it('should decorate error events with messageId', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          exchange: 'e1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', { options: { messageId: 'wibble' } }, function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          assert.equal('wibble', messageId);
+
+          amqputils.getMessage('q1', namespace, function(err, message) {
+            assert.ifError(err);
+            assert.ok(message);
+            assert.equal('wibble', message.properties.messageId);
+            done();
+          });
+        });
+        publication.on('error', function(messageId) {
+          assert.equal('wibble', messageId);
+
+          amqputils.getMessage('q1', namespace, function(err, message) {
+            assert.ifError(err);
+            assert.ok(message);
+            assert.equal('wibble', message.properties.messageId);
+            done();
+          });
+        });
+      });
+    });
+  });
+
   it('should publish to using confirm channels to queues', function(done) {
     createBroker({
       vhosts: vhosts,
