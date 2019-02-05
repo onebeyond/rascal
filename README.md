@@ -670,6 +670,26 @@ Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.htm
 }
 ```
 
+#### Publishing to a queue via the default exchange
+If you would like to publish directly to a queue, but you don't know the queue name ahead of time, you can use the fact that [all queues are automatically bound to the default exchange](https://www.rabbitmq.com/tutorials/amqp-concepts.html#exchange-default) with the routing key which is the same as the queue name. The default exchange's name is the empty string.
+```json
+{
+  "publications": {
+    "p1": {
+      "exchange": ""
+    }
+  },
+  "queues": ["q1"],
+  ...
+}
+```
+You can then publish to the queue:
+```
+broker.publish('p1', 'content', 'q1', function(err, publication) { ... });
+```
+
+See the "default-exchange" in the examples directory for a full working example.
+
 #### Encrypting messages
 Rascal can be configured to automatically encrypt outbound messages.
 ```json
