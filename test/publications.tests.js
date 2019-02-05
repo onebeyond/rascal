@@ -172,14 +172,9 @@ describe('Publications', function() {
   it('should publish text messages to queues via the default exchange', function(done) {
     createBroker({
       vhosts: vhosts,
-      publications: {
-        p1: {
-          exchange: '',
-        },
-      },
     }, function(err, broker) {
       assert.ifError(err);
-      broker.publish('p1', 'test message', broker.qualify('/', 'q3'), function(err, publication) {
+      broker.publish('/', 'test message', broker.qualify('/', 'q3'), function(err, publication) {
         assert.ifError(err);
         publication.on('success', function(messageId) {
           amqputils.assertMessage('q3', namespace, 'test message', done);
