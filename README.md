@@ -617,7 +617,7 @@ broker.publish("p1", "some message", { routingKey: "some.routing.key", options: 
 
 ```js
 await broker.publish("p1", "some message")
-await broker.publish("p1", "some message")
+await broker.publish("p1", "some message", "some.routing.key")
 await broker.publish("p1", "some message", { routingKey: "some.routing.key", options: { messageId: "foo", "expiration": 5000 } })
 ```
 
