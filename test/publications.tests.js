@@ -26,7 +26,6 @@ describe('Publications', function() {
       '/': {
         namespace: namespace,
         exchanges: {
-          '': {},
           e1: {
             assert: true,
           },
