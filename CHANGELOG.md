@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.2.0
+### Added
+- Support for RabbitMQs default exchange
+
 ## 4.1.0
 ### Added
 - Publisher error events are passed the messageId where possible
