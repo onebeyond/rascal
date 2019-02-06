@@ -229,6 +229,21 @@ describe('Validation', function() {
       });
     });
 
+    it('should mandate either an exchange or a queue (c)', function() {
+      validate({
+        publications: {
+          p1: {
+            vhost: 'v1',
+            exchange: '', // default exchange
+            queue: 'q1',
+          },
+        },
+      }, function(err) {
+        assert.ok(err);
+        assert.equal('Publication: p1 has an exchange and a queue', err.message);
+      });
+    });
+
     it('should report unknown vhosts (a)', function() {
       validate({
         publications: {

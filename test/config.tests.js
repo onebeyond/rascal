@@ -342,6 +342,51 @@ describe('Configuration', function() {
         });
       });
 
+      it('should add default exchange by default', function() {
+        configure({
+          vhosts: {
+            v1: {
+              exchanges: {
+                e1: {
+                  assert: false,
+                  type: 'direct',
+                  options: {
+                    durable: false,
+                  },
+                },
+              },
+            },
+          },
+        }, function(err, config) {
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges[''].name, '');
+        });
+      });
+
+      it('should not overwrite existing default exchange', function() {
+        configure({
+          vhosts: {
+            v1: {
+              exchanges: {
+                '': {
+                  type: 'not-overwritten',
+                },
+                e1: {
+                  assert: false,
+                  type: 'direct',
+                  options: {
+                    durable: false,
+                  },
+                },
+              },
+            },
+          },
+        }, function(err, config) {
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.exchanges[''].type, 'not-overwritten');
+        });
+      });
+
       it('should inflate exchanges with empty structure', function() {
         configure({
           vhosts: {

@@ -43,6 +43,9 @@ describe('Publications', function() {
           q2: {
             assert: true,
           },
+          q3: {
+            assert: true,
+          },
         },
         bindings: {
           b1: {
@@ -161,6 +164,20 @@ describe('Publications', function() {
         assert.ifError(err);
         publication.on('success', function(messageId) {
           amqputils.assertMessage('q1', namespace, 'test message', done);
+        });
+      });
+    });
+  });
+
+  it('should publish text messages to queues via the default exchange', function(done) {
+    createBroker({
+      vhosts: vhosts,
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('/', 'test message', broker.qualify('/', 'q3'), function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          amqputils.assertMessage('q3', namespace, 'test message', done);
         });
       });
     });
