@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.2.1
+### Updated
+- Updated lodash
+
 ## 4.2.0
 ### Added
 - Support for RabbitMQs default exchange
