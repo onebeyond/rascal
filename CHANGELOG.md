@@ -3,6 +3,7 @@
 ## 4.2.2
 ### Updated
 - Updated various dev dependencies
+- Readme
 
 ## 4.2.1
 ### Updated
