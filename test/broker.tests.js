@@ -8,7 +8,7 @@ var Broker = require('..').Broker;
 
 describe('Broker', function () {
 
-  this.timeout(2000);
+  this.timeout(5000);
   this.slow(1000);
 
   var broker;
@@ -23,6 +23,13 @@ describe('Broker', function () {
 
     vhosts = {
       '/': {
+        connection: {
+          management: {
+            options: {
+              timeout: 200,
+            }
+          },
+        },
         namespace: namespace,
         exchanges: {
           e1: {
