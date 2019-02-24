@@ -33,7 +33,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Promise and callback support
 * TDD support
 
-### Concepts
+## Concepts
 Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges Queues, Channels and Connections with with two new ones
 
 1. Publications
@@ -41,9 +41,9 @@ Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutoria
 
 A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrivied from the broker and used to publish and consume messages.
 
-### Examples
+## Examples
 
-#### Async/Await
+### Async/Await
 ```js
 const Broker = require('rascal').BrokerAsPromised;
 const config = require('./config');
@@ -69,9 +69,7 @@ const config = require('./config');
   }
 )();
 ```
-
-#### Callbacks
-
+### Callbacks
 ```js
 const Broker = require('rascal').Broker;
 const config = require('./config');
