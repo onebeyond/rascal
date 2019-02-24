@@ -5,7 +5,8 @@ services:
 
 before_install:
   - docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management
-  - curl --retry 20 --retry-connrefused --retry-delay 1 http://localhost:15672
+  - curl --help
+  - curl --retry 20 --retry-delay 1 http://localhost:15672
 language: node_js
 
 node_js:
