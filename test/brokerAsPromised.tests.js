@@ -23,6 +23,13 @@ describe('Broker As Promised', function() {
 
     vhosts = {
       '/': {
+        connection: {
+          management: {
+            options: {
+              timeout: 200,
+            }
+          },
+        },
         namespace: namespace,
         exchanges: {
           e1: {
