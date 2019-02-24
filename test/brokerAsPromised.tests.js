@@ -8,7 +8,7 @@ var BrokerAsPromised = require('..').BrokerAsPromised;
 
 describe('Broker As Promised', function() {
 
-  this.timeout(2000);
+  this.timeout(6000);
   this.slow(1000);
 
   var broker;
@@ -26,7 +26,7 @@ describe('Broker As Promised', function() {
         connection: {
           management: {
             options: {
-              timeout: 200,
+              timeout: 5000,
             },
           },
         },
