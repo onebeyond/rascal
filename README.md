@@ -41,14 +41,16 @@ Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutoria
 
 A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrivied from the broker and used to publish and consume messages.
 
+### Examples
+
+#### Async/Await
 ```js
-// Using async
-const Rascal = require('rascal');
+const Broker = require('rascal').BrokerAsPromised;
 const config = require('./config');
 
-//...
+(async () => {
   try {
-    const broker = await Rascal.BrokerAsPromised.create(config);
+    const broker = await Broker.create(config);
     broker.on('error', console.error);
 
     // Publish a message
@@ -65,35 +67,35 @@ const config = require('./config');
   } catch(err) {
     console.error(err);
   }
+)();
 ```
 
+#### Callbacks
+
 ```js
-// Using callbacks
-const Rascal = require('rascal');
+const Broker = require('rascal').Broker;
 const config = require('./config');
 
-//...
+Broker.create(config), (err, broker) => {
+  if (err) throw err;
 
-  Rascal.Broker.create(config), (err, broker) => {
+  broker.on('error', console.error);
+
+  // Publish a message
+  broker.publish('demo_publication', 'Hello World!', (err, publication) => {
+    if (err) throw err
+    publication.on('error', console.error)
+  })
+
+  // Consume a message
+  broker.subscribe('demo_subscription', (err, subscription) => {
     if (err) throw err;
-
-    broker.on('error', console.error);
-
-    // Publish a message
-    broker.publish('demo_publication', 'Hello World!', (err, publication) => {
-      if (err) throw err
-      publication.on('error', console.error)
+    subscription.on('message', (message, content, ackOrNack) => {
+      console.log(content);
+      ackOrNack();
     })
-
-    // Consume a message
-    broker.subscribe('demo_subscription', (err, subscription) => {
-      if (err) throw err;
-      subscription.on('message', (message, content, ackOrNack) => {
-        console.log(content);
-        ackOrNack();
-      })
-      subscription.on('error', console.error);
-    })
+    subscription.on('error', console.error);
+  })
 })
 ```
 
