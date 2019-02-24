@@ -4,6 +4,8 @@
 ### Updated
 - Updated various dev dependencies
 - Readme
+- Switched from istanbul to nyc
+- Fix flakey travis tests
 
 ## 4.2.1
 ### Updated
