@@ -99,7 +99,7 @@ Broker.create(config), (err, broker) => {
 
 See [here](https://github.com/guidesmiths/rascal/tree/master/examples) for more examples.
 
-## Potential Message Loss
+## Avoiding Potential Message Loss
 There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
 
 1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener

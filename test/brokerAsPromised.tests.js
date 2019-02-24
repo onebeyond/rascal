@@ -27,7 +27,7 @@ describe('Broker As Promised', function() {
           management: {
             options: {
               timeout: 200,
-            }
+            },
           },
         },
         namespace: namespace,
