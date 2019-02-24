@@ -33,8 +33,6 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Promise and callback support
 * TDD support
 
-See the [examples](https://github.com/guidesmiths/rascal/tree/master/examples)
-
 ### Concepts
 Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges Queues, Channels and Connections with with two new ones
 
@@ -102,6 +100,8 @@ const config = require('./config');
     })
 })
 ```
+
+See [here](https://github.com/guidesmiths/rascal/tree/master/examples) for more examples.
 
 ## Caveats
 * There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
