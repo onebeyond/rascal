@@ -1,5 +1,10 @@
 # Change Log
 
+## 4.2.1
+### Updated
+- Dependencies
+- Fixed vararg related bug in Broker.create
+
 ## 4.2.2
 ### Updated
 - Updated various dev dependencies
