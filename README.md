@@ -1,5 +1,5 @@
 # Rascal
-Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package/amqplib).
+Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/amqplib).
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
 [![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
@@ -11,7 +11,7 @@ Rascal is a config driven wrapper around [amqplib](https://www.npmjs.com/package
 [![devDependencies Status](https://david-dm.org/guidesmiths/rascal/dev-status.svg)](https://david-dm.org/guidesmiths/rascal?type=dev)
 
 ## About
-Rascal is a wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
+Rascal is a rich pub/sub wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
 
 * Messages are not persistent by default and will be lost if your broker restarts
 * Messages that crash your app will be infinitely retried
@@ -122,7 +122,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
     broker.subscribe('s1', (err, subscription) => {
-      if (err) throw new Error('Rascal config error: ', err.message)
+      if (err) throw new Error(`Rascal config error: ${err.message}`)
       subscription.on('message', (message, content, ackOrNack) => {
         Do stuff with message
       }).on('error', (err) => {
@@ -140,7 +140,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
         console.error('Subscriber error', err)
       })
     } catch(err) {
-      throw new Error('Rascal config error: ', err.message)
+      throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
 
@@ -148,7 +148,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
     broker.publish('p1', 'some text', (err, publication) => {
-      if (err) throw new Error('Rascal config error: ', err.message)
+      if (err) throw new Error(`Rascal config error: ${err.message}`)
       publication.on('error', (err, messageId) => {
         console.error('Publisher error', err, messageId)
       })
@@ -162,7 +162,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
         console.error('Publisher error', err, messageId)
       })
     } catch(err) {
-      throw new Error('Rascal config error: ', err.message)
+      throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
 
@@ -170,7 +170,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
     ```js
     broker.forward('p1', message, (err, publication) => {
-      if (err) throw new Error('Rascal config error: ', err.message)
+      if (err) throw new Error(`Rascal config error: ${err.message}`)
       publication.on('error', (err, messageId) => {
         console.error('Publisher error', err, messageId)
       })
@@ -184,7 +184,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
         console.error('Publisher error', err, messageId)
       })
     } catch(err) {
-      throw new Error('Rascal config error: ', err.message)
+      throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
 
@@ -1232,6 +1232,25 @@ is equivalent to...
 }
 ```
 
+### Connect
+Rascal is a rich pub/sub wrapper and as such hides much of the amqplib [channel api](https://www.squaremobius.net/amqp.node/channel_api.html#channel). If you need to access this you can programmatically establish a connection to a vhost as follows.
+```js
+broker.connect('/', (err, connection) => {
+  if (err) throw new Error(`Connection error: ${err.message}`);
+  // profit
+})
+```
+
+```js
+try {
+  const connection = broker.connect('/')
+  // profit
+} catch(err) {
+  throw new Error(`Connection error: ${err.message}`)
+}
+```
+This will leverage Rascal's [cluster connection support](#cluster_connections), but you will be responsible for error handling and disconnection.
+
 ### Nuke, Purge and UnsubscribeAll
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
 ```js
@@ -1311,4 +1330,3 @@ You'll need a RabbitMQ server running locally with default configuration. If tha
 ```
 docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq
 ```
-

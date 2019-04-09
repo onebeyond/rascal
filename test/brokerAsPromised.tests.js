@@ -175,6 +175,15 @@ describe('Broker As Promised', function() {
     });
   });
 
+  it('should connect', function() {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    return createBroker(config).then(function(broker) {
+      return broker.connect('/').then(function(connection) {
+        assert.ok(connection._rascal_id);
+      });
+    });
+  });
+
   function createBroker(config) {
     return BrokerAsPromised.create(config).then(function(_broker) {
       broker = _broker;

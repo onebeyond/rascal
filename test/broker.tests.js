@@ -6,7 +6,7 @@ var format = require('util').format;
 var Broker = require('..').Broker;
 
 
-describe('Broker', function () {
+describe('Broker', function() {
 
   this.timeout(6000);
   this.slow(1000);
@@ -90,7 +90,7 @@ describe('Broker', function () {
     customVhosts[vhostName].assert = true;
 
     var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
       done();
     });
@@ -102,7 +102,7 @@ describe('Broker', function () {
     customVhosts[vhostName].check = true;
 
     var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ok(err);
       assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
       done();
@@ -116,7 +116,7 @@ describe('Broker', function () {
     customVhosts[vhostName].check = true;
 
     var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
       done();
     });
@@ -128,13 +128,13 @@ describe('Broker', function () {
     customVhosts[vhostName].assert = true;
 
     var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.nuke(function(err) {
         assert.ifError(err);
         config.vhosts[vhostName].assert = false;
         config.vhosts[vhostName].check = true;
-        createBroker(config, function (err, broker) {
+        createBroker(config, function(err, broker) {
           assert.ok(err);
           assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
           done();
@@ -145,7 +145,7 @@ describe('Broker', function () {
 
   it('should provide fully qualified name', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
       assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
       done();
@@ -155,7 +155,7 @@ describe('Broker', function () {
   it('should not modify configuration', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     var json = JSON.stringify(config, null, 2);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
       assert.equal(json, JSON.stringify(config, null, 2));
       done();
@@ -164,9 +164,9 @@ describe('Broker', function () {
 
   it('should nuke', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
-      broker.nuke(function (err) {
+      broker.nuke(function(err) {
         assert.ifError(err);
         done();
       });
@@ -179,23 +179,23 @@ describe('Broker', function () {
       subscriptions: subscriptions,
     }, testConfig);
 
-    createBroker(config, function (err, broker) {
+    createBroker(config, function(err, broker) {
       assert.ifError(err);
 
-      broker.subscribe('s1', function (err, subscription) {
+      broker.subscribe('s1', function(err, subscription) {
         assert.ifError(err);
 
-        subscription.on('message', function (message, content, ackOrNack) {
-          subscription.cancel(function (err) {
+        subscription.on('message', function(message, content, ackOrNack) {
+          subscription.cancel(function(err) {
             done(err);
           });
           assert(false, 'No message should have been received');
         });
 
-        broker.unsubscribeAll(function (err) {
+        broker.unsubscribeAll(function(err) {
           assert.ifError(err);
 
-          broker.publish('p1', 'test message', function (err) {
+          broker.publish('p1', 'test message', function(err) {
             assert.ifError(err);
             setTimeout(done, 500);
           });
@@ -204,9 +204,20 @@ describe('Broker', function () {
     });
   });
 
+  it('should connect', function(done) {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+      broker.connect('/', function(err, connection) {
+        assert.ifError(err);
+        assert.ok(connection._rascal_id);
+        done();
+      });
+    });
+  });
 
   function createBroker(config, next) {
-    Broker.create(config, function (err, _broker) {
+    Broker.create(config, function(err, _broker) {
       broker = _broker;
       next(err, broker);
     });

@@ -4,7 +4,9 @@
 ### Updated
 - Dependencies
 - Moved amqplib to peer dependency
-- Expose broker.connect
+
+## Added
+- broker.connect(vhost)
 
 ## 4.2.1
 ### Updated
