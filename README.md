@@ -1249,7 +1249,7 @@ try {
   throw new Error(`Connection error: ${err.message}`)
 }
 ```
-This will leverage Rascal's [cluster connection support](#cluster_connections), but you will be responsible for error handling and disconnection.
+This will leverage Rascal's [cluster connection support](#cluster-connections), but you will be responsible for error handling and disconnection.
 
 ### Nuke, Purge and UnsubscribeAll
 In a test environment it's useful to be able to nuke your setup between tests. The specifics will vary based on your test runner, but assuming you were using [Mocha](http://mochajs.org/)...
