@@ -1,5 +1,11 @@
 # Change Log
 
+## 4.3.1
+### Updated
+- Dependencies
+- Moved amqplib to peer dependency
+- Expose broker.connect
+
 ## 4.2.1
 ### Updated
 - Dependencies
