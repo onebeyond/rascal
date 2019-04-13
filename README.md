@@ -67,7 +67,7 @@ const config = require('./config');
   } catch(err) {
     console.error(err);
   }
-)();
+})();
 ```
 ### Callbacks
 ```js
