@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.4.0
+### Updated
+- Throw error when using cluster based redeliveries counter outside of a cluster
+
 ## 4.3.1
 ### Updated
 - Dependencies
