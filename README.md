@@ -339,7 +339,7 @@ The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal use
           "user": "admin",
           "password": "super-secret",
           "options": {
-            "timeout": 1000,
+            "timeout": 1000
           }
         }
       }
@@ -347,7 +347,7 @@ The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal use
   }
 }
 ```
-Rascal uses [request](https://github.com/request/request) under the hood, and any management options will be passed straight through. URL configuration is supported too.
+Rascal uses [superagent](https://github.com/visionmedia/superagent) under the hood. URL configuration is supported.
 
 ```json
 {
