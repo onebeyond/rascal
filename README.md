@@ -74,7 +74,7 @@ const config = require('./config');
 const Broker = require('rascal').Broker;
 const config = require('./config');
 
-Broker.create(config), (err, broker) => {
+Broker.create(config, (err, broker) => {
   if (err) throw err;
 
   broker.on('error', console.error);
