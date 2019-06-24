@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.5.0
+### Updated
+- Replaced request with superagent. Thanks @ksnll
+
 ## 4.4.0
 ### Updated
 - Throw error when using cluster based redeliveries counter outside of a cluster

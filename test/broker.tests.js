@@ -96,6 +96,20 @@ describe('Broker', function() {
     });
   });
 
+  it('should fail to assert vhost when unable to connect to management plugin', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].assert = true;
+    customVhosts[vhostName].connection.management.port = 65535;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ok(err);
+      assert.ok(/Failed to assert vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
+      done();
+    });
+  });
+
   it('should fail when checking vhosts that dont exist', function(done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
@@ -109,7 +123,21 @@ describe('Broker', function() {
     });
   });
 
-  it('should not fail when checking vhosts that do exist', function(done) {
+  it('should fail to check vhost when unable to connect to management plugin', function(done) {
+    var vhostName = uuid();
+    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    customVhosts[vhostName].check = true;
+    customVhosts[vhostName].connection.management.port = 65535;
+
+    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ok(err);
+      assert.ok(/Failed to check vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
+      done();
+    });
+  });
+
+  it('should succeed when checking vhosts that do exist', function(done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
