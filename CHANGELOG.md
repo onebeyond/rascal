@@ -4,6 +4,7 @@
 ### Updated
 - Replaced request with superagent. Thanks @ksnll
 - Updated dependencies
+- Added node 12 to travis config
 
 ## 4.4.0
 ### Updated
