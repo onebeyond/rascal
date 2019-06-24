@@ -3,6 +3,7 @@
 ## 4.5.0
 ### Updated
 - Replaced request with superagent. Thanks @ksnll
+- Updated dependencies
 
 ## 4.4.0
 ### Updated
