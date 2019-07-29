@@ -3,6 +3,7 @@
 ## 4.5.1
 ### Updated
 - Depend on version 0.5.3 of amqplib until https://github.com/squaremo/amqp.node/issues/534 is fixed
+- Update dependencies
 
 ## 4.5.0
 ### Updated
