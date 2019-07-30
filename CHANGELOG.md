@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.5.2
+### Updated
+- Depend on version 0.5.3 of amqplib (peer) until https://github.com/squaremo/amqp.node/issues/534 is fixed
+
 ## 4.5.1
 ### Updated
 - Depend on version 0.5.3 of amqplib until https://github.com/squaremo/amqp.node/issues/534 is fixed

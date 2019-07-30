@@ -29,7 +29,7 @@
     "nyc": "^14.1.1"
   },
   "peerDependencies": {
-    "amqplib": "^0.5.3"
+    "amqplib": "0.5.3"
   },
   "greenkeeper": {
     "ignore": [
