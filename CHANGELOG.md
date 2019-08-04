@@ -1,5 +1,10 @@
 # Change Log
 
+## 4.6.0
+### Updated
+- Fixes for #60 and #61. Thanks @rossj.
+- Depend on amqplib ^0.5.5
+
 ## 4.5.2
 ### Updated
 - Depend on version 0.5.3 of amqplib (peer) until https://github.com/squaremo/amqp.node/issues/534 is fixed
