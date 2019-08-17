@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+### Added
+- Automated codeclimate reporting
+
 ## 4.6.0
 ### Updated
 - Fixes for #60 and #61. Thanks @rossj.
