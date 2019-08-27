@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.6.2
+### Fixed
+- Fixed a bug where you could not re-initialise a vhost
+
 ## 4.6.1
 ### Added
 - Automated codeclimate reporting
