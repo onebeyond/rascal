@@ -4,7 +4,8 @@ var testConfig = require('../lib/config/tests');
 var uuid = require('uuid').v4;
 var format = require('util').format;
 var Broker = require('..').Broker;
-
+var amqplib = require('amqplib/callback_api');
+var AmqpUtils = require('./utils/amqputils');
 
 describe('Broker', function() {
 
@@ -12,6 +13,7 @@ describe('Broker', function() {
   this.slow(1000);
 
   var broker;
+  var amqputils;
   var namespace;
   var vhosts;
   var publications;
@@ -76,7 +78,11 @@ describe('Broker', function() {
       },
     };
 
-    done();
+    amqplib.connect(function(err, connection) {
+      if (err) return done(err);
+      amqputils = AmqpUtils.init(connection);
+      done();
+    });
   });
 
   afterEach(function(done) {
@@ -243,6 +249,32 @@ describe('Broker', function() {
       });
     });
   });
+
+  it('should bounce vhosts', function(done) {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+      broker.bounce(done);
+    });
+  });
+
+  it('should purge vhosts', function(done) {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('/q1', 'test message', function(err) {
+        assert.ifError(err);
+        setTimeout(function() {
+          broker.purge(function(err) {
+            assert.ifError(err);
+            amqputils.assertMessageAbsent('q1', namespace, done);
+          });
+        }, 200);
+      });
+
+    });
+  });
+
 
   function createBroker(config, next) {
     Broker.create(config, function(err, _broker) {
