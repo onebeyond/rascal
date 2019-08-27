@@ -1,8 +1,11 @@
 # Change Log
 
-## Unreleased
+## 4.6.1
 ### Added
 - Automated codeclimate reporting
+
+### Fixed
+- Fixed a bug where the connection index could be undefined
 
 ## 4.6.0
 ### Updated
