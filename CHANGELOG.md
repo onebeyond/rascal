@@ -1,5 +1,9 @@
 # Change Log
 
+## 4.7.0
+### Updated
+- Dependencies
+
 ## 4.6.2
 ### Fixed
 - Fixed a bug where you could not re-initialise a vhost
