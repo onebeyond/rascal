@@ -306,11 +306,12 @@ The exponential configuration will cause rascal to retry the connection at expon
 The linear configuration will cause rascal to retry the connection at linearly increasing intervals, between one and five seconds.
 
 #### Cluster Connections
-If you specify an array of connections instead of a single connection object Rascal will order then randomly at startup, and cycle through until it obtains a connection or exhausts all hosts.
+If you specify an array of connections instead of a single connection object Rascal will order then as per the connection strategy at startup, and cycle through until it obtains a connection or exhausts all hosts.
 ```json
 {
   "vhosts": {
     "v1": {
+      "connectionStrategy": "random",
       "connections": [
         "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
         "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
@@ -320,6 +321,7 @@ If you specify an array of connections instead of a single connection object Ras
   }
 }
 ```
+The default connection strategy is `random`, but if you prefer an active/passive configuration you should use `fixed`.
 
 #### Management connection configuration
 **Please note: this functionality is mainly useful in test environments, since it does not create users or grant them permissions to vhosts**

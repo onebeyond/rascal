@@ -4,6 +4,9 @@
 ### Updated
 - Dependencies
 
+### Added
+- Support for active/passive connection management
+
 ## 4.6.2
 ### Fixed
 - Fixed a bug where you could not re-initialise a vhost

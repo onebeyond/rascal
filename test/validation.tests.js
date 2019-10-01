@@ -588,6 +588,19 @@ describe('Validation', function() {
       });
     });
 
+    it('should report invalid connection strategies', function() {
+      validate({
+        vhosts: {
+          v1: {
+            connectionStrategy: 'meh',
+          },
+        },
+      }, function(err) {
+        assert.ok(err);
+        assert.equal('Vhost: v1 refers to an unknown connection strategy: meh', err.message);
+      });
+    });
+
     it('should report invalid connection attributes', function() {
       validate({
         vhosts: {

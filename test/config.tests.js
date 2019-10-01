@@ -282,6 +282,111 @@ describe('Configuration', function() {
         assert.ok(_.uniq(results).length > 1);
       });
 
+      it('should honour the order of connections with fixed connection strategy', function() {
+        configure({
+          vhosts: {
+            v1: {
+              connectionStrategy: 'fixed',
+              connections: [
+                {
+                  url: 'protocol://user:password@alpha:9000/v1?heartbeat=10&channelMax=100',
+                },
+                {
+                  url: 'protocol://user:password@alpha:9001/v1?heartbeat=10&channelMax=100',
+                },
+                {
+                  slashes: true,
+                  protocol: 'protocol',
+                  hostname: 'beta',
+                  port: 9000,
+                  vhost: 'v1',
+                  user: 'user',
+                  password: 'password',
+                  options: {
+                    heartbeat: 10,
+                    channelMax: 100,
+                  },
+                },
+                {
+                  url: 'protocol://user:password@zeta:9000/v1?heartbeat=10&channelMax=100',
+                },
+              ],
+            },
+            v2: {
+              connectionStrategy: 'fixed',
+              connections: [
+                {
+                  url: 'protocol://user:password@alpha:9001/v2?heartbeat=10&channelMax=100',
+                },
+                {
+                  url: 'protocol://user:password@alpha:9000/v2?heartbeat=10&channelMax=100',
+                },
+                {
+                  url: 'protocol://user:password@zeta:9000/v2?heartbeat=10&channelMax=100',
+                },
+                {
+                  slashes: true,
+                  protocol: 'protocol',
+                  hostname: 'beta',
+                  port: 9000,
+                  vhost: 'v2',
+                  user: 'user',
+                  password: 'password',
+                  options: {
+                    heartbeat: 10,
+                    channelMax: 100,
+                  },
+                },
+              ],
+            },
+            v3: {
+              connectionStrategy: 'fixed',
+              connections: [
+                {
+                  url: 'protocol://user:password@alpha:9000/v3?heartbeat=10&channelMax=100',
+                },
+                {
+                  url: 'protocol://user:password@alpha:9001/v3?heartbeat=10&channelMax=100',
+                },
+                {
+                  slashes: true,
+                  protocol: 'protocol',
+                  hostname: 'beta',
+                  port: 9000,
+                  vhost: 'v3',
+                  user: 'user',
+                  password: 'password',
+                  options: {
+                    heartbeat: 10,
+                    channelMax: 100,
+                  },
+                },
+                {
+                  url: 'protocol://user:password@zeta:9000/v3?heartbeat=10&channelMax=100',
+                },
+              ],
+            },
+          },
+        }, function(err, config) {
+          assert.ifError(err);
+          assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, 'alpha:9000');
+          assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, 'alpha:9001');
+          assert.equal(url.parse(config.vhosts.v1.connections[2].url).host, 'beta:9000');
+          assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, 'zeta:9000');
+
+          assert.equal(url.parse(config.vhosts.v2.connections[0].url).host, 'alpha:9001');
+          assert.equal(url.parse(config.vhosts.v2.connections[1].url).host, 'alpha:9000');
+          assert.equal(url.parse(config.vhosts.v2.connections[2].url).host, 'zeta:9000');
+          assert.equal(url.parse(config.vhosts.v2.connections[3].url).host, 'beta:9000');
+
+          assert.equal(url.parse(config.vhosts.v3.connections[0].url).host, 'alpha:9000');
+          assert.equal(url.parse(config.vhosts.v3.connections[1].url).host, 'alpha:9001');
+          assert.equal(url.parse(config.vhosts.v3.connections[2].url).host, 'beta:9000');
+          assert.equal(url.parse(config.vhosts.v3.connections[3].url).host, 'zeta:9000');
+        });
+      });
+
+
       it('should decorate the connection config with a loggable url (b)', function() {
         configure({
           vhosts: {
