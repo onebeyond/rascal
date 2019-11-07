@@ -849,7 +849,7 @@ broker.subscribe('s1', (err, subscription) => {
     // Do stuff with message
   }).on('error', (err) => {
     console.error('Subscriber error', err)
-  }).on('invalid_content', (err, message, ackOrNack)) => {
+  }).on('invalid_content', (err, message, ackOrNack) => {
     console.error('Invalid content', err)
     ackOrNack(err)
   })
@@ -862,7 +862,7 @@ try {
     // Do stuff with message
   }).on('error', (err) => {
     console.error('Subscriber error', err)
-  }).on('invalid_content', (err, message, ackOrNack)) => {
+  }).on('invalid_content', (err, message, ackOrNack) => {
     console.error('Invalid content', err)
     ackOrNack(err)
   })
@@ -930,7 +930,7 @@ broker.subscribe('s1', (err, subscription) => {
     // Do stuff with message
   }).on('error', (err) => {
     console.error('Subscriber error', err)
-  }).on('redeliveries_exceeded', (err, message, ackOrNack)) => {
+  }).on('redeliveries_exceeded', (err, message, ackOrNack) => {
     console.error('Redeliveries exceeded', err)
     ackOrNack(err)
   })
@@ -943,7 +943,7 @@ try {
     // Do stuff with message
   }).on('error', (err) => {
     console.error('Subscriber error', err)
-  }).on('redeliveries_exceeded', (err, message, ackOrNack)) => {
+  }).on('redeliveries_exceeded', (err, message, ackOrNack) => {
     console.error('Redeliveries exceeded', err)
     ackOrNack(err)
   })
@@ -1152,9 +1152,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 ```
 
 ### Cancelling subscriptions
-
 You can cancel subscriptions as follows
-
 ```js
 broker.subscribe('s1', (err, subscription) => {
   if (err) throw err // subscription didn't exist
@@ -1171,6 +1169,10 @@ try {
   // subscription didn't exist or could not be cancelled
 }
 ```
+Cancelling a subscribion will stop consuming messages, but leave the channel open for a short while so your application can still ack/nack messages. By default the channel is left open for 10 seconds, but can be overridden through the `deferCloseChannel` subscription property.
+
+## Shutdown
+You can shutdown the broker by calling `await broker.shutdown()` or `broker.shutdown(cb)`. Shutting down the broker will cancel all subscriptions, then wait a short amount of time for inflight messages to be acknowledged (configurable via the `deferCloseChannel` subscription property), before closing channels and disconnecting.
 
 ## Bonus Features
 

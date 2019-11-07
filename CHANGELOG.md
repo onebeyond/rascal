@@ -1,5 +1,10 @@
 # Change Log
 
+## 5.0.0
+### Updated
+- Wait for subscriber channels to be closed before shutting down the broker
+- Reduced default close channel deferral from 1 minute to 10 seconds in default config and from 1 minute to 100ms in test config
+
 ## 4.7.0
 ### Updated
 - Dependencies

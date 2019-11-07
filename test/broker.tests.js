@@ -238,6 +238,35 @@ describe('Broker', function() {
     });
   });
 
+  it('should defer returning from unsubscribeAll until underlying channels have been closed', function(done) {
+    var config = _.defaultsDeep({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: subscriptions,
+    }, testConfig);
+
+    config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
+
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+
+        subscription.on('message', function(message, content, ackOrNack) {
+        });
+
+        var before = Date.now();
+        broker.unsubscribeAll(function(err) {
+          assert.ifError(err);
+          var after = Date.now();
+          assert.ok(after >= (before + 200), 'Did not defer returning from unsubscibeAll');
+          done();
+        });
+      });
+    });
+  });
+
   it('should connect', function(done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
