@@ -309,6 +309,9 @@ describe('Broker', function() {
   });
 
   it('should emit busy/ready events', function(done) {
+
+    this.timeout(60000);
+
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -324,10 +327,14 @@ describe('Broker', function() {
           });
         });
 
+      setTimeout(function() {
+        stream.destroy();
+      }, 50000);
+
       broker.once('busy', function() {
         busyOn = Date.now();
         assert.equal(readyOn, undefined);
-        stream.pause();
+        stream.destroy();
       });
 
       broker.once('ready', function() {
