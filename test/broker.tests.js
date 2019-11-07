@@ -309,8 +309,9 @@ describe('Broker', function() {
   });
 
   it('should emit busy/ready events', function(done) {
+    if (process.env.CI) return done();
 
-    this.timeout(60000);
+    this.timeout(20000);
 
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
@@ -329,7 +330,7 @@ describe('Broker', function() {
 
       setTimeout(function() {
         stream.pause();
-      }, 50000);
+      }, 10000);
 
       broker.once('busy', function() {
         busyOn = Date.now();
