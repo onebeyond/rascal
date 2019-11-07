@@ -1,5 +1,9 @@
 # Change Log
 
+## 5.1.0
+### Added
+- Added potential for flow control / throttling via broker 'busy' and 'ready' events.
+
 ## 5.0.0
 ### Updated
 - Wait for subscriber channels to be closed before shutting down the broker

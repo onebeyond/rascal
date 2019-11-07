@@ -6,6 +6,7 @@ var format = require('util').format;
 var Broker = require('..').Broker;
 var amqplib = require('amqplib/callback_api');
 var AmqpUtils = require('./utils/amqputils');
+var random = require('random-readable');
 
 describe('Broker', function() {
 
@@ -51,6 +52,10 @@ describe('Broker', function() {
         publications: {
           p1: {
             exchange: 'e1',
+          },
+          p2: {
+            exchange: 'e1',
+            confirm: false,
           },
         },
         bindings: {
@@ -300,7 +305,36 @@ describe('Broker', function() {
           });
         }, 200);
       });
+    });
+  });
 
+  it('should emit busy/ready events', function(done) {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+
+      var busyOn;
+      var readyOn;
+
+      var stream = random.createRandomStream()
+        .on('data', data => {
+          broker.publish('p2', data, function(err, publication) {
+            if (err) throw err;
+            publication.on('error', console.error);
+          });
+        });
+
+      broker.once('busy', function() {
+        busyOn = Date.now();
+        assert.equal(readyOn, undefined);
+        stream.pause();
+      });
+
+      broker.once('ready', function() {
+        readyOn = Date.now();
+        assert.ok(busyOn <= readyOn);
+        done();
+      });
     });
   });
 
