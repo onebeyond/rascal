@@ -328,13 +328,13 @@ describe('Broker', function() {
         });
 
       setTimeout(function() {
-        stream.destroy();
+        stream.pause();
       }, 50000);
 
       broker.once('busy', function() {
         busyOn = Date.now();
         assert.equal(readyOn, undefined);
-        stream.destroy();
+        stream.pause();
       });
 
       broker.once('ready', function() {
