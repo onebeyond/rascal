@@ -1345,6 +1345,4 @@ or in shorthand
 npm test
 ```
 You'll need a RabbitMQ server running locally with default configuration. If that's too much trouble try installing [docker](https://www.docker.com/) and running the following
-```
-docker run -d -p 5672:5672 -p 15672:15672 dockerfile/rabbitmq
-```
+```npm run docker```
