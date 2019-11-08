@@ -1,5 +1,8 @@
 # Change Log
 
+## 5.2.0
+- The broker emits 'busy' event when outstanding channel requests exceed the number of channels in the pool, and 'ready' when the channel queue is back to zero. Instead of sending just the vhost, additional pool details (e.g. queue length, available channels etc) are emitted.
+
 ## 5.1.0
 ### Added
 - Added potential for flow control / throttling via broker 'busy' and 'ready' events.

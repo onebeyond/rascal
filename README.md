@@ -779,15 +779,15 @@ try {
 **Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using ```broker.foward```**
 
 #### Flow Control
-[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. The name of the vhost is passed to both event handlers so you can take selective action;
+[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. The pool details are passed to both event handlers so you can take selective action;
 
 ```js
-broker.on('busy', vhost => {
+broker.on('busy', ({ vhost, pool, queue, size, available, borrowed, min, max }) => {
   if (vhost === 'events') return eventStream.pause();
   console.warn(`vhost ${vhost} is busy`);
 });
 
-broker.on('ready', vhost => {
+broker.on('ready', ({ vhost, pool, queue, size, available, borrowed, min, max }) => {
   if (vhost === 'events') return eventStream.pause();
   console.info(`vhost ${vhost} is ready`);
 });
@@ -1127,40 +1127,39 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 ```json
 {
   "defaults": {
-      "vhosts": {
-          "exchanges": {
-              "assert": true,
-              "type": "topic"
-          },
-          "queues": {
-              "assert": true
-          },
-          "bindings": {
-              "destinationType": "queue",
-              "bindingKey": "#"
-          }
+    "vhosts": {
+      "exchanges": {
+        "assert": true,
+        "type": "topic"
       },
-      "publications": {
-          "vhost": "/",
-          "confirm": true,
-          "options": {
-              "persistent": true
-          }
+      "queues": {
+        "assert": true
       },
-      "subscriptions": {
-          "vhost": "/",
-          "prefetch": 10,
-          "retry": {
-              "delay": 1000
-          },
-          "redeliveries": {
-              "counter": {
-                  "size": 1000
-              },
-              "limit": 1000
-          }
-        }
+      "bindings": {
+        "destinationType": "queue",
+        "bindingKey": "#"
       }
+    },
+    "publications": {
+      "vhost": "/",
+      "confirm": true,
+      "options": {
+        "persistent": true
+      }
+    },
+    "subscriptions": {
+      "vhost": "/",
+      "prefetch": 10,
+      "retry": {
+        "delay": 1000
+      },
+      "redeliveries": {
+        "counter": {
+          "size": 1000
+        },
+        "limit": 1000
+      }
+    }
   }
 }
 ```
