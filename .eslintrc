@@ -2,7 +2,7 @@
   "extends": "imperative",
   "rules": {
     "comma-dangle": ["error", "always-multiline"],
-    "indent": ["error", 2],
+    "indent": ["error", 2, { "ignoredNodes": ["ConditionalExpression"] }],
     "semi": ["error", "always"]
   }
 }
