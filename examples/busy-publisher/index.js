@@ -18,12 +18,12 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config), (err, broker) => {
     })
 
   broker.on('busy', (details) => {
-    console.log(Date.now(), `Pausing vhost: ${details.vhost} (queue: ${details.queue}, size: ${details.size}, borrowed: ${details.borrowed}, available: ${details.available})`);
+    console.log(Date.now(), `Pausing vhost: ${details.vhost}, (mode: ${details.mode}, queue: ${details.queue}, size: ${details.size}, borrowed: ${details.borrowed}, available: ${details.available})`);
     stream.pause();
   });
 
   broker.on('ready', (details) => {
-    console.log(Date.now(), `Resuming vhost: ${details.vhost} (queue: ${details.queue}, size: ${details.size}, borrowed: ${details.borrowed}, available: ${details.available})`);
+    console.log(Date.now(), `Resuming vhost: ${details.vhost} (mode: ${details.mode}, queue: ${details.queue}, size: ${details.size}, borrowed: ${details.borrowed}, available: ${details.available})`);
     stream.resume();
   });
 })

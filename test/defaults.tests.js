@@ -80,8 +80,16 @@ describe('Defaults', function() {
           defaults: {
             vhosts: {
               publicationChannelPools: {
-                regularPoolSize: 2,
-                confirmPoolSize: 3,
+                regularPool: {
+                  min: 2,
+                  max: 3,
+                  autostart: true,
+                },
+                confirmPool: {
+                  min: 4,
+                  max: 5,
+                  autostart: true,
+                },
               },
             },
           },
@@ -91,8 +99,12 @@ describe('Defaults', function() {
           },
         }, function(err, config) {
           assert.ifError(err);
-          assert.equal(config.vhosts.v1.publicationChannelPools.regularPoolSize, 2);
-          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPoolSize, 3);
+          assert.equal(config.vhosts.v1.publicationChannelPools.regularPool.min, 2);
+          assert.equal(config.vhosts.v1.publicationChannelPools.regularPool.max, 3);
+          assert.equal(config.vhosts.v1.publicationChannelPools.regularPool.autostart, true);
+          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPool.min, 4);
+          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPool.max, 5);
+          assert.equal(config.vhosts.v1.publicationChannelPools.confirmPool.autostart, true);
         });
       });
 

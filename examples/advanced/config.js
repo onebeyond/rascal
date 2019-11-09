@@ -150,6 +150,20 @@ module.exports = {
             "encryption": "well-known-v1"
           }
         }
+
+        // Configure regular and confirm channel pools. See https://www.npmjs.com/package/generic-pool
+        "publicationChannelPools": {
+          "regularPool": {
+            max: 10,
+            min: 5,
+            autostart: true
+          },
+          "confirmPool": {
+            max: 10,
+            min: 5,
+            autostart: true
+          }
+        }
       }
     },
     // Define recovery strategies for different error scenarios

@@ -29,6 +29,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Advanced error handling including delayed, limited retries
 * Redelivery protection
 * Channel pooling
+* Flow control
 * Safe defaults
 * Promise and callback support
 * TDD support
@@ -399,18 +400,45 @@ When set to true, Rascal will check that the vhost exists using the RabbitMQ man
 ```
 
 #### Channel pooling
-Rascal pools channels it uses for publishing messages. It creates a two pools per vhost - one for confirm channels, and other one for "regular" channels. Default maximum pool size for these is 1. If you think it is a limiting factor in your publishing code, the value can be changed through config.
+Rascal useds pools channels it uses for publishing messages. It creates two pools per vhost - one for confirm channels, and other one for regular channels. The default maximum pool size is 5 and the minimum 1, but neither pool will be created until first use (override this by setting `autostart: true`). Idle channels are automatically evicted from the pool. The pool configuration can be adjusted through config, which is passed through to the underlying [generic-pool](https://www.npmjs.com/package/generic-pool) library.
 ```json
 {
   "vhosts": {
     "v1": {
       "publicationChannelPools": {
-        "regularPoolSize": 1,
-        "confirmPoolSize": 1
+        "regularPool": {
+          "max": 10,
+          "min": 5,
+          "evictionRunIntervalMillis": 10000,
+          "idleTimeoutMillis": 60000,
+          "autostart": true
+        },
+        "confirmPool": {
+          "max": 10,
+          "min": 5,
+          "evictionRunIntervalMillis": 10000,
+          "idleTimeoutMillis": 60000,
+          "autostart": true
+        },
       }
     }
   }
 }
+```
+
+#### Flow Control
+[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
+
+```js
+broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
+  if (vhost === 'events') return eventStream.pause();
+  console.warn(`vhost ${vhost} is busy`);
+});
+
+broker.on('ready', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
+  if (vhost === 'events') return eventStream.pause();
+  console.info(`vhost ${vhost} is ready`);
+});
 ```
 
 #### assert
@@ -777,21 +805,6 @@ try {
 ```
 
 **Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using ```broker.foward```**
-
-#### Flow Control
-[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. The pool details are passed to both event handlers so you can take selective action;
-
-```js
-broker.on('busy', ({ vhost, pool, queue, size, available, borrowed, min, max }) => {
-  if (vhost === 'events') return eventStream.pause();
-  console.warn(`vhost ${vhost} is busy`);
-});
-
-broker.on('ready', ({ vhost, pool, queue, size, available, borrowed, min, max }) => {
-  if (vhost === 'events') return eventStream.pause();
-  console.info(`vhost ${vhost} is ready`);
-});
-```
 
 ### Subscriptions
 The real fun begins with subscriptions

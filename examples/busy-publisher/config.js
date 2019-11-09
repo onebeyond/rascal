@@ -2,8 +2,11 @@ module.exports = {
   vhosts: {
     "/": {
       "publicationChannelPools": {
-        "regularPoolSize": 10,
-        "confirmPoolSize": 1
+        "regularPool": {
+          max: 10,
+          min: 5,
+          autostart: true
+        }
       },
       connection: {
         heartbeat: 5,
