@@ -1,5 +1,9 @@
 # Change Log
 
+## 6.0.1
+### Updated
+- Explicitly import each task to allow use with webpack. Thanks @rossj
+
 ## 6.0.0
 - Improved channel pool management (includes a breaking config change - see https://github.com/guidesmiths/rascal#channel-pooling).
 
