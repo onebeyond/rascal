@@ -151,13 +151,10 @@ module.exports = {
           }
         }
 
-        // Configure regular and confirm channel pools. See https://www.npmjs.com/package/generic-pool
+        // Configure confirm channel pools. See https://www.npmjs.com/package/generic-pool
+        // The demo application doesn't publish using regular channels. A regular pool will be created by default, but
+        // never allocated channels because autostart defaults to false.
         "publicationChannelPools": {
-          "regularPool": {
-            max: 10,
-            min: 5,
-            autostart: true
-          },
           "confirmPool": {
             max: 10,
             min: 5,
