@@ -1,5 +1,9 @@
 # Change Log
 
+## 6.0.2
+### Updated
+- Fixed bug that caused management credentials to be ignored. Thanks @juliendangers
+
 ## 6.0.1
 ### Updated
 - Explicitly import each task to allow use with webpack. Thanks @rossj
