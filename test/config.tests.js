@@ -402,6 +402,72 @@ describe('Configuration', function() {
         });
       });
 
+      it('should configure the management connection from an object', function() {
+        configure({
+          vhosts: {
+            v1: {
+              connection: {
+                slashes: true,
+                protocol: 'protocol',
+                hostname: 'hostname',
+                port: 9000,
+                vhost: 'vhost',
+                user: 'user',
+                password: 'password',
+                management: {
+                  protocol: 'https',
+                  user: 'admin',
+                  password: 'adminpassword',
+                  port: 9999,
+                  options: {
+                    timeout: 555,
+                  },
+                },
+                options: {
+                  heartbeat: 10,
+                  channelMax: 100,
+                },
+              },
+            },
+          },
+        }, function(err, config) {
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].management.url, 'https://admin:adminpassword@hostname:9999');
+        });
+      });
+
+      it('should configure the management connection with connection credentials', function() {
+        configure({
+          vhosts: {
+            v1: {
+              connection: {
+                slashes: true,
+                protocol: 'protocol',
+                hostname: 'hostname',
+                port: 9000,
+                vhost: 'vhost',
+                user: 'user',
+                password: 'password',
+                management: {
+                  protocol: 'https',
+                  port: 9999,
+                  options: {
+                    timeout: 444,
+                  },
+                },
+                options: {
+                  heartbeat: 10,
+                  channelMax: 100,
+                },
+              },
+            },
+          },
+        }, function(err, config) {
+          assert.ifError(err);
+          assert.equal(config.vhosts.v1.connections[0].management.url, 'https://user:password@hostname:9999');
+        });
+      });
+
       it('should generate a namespace when specified', function() {
         configure({
           vhosts: {
