@@ -880,7 +880,7 @@ describe('Subscriptions', function() {
   });
 
 
-  it('should consume a poision message when a listener acks it', function(done) {
+  it('should consume a poison message when a listener acks it', function(done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,

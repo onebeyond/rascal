@@ -1,7 +1,11 @@
 # Change Log
 
+## 6.0.3
+### Fixed
+- Fixed [#72](https://github.com/guidesmiths/rascal/issues/72) which meant published messages waiting for a channel would be lost on connection error
+
 ## 6.0.2
-### Updated
+### Fixed
 - Fixed bug that caused management credentials to be ignored. Thanks @juliendangers
 
 ## 6.0.1
