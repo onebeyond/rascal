@@ -258,7 +258,7 @@ The simplest way to specify a connection is with a url
 {
   "vhosts": {
     "v1": {
-      "connection": "amqp://guest:guest@example.com:5672/v1?heartbeat=10"
+      "connection": "amqp://guest:guest@broker.example.com:5672/v1?heartbeat=10"
     }
   }
 }
@@ -293,7 +293,7 @@ Any attributes you add to the "options" sub document will be converted to query 
   "vhosts": {
     "v1": {
       "connection": {
-        "hostname": "example.com",
+        "hostname": "broker.example.com",
         "user": "bob",
         "password": "secret"
       }
@@ -346,9 +346,9 @@ If you specify an array of connections instead of a single connection object Ras
     "v1": {
       "connectionStrategy": "random",
       "connections": [
-        "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
-        "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
-        "amqp://guest:guest@example3.com:5672/v1?heartbeat=10"
+        "amqp://guest:guest@broker1.example.com:5672/v1?heartbeat=10",
+        "amqp://guest:guest@broker2.example.com:5672/v1?heartbeat=10",
+        "amqp://guest:guest@broker3.example.com:5672/v1?heartbeat=10"
       ]
     }
   }
@@ -365,7 +365,7 @@ The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal use
   "vhosts": {
     "v1": {
       "connection": {
-        "hostname": "example.com",
+        "hostname": "broker.example.com",
         "user": "bob",
         "password": "secret",
         "management": {
@@ -390,16 +390,16 @@ Rascal uses [superagent](https://github.com/visionmedia/superagent) under the ho
     "v1": {
       "connections": [
         {
-          "url": "amqp://guest:guest@example1.com:5672/v1?heartbeat=10",
-          "management": "http://guest:guest@example1.com:15672"
+          "url": "amqp://guest:guest@broker1.example.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@broker1.example.com:15672"
         },
         {
-          "url": "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
-          "management": "http://guest:guest@example2.com:15672"
+          "url": "amqp://guest:guest@broker2.example.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@broker2.example.com:15672"
         },
         {
-          "url": "amqp://guest:guest@example2.com:5672/v1?heartbeat=10",
-          "management": "http://guest:guest@example2.com:15672"
+          "url": "amqp://guest:guest@broker3.example.com:5672/v1?heartbeat=10",
+          "management": "http://guest:guest@broker3.example.com:15672"
         }
       ]
     }
