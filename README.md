@@ -222,7 +222,7 @@ A simple configuration is shown below.
   "vhosts": {
     "/": {
       "connection": {
-        "url": "amqp://broker.example.com:5742/"
+        "url": "amqp://user:password@broker.example.com:5742/"
       },
       "exchanges": [
         "demo_ex"
