@@ -209,7 +209,7 @@ var config = rascal.withTestConfig(definitions)
 ```
 We advise you to review these defaults before using them in an environment you care about.
 
-The most common configuration sections are 
+The most common configuration options are 
 * [connection](#connection)
 * [exchanges](#exchanges)
 * [queues](#queues)
