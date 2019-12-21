@@ -63,8 +63,7 @@ const config = require('./config');
     subscription.on('message', (message, content, ackOrNack) => {
       console.log(content);
       ackOrNack();
-    })
-    subscription.on('error', console.error);
+    }).on('error', console.error);
   } catch(err) {
     console.error(err);
   }
@@ -92,8 +91,7 @@ Broker.create(config, (err, broker) => {
     subscription.on('message', (message, content, ackOrNack) => {
       console.log(content);
       ackOrNack();
-    })
-    subscription.on('error', console.error);
+    }).on('error', console.error);
   })
 })
 ```
@@ -122,17 +120,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 2. After subscribing to a channel
 
     ```js
-    broker.subscribe('s1', (err, subscription) => {
-      if (err) throw new Error(`Rascal config error: ${err.message}`)
-      subscription.on('message', (message, content, ackOrNack) => {
-        Do stuff with message
-      }).on('error', (err) => {
-        console.error('Subscriber error', err)
-      })
-    })
-    ```
-
-    ```js
+    // Async/Await
     try {
       const subscription = await broker.subscribe('s1')
       subscription.on('message', (message, content, ackOrNack) => {
@@ -144,19 +132,23 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
-
-3. After publishing a message
-
+    
     ```js
-    broker.publish('p1', 'some text', (err, publication) => {
+    // Callbacks
+    broker.subscribe('s1', (err, subscription) => {
       if (err) throw new Error(`Rascal config error: ${err.message}`)
-      publication.on('error', (err, messageId) => {
-        console.error('Publisher error', err, messageId)
+      subscription.on('message', (message, content, ackOrNack) => {
+        // Do stuff with message
+      }).on('error', (err) => {
+        console.error('Subscriber error', err)
       })
     })
     ```
 
+3. After publishing a message
+
     ```js
+    // Async/Await
     try {
       const publication = await broker.publish('p1', 'some text')
       publication.on('error', (err, messageId) => {
@@ -167,10 +159,9 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     }
     ```
 
-4. After forwarding a message
-
     ```js
-    broker.forward('p1', message, (err, publication) => {
+    // Callbacks
+    broker.publish('p1', 'some text', (err, publication) => {
       if (err) throw new Error(`Rascal config error: ${err.message}`)
       publication.on('error', (err, messageId) => {
         console.error('Publisher error', err, messageId)
@@ -178,7 +169,10 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     })
     ```
 
+4. After forwarding a message
+
     ```js
+    // Async/Await    
     try {
       const publication = await broker.forward('p1', message)
       publication.on('error', (err, messageId) => {
@@ -188,6 +182,16 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
+    
+    ```js
+    // Callbacks    
+    broker.forward('p1', message, (err, publication) => {
+      if (err) throw new Error(`Rascal config error: ${err.message}`)
+      publication.on('error', (err, messageId) => {
+        console.error('Publisher error', err, messageId)
+      })
+    })
+    ```    
 
 ## Configuration
 Rascal provides what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
