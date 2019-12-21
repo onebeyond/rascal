@@ -248,6 +248,7 @@ A simple configuration is shown below.
     }
   }
 }
+```
 
 ### Vhosts
 
