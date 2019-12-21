@@ -217,7 +217,7 @@ The most common configuration sections are
 * [subscriptions](#subscriptions)
 
 A simple configuration is shown below.
-```
+```json
 {
   "vhosts": {
     "/": {
