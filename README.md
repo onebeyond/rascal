@@ -194,7 +194,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
     ```    
 
 ## Configuration
-Rascal provides what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
+Rascal is highly configurable, but ships with what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
 
 ```js
 var rascal = require('rascal')
@@ -209,20 +209,47 @@ var config = rascal.withTestConfig(definitions)
 ```
 We advise you to review these defaults before using them in an environment you care about.
 
-### Vhosts
+The most common configuration sections are 
+* [connection](#connection)
+* [exchanges](#exchanges)
+* [queues](#queues)
+* [publications](#publications)
+* [subscriptions](#subscriptions)
 
-#### namespace
-Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange.
-```json
+A simple configuration is shown below.
+```
 {
   "vhosts": {
-    "v1": {
-      "namespace": true
+    "/": {
+      "connection": {
+        "url": "amqp://broker.example.com:5742/"
+      },
+      "exchanges": [
+        "demo_ex"
+      ],
+      "queues": [
+        "demo_q"
+      ],
+      "bindings": [
+        "demo_ex[a.b.c] -> demo_q"
+      ],
+      "publications": {
+        "demo_pub": {
+          "exchange": "demo_ex",
+          "routingKey": "a.b.c"
+        }
+      },
+      "subscriptions": {
+        "demo_sub": {
+          "queue": "demo_q",
+          "prefetch": 3
+        }
+      }
     }
   }
 }
-```
-If you specify ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
+
+### Vhosts
 
 #### connection
 The simplest way to specify a connection is with a url
@@ -378,7 +405,6 @@ Rascal uses [superagent](https://github.com/visionmedia/superagent) under the ho
   }
 }
 ```
-
 #### assert
 When set to true, Rascal will create the vhost if one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker and for the management user to have necessary permissions.
 ```json
@@ -445,11 +471,18 @@ broker.on('ready', ({ vhost, mode, queue, size, available, borrowed, min, max })
 });
 ```
 
-#### assert
-The AMQP protocol doesn't support assertion or confirmation of vhosts, however the RabbitMQ management API does. By setting `assert` to `true` and specifying a management connection, you can automatically create the vhost if it does not exist.
-
-#### check
-The AMQP protocol doesn't support assertion or confirmation of vhosts, however the RabbitMQ management API does. By setting `check` to `true` and specifying a management connection, you can error if the vhost does not exist.
+#### namespace
+Running automated tests against shared queues and exchanges is problematic. Messages left over from a previous test run can cause assertions to fail. Rascal has several strategies which help you cope with this problem, one of which is to namespace your queues and exchange.
+```json
+{
+  "vhosts": {
+    "v1": {
+      "namespace": true
+    }
+  }
+}
+```
+If you specify ```"namespace" :true``` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, ```"namespace": "foo"```. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
 
 #### Exchanges
 
