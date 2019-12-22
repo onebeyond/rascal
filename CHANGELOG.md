@@ -1,5 +1,10 @@
 # Change Log
 
+## 7.0.0
+### Updated
+- Rascal attempts to resubscribe following a consumer cancel. See the README for more details
+- Undocumented SubscriberSession.close function has been removed (Use .cancel instead)
+
 ## 6.0.0
 - Improved channel pool management (includes a breaking config change - see https://github.com/guidesmiths/rascal#channel-pooling).
 

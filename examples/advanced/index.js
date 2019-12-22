@@ -33,6 +33,8 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
                 }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
                     console.error('Redeliveries Exceeded', err.message)
                     ackOrNack(err, broker.config.recovery.dead_letter)
+                }).on('cancel', function(err) {
+                    console.warn(err.message)
                 }).on('error', function(err) {
                     console.error(err.message)
                 })

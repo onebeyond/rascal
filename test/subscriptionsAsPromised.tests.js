@@ -128,26 +128,6 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should report deprecated subscriptions', function(done) {
-
-    createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s4').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
-            assert(message);
-            assert.equal(message.properties.contentType, 'text/plain');
-            assert.equal(content, 'test message');
-            done();
-          });
-        });
-      });
-    });
-  });
-
   it('should consume to text/plain messages', function(done) {
 
     createBroker({
