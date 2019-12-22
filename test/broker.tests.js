@@ -309,9 +309,14 @@ describe('Broker', function() {
   });
 
   it('should emit busy/ready events', function(done) {
+    /*
+    This test needs to publish messages faster than the channel can cope with in order to
+    trigger a 'busy' event. It may fail on fast systems.
+    */
+
     if (process.env.CI) return done();
 
-    this.timeout(20000);
+    this.timeout(60000);
 
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
@@ -327,10 +332,6 @@ describe('Broker', function() {
             publication.on('error', console.error);
           });
         });
-
-      setTimeout(function() {
-        stream.pause();
-      }, 10000);
 
       broker.once('busy', function() {
         busyOn = Date.now();

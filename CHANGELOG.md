@@ -5,6 +5,19 @@
 - Rascal attempts to resubscribe following a consumer cancel. See the README for more details
 - Undocumented SubscriberSession.close function has been removed (Use .cancel instead)
 
+## 6.0.3
+### Fixed
+- Fixed [#72](https://github.com/guidesmiths/rascal/issues/72) which meant published messages waiting for a channel would be lost on connection error
+
+## 6.0.2
+### Fixed
+- Fixed bug that caused management credentials to be ignored. Thanks @juliendangers
+
+## 6.0.1
+### Updated
+- Explicitly import each task to allow use with webpack. Thanks @rossj
+>>>>>>> master
+
 ## 6.0.0
 - Improved channel pool management (includes a breaking config change - see https://github.com/guidesmiths/rascal#channel-pooling).
 
