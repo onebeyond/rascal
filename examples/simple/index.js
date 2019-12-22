@@ -9,8 +9,11 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config), function(err, broker) {
     subscription.on('message', function(message, content, ackOrNack) {
       console.log(content)
       ackOrNack()
-    }).on('error', console.error)
-  }).on('error', console.error)
+    })
+    subscription.on('error', console.error)
+    subscription.on('cancel', console.warn);
+  })
+  broker.on('error', console.error)
 
   setInterval(function() {
     broker.publish('demo_pub', new Date().toISOString() + ': hello world', function(err, publication) {

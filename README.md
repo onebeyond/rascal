@@ -937,6 +937,12 @@ try {
 ```
 If the message has not been auto-acknowledged you should ackOrNack it. **If you do not listen for the invalid_content event rascal will nack the message (without requeue) and emit an error event instead, leading to message loss if you have not configured a dead letter exchange/queue**.
 
+#### Handling Cancel Notifications
+The RabbitMQ broker may [cancel](https://www.rabbitmq.com/consumer-cancel.html) the consumer if the queue is deleted or the node on which the queue is located fails. [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) handles this by delivering a `null` message. When Rascal receives the null message it will
+
+1. Emit a `cancelled` event from the subscription.
+1. Emit an `error` event from the subscription if the `cancel` event was not handled
+1. Optionally attempt to resubscribe as per normal retry configuration. If the queue was deleted rather than being failed over, the queue will not automatically be re-created and retry attempts will fail indefinitely.
 
 #### Decrypting messages
 Rascal can be configured to automatically decrypt inbound messages.

@@ -17,6 +17,16 @@ function init(connection) {
     });
   }
 
+  function createQueue(name, namespace, next) {
+    connection.createChannel(function(err, channel) {
+      assert.ifError(err);
+      channel.assertQueue(namespace + ':' + name, {}, function(err, ok) {
+        assert.ifError(err);
+        next();
+      });
+    });
+  }
+
   function checkQueue(present, name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
@@ -27,11 +37,27 @@ function init(connection) {
     });
   }
 
-  function publishMessage(exchange, namespace, message, options, next) {
+  function deleteQueue(name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
-      channel.publish(namespace + ':' + exchange, options.routingKey, Buffer.from(message), options);
-      next();
+      channel.deleteQueue(namespace + ':' + name, next);
+    });
+  }
+
+  function publishMessage(exchange, namespace, message, options, next) {
+    _publishMessage(namespace + ':' + exchange, message, options, next);
+  }
+
+  function publishMessageToQueue(queue, namespace, message, options, next) {
+    options.routingKey = namespace + ':' + queue;
+    _publishMessage('', message, options, next);
+  };
+
+  function _publishMessage(fqExchange, message, options, next) {
+    connection.createChannel(function(err, channel) {
+      assert.ifError(err);
+      channel.publish(fqExchange, options.routingKey, Buffer.from(message), options);
+      next && next();
     });
   }
 
@@ -64,8 +90,11 @@ function init(connection) {
 
   return {
     checkExchange: _.curry(checkExchange),
+    createQueue: createQueue,
     checkQueue: _.curry(checkQueue),
+    deleteQueue: deleteQueue,
     publishMessage: _.curry(publishMessage),
+    publishMessageToQueue: publishMessageToQueue,
     getMessage: _.curry(getMessage),
     assertMessage: _.curry(assertMessage),
     assertMessageAbsent: _.curry(assertMessageAbsent),

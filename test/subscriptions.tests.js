@@ -20,7 +20,6 @@ describe('Subscriptions', function() {
   var subscriptions;
 
   beforeEach(function(done) {
-
     namespace = uuid();
     vhosts = {
       '/': {
@@ -127,29 +126,6 @@ describe('Subscriptions', function() {
         assert.ok(err);
         assert.equal(err.message, 'Unknown subscription: does-not-exist');
         done();
-      });
-    });
-  });
-
-  it('should report deprecated subscriptions', function(done) {
-
-    createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
-    }, function(err, broker) {
-      assert.ifError(err);
-      broker.publish('p1', 'test message', function(err) {
-        assert.ifError(err);
-        broker.subscribe('s4', function(err, subscription) {
-          assert.ifError(err);
-          subscription.on('message', function(message, content, ackOrNack) {
-            assert(message);
-            assert.equal(message.properties.contentType, 'text/plain');
-            assert.equal(content, 'test message');
-            done();
-          });
-        });
       });
     });
   });
@@ -879,8 +855,7 @@ describe('Subscriptions', function() {
     });
   });
 
-
-  it('should consume a poison message when a listener acks it', function(done) {
+  it('should consume a poision message when a listener acks it', function(done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1875,6 +1850,106 @@ describe('Subscriptions', function() {
     });
   });
 
+  it('should emit cancelled event when the broker cancels the consumer', function(done) {
+
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+        subscription.on('message', function(message, content, ackOrNack) {
+          assert.ok(false, 'No messages expected');
+        });
+        subscription.on('cancelled', function(err) {
+          assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
+          done();
+        });
+        setTimeout(function() {
+          amqputils.deleteQueue('q1', namespace, function(err) {
+            assert.ifError(err);
+          });
+        }, 200);
+      });
+    });
+  });
+
+  it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(done) {
+
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+        subscription.on('message', function(message, content, ackOrNack) {
+          assert.ok(false, 'No messages expected');
+        });
+        subscription.on('error', function(err) {
+          assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
+          done();
+        });
+        setTimeout(function() {
+          amqputils.deleteQueue('q1', namespace, function(err) {
+            assert.ifError(err);
+          });
+        }, 200);
+      });
+    });
+  });
+
+  it('should resubscribe following a broker cancellation', function(done) {
+
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+        subscription.on('message', function(message, content, ackOrNack) {
+          assert.equal(content, 'ok');
+          ackOrNack();
+          subscription.cancel(done);
+        });
+        subscription.on('error', function(err) {
+          assert.ok(/Operation failed: BasicConsume; 404 \(NOT-FOUND\)/.test(err.message), err.message);
+        });
+        subscription.on('cancelled', function(err) {
+          assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
+          amqputils.createQueue('q1', namespace, function(err) {
+            assert.ifError(err);
+            amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
+          });
+        });
+        setTimeout(function() {
+          amqputils.deleteQueue('q1', namespace, function(err) {
+            assert.ifError(err);
+          });
+        }, 200);
+      });
+    });
+  });
 
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
