@@ -1,0 +1,4 @@
+--recursive
+--timeout 5000
+--check-leaks
+--bail
