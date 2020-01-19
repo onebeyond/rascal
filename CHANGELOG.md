@@ -2,7 +2,7 @@
 
 ## 8.0.0
 ### Updated
-- Drop support for node 6
+- Drop support for Node 6
 - Updated dependencies as per https://github.com/guidesmiths/rascal/pull/75. Thanks @ravihara
 
 ## 7.0.0
