@@ -1,5 +1,9 @@
 # Change Log
 
+## 7.0.1
+### Updated
+- Updated dependencies as per https://github.com/guidesmiths/rascal/pull/75. Thanks @ravihara
+
 ## 7.0.0
 ### Updated
 - Rascal attempts to resubscribe following a consumer cancel. See the README for more details
