@@ -14,7 +14,7 @@
     "safe-json-parse": "^4.0.0",
     "stashback": "^1.1.0",
     "superagent": "^5.2.1",
-    "uuid": "^3.3.3",
+    "uuid": "^3.4.0",
     "xregexp": "^4.2.4"
   },
   "devDependencies": {
@@ -24,7 +24,7 @@
     "eslint": "^6.8.0",
     "eslint-config-imperative": "^3.0.0",
     "eslint-plugin-imperative": "^3.0.0",
-    "husky": "^4.0.9",
+    "husky": "^4.0.10",
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
     "random-readable": "^1.0.1"

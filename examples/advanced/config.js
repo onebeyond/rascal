@@ -10,8 +10,7 @@ module.exports = {
 
         // Define the vhost connection parameters. Specify multiple entries for cluster.
         // Rascal will randomise the list, and cycle through the entries until it finds one that works
-        "connections": [
-          {
+        "connections": [{
             "url": "amqp://does-not-exist-1b9935d9-5066-4b13-84dc-a8e2bb618154:5672/customer-vhost"
           },
           {
@@ -22,17 +21,17 @@ module.exports = {
               "heartbeat": 1
             },
             socketOptions: {
-                timeout: 1000
+              timeout: 1000
             }
           }
         ],
 
         // Define exchanges within the registration vhost
         "exchanges": [
-          "service",      // Shared exchange for all services within this vhost
-          "delay",        // To delay failed messages before a retry
-          "retry",        // To retry failed messages a up to maximum number of times
-          "dead_letters"  // When retring fails messages end up here
+          "service", // Shared exchange for all services within this vhost
+          "delay", // To delay failed messages before a retry
+          "retry", // To retry failed messages a up to maximum number of times
+          "dead_letters" // When retring fails messages end up here
         ],
 
         // Define queues within the registration vhost
@@ -149,7 +148,7 @@ module.exports = {
             // providing the consumer configuration has a matching profile.
             "encryption": "well-known-v1"
           }
-        }
+        },
 
         // Configure confirm channel pools. See https://www.npmjs.com/package/generic-pool
         // The demo application doesn't publish using regular channels. A regular pool will be created by default, but
@@ -167,26 +166,22 @@ module.exports = {
     "recovery": {
 
       // Deferred retry is a good strategy for temporary (connection timeout) or unknown errors
-      "deferred_retry": [
-        {
-         "strategy": "forward",
-          "attempts": 10,
-          "publication": "retry_in_1m",
-          "xDeathFix": true // See https://github.com/rabbitmq/rabbitmq-server/issues/161
-        }, {
-          "strategy": "nack"
-        }
-      ],
+      "deferred_retry": [{
+        "strategy": "forward",
+        "attempts": 10,
+        "publication": "retry_in_1m",
+        "xDeathFix": true // See https://github.com/rabbitmq/rabbitmq-server/issues/161
+      }, {
+        "strategy": "nack"
+      }],
 
       // Republishing with immediate nack returns the message to the original queue but decorates
       // it with error headers. The next time Rascal encounters the message it immedately nacks it
       // causing it to be routed to the services dead letter queue
-      "dead_letter": [
-        {
-          "strategy": "republish",
-          "immediateNack": true
-        }
-      ]
+      "dead_letter": [{
+        "strategy": "republish",
+        "immediateNack": true
+      }]
     },
     // Define counter(s) for counting redeliveries
     "redeliveries": {
