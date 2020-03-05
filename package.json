@@ -1,6 +1,6 @@
 {
   "name": "rascal",
-  "version": "7.0.1",
+  "version": "8.0.0",
   "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decription and channel pooling",
   "main": "index.js",
   "dependencies": {
@@ -73,8 +73,10 @@
     }
   },
   "mocha": {
-    "timeout": 5000,
-    "checkLeaks": true,
-    "bail": true
+    "bail": true,
+    "check-leaks": true,
+    "recursive": true,
+    "slow": 2000,
+    "timeout": 5000
   }
 }

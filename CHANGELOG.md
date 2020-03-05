@@ -1,5 +1,10 @@
 # Change Log
 
+## 8.0.0
+### Updated
+- Drop support for Node 6
+- Updated dependencies as per https://github.com/guidesmiths/rascal/pull/75. Thanks @ravihara
+
 ## 7.0.0
 ### Updated
 - Rascal attempts to resubscribe following a consumer cancel. See the README for more details
