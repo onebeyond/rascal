@@ -1,5 +1,9 @@
 # Change Log
 
+## 8.0.1
+### Updated
+- emit error when publishFn err Channel closed as oer https://github.com/guidesmiths/rascal/pull/81. Thanks @zijin-m
+
 ## 8.0.0
 ### Updated
 - Drop support for Node 6
