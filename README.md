@@ -582,6 +582,22 @@ Define any further configuration in an options block
   }
 }
 ```
+To define a queue with extentions add arguments to the options block
+```json
+{
+  "queues": {
+    "q1": {
+      "options": {
+        "durable": false,
+        "arguments": {
+           "x-message-ttl": 65000,
+           "x-queue-mode": "lazy"
+        }
+      }
+    }
+  }
+}
+```
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
 
 #### bindings
