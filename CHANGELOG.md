@@ -1,8 +1,9 @@
 # Change Log
 
-## Unreleased
+## 8.1.0
 ### Updated
 - Fixed [#86](https://github.com/guidesmiths/rascal/issues/85)
+- Fixed [#84](https://github.com/guidesmiths/rascal/issues/84). Thanks @huikaihoo
 
 ### Added
 - Added a new subscription `subscribed` event
