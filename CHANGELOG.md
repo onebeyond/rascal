@@ -1,5 +1,12 @@
 # Change Log
 
+## Unreleased
+### Updated
+- Fixed [#86](https://github.com/guidesmiths/rascal/issues/85)
+
+### Added
+- Added a new subscription `subscribed` event
+
 ## 8.0.1
 ### Updated
 - emit error when publishFn err Channel closed as oer https://github.com/guidesmiths/rascal/pull/81. Thanks @zijin-m

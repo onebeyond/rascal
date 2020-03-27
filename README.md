@@ -132,7 +132,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
-    
+
     ```js
     // Callbacks
     broker.subscribe('s1', (err, subscription) => {
@@ -172,7 +172,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 4. After forwarding a message
 
     ```js
-    // Async/Await    
+    // Async/Await
     try {
       const publication = await broker.forward('p1', message)
       publication.on('error', (err, messageId) => {
@@ -182,16 +182,16 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
-    
+
     ```js
-    // Callbacks    
+    // Callbacks
     broker.forward('p1', message, (err, publication) => {
       if (err) throw new Error(`Rascal config error: ${err.message}`)
       publication.on('error', (err, messageId) => {
         console.error('Publisher error', err, messageId)
       })
     })
-    ```    
+    ```
 
 ## Configuration
 Rascal is highly configurable, but ships with what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
@@ -209,7 +209,7 @@ var config = rascal.withTestConfig(definitions)
 ```
 We advise you to review these defaults before using them in an environment you care about.
 
-The most common configuration options are 
+The most common configuration options are
 * [connection](#connection)
 * [exchanges](#exchanges)
 * [queues](#queues)
@@ -896,7 +896,7 @@ try {
 ```
 It's **very** important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.
 
-Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors.
+Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors. For Rascal 4.0.0 and beyond, subsciptions are lazily applied when you add the `message` handller. Because registering event handlers is synchronous, but setting up RabbitMQ consumers is asynchronous, we've also added the `subscribed` event in case you need to wait until the subscription has been successfully established.
 
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 ```json

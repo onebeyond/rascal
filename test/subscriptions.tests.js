@@ -1851,7 +1851,6 @@ describe('Subscriptions', function() {
   });
 
   it('should emit cancelled event when the broker cancels the consumer', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1870,19 +1869,18 @@ describe('Subscriptions', function() {
         });
         subscription.on('cancelled', function(err) {
           assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
-          done();
+          subscription.cancel(done);
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });
 
   it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1901,19 +1899,18 @@ describe('Subscriptions', function() {
         });
         subscription.on('error', function(err) {
           assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
-          done();
+          subscription.cancel(done);
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });
 
   it('should resubscribe following a broker cancellation', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1942,11 +1939,11 @@ describe('Subscriptions', function() {
             amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
           });
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });
