@@ -458,7 +458,7 @@ Rascal useds pools channels it uses for publishing messages. It creates two pool
 ```
 
 #### Flow Control
-[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
+[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the channel is saturated and true if it is not. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
 
 ```js
 broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
