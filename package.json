@@ -1,7 +1,7 @@
 {
   "name": "rascal",
   "version": "8.1.0",
-  "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decription and channel pooling",
+  "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
   "main": "index.js",
   "dependencies": {
     "async": "^3.1.0",

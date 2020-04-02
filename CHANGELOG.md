@@ -1,5 +1,9 @@
 # Change Log
 
+## 8.2.0
+### Added
+- Publication timeouts (default value is 10 seconds).
+
 ## 8.1.0
 ### Updated
 - Fixed [#86](https://github.com/guidesmiths/rascal/issues/85)

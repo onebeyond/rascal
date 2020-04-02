@@ -18,6 +18,7 @@ Rascal is a rich pub/sub wrapper for the excellent [amqplib](https://www.npmjs.c
 * Without prefetch a sudden flood of messages may bust your event loop
 * Dropped connections and borked channels will not be automatically recovered
 * Any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
+* If a message is published using a confirm channel, and the broker fails to acknowledge, the flow of execution may be blocked indefinitely
 
 Rascal seeks to either solve these problems, make them easier to deal with or bring them to your attention by adding the following to [amqplib](https://www.npmjs.com/package/amqplib)
 
@@ -30,6 +31,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Redelivery protection
 * Channel pooling
 * Flow control
+* Publication timeouts
 * Safe defaults
 * Promise and callback support
 * TDD support
@@ -772,7 +774,7 @@ try {
 }
 ```
 
- One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
@@ -798,6 +800,22 @@ broker.publish('/', 'content', 'q1', (err, publication) => { ... });
 ```
 
 See the "default-exchange" in the examples directory for a full working example.
+
+#### Timeouts
+When you publish a message using a confirm channel, amqplib will wait for an acknowledgement that the message was safely received by the broker, and in a clustered environment replicated to all nodes. If something goes wrong, the broker will not send the acknowledgement, amqplib will never execute the callback, and the associated flow of execution will never be resumed. Rascal guards against this by adding publication timeouts. If the timeout expires, then Rascal will close the channel and emit a error event from the publication, however there will still be an unavoidable memory leak as amqplib's callback will never be cleared up. The default timeout is 10 seconds but can be overriden in config. The setting is ignored for normal channels and can be disabled by specifying 0.
+
+```json
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1",
+      "confirm": true,
+      "timeout": 10000
+    }
+  }
+}
+```
 
 #### Encrypting messages
 Rascal can be configured to automatically encrypt outbound messages.
