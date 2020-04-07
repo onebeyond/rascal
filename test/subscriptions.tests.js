@@ -528,14 +528,12 @@ describe('Subscriptions', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             ackOrNack();
-            const t = setTimeout(function() {
+            setTimeout(function() {
               broker.shutdown(function(err) {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100)
-            if(t.unref)
-              t.unref();
+            }, 100);
           });
         });
       });
@@ -557,14 +555,12 @@ describe('Subscriptions', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             ackOrNack(new Error('reject'));
-            const t = setTimeout(function() {
+            setTimeout(function() {
               broker.shutdown(function(err) {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100)
-            if(t.unref)
-              t.unref();
+            }, 100);
           });
         });
       });
