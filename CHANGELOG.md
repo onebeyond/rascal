@@ -1,13 +1,22 @@
 # Change Log
 
+## 9.1.2
+### Updated
+- Test to see whether setTimeout.unref is available before calling it
+
 ## 9.1.1
+### Added
 - Expose clonsed subscription config on session
 
 ## 9.1.0
+### Added
 - Optionally promisify ackOrNack
 
 ## 9.0.0
+### Updated
 - Broker functions (publish, forward, nuke, etc) no longer return the broker.
+
+### Added
 - Added broker.subscribeAll
 
 ## 8.2.0
