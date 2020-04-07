@@ -184,6 +184,40 @@ describe('Broker As Promised', function() {
     });
   });
 
+
+  it('should subscribe to all subscriptions', function() {
+    var config = _.defaultsDeep({
+      vhosts: vhosts, publications: publications,
+      subscriptions: subscriptions,
+    }, testConfig);
+
+    return createBroker(config).then(function(broker) {
+      return broker.subscribeAll().then(function(subscriptions) {
+        assert.equal(subscriptions.length, 2);
+        assert.equal(subscriptions[0].constructor.name, 'SubscriberSessionAsPromised');
+        assert.equal(subscriptions[0].name, 's1');
+        assert.equal(subscriptions[1].name, '/q1');
+      });
+    });
+  });
+
+  it('should subscribe to all filtered subscriptions', function() {
+    var config = _.defaultsDeep({
+      vhosts: vhosts, publications: publications,
+      subscriptions: subscriptions,
+    }, testConfig);
+
+    return createBroker(config).then(function(broker) {
+      return broker.subscribeAll(function(subscriptionConfig) {
+        return !subscriptionConfig.autoCreated;
+      }).then(function(subscriptions) {
+        assert.equal(subscriptions.length, 1);
+        assert.equal(subscriptions[0].constructor.name, 'SubscriberSessionAsPromised');
+        assert.equal(subscriptions[0].name, 's1');
+      });
+    });
+  });
+
   function createBroker(config) {
     return BrokerAsPromised.create(config).then(function(_broker) {
       broker = _broker;

@@ -1,5 +1,9 @@
 # Change Log
 
+## 9.0.0
+- Broker functions (publish, forward, nuke, etc) no longer return the broker.
+- Added broker.subscribeAll
+
 ## 8.2.0
 ### Added
 - Publication timeouts (default value is 10 seconds).

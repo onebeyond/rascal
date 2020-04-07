@@ -939,6 +939,66 @@ The arguments to the on message event handler are ```function(message, content, 
 
 > As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
 
+#### Subscribe All
+You can subscribe to multiple subscriptions using ```broker.subscribeAll```.
+```js
+broker.subscribeAll((err, subscriptions) => {
+  if (err) throw err // one or more subscriptions didn't exist
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+})
+```
+
+```js
+try {
+  const subscriptions = await broker.subscribeAll() => {
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+} catch(err) {
+  // One or more subscriptions didn't exist
+}
+```
+subscribeAll takes a filter so you can ignore subscriptions if required. This is especially useful for ignoring the rascals default subscriptions. e.g.
+```js
+broker.subscribeAll(s => !s.autoCreated, (err, subscriptions) => {
+  if (err) throw err // one or more subscriptions didn't exist
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+})
+```
+
+```js
+try {
+  const subscriptions = await broker.subscribeAll(s => !s.autoCreated) => {
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+} catch(err) {
+  // One or more subscriptions didn't exist
+}
+```
+
+
+
 #### Invalid Messages
 If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
 ```js
