@@ -1,5 +1,8 @@
 # Change Log
 
+## 9.1.1
+- Expose clonsed subscription config on session
+
 ## 9.1.0
 - Optionally promisify ackOrNack
 
