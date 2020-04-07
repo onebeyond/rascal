@@ -475,11 +475,13 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             ackOrNack();
-            setTimeout(function() {
+            const t = setTimeout(function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100)
+            if(t.unref)
+              t.unref();
           });
         });
       });
@@ -498,11 +500,13 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             ackOrNack(new Error('reject'));
-            setTimeout(function() {
+            const t = setTimeout(function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100)
+            if(t.unref)
+              t.unref();
           });
         });
       });
