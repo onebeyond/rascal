@@ -533,7 +533,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });
@@ -560,7 +560,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });

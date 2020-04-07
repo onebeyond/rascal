@@ -479,7 +479,7 @@ describe('Subscriptions As Promised', function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });
@@ -502,7 +502,7 @@ describe('Subscriptions As Promised', function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });
