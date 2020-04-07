@@ -1362,7 +1362,7 @@ describe('Subscriptions', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack(null, function() {
+            ackOrNack(function() {
               broker.shutdown(function(err) {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);

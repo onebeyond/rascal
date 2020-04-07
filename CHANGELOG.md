@@ -1,5 +1,8 @@
 # Change Log
 
+## 9.1.0
+- Optionally promisify ackOrNack
+
 ## 9.0.0
 - Broker functions (publish, forward, nuke, etc) no longer return the broker.
 - Added broker.subscribeAll

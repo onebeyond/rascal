@@ -932,10 +932,11 @@ The ```broker.subscribe``` method also accepts an options parameter which will o
 ```js
 broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
+
 ```js
-await broker.subscribe("s1", { prefetch: 10, retry: false })
+await subscription = broker.subscribe("s1", { prefetch: 10, retry: false })
 ```
-The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
+The arguments passed to the message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This ackOrNack callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```. For more details on acking or nacking messages see [Message Acknowledgement and Recovery Strategies](#message-acknowledgement-and-recovery-strategies).
 
 > As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
 
@@ -996,8 +997,6 @@ try {
   // One or more subscriptions didn't exist
 }
 ```
-
-
 
 #### Invalid Messages
 If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
@@ -1133,7 +1132,11 @@ If your application is not clustered, but you still want to protect yourself fro
 See [here](https://www.npmjs.com/package/rascal-redis-counter) for a redis backed counter.
 
 #### Message Acknowledgement and Recovery Strategies
-For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
+For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err)``` will nack the message using Rascal's default recovery strategy (nack with requeue). Calling ```ackOrNack(err, recoveryOptions)``` will trigger the specified recovery strategy or strategies.
+
+When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument (irrespective of what other arguments you provide.
+
+When using the promises API, ackOrNack will work as for the callback API unless you explicity set promisifyAckOrNack to true on the subscription. If you do enable this feature, be sure to catch rejections.
 
 ##### Nack (Reject or Dead Letter)
 ```js

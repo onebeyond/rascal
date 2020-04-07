@@ -129,7 +129,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume to text/plain messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -169,7 +168,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume to text/other messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -193,7 +191,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume to whatever/whatever messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -332,7 +329,7 @@ describe('Subscriptions As Promised', function() {
             assert.ok(false, 'Message should not have been delivered');
           }).on('invalid_content', function(err, message, ackOrNack) {
             assert(err);
-            ackOrNack(function() {
+            ackOrNack().then(function() {
               setTimeout(function() {
                 broker.shutdown().then(function() {
                   amqputils.assertMessageAbsent('q1', namespace, done);
@@ -358,7 +355,7 @@ describe('Subscriptions As Promised', function() {
             assert.ok(false, 'Message should not have been delivered');
           }).on('invalid_content', function(err, message, ackOrNack) {
             assert(err);
-            ackOrNack(err, function() {
+            ackOrNack(err).then(function() {
               setTimeout(function() {
                 broker.shutdown().then(function() {
                   amqputils.assertMessageAbsent('q1', namespace, done);
@@ -397,7 +394,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should filter subscriptions by routing key', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -421,7 +417,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume auto acknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -449,7 +444,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should not consume unacknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -470,7 +464,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume acknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -494,7 +487,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume rejected messages by default', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -589,7 +581,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should requeue messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -614,7 +605,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should defer requeueing messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -643,7 +633,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should count redeliveries', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -672,7 +661,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should notify when redeliveries limit is exceeded', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -793,7 +781,7 @@ describe('Subscriptions As Promised', function() {
             throw new Error('oh no');
           }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
             assert(err);
-            ackOrNack(function() {
+            ackOrNack().then(function() {
               setTimeout(function() {
                 broker.shutdown().then(function() {
                   amqputils.assertMessageAbsent('q1', namespace, done);
@@ -809,7 +797,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should republish messages to queue when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -834,7 +821,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should truncate error messages when republishing', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -857,7 +843,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should maintain original fields, properties and headers when republished', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -885,7 +870,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should cap republishes when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -910,7 +894,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should defer republishing messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1009,7 +992,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should forward messages to publication when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1040,7 +1022,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should truncate error messages when forwarding', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1068,7 +1049,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should override routing key when forward messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1095,7 +1075,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should maintain original fields, properties and headers when forwarded', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1132,7 +1111,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should cap forwards when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1159,7 +1137,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should error when forwarding messages to /dev/null', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1170,11 +1147,11 @@ describe('Subscriptions As Promised', function() {
           broker.subscribe('s1').then(function(subscription) {
             subscription.on('message', function(message, content, ackOrNack) {
               assert.ok(message);
-              ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' });
-            }).on('error', function(err) {
-              assert.ok(err);
-              assert.equal('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
-              done();
+              ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' }).catch(function(err) {
+                assert.ok(err);
+                assert.equal('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
+                done();
+              });
             });
           });
         });
@@ -1183,7 +1160,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should error on unknown recovery strategy', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1194,11 +1170,11 @@ describe('Subscriptions As Promised', function() {
           broker.subscribe('s1').then(function(subscription) {
             subscription.on('message', function(message, content, ackOrNack) {
               assert.ok(message);
-              ackOrNack(new Error('unknown'), { strategy: 'foo' });
-            }).on('error', function(err) {
-              assert.ok(err);
-              assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
-              done();
+              ackOrNack(new Error('unknown'), { strategy: 'foo' }).catch(function(err) {
+                assert.ok(err);
+                assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                done();
+              });
             });
           });
         });
@@ -1220,7 +1196,7 @@ describe('Subscriptions As Promised', function() {
             ackOrNack(new Error('retry'), [
               { strategy: 'republish', attempts: 5 },
               { strategy: 'ack' },
-            ], function() {
+            ]).then(function() {
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 6) return;
               setTimeout(function() {
@@ -1246,7 +1222,7 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack(null, function() {
+            ackOrNack().then(function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
@@ -1271,7 +1247,7 @@ describe('Subscriptions As Promised', function() {
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             ackOrNack(new Error('Oh Noes'), [
               { strategy: 'ack' },
-            ], function() {
+            ]).then(function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
@@ -1294,7 +1270,7 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack(new Error('retry'), [], function() {
+            ackOrNack(new Error('retry'), []).then(function() {
               broker.shutdown().then(function() {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
@@ -1306,7 +1282,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should limit concurrent messages using prefetch', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1403,7 +1378,6 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should not consume messages after unsubscribing', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1512,12 +1486,12 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             subscription.cancel().then(function() {
               setTimeout(function() {
-                ackOrNack();
+                ackOrNack().catch(function(err) {
+                  assert.equal(err.message, 'The channel has been closed. Unable to ack message');
+                  done();
+                });
               }, 200);
             });
-          }).on('error', function(err) {
-            assert.equal(err.message, 'The channel has been closed. Unable to ack message');
-            done();
           });
         });
       });
@@ -1535,12 +1509,12 @@ describe('Subscriptions As Promised', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             subscription.cancel().then(function() {
               setTimeout(function() {
-                ackOrNack(new Error('Oh Noes!'));
+                ackOrNack(new Error('Oh Noes!')).catch(function(err) {
+                  assert.equal(err.message, 'The channel has been closed. Unable to nack message');
+                  done();
+                });
               }, 200);
             });
-          }).on('error', function(err) {
-            assert.equal(err.message, 'The channel has been closed. Unable to nack message');
-            done();
           });
         });
       });
@@ -1663,8 +1637,62 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
+  it('should support ackOrNack using callbacks', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+          promisifyAckOrNack: false,
+        },
+      },
+    }).then(function(broker) {
+      broker.publish('p1', 'test message').then(function(publication) {
+        publication.on('success', function(messageId) {
+          broker.subscribe('s1').then(function(subscription) {
+            subscription.on('message', function(message, content, ackOrNack) {
+              assert.ok(message);
+              ackOrNack(done);
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('should support handling recovery errors using callbacks', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+          promisifyAckOrNack: false,
+        },
+      },
+    }).then(function(broker) {
+      broker.publish('p1', 'test message').then(function(publication) {
+        publication.on('success', function(messageId) {
+          broker.subscribe('s1').then(function(subscription) {
+            subscription.on('message', function(message, content, ackOrNack) {
+              assert.ok(message);
+              ackOrNack(new Error('unknown'), { strategy: 'foo' }, function(err) {
+                assert.ok(err);
+                assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
   function createBroker(config) {
-    config = _.defaultsDeep(config, testConfig);
+    config = _.defaultsDeep(config, testConfig, { defaults: { subscriptions: { promisifyAckOrNack: true } } });
     return BrokerAsPromised.create(config).then(function(_broker) {
       broker = _broker;
       return broker;
