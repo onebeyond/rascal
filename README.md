@@ -469,7 +469,7 @@ broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) 
 });
 
 broker.on('ready', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
-  if (vhost === 'events') return eventStream.pause();
+  if (vhost === 'events') return eventStream.resume();
   console.info(`vhost ${vhost} is ready`);
 });
 ```
