@@ -1,5 +1,9 @@
 # Change Log
 
+## 9.1.3
+### Updated
+- Fixed bug where channels were destroyed instead of returned to the pool
+
 ## 9.1.2
 ### Updated
 - Test to see whether setTimeout.unref is available before calling it
