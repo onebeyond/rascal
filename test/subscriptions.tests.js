@@ -131,7 +131,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume to text/plain messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -177,7 +176,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume to text/other messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -204,7 +202,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume to whatever/whatever messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -435,7 +432,6 @@ describe('Subscriptions', function() {
   });
 
   it('should filter subscriptions by routing key', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -462,7 +458,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume auto acknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -495,7 +490,6 @@ describe('Subscriptions', function() {
   });
 
   it('should not consume unacknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -520,7 +514,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume acknowledged messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -540,7 +533,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });
@@ -548,7 +541,6 @@ describe('Subscriptions', function() {
   });
 
   it('should consume rejected messages by default', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -568,7 +560,7 @@ describe('Subscriptions', function() {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
-            }, 100).unref();
+            }, 100);
           });
         });
       });
@@ -651,7 +643,6 @@ describe('Subscriptions', function() {
   });
 
   it('should requeue messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -679,7 +670,6 @@ describe('Subscriptions', function() {
   });
 
   it('should defer requeueing messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -711,7 +701,6 @@ describe('Subscriptions', function() {
   });
 
   it('should count redeliveries', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -744,7 +733,6 @@ describe('Subscriptions', function() {
   });
 
   it('should notify when redeliveries limit is exceeded', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -899,7 +887,6 @@ describe('Subscriptions', function() {
   });
 
   it('should republish messages to queue when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -927,7 +914,6 @@ describe('Subscriptions', function() {
   });
 
   it('should truncate error messages when republishing', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -954,7 +940,6 @@ describe('Subscriptions', function() {
   });
 
   it('should maintain original fields, properties and headers when republished', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -986,7 +971,6 @@ describe('Subscriptions', function() {
   });
 
   it('should cap republishes when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1013,7 +997,6 @@ describe('Subscriptions', function() {
   });
 
   it('should defer republishing messages when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1119,7 +1102,6 @@ describe('Subscriptions', function() {
   });
 
   it('should forward messages to publication when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1153,7 +1135,6 @@ describe('Subscriptions', function() {
   });
 
   it('should truncate error messages when forwarding', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1184,7 +1165,6 @@ describe('Subscriptions', function() {
   });
 
   it('should override routing key when forward messages', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1214,7 +1194,6 @@ describe('Subscriptions', function() {
   });
 
   it('should maintain original fields, properties and headers when forwarded', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1255,7 +1234,6 @@ describe('Subscriptions', function() {
   });
 
   it('should cap forwards when requested', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1284,7 +1262,6 @@ describe('Subscriptions', function() {
   });
 
   it('should error when forwarding messages to /dev/null', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1385,7 +1362,7 @@ describe('Subscriptions', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack(null, function() {
+            ackOrNack(function() {
               broker.shutdown(function(err) {
                 assert.ifError(err);
                 amqputils.assertMessageAbsent('q1', namespace, done);
@@ -1456,7 +1433,6 @@ describe('Subscriptions', function() {
   });
 
   it('should limit concurrent messages using prefetch', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1851,7 +1827,6 @@ describe('Subscriptions', function() {
   });
 
   it('should emit cancelled event when the broker cancels the consumer', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1870,19 +1845,18 @@ describe('Subscriptions', function() {
         });
         subscription.on('cancelled', function(err) {
           assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
-          done();
+          subscription.cancel(done);
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });
 
   it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1901,19 +1875,18 @@ describe('Subscriptions', function() {
         });
         subscription.on('error', function(err) {
           assert.equal(err.message, 'Subscription: s1 was cancelled by the broker');
-          done();
+          subscription.cancel(done);
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });
 
   it('should resubscribe following a broker cancellation', function(done) {
-
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1942,11 +1915,11 @@ describe('Subscriptions', function() {
             amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
           });
         });
-        setTimeout(function() {
+        subscription.on('subscribed', function() {
           amqputils.deleteQueue('q1', namespace, function(err) {
             assert.ifError(err);
           });
-        }, 200);
+        });
       });
     });
   });

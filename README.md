@@ -18,6 +18,7 @@ Rascal is a rich pub/sub wrapper for the excellent [amqplib](https://www.npmjs.c
 * Without prefetch a sudden flood of messages may bust your event loop
 * Dropped connections and borked channels will not be automatically recovered
 * Any connection or channel errors are emitted as "error" events. Unless you handle them or use [domains](https://nodejs.org/api/domain.html) these will cause your application to crash
+* If a message is published using a confirm channel, and the broker fails to acknowledge, the flow of execution may be blocked indefinitely
 
 Rascal seeks to either solve these problems, make them easier to deal with or bring them to your attention by adding the following to [amqplib](https://www.npmjs.com/package/amqplib)
 
@@ -30,6 +31,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * Redelivery protection
 * Channel pooling
 * Flow control
+* Publication timeouts
 * Safe defaults
 * Promise and callback support
 * TDD support
@@ -132,7 +134,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
-    
+
     ```js
     // Callbacks
     broker.subscribe('s1', (err, subscription) => {
@@ -172,7 +174,7 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 4. After forwarding a message
 
     ```js
-    // Async/Await    
+    // Async/Await
     try {
       const publication = await broker.forward('p1', message)
       publication.on('error', (err, messageId) => {
@@ -182,16 +184,16 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       throw new Error(`Rascal config error: ${err.message}`)
     }
     ```
-    
+
     ```js
-    // Callbacks    
+    // Callbacks
     broker.forward('p1', message, (err, publication) => {
       if (err) throw new Error(`Rascal config error: ${err.message}`)
       publication.on('error', (err, messageId) => {
         console.error('Publisher error', err, messageId)
       })
     })
-    ```    
+    ```
 
 ## Configuration
 Rascal is highly configurable, but ships with what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
@@ -209,7 +211,7 @@ var config = rascal.withTestConfig(definitions)
 ```
 We advise you to review these defaults before using them in an environment you care about.
 
-The most common configuration options are 
+The most common configuration options are
 * [connection](#connection)
 * [exchanges](#exchanges)
 * [queues](#queues)
@@ -458,7 +460,7 @@ Rascal useds pools channels it uses for publishing messages. It creates two pool
 ```
 
 #### Flow Control
-[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the underlying vhost connection is saturated and false otherwise. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
+[amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the channel is saturated and true if it is not. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
 
 ```js
 broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
@@ -467,7 +469,7 @@ broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) 
 });
 
 broker.on('ready', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
-  if (vhost === 'events') return eventStream.pause();
+  if (vhost === 'events') return eventStream.resume();
   console.info(`vhost ${vhost} is ready`);
 });
 ```
@@ -577,6 +579,22 @@ Define any further configuration in an options block
       "options": {
         "durable": false,
         "exclusive": true
+      }
+    }
+  }
+}
+```
+To define a queue with extentions add arguments to the options block
+```json
+{
+  "queues": {
+    "q1": {
+      "options": {
+        "durable": false,
+        "arguments": {
+           "x-message-ttl": 65000,
+           "x-queue-mode": "lazy"
+        }
       }
     }
   }
@@ -756,7 +774,7 @@ try {
 }
 ```
 
- One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
 Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
 
@@ -782,6 +800,22 @@ broker.publish('/', 'content', 'q1', (err, publication) => { ... });
 ```
 
 See the "default-exchange" in the examples directory for a full working example.
+
+#### Timeouts
+When you publish a message using a confirm channel, amqplib will wait for an acknowledgement that the message was safely received by the broker, and in a clustered environment replicated to all nodes. If something goes wrong, the broker will not send the acknowledgement, amqplib will never execute the callback, and the associated flow of execution will never be resumed. Rascal guards against this by adding publication timeouts. If the timeout expires, then Rascal will close the channel and emit a error event from the publication, however there will still be an unavoidable memory leak as amqplib's callback will never be cleared up. The default timeout is 10 seconds but can be overriden in config. The setting is ignored for normal channels and can be disabled by specifying 0.
+
+```json
+{
+  "publications": {
+    "p1": {
+      "exchange": "e1",
+      "vhost": "v1",
+      "confirm": true,
+      "timeout": 10000
+    }
+  }
+}
+```
 
 #### Encrypting messages
 Rascal can be configured to automatically encrypt outbound messages.
@@ -880,7 +914,7 @@ try {
 ```
 It's **very** important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.
 
-Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors.
+Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors. For Rascal 4.0.0 and beyond, subsciptions are lazily applied when you add the `message` handller. Because registering event handlers is synchronous, but setting up RabbitMQ consumers is asynchronous, we've also added the `subscribed` event in case you need to wait until the subscription has been successfully established.
 
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 ```json
@@ -898,12 +932,71 @@ The ```broker.subscribe``` method also accepts an options parameter which will o
 ```js
 broker.subscribe("s1", { prefetch: 10, retry: false }, callback)
 ```
+
 ```js
-await broker.subscribe("s1", { prefetch: 10, retry: false })
+await subscription = broker.subscribe("s1", { prefetch: 10, retry: false })
 ```
-The arguments to the on message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```.
+The arguments passed to the message event handler are ```function(message, content, ackOrNack)```, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This ackOrNack callback should only be used for messages which were not ```{ "options": { "noAck": true } }``` by the subscription configuration or the options passed to ```broker.subscribe```. For more details on acking or nacking messages see [Message Acknowledgement and Recovery Strategies](#message-acknowledgement-and-recovery-strategies).
 
 > As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
+
+#### Subscribe All
+You can subscribe to multiple subscriptions using ```broker.subscribeAll```.
+```js
+broker.subscribeAll((err, subscriptions) => {
+  if (err) throw err // one or more subscriptions didn't exist
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+})
+```
+
+```js
+try {
+  const subscriptions = await broker.subscribeAll() => {
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+} catch(err) {
+  // One or more subscriptions didn't exist
+}
+```
+subscribeAll takes a filter so you can ignore subscriptions if required. This is especially useful for ignoring the rascals default subscriptions. e.g.
+```js
+broker.subscribeAll(s => !s.autoCreated, (err, subscriptions) => {
+  if (err) throw err // one or more subscriptions didn't exist
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+})
+```
+
+```js
+try {
+  const subscriptions = await broker.subscribeAll(s => !s.autoCreated) => {
+  subscriptions.forEach(subscription => {
+    subscription.on('message', (message, content, ackOrNack) => {
+      // Do stuff with message
+    }).on('error', (err) => {
+      console.error('Subscriber error', err)
+    })
+  });
+} catch(err) {
+  // One or more subscriptions didn't exist
+}
+```
 
 #### Invalid Messages
 If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
@@ -1039,7 +1132,11 @@ If your application is not clustered, but you still want to protect yourself fro
 See [here](https://www.npmjs.com/package/rascal-redis-counter) for a redis backed counter.
 
 #### Message Acknowledgement and Recovery Strategies
-For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err, [options], [callback])``` will nack the message will trigger one of the Rascal's recovery strategies.
+For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err)``` will nack the message using Rascal's default recovery strategy (nack with requeue). Calling ```ackOrNack(err, recoveryOptions)``` will trigger the specified recovery strategy or strategies.
+
+When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument (irrespective of what other arguments you provide.
+
+When using the promises API, ackOrNack will work as for the callback API unless you explicity set promisifyAckOrNack to true on the subscription. If you do enable this feature, be sure to catch rejections.
 
 ##### Nack (Reject or Dead Letter)
 ```js

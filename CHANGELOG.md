@@ -1,5 +1,40 @@
 # Change Log
 
+## 9.1.2
+### Updated
+- Test to see whether setTimeout.unref is available before calling it
+
+## 9.1.1
+### Added
+- Expose clonsed subscription config on session
+
+## 9.1.0
+### Added
+- Optionally promisify ackOrNack
+
+## 9.0.0
+### Updated
+- Broker functions (publish, forward, nuke, etc) no longer return the broker.
+
+### Added
+- Added broker.subscribeAll
+
+## 8.2.0
+### Added
+- Publication timeouts (default value is 10 seconds).
+
+## 8.1.0
+### Updated
+- Fixed [#86](https://github.com/guidesmiths/rascal/issues/85)
+- Fixed [#84](https://github.com/guidesmiths/rascal/issues/84). Thanks @huikaihoo
+
+### Added
+- Added a new subscription `subscribed` event
+
+## 8.0.1
+### Updated
+- emit error when publishFn err Channel closed as oer https://github.com/guidesmiths/rascal/pull/81. Thanks @zijin-m
+
 ## 8.0.0
 ### Updated
 - Drop support for Node 6
