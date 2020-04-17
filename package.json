@@ -4,7 +4,7 @@
   "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
   "main": "index.js",
   "dependencies": {
-    "async": "^3.1.0",
+    "async": "^3.2.0",
     "debug": "^4.1.1",
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
@@ -12,21 +12,21 @@
     "lodash": "^4.17.15",
     "lru-cache": "^5.1.1",
     "safe-json-parse": "^4.0.0",
-    "stashback": "^1.1.0",
-    "superagent": "^5.2.1",
-    "uuid": "^3.4.0",
-    "xregexp": "^4.2.4"
+    "stashback": "^1.1.1",
+    "superagent": "^5.2.2",
+    "uuid": "^7.0.3",
+    "xregexp": "^4.3.0"
   },
   "devDependencies": {
     "amqplib": "^0.5.5",
-    "chalk": "^3.0.0",
+    "chalk": "^4.0.0",
     "chance": "^1.1.4",
     "eslint": "^6.8.0",
     "eslint-config-imperative": "^3.0.0",
     "eslint-plugin-imperative": "^3.0.0",
-    "husky": "^4.0.10",
+    "husky": "^4.2.5",
     "mocha": "^7.1.1",
-    "nyc": "^15.0.0",
+    "nyc": "^15.0.1",
     "random-readable": "^1.0.1"
   },
   "peerDependencies": {
