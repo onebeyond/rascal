@@ -15,7 +15,8 @@
     "stashback": "^1.1.0",
     "superagent": "^5.2.1",
     "uuid": "^3.3.3",
-    "xregexp": "^4.2.4"
+    "xregexp": "^4.2.4",
+    "snyk": "^1.316.1"
   },
   "devDependencies": {
     "amqplib": "^0.5.5",
@@ -45,7 +46,9 @@
     "lint": "eslint .",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
     "coverage": "nyc report --reporter lcov --reporter html",
-    "codeclimate": "(test -e .codeclimate && npm run coverage && source .codeclimate && codeclimate-test-reporter < coverage/lcov.info) || echo skipping codeclimate"
+    "codeclimate": "(test -e .codeclimate && npm run coverage && source .codeclimate && codeclimate-test-reporter < coverage/lcov.info) || echo skipping codeclimate",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "keywords": [
     "amqplib",
@@ -78,5 +81,6 @@
     "recursive": true,
     "slow": 2000,
     "timeout": 5000
-  }
+  },
+  "snyk": true
 }
