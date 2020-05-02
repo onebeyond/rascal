@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+### Updated
+- Added vhost name to connect / disconnect events
+
 ## 9.3.0
 ### Updated
 - [Fixed #78](https://github.com/guidesmiths/rascal/issues/78) by using a baseline config, and only laying connection options via withDefaultConfig
