@@ -1,5 +1,11 @@
 # Change Log
 
+## 9.1.4
+### Updated
+- Dependencies
+- Patched lodash
+- Added snyk
+
 ## 9.1.3
 ### Updated
 - Fixed bug where channels were destroyed instead of returned to the pool
