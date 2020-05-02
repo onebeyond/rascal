@@ -1,6 +1,9 @@
 # Change Log
 
-## 9.1.4
+## 9.2.0
+### Added
+- [Fixed #93](https://github.com/guidesmiths/rascal/issues/93) through use of setInterval to keep node process active in the event of broker restart.
+
 ### Updated
 - Dependencies
 - Patched lodash
