@@ -1,8 +1,8 @@
 module.exports = {
   vhosts: {
     "/": {
-      "publicationChannelPools": {
-        "regularPool": {
+      publicationChannelPools: {
+        regularPool: {
           max: 10,
           min: 5,
           autostart: true
@@ -20,18 +20,18 @@ module.exports = {
         "demo_ex[a.b.c] -> demo_q"
       ],
       publications: {
-        "demo_pub": {
-          "exchange": "demo_ex",
-          "routingKey": "a.b.c",
-          "confirm": false,
-          "options": {
-            "persistent": false
+        demo_pub: {
+          exchange: "demo_ex",
+          routingKey: "a.b.c",
+          confirm: false,
+          options: {
+            persistent: false
           }
         }
       },
       subscriptions: {
-        "demo_sub": {
-          "queue": "demo_q"
+        demo_sub: {
+          queue: "demo_q"
         }
       }
     }

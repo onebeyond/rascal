@@ -28,9 +28,9 @@ module.exports = {
 
         // Define exchanges within the registration vhost
         "exchanges": [
-          "service", // Shared exchange for all services within this vhost
-          "delay", // To delay failed messages before a retry
-          "retry", // To retry failed messages a up to maximum number of times
+          "service",     // Shared exchange for all services within this vhost
+          "delay",       // To delay failed messages before a retry
+          "retry",       // To retry failed messages a up to maximum number of times
           "dead_letters" // When retring fails messages end up here
         ],
 
