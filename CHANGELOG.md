@@ -1,5 +1,9 @@
 # Change Log
 
+## 9.3.0
+### Updated
+- [Fixed #78](https://github.com/guidesmiths/rascal/issues/78) by using a baseline config, and only laying connection options via withDefaultConfig
+
 ## 9.2.0
 ### Added
 - [Fixed #93](https://github.com/guidesmiths/rascal/issues/93) through use of setInterval to keep node process active in the event of broker restart.
