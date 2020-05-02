@@ -766,7 +766,7 @@ try {
     console.log("Message id was: ", messageId)
   }).on("error", (err, messageId) => {
      console.error("Error was: ", err.message)
-  }).on("return", (messageId) => {
+  }).on("return", (message) => {
      console.warn("Message was returned: ", message.properties.messageId)
   })
 } catch (err) {
@@ -814,6 +814,39 @@ When you publish a message using a confirm channel, amqplib will wait for an ack
       "timeout": 10000
     }
   }
+}
+```
+
+#### Aborting
+Rascal uses a channel pool to publish messages. Access to the channel pool is synchronised via an in memory queue, which will be paused if the connection to the broker is temporarily lost. Consequently instead of erroring, publishes will be held until the connection is re-established. If you would rather abort under these circumstances, you can listen for the publication 'paused' event, and call `publication.abort()`. When the connection is re-established any aborted messages will be dropped instead of published.
+
+```js
+broker.publish("p1", "some message", (err, publication) => {
+  if (err) throw err; // publication didn't exist
+  publication.on("success", (messageId) => {
+     console.log("Message id was: ", messageId)
+  }).on("error", (err, messageId) => {
+     console.error("Error was: ", err.message)
+  }).on("paused", (messageId) => {
+     console.warn("Publication was paused. Aborting message: ", messageId)
+     publication.abort();
+  })
+})
+```
+
+```js
+try {
+  const publication = await broker.publish("p1", "some message")
+  publication.on("success", (messageId) => {
+    console.log("Message id was: ", messageId)
+  }).on("error", (err, messageId) => {
+     console.error("Error was: ", err.message)
+  }).on("paused", (messageId) => {
+     console.warn("Publication was paused. Aborting message: ", messageId)
+     publication.abort();
+  })
+} catch (err) {
+  // publication didn't exist
 }
 ```
 
