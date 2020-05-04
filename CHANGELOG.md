@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 9.4.0
 ### Added
 - vhost_initialised event
 - publication paused notifications
