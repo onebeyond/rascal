@@ -114,8 +114,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 1. Immediately after obtaining a broker instance
 
     ```js
-    broker.on('error', (err) => {
-      console.error('Broker error', err)
+    broker.on('error', (err, { vhost, connectionUrl }) => {
+      console.error('Broker error', err, vhost, connectionUrl)
     })
     ```
 
@@ -194,6 +194,28 @@ The reason Rascal nacks the message is because the alternative is to rollback an
       })
     })
     ```
+
+### Other Broker Events
+
+#### vhost_initialised
+The broker emits the `vhost_initialised` event after recovering from a connection error. An object containing the vhost name and connection url (with obfuscated password) are passed to he event handler. e.g.
+
+```js
+broker.on('vhost_initialised', ({ vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was initialised using connection: ${connectionUrl}`);
+})
+```
+
+#### blocked / unblocked
+RabbitMQ notifies clients of [blocked and unblocked](https://www.rabbitmq.com/connection-blocked.html) connections, which rascal forwards from the connection to the broker. e.g.
+```js
+broker.on('blocked', (reason, { vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was blocked using connection: ${connectionUrl}. Reason: ${reason}`);
+})
+broker.on('unblocked', ({ vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was unblocked using connection: ${connectionUrl}.`);
+})
+```
 
 ## Configuration
 Rascal is highly configurable, but ships with what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.

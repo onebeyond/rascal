@@ -1,8 +1,13 @@
 # Change Log
 
 ## Unreleased
+### Added
+- vhost_initialised event
+- publication paused notifications
+- publication.abort
+
 ### Updated
-- Added vhost name to connect / disconnect events
+- broker error events now include vhost connection details
 
 ## 9.3.0
 ### Updated
