@@ -436,6 +436,7 @@ describe('Publications', function() {
                 assert.equal(message.properties.contentType, 'text/plain');
                 assert.equal(message.content.toString(), 'test message');
                 assert.ok(/\w+-\w+-\w+-\w+-\w+:q1/.test(message.properties.headers.rascal.originalQueue), format('%s failed to match expected pattern', message.properties.headers.rascal.originalQueue));
+                assert.equal(message.properties.headers.rascal.restoreRoutingHeaders, false);
                 assert.equal(message.properties.headers.rascal.originalRoutingKey, 'rk1');
                 assert.equal(message.properties.headers.rascal.originalExchange, namespace + ':e1');
                 done();
@@ -450,6 +451,54 @@ describe('Publications', function() {
         publication.on('success', function(_messageId) {
           messageId = _messageId;
         });
+      });
+    });
+  });
+
+  it('should instruct subscriber to restore routing headers when requested', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          exchange: 'e1',
+          routingKey: 'rk1',
+        },
+        p2: {
+          exchange: 'e2',
+          routingKey: 'rk2',
+        },
+      },
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+
+        subscription.on('message', function(message, content, ackOrNack) {
+          broker.forward('p2', message, { restoreRoutingHeaders: true }, function(err, publication) {
+            assert.ifError(err);
+            publication.on('success', function() {
+              ackOrNack();
+
+              amqputils.getMessage('q2', namespace, function(err, message) {
+                assert.ifError(err);
+                assert.ok(message);
+                assert.equal(message.properties.headers.rascal.restoreRoutingHeaders, true);
+                done();
+              });
+            });
+          });
+        });
+      });
+
+      broker.publish('p1', 'test message', function(err, publication) {
+        assert.ifError(err);
       });
     });
   });

@@ -1164,7 +1164,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should override routing key when forward messages', function(done) {
+  it('should override routing key when forwarding messages', function(done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1193,7 +1193,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should maintain original fields, properties and headers when forwarded', function(done) {
+  it('should maintain original fields, properties and headers when forwarding messages', function(done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1227,6 +1227,46 @@ describe('Subscriptions', function() {
           assert.equal(message.properties.headers.foo, 'bar');
           assert.equal(message.properties.messageId, messageId);
           assert.equal(message.fields.routingKey, 'foo');
+          done();
+        });
+      });
+    });
+  });
+
+  it('should not maintain original routing headers when requested', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: publications,
+      subscriptions: subscriptions,
+    }, function(err, broker) {
+      assert.ifError(err);
+
+      var messageId;
+
+      broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }, function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(_messageId) {
+          messageId = _messageId;
+        });
+      });
+
+      broker.subscribe('s1', function(err, subscription) {
+        assert.ifError(err);
+        subscription.on('message', function(message, content, ackOrNack) {
+          assert.ok(message);
+          ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2', restoreRoutingHeaders: false });
+        });
+      });
+
+      broker.subscribe('s2', function(err, subscription) {
+        assert.ifError(err);
+        subscription.on('message', function(message, content, ackOrNack) {
+          assert.ok(message);
+          ackOrNack();
+          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.equal(message.properties.headers.foo, 'bar');
+          assert.equal(message.properties.messageId, messageId);
+          assert.equal(message.fields.routingKey, 'bar');
           done();
         });
       });

@@ -930,6 +930,7 @@ try {
   // publication didn't exist
 }
 ```
+Prior to version 10.0.0, if you used Rascal to consume a forwarded message, the subscriber would automatically restore the original routing key and exchange to the message.fields before emitting it. This was added to support the delayed retry loop advanced recovery strategy, but should not have been applied to `broker.forward`. From version 10.0.0 this behaviour has been disabled for `broker.forward` but you can turn it back on by setting `restoreRoutingHeaders` to true in the overrides. You can also disable this behaviour in the `forward` and `republish` recovery strategies by setting `restoreRoutingHeaders` to false.
 
 **Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using ```broker.foward```**
 

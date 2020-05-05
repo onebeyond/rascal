@@ -328,6 +328,7 @@ describe('Publications As Promised', function() {
                 assert.equal(message.properties.contentType, 'text/plain');
                 assert.equal(message.content.toString(), 'test message');
                 assert.ok(/\w+-\w+-\w+-\w+-\w+:q1/.test(message.properties.headers.rascal.originalQueue), format('%s failed to match expected pattern', message.properties.headers.rascal.originalQueue));
+                assert.equal(message.properties.headers.rascal.restoreRoutingHeaders, false);
                 assert.equal(message.properties.headers.rascal.originalRoutingKey, 'rk1');
                 assert.equal(message.properties.headers.rascal.originalExchange, namespace + ':e1');
                 done();

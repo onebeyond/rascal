@@ -1,5 +1,8 @@
 # Change Log
 
+## 10.0.0
+- Using rascal to consume messages published with broker.forward no longer restores original routing headers by default, unless used in the context of a recovery strategy. See the broker.forward section of the readme for more information.
+
 ## 9.4.0
 ### Added
 - vhost_initialised event
