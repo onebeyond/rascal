@@ -1013,7 +1013,7 @@ broker.subscribeAll((err, subscriptions) => {
 
 ```js
 try {
-  const subscriptions = await broker.subscribeAll() => {
+  const subscriptions = await broker.subscribeAll();
   subscriptions.forEach(subscription => {
     subscription.on('message', (message, content, ackOrNack) => {
       // Do stuff with message
