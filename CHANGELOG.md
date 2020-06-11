@@ -1,5 +1,8 @@
 # Change Log
 
+## 10.0.1
+- Set vhost max event listeners to inifinity (see https://github.com/guidesmiths/rascal/issues/99)
+
 ## 10.0.0
 - Using rascal to consume messages published with broker.forward no longer restores original routing headers by default, unless used in the context of a recovery strategy. See the broker.forward section of the readme for more information.
 
