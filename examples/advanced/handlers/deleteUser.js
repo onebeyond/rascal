@@ -13,7 +13,7 @@ module.exports = function(broker) {
             var routingKey = format('registration_service.user.deleted.%s', user.username)
             broker.publish('delete_user_succeeded', routingKey, function(err, publication) {
                 if (err) return cb(err)
-                publication.on('success', cb).on('error', console.error)
+                publication.on('success', () => cb).on('error', console.error)
             })
         })
     }
