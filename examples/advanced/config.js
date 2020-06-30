@@ -8,7 +8,7 @@ module.exports = {
         // Creates the vhost if it doesn't exist (requires the RabbitMQ management plugin to be installed)
         "assert": true,
 
-        // Define the vhost connection parameters. Specify multiple entries for cluster.
+        // Define the vhost connection parameters. Specify multiple entries for clusters.
         // Rascal will randomise the list, and cycle through the entries until it finds one that works
         "connections": [{
             "url": "amqp://does-not-exist-1b9935d9-5066-4b13-84dc-a8e2bb618154:5672/customer-vhost"
@@ -30,12 +30,12 @@ module.exports = {
         "exchanges": [
           "service",     // Shared exchange for all services within this vhost
           "delay",       // To delay failed messages before a retry
-          "retry",       // To retry failed messages a up to maximum number of times
-          "dead_letters" // When retring fails messages end up here
+          "retry",       // To retry failed messages up to maximum number of times
+          "dead_letters" // When retrying fails, messages end up here
         ],
 
         // Define queues within the registration vhost
-        // A good naming convension for queues is consumer:entity:action
+        // A good naming convention for queues is consumer:entity:action
         "queues": {
 
           // Create a queue for saving users
@@ -60,11 +60,11 @@ module.exports = {
             }
           },
 
-          // Create a delay queues to hold failed messages for a short interval before retrying
+          // Create a delay queue to hold failed messages for a short interval before retrying
           "delay:1m": {
             "options": {
               "arguments": {
-                // Configure messages to expire after 1 minute, then route to the retry exchange
+                // Configure messages to expire after 1 minute, then route them to the retry exchange
                 "x-message-ttl": 60000,
                 "x-dead-letter-exchange": "retry"
               }
@@ -176,7 +176,7 @@ module.exports = {
       }],
 
       // Republishing with immediate nack returns the message to the original queue but decorates
-      // it with error headers. The next time Rascal encounters the message it immedately nacks it
+      // it with error headers. The next time Rascal encounters the message it immediately nacks it
       // causing it to be routed to the services dead letter queue
       "dead_letter": [{
         "strategy": "republish",
