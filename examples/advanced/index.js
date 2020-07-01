@@ -60,11 +60,29 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function(err, brok
         })
     }, 1000)
 
-    process.on('SIGINT', function() {
-        broker.shutdown(function() {
-            process.exit()
+    process
+        .on('SIGINT', function() {
+            broker.shutdown(function() {
+                process.exit()
+            })
         })
-    })
+        .on("SIGTERM", () => {
+            broker.shutdown(function () {
+                process.exit()
+            })
+        })    
+        .on("unhandledRejection", (reason, p) => {
+            console.error(reason, "Unhandled Rejection at Promise", p)
+            broker.shutdown(function () {
+                process.exit(-1)
+            });
+        })
+        .on("uncaughtException", (err) => {
+            console.error(err, "Uncaught Exception thrown")
+            broker.shutdown(function () {
+                process.exit(-2)
+            });
+        });
 })
 
 function randomInt(max) {

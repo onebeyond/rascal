@@ -4,7 +4,7 @@ var format = require('util').format
 module.exports = function(broker) {
     return function(user, cb) {
 
-        // Pretend we'd really asynchronousely saved something
+        // Pretend we'd really asynchronously saved something
         setImmediate(function() {
             console.log(chalk.magenta('Saving user:'), user.username)
 
