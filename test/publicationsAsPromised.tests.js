@@ -510,7 +510,7 @@ describe('Publications As Promised', function() {
       broker.publish('p1', { message: 'test message' }).then(function(publication) {
         publication.on('success', function(messageId) {
           assert.equal(typeof publication.stats.duration, 'number');
-          assert.ok(publication.stats.duration > 0);
+          assert.ok(publication.stats.duration >= 0);
           done();
         });
       });
@@ -531,7 +531,7 @@ describe('Publications As Promised', function() {
       broker.publish('p1', 'test message').then(function(publication) {
         publication.on('success', function(messageId) {
           assert.equal(typeof publication.stats.duration, 'number');
-          assert.ok(publication.stats.duration > 0);
+          assert.ok(publication.stats.duration >= 0);
           done();
         });
       });

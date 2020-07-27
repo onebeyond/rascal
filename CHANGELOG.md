@@ -2,6 +2,7 @@
 
 ## 10.1.0
 - Added publication statistics
+- Support node 14
 
 ## 10.0.1
 - Set vhost max event listeners to inifinity (see https://github.com/guidesmiths/rascal/issues/99)

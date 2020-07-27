@@ -682,7 +682,7 @@ describe('Publications', function() {
         assert.ifError(err);
         publication.on('success', function(messageId) {
           assert.equal(typeof publication.stats.duration, 'number');
-          assert.ok(publication.stats.duration > 0);
+          assert.ok(publication.stats.duration >= 0);
           done();
         });
       });
@@ -705,7 +705,7 @@ describe('Publications', function() {
         assert.ifError(err);
         publication.on('success', function(messageId) {
           assert.equal(typeof publication.stats.duration, 'number');
-          assert.ok(publication.stats.duration > 0);
+          assert.ok(publication.stats.duration >= 0);
           done();
         });
       });
