@@ -668,6 +668,50 @@ describe('Publications', function() {
     });
   });
 
+  it('should capture publication stats for normal channels', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          exchange: 'e1',
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', { message: 'test message' }, function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          assert.equal(typeof publication.stats.duration, 'number');
+          assert.ok(publication.stats.duration > 0);
+          done();
+        });
+      });
+    });
+  });
+
+
+  it('should capture publication stats for confirm channels', function(done) {
+    createBroker({
+      vhosts: vhosts,
+      publications: {
+        p1: {
+          exchange: 'e1',
+          confirm: true,
+        },
+      },
+    }, function(err, broker) {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', function(err, publication) {
+        assert.ifError(err);
+        publication.on('success', function(messageId) {
+          assert.equal(typeof publication.stats.duration, 'number');
+          assert.ok(publication.stats.duration > 0);
+          done();
+        });
+      });
+    });
+  });
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, function(err, _broker) {
