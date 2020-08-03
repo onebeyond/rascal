@@ -1,5 +1,8 @@
 # Change Log
 
+## 10.2.0
+- Add broker.getConnections()
+
 ## 10.1.0
 - Added publication statistics
 - Support node 14

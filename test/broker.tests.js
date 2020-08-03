@@ -386,6 +386,18 @@ describe('Broker', function() {
     });
   });
 
+  it('should get vhost connections', function(done) {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    createBroker(config, function(err, broker) {
+      assert.ifError(err);
+      var connections = broker.getConnections();
+      assert.equal(connections.length, 1);
+      assert.equal(connections[0].vhost, '/');
+      assert.equal(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);
+      done();
+    });
+  });
+
   function createBroker(config, next) {
     Broker.create(config, function(err, _broker) {
       broker = _broker;
