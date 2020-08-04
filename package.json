@@ -19,7 +19,7 @@
     "xregexp": "^4.3.0"
   },
   "devDependencies": {
-    "amqplib": "^0.5.5",
+    "amqplib": "^0.6.0",
     "chalk": "^4.0.0",
     "chance": "^1.1.4",
     "eslint": "^6.8.0",
@@ -31,7 +31,7 @@
     "random-readable": "^1.0.1"
   },
   "peerDependencies": {
-    "amqplib": "^0.5.5"
+    "amqplib": ">=0.5.5"
   },
   "greenkeeper": {
     "ignore": [

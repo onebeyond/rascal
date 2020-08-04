@@ -1,5 +1,9 @@
 # Change Log
 
+## 10.2.1
+### Updated
+- Support amqplib 0.6.0
+
 ## 10.2.0
 ### Added
 - Added broker.getConnections()
