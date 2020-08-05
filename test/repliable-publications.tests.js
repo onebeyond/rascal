@@ -1,125 +1,200 @@
 var assert = require('assert');
 var _ = require('lodash');
-// var async = require('async');
 var amqplib = require('amqplib/callback_api');
 var testConfig = require('../lib/config/tests');
-// var format = require('util').format;
 var uuid = require('uuid').v4;
 var BrokerAsPromised = require('..').BrokerAsPromised;
-var AmqpUtils = require('./utils/amqputils');
 
 describe.only('Repliable publications', function() {
   this.timeout(2000);
   this.slow(1000);
 
   var broker;
-  var amqputils;
   var namespace;
   var vhosts;
 
   beforeEach(function(done) {
-
     namespace = uuid();
 
-    vhosts = {
-      '/': {
-        namespace: namespace,
-        exchanges: {
-          e1: {
-            assert: true,
-          },
-          e2: {
-            assert: true,
-          },
-          xx: {
-            assert: true,
-          },
-        },
-        queues: {
-          q1: {
-            assert: true,
-          },
-          q2: {
-            assert: true,
-          },
-          q3: {
-            assert: true,
-          },
-        },
-        bindings: {
-          b1: {
-            source: 'e1',
-            destination: 'q1',
-          },
-          b2: {
-            source: 'e2',
-            destination: 'q2',
-          },
-        },
-      },
-    };
+    vhosts = getVhosts(namespace);
 
-    amqplib.connect(function(err, connection) {
-      if (err) return done(err);
-      amqputils = AmqpUtils.init(connection);
-      done();
-    });
+    amqplib.connect(done);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     if (broker) return broker.nuke();
   });
 
-  it.only('should enable replying to a repliable message', function(done) {
-    createBroker({
-      vhosts: vhosts,
-      publications: {
-        p1: {
-          queue: 'q1',
-          repliable: true,
-        },
-      },
-      subscriptions: {
-        s1: {
-          queue: 'q1',
-        },
-      },
-    }).then(function(broker) {
-      broker.subscribe('s1')
-        .then((subscription) => {
-          subscription.on('message', (message, content, ackOrNack) => {
-            return Promise.resolve()
-              .then(() => ackOrNack())
-              .then(() => {
-                const { replyTo, messageId } = message.properties;
-                return broker.publish(
-                  '/',
-                  { outcome: 'success' },
-                  { routingKey: replyTo, options: { correlationId: messageId } }
-                );
-              });
-          });
+  it('should enable replying to a repliable message', async () => {
+    broker = await createBroker();
 
-          broker.publish('p1', 'repliable message')
-            .then((publication) => {
-              publication.replies.on('message', (msg, content) => {
-                assert.equal(content.outcome, 'success');
-                return done();
-              });
-            })
-            .catch(done);
-        })
-        .catch(done);
+    const subscription = await broker.subscribe('s1');
+
+    subscription.on('message', async (message, content, ackOrNack) => {
+      await ackOrNack();
+      const { replyTo, messageId } = message.properties;
+      return broker.publish(
+        '/',
+        { outcome: 'success' },
+        { routingKey: replyTo, options: { correlationId: messageId } },
+      );
+    });
+
+    const publication = await broker.publish('repliablePublication', 'ahoy hoy');
+
+    await new Promise((resolve) => {
+      publication.replies.on('message', (msg, content) => {
+        assert.equal(content.outcome, 'success');
+        return resolve();
+      });
     });
   });
 
-  it('should not enable replying to a non-repliable message');
+  it('should handle multiple replies', async () => {
+    broker = await createBroker();
 
-  function createBroker(config, next) {
-    config = _.defaultsDeep(config, testConfig);
+    const subscription = await broker.subscribe('s1');
+
+    subscription.on('message', async (message, content, ackOrNack) => {
+      const { replyTo, messageId } = message.properties;
+      const publishReply = () => broker.publish('/', { outcome: 'success' }, { routingKey: replyTo, options: { correlationId: messageId } });
+      await publishReply();
+      await publishReply();
+      await publishReply();
+    });
+
+    const repliablePublication = await broker.publish('repliablePublication', 'ahoy hoy');
+
+    await new Promise((resolve) => {
+      let replies = 0;
+      repliablePublication.replies.on('message', () => {
+        replies++;
+        if (replies === 3) resolve();
+      });
+    });
+  });
+
+  it('should enable cancelling replies', async () => {
+    broker = await createBroker();
+
+    const subscription = await broker.subscribe('s1');
+
+    const [{ replyTo, correlationId }, publication] = await Promise.all([
+      new Promise((resolve) => {
+        subscription.on('message', (message) => {
+          const { replyTo, messageId } = message.properties;
+          return resolve({ replyTo, correlationId: messageId });
+        });
+      }),
+      broker.publish('repliablePublication', 'ahoy hoy'),
+    ]);
+
+    let counter = 0;
+    publication.replies.on('message', () => { counter++; });
+    publication.replies.cancel();
+
+    await broker.publish('/', { outcome: 'success' }, { routingKey: replyTo, options: { correlationId } });
+    await new Promise(resolve => setTimeout(resolve, 300));
+    assert.equal(counter, 0);
+  });
+
+  it('should send replies to the right place', async () => {
+    broker = await createBroker();
+
+    const subscription = await broker.subscribe('s1');
+    subscription.on('message', async (message, content) => {
+      const { replyTo, messageId } = message.properties;
+      await new Promise(resolve => setTimeout(resolve, content.delay));
+      return broker.publish(
+        '/',
+        content.letter,
+        { routingKey: replyTo, options: { correlationId: messageId } },
+      );
+    });
+
+    const originalMessages = [
+      { letter: 'a', delay: 50 },
+      { letter: 'b', delay: 0 },
+      { letter: 'c', delay: 100 },
+    ];
+
+    const publications = await Promise.all(originalMessages.map(m => broker.publish('repliablePublication', m)));
+    const responses = await Promise.all(publications.map(p => new Promise(resolve => p.replies.on('message', (_, content) => resolve(content)))));
+    assert.deepEqual(responses, ['a', 'b', 'c']);
+  });
+
+  it('should not place a replies property on non-repliable publications', async () => {
+    broker = await createBroker();
+
+    const publication = await broker.publish('nonRepliablePublication', 'ahoy hoy');
+    assert.equal(publication.replies, undefined);
+  });
+
+  it('should not include a replyTo property on messages published to non-repliable publications', async () => {
+    broker = await createBroker();
+
+    const subscription = await broker.subscribe('s1');
+
+    await broker.publish('nonRepliablePublication', 'ahoy hoy');
+
+    const replyTo = await new Promise((resolve) => {
+      subscription.on('message', (message) => {
+        return resolve(message.properties.replyTo);
+      });
+    });
+
+    assert.equal(replyTo, undefined);
+  });
+
+  function createBroker() {
+    const config = _.defaultsDeep(getStandardConfig(vhosts), testConfig);
     return BrokerAsPromised.create(config).then(function(_broker) {
       broker = _broker;
       return broker;
     });
   }
 });
+
+function getVhosts(namespace) {
+  return {
+    '/': {
+      namespace: namespace,
+      exchanges: {
+        e1: {
+          assert: true,
+        },
+      },
+      queues: {
+        q1: {
+          assert: true,
+        },
+      },
+      bindings: {
+        b1: {
+          source: 'e1',
+          destination: 'q1',
+        },
+      },
+    },
+  };
+}
+
+function getStandardConfig(vhosts) {
+  return {
+    vhosts: vhosts,
+    publications: {
+      repliablePublication: {
+        queue: 'q1',
+        repliable: true,
+      },
+      nonRepliablePublication: {
+        queue: 'q1',
+      },
+    },
+    subscriptions: {
+      s1: {
+        queue: 'q1',
+      },
+    },
+  };
+}

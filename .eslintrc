@@ -4,5 +4,8 @@
     "comma-dangle": ["error", "always-multiline"],
     "indent": ["error", 2, { "ignoredNodes": ["ConditionalExpression"] }],
     "semi": ["error", "always"]
+  },
+  "parserOptions": {
+    "ecmaVersion": 2017
   }
 }
