@@ -986,7 +986,7 @@ async function handleRequest(req, res, next) {
 }
 ```
 **Sample server code**
-To reply directly, we publish to the default exchange of `vhost` (`${vhost}/`) using message's `replyTo` property as the `routingKey` and the message's `messageId` as `options.correlationId`.
+To reply directly, we publish to the default exchange of `vhost` (`${vhost}/`) using the message's `replyTo` property as the `routingKey` and the message's `messageId` as `options.correlationId`.
 
 ```javascript
 subscription.on('message', async (message, content, ackOrNack) => {
