@@ -944,6 +944,65 @@ Prior to version 10.0.0, if you used Rascal to consume a forwarded message, the 
 
 **Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using ```broker.foward```**
 
+#### RPC / Direct reply-to
+
+Rascal supports remote procedure calls (RPC) using RabbitMQ's [direct reply-to](https://www.rabbitmq.com/direct-reply-to.html) under the hood.
+
+**Sample configuration**
+A publication must be defined with `directReplies: true` for this functionality to be enabled.
+```json
+{
+  "publications": {
+    "my-publication": {
+      "queue": "my-queue",
+      "directReplies": true
+    }
+  }
+}
+```
+**Sample client code (express handler)**
+The `replies` on-message handler does not use `ackOrNack` because direct reply messages are consumed in no-ack mode in the underlying implementation per the RabbitMQ documentation.
+
+To support handling multiple replies to a single published message, the `replies` handler stays active until it is removed by calling `cancel`. **If `replies` handlers are not explicitly cancelled, this will cause a memory leak.**
+
+```javascript
+async function handleRequest(req, res, next) {
+  const { params } = req;
+  const publication = await broker.publish('my-publication', params);
+  try {
+    await new Promise((resolve, reject) => {
+      publication.replies.on('message', (message, content) => {
+        if (content.outcome === 'success') return resolve();
+        return reject(new Error(content.errorMessage));
+      })
+    });
+    return res.status(200);
+  } catch (error) {
+    next(error);
+  } finally {
+    publication.replies.cancel();
+  }
+}
+```
+**Sample server code**
+To reply directly, we publish to the `vhost` using message's `replyTo` property as the `routingKey` and the message's `messageId` as `options.correlationId`.
+```javascript
+subscription.on('message', async (message, content, ackOrNack) => {
+  const { userId } = content;
+  const { replyTo, messageId } = message.properties;
+  const result = await lookup(userId);
+  const response = result
+    ? { outcome: 'success' }
+    : { outcome: 'failure', errorMessage: 'user not found' };
+
+  return broker.publish(
+    vhost,
+    response,
+    { routingKey: replyTo, options: { correlationId: messageId } },
+  );
+});
+```
+
 ### Subscriptions
 The real fun begins with subscriptions
 ```json
