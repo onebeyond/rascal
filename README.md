@@ -950,6 +950,7 @@ Rascal supports remote procedure calls (RPC) using RabbitMQ's [direct reply-to](
 
 **Sample configuration**
 A publication must be defined with `directReplies: true` for this functionality to be enabled.
+
 ```json
 {
   "publications": {
@@ -986,6 +987,7 @@ async function handleRequest(req, res, next) {
 ```
 **Sample server code**
 To reply directly, we publish to the `vhost` using message's `replyTo` property as the `routingKey` and the message's `messageId` as `options.correlationId`.
+
 ```javascript
 subscription.on('message', async (message, content, ackOrNack) => {
   const { userId } = content;
