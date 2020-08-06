@@ -5,7 +5,7 @@ var testConfig = require('../lib/config/tests');
 var uuid = require('uuid').v4;
 var BrokerAsPromised = require('..').BrokerAsPromised;
 
-describe.only('Publications -- directReplies', function() {
+describe('Publications -- directReplies', function() {
   this.timeout(2000);
   this.slow(1000);
 
