@@ -5,7 +5,7 @@ var testConfig = require('../lib/config/tests');
 var uuid = require('uuid').v4;
 var BrokerAsPromised = require('..').BrokerAsPromised;
 
-describe.only('Repliable publications', function() {
+describe.only('Publications -- directReplies', function() {
   this.timeout(2000);
   this.slow(1000);
 
@@ -25,7 +25,7 @@ describe.only('Repliable publications', function() {
     if (broker) return broker.nuke();
   });
 
-  it('should enable replying to a repliable message', async () => {
+  it('should enable replying to a message whose publication has directReplies enabled', async () => {
     broker = await createBroker();
 
     const subscription = await broker.subscribe('s1');
@@ -40,7 +40,7 @@ describe.only('Repliable publications', function() {
       );
     });
 
-    const publication = await broker.publish('repliablePublication', 'ahoy hoy');
+    const publication = await broker.publish('publicationWithDirectReplies', 'ahoy hoy');
 
     await new Promise((resolve) => {
       publication.replies.on('message', (msg, content) => {
@@ -63,18 +63,18 @@ describe.only('Repliable publications', function() {
       await publishReply();
     });
 
-    const repliablePublication = await broker.publish('repliablePublication', 'ahoy hoy');
+    const publicationWithDirectReplies = await broker.publish('publicationWithDirectReplies', 'ahoy hoy');
 
     await new Promise((resolve) => {
       let replies = 0;
-      repliablePublication.replies.on('message', () => {
+      publicationWithDirectReplies.replies.on('message', () => {
         replies++;
         if (replies === 3) resolve();
       });
     });
   });
 
-  it('should enable cancelling replies', async () => {
+  it('should support cancelling/removing a reply handler', async () => {
     broker = await createBroker();
 
     const subscription = await broker.subscribe('s1');
@@ -86,7 +86,7 @@ describe.only('Repliable publications', function() {
           return resolve({ replyTo, correlationId: messageId });
         });
       }),
-      broker.publish('repliablePublication', 'ahoy hoy'),
+      broker.publish('publicationWithDirectReplies', 'ahoy hoy'),
     ]);
 
     let counter = 0;
@@ -118,24 +118,24 @@ describe.only('Repliable publications', function() {
       { letter: 'c', delay: 100 },
     ];
 
-    const publications = await Promise.all(originalMessages.map(m => broker.publish('repliablePublication', m)));
+    const publications = await Promise.all(originalMessages.map(m => broker.publish('publicationWithDirectReplies', m)));
     const responses = await Promise.all(publications.map(p => new Promise(resolve => p.replies.on('message', (_, content) => resolve(content)))));
     assert.deepEqual(responses, ['a', 'b', 'c']);
   });
 
-  it('should not place a replies property on non-repliable publications', async () => {
+  it('should not place a replies property on publications without directReplies enabled', async () => {
     broker = await createBroker();
 
-    const publication = await broker.publish('nonRepliablePublication', 'ahoy hoy');
+    const publication = await broker.publish('publicationWithoutDirectReplies', 'ahoy hoy');
     assert.equal(publication.replies, undefined);
   });
 
-  it('should not include a replyTo property on messages published to non-repliable publications', async () => {
+  it('should not include a replyTo property on messages published to publications without directReplies enabled', async () => {
     broker = await createBroker();
 
     const subscription = await broker.subscribe('s1');
 
-    await broker.publish('nonRepliablePublication', 'ahoy hoy');
+    await broker.publish('publicationWithoutDirectReplies', 'ahoy hoy');
 
     const replyTo = await new Promise((resolve) => {
       subscription.on('message', (message) => {
@@ -183,11 +183,11 @@ function getStandardConfig(vhosts) {
   return {
     vhosts: vhosts,
     publications: {
-      repliablePublication: {
+      publicationWithDirectReplies: {
         queue: 'q1',
-        repliable: true,
+        directReplies: true,
       },
-      nonRepliablePublication: {
+      publicationWithoutDirectReplies: {
         queue: 'q1',
       },
     },
