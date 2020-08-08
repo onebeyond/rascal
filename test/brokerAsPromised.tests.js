@@ -218,6 +218,17 @@ describe('Broker As Promised', function() {
     });
   });
 
+  it('should get vhost connections', function() {
+    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    return createBroker(config).then(function(broker) {
+      var connections = broker.getConnections();
+      assert.equal(connections.length, 1);
+      assert.equal(connections[0].vhost, '/');
+      assert.equal(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);
+    });
+  });
+
+
   function createBroker(config) {
     return BrokerAsPromised.create(config).then(function(_broker) {
       broker = _broker;

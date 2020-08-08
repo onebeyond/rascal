@@ -380,6 +380,15 @@ If you specify an array of connections instead of a single connection object Ras
 ```
 The default connection strategy is `random`, but if you prefer an active/passive configuration you should use `fixed`.
 
+#### broker.getConnections()
+You can see the list of Rascal managed connections by calling `broker.getConnections()`. This will return an array similar to the following...
+```json
+[
+  { "vhost": "/", "connectionUrl": "amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100" }
+  { "vhost": "other", "connectionUrl": "amqp://guest:***@localhost:5672/other?heartbeat=50&connection_timeout=10000&channelMax=100" }
+]
+```
+
 #### Management connection configuration
 **Please note: this functionality is mainly useful in test environments, since it does not create users or grant them permissions to vhosts**
 
@@ -838,6 +847,7 @@ When you publish a message using a confirm channel, amqplib will wait for an ack
   }
 }
 ```
+If you start experiencing publication timeouts you may find it useful to monitor the publication statistics via the `publication.stats` object, which includes the duration of Rascal's low level publish operations.
 
 #### Aborting
 Rascal uses a channel pool to publish messages. Access to the channel pool is synchronised via an in memory queue, which will be paused if the connection to the broker is temporarily lost. Consequently instead of erroring, publishes will be held until the connection is re-established. If you would rather abort under these circumstances, you can listen for the publication 'paused' event, and call `publication.abort()`. When the connection is re-established any aborted messages will be dropped instead of published.
