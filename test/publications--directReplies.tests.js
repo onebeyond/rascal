@@ -146,6 +146,26 @@ describe('Publications -- directReplies', function() {
     assert.equal(replyTo, undefined);
   });
 
+  it('should enable replying via a broker method', async () => {
+    broker = await createBroker();
+
+    const subscription = await broker.subscribe('s1');
+
+    subscription.on('message', async (message, content, ackOrNack) => {
+      await ackOrNack();
+      return broker.reply('/', message, { outcome: 'success' });
+    });
+
+    const publication = await broker.publish('publicationWithDirectReplies', 'ahoy hoy');
+
+    await new Promise((resolve) => {
+      publication.replies.on('message', (msg, content) => {
+        assert.equal(content.outcome, 'success');
+        return resolve();
+      });
+    });
+  });
+
   function createBroker() {
     const config = _.defaultsDeep(getStandardConfig(vhosts), testConfig);
     return BrokerAsPromised.create(config).then(function(_broker) {
