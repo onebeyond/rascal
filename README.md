@@ -948,6 +948,8 @@ Prior to version 10.0.0, if you used Rascal to consume a forwarded message, the 
 
 Rascal supports remote procedure calls (RPC) using RabbitMQ's [direct reply-to](https://www.rabbitmq.com/direct-reply-to.html) under the hood.
 
+We do not yet support replies with encryption.
+
 **Sample configuration**
 A publication must be defined with `directReplies: true` for this functionality to be enabled.
 
