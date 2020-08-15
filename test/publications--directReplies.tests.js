@@ -32,12 +32,7 @@ describe('Publications -- directReplies', function() {
 
     subscription.on('message', async (message, content, ackOrNack) => {
       await ackOrNack();
-      const { replyTo, messageId } = message.properties;
-      return broker.publish(
-        '/',
-        { outcome: 'success' },
-        { routingKey: replyTo, options: { correlationId: messageId } },
-      );
+      return broker.reply('/', message, { outcome: 'success' });
     });
 
     const publication = await broker.publish('publicationWithDirectReplies', 'ahoy hoy');
@@ -56,8 +51,7 @@ describe('Publications -- directReplies', function() {
     const subscription = await broker.subscribe('s1');
 
     subscription.on('message', async (message, content, ackOrNack) => {
-      const { replyTo, messageId } = message.properties;
-      const publishReply = () => broker.publish('/', { outcome: 'success' }, { routingKey: replyTo, options: { correlationId: messageId } });
+      const publishReply = () => broker.reply('/', message, { outcome: 'success' });
       await publishReply();
       await publishReply();
       await publishReply();
@@ -79,13 +73,8 @@ describe('Publications -- directReplies', function() {
 
     const subscription = await broker.subscribe('s1');
 
-    const [{ replyTo, correlationId }, publication] = await Promise.all([
-      new Promise((resolve) => {
-        subscription.on('message', (message) => {
-          const { replyTo, messageId } = message.properties;
-          return resolve({ replyTo, correlationId: messageId });
-        });
-      }),
+    const [message, publication] = await Promise.all([
+      new Promise((resolve) => subscription.on('message', resolve)),
       broker.publish('publicationWithDirectReplies', 'ahoy hoy'),
     ]);
 
@@ -93,7 +82,8 @@ describe('Publications -- directReplies', function() {
     publication.replies.on('message', () => { counter++; });
     publication.replies.cancel();
 
-    await broker.publish('/', { outcome: 'success' }, { routingKey: replyTo, options: { correlationId } });
+    await broker.reply('/', message, { outcome: 'success' });
+
     await new Promise(resolve => setTimeout(resolve, 300));
     assert.equal(counter, 0);
   });
@@ -103,13 +93,8 @@ describe('Publications -- directReplies', function() {
 
     const subscription = await broker.subscribe('s1');
     subscription.on('message', async (message, content) => {
-      const { replyTo, messageId } = message.properties;
       await new Promise(resolve => setTimeout(resolve, content.delay));
-      return broker.publish(
-        '/',
-        content.letter,
-        { routingKey: replyTo, options: { correlationId: messageId } },
-      );
+      return broker.reply('/', message, content.letter);
     });
 
     const originalMessages = [
@@ -137,33 +122,10 @@ describe('Publications -- directReplies', function() {
 
     await broker.publish('publicationWithoutDirectReplies', 'ahoy hoy');
 
-    const replyTo = await new Promise((resolve) => {
-      subscription.on('message', (message) => {
-        return resolve(message.properties.replyTo);
-      });
-    });
+    const replyTo = await new Promise((resolve) =>
+      subscription.on('message', (message) => resolve(message.properties.replyTo)));
 
     assert.equal(replyTo, undefined);
-  });
-
-  it('should enable replying via a broker method', async () => {
-    broker = await createBroker();
-
-    const subscription = await broker.subscribe('s1');
-
-    subscription.on('message', async (message, content, ackOrNack) => {
-      await ackOrNack();
-      return broker.reply('/', message, { outcome: 'success' });
-    });
-
-    const publication = await broker.publish('publicationWithDirectReplies', 'ahoy hoy');
-
-    await new Promise((resolve) => {
-      publication.replies.on('message', (msg, content) => {
-        assert.equal(content.outcome, 'success');
-        return resolve();
-      });
-    });
   });
 
   function createBroker() {
