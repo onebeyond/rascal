@@ -1,5 +1,9 @@
 # Change Log
 
+## 10.2.2
+### Fixed
+- Fixed issue [#121](https://github.com/guidesmiths/rascal/issues/121), which caused rascals connection index to permanently increment rather than cycling back to 0. Consequently if all nodes in a cluster failed, Rascal could crash the application.
+
 ## 10.2.1
 ### Updated
 - Support amqplib 0.6.0
