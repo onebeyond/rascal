@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+### Changed
+- Improved readme as per issue [#111](https://github.com/guidesmiths/rascal/issues/111)
+
 ## 10.2.4
 ### Fixed
 - Fixed issue [#122](https://github.com/guidesmiths/rascal/issues/122), where error listeners were registered once, so repeated errors could bubble up and crash node

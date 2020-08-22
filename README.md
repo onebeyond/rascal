@@ -760,7 +760,9 @@ If you prefer to send messages to a queue
 }
 ```
 
-Rascal supports text, buffers and anything it can JSON.stringify. The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
+Rascal supports text, buffers and anything it can JSON.stringify. Rascal will automatically set the content type to `text/plain` for strings, `application/json` for objects and `application/octet-stream` when [encrypting messages](#encrypting-messages). Alternatively you can explicitly set the content type through the `contentType` option.
+
+The ```broker.publish``` method is overloaded to accept a runtime routing key or options.
 
 ```js
 broker.publish("p1", "some message", callback)
