@@ -5,6 +5,8 @@ const random = require('random-readable');
 Rascal.Broker.create(Rascal.withDefaultConfig(config), (err, broker) => {
   if (err) throw err
 
+  broker.on('error', console.error);
+
   const stream = random.createRandomStream()
     .on('error', console.error)
     .on('data', data => {

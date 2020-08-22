@@ -2,9 +2,11 @@ module.exports = {
   vhosts: {
     "/": {
       publicationChannelPools: {
-        regularPool: {
+        confirmPool: {
           max: 10,
-          min: 5,
+          min: 10,
+          evictionRunIntervalMillis: 1000,
+          idleTimeoutMillis: 5000,
           autostart: true
         }
       },

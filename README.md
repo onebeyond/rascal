@@ -489,6 +489,7 @@ Rascal useds pools channels it uses for publishing messages. It creates two pool
   }
 }
 ```
+Unfortunately there is a [bug](https://github.com/coopernurse/node-pool/issues/197#issuecomment-477862861) in generic-pool's implementation, which means that if the pool fails to create a channel, it can enter a tight loop, thrashing your CPU and potentially crashing your node process due to a memory leak. While we assess the long term use of pooling, we have put in a workaround. Errors will only be rejected after a configurable delay. This defaults to one second but can be overriden through the `rejectionDelayMillis` pool attribute. Special thanks to @willthrom for helping diagnose and fix this issue.
 
 #### Flow Control
 [amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the channel is saturated and true if it is not. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
