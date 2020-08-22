@@ -1,5 +1,9 @@
 # Change Log
 
+## 10.2.4
+### Fixed
+- Fixed issue [#122](https://github.com/guidesmiths/rascal/issues/122), where error listeners were registered once, so repeated errors could bubble up and crash node
+
 ## 10.2.3
 ### Fixed
 - Fixed second part of issue [#121](https://github.com/guidesmiths/rascal/issues/121), where the generic-pool could cause tight loops and memory leaks
