@@ -9,7 +9,7 @@
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
     "generic-pool": "^3.7.1",
-    "lodash": "^4.17.19",
+    "lodash": "^4.17.20",
     "lru-cache": "^5.1.1",
     "safe-json-parse": "^4.0.0",
     "snyk": "^1.316.2",

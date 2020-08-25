@@ -1,8 +1,14 @@
 # Change Log
 
+## Unreleased
+### Updated
+- Dependencies
+
 ## 10.2.5
-### Changed
+### Updated
 - Improved readme as per issue [#111](https://github.com/guidesmiths/rascal/issues/111)
+
+### Fixed
 - Fixed issue [#123](https://github.com/guidesmiths/rascal/issues/123), where a race condition was causing channels to be closed twice. Thanks @cinnq346.
 
 ## 10.2.4
