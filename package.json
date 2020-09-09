@@ -12,7 +12,6 @@
     "lodash": "^4.17.20",
     "lru-cache": "^5.1.1",
     "safe-json-parse": "^4.0.0",
-    "snyk": "^1.316.2",
     "stashback": "^1.1.2",
     "superagent": "^5.2.2",
     "uuid": "^8.0.0",
@@ -33,11 +32,6 @@
   "peerDependencies": {
     "amqplib": ">=0.5.5"
   },
-  "greenkeeper": {
-    "ignore": [
-      "generic-pool"
-    ]
-  },
   "engines": {
     "node": ">=6.0.0"
   },
@@ -46,9 +40,7 @@
     "lint": "eslint .",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
     "coverage": "nyc report --reporter lcov --reporter html",
-    "codeclimate": "(test -e .codeclimate && npm run coverage && source .codeclimate && codeclimate-test-reporter < coverage/lcov.info) || echo skipping codeclimate",
-    "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "codeclimate": "(test -e .codeclimate && npm run coverage && source .codeclimate && codeclimate-test-reporter < coverage/lcov.info) || echo skipping codeclimate"
   },
   "keywords": [
     "amqplib",
@@ -81,6 +73,5 @@
     "slow": 2000,
     "timeout": 5000,
     "exit": true
-  },
-  "snyk": true
+  }
 }

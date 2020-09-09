@@ -1,8 +1,9 @@
 # Change Log
 
-## Unreleased
+## 10.2.6
 ### Updated
 - Dependencies
+- Removing Synk
 
 ## 10.2.5
 ### Updated
