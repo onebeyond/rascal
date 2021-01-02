@@ -36,11 +36,10 @@
     "node": ">=10.0.0"
   },
   "scripts": {
-    "test": "nyc --reporter text-summary node test",
+    "test": "node test",
     "lint": "eslint .",
-    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
-    "coverage": "nyc report --reporter lcov --reporter html",
-    "codeclimate": "(test -e .codeclimate && npm run coverage && source .codeclimate && codeclimate-test-reporter < coverage/lcov.info) || echo skipping codeclimate"
+    "coverage": "nyc --report html --reporter lcov --reporter text-summary node test",
+    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
   },
   "keywords": [
     "amqplib",
