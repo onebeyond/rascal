@@ -2,6 +2,7 @@
 
 ## Unreleased
 - Moved from travis to github actions
+- Fix broker waiting indefinitely when shutdown is called after losing a connection. See [#126](https://github.com/guidesmiths/rascal/issues/126)
 
 ## 12.0.0
 - Removed node 8 support
