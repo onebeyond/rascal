@@ -3,7 +3,7 @@ Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
 [![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
-[![Build Status](https://img.shields.io/travis/guidesmiths/rascal/master.svg)](https://travis-ci.org/guidesmiths/rascal)
+[![Node.js CI](https://github.com/acuminous/rascal/workflows/Node.js%20CI/badge.svg)](https://github.com/acuminous/rascal/actions?query=workflow%3A%22Node.js+CI%22)
 [![Code Climate](https://codeclimate.com/github/guidesmiths/rascal/badges/gpa.svg)](https://codeclimate.com/github/guidesmiths/rascal)
 [![Test Coverage](https://codeclimate.com/github/guidesmiths/rascal/badges/coverage.svg)](https://codeclimate.com/github/guidesmiths/rascal/coverage)
 [![Code Style](https://img.shields.io/badge/code%20style-imperative-brightgreen.svg)](https://github.com/guidesmiths/eslint-config-imperative)
