@@ -1,5 +1,8 @@
 # Change Log
 
+## 12.0.0
+- Removed node 8 support
+
 ## 11.0.1
 - Replaced mocha with zunit
 
