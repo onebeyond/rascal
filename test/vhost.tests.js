@@ -24,8 +24,10 @@ describe('Vhost', function() {
   });
 
   afterEach(function(done) {
-    if (!broker) return done();
-    broker.nuke(done);
+    amqputils.disconnect(function() {
+      if (broker) return broker.nuke(done);
+      done();
+    });
   });
 
   it('should timeout connections', function(done) {

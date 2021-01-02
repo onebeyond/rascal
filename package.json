@@ -33,7 +33,7 @@
     "amqplib": ">=0.5.5"
   },
   "engines": {
-    "node": ">=6.0.0"
+    "node": ">=8.0.0"
   },
   "scripts": {
     "test": "nyc --reporter text-summary mocha ./test",
@@ -71,7 +71,6 @@
     "check-leaks": true,
     "recursive": true,
     "slow": 2000,
-    "timeout": 5000,
-    "exit": true
+    "timeout": 5000
   }
 }

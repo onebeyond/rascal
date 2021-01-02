@@ -7,6 +7,10 @@ module.exports = {
 
 function init(connection) {
 
+  function disconnect(next) {
+    connection.close(next);
+  }
+
   function checkExchange(present, name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
@@ -89,6 +93,7 @@ function init(connection) {
   }
 
   return {
+    disconnect: disconnect,
     checkExchange: _.curry(checkExchange),
     createQueue: createQueue,
     checkQueue: _.curry(checkQueue),

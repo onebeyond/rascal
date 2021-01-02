@@ -110,8 +110,11 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  afterEach(function() {
-    if (broker) return broker.nuke();
+  afterEach(function(done) {
+    amqputils.disconnect(function() {
+      if (broker) return broker.nuke().catch(done).then(done);
+      done();
+    });
   });
 
   it('should report unknown subscriptions', function(done) {
@@ -1729,9 +1732,13 @@ describe('Subscriptions As Promised', function() {
 
   function createBroker(config) {
     config = _.defaultsDeep(config, testConfig, { defaults: { subscriptions: { promisifyAckOrNack: true } } });
-    return BrokerAsPromised.create(config).then(function(_broker) {
-      broker = _broker;
-      return broker;
-    });
+    return BrokerAsPromised.create(config)
+      .catch(function(err) {
+        if (err.broker) broker = err[err.broker];
+        throw err;
+      }).then(function(_broker) {
+        broker = _broker;
+        return broker;
+      });
   }
 });

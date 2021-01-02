@@ -180,6 +180,7 @@ describe('Broker As Promised', function() {
     return createBroker(config).then(function(broker) {
       return broker.connect('/').then(function(connection) {
         assert.ok(connection._rascal_id);
+        return connection.close();
       });
     });
   });
@@ -228,11 +229,14 @@ describe('Broker As Promised', function() {
     });
   });
 
-
   function createBroker(config) {
-    return BrokerAsPromised.create(config).then(function(_broker) {
-      broker = _broker;
-      return broker;
-    });
+    return BrokerAsPromised.create(config)
+      .catch(function(err) {
+        if (err.broker) broker = err[err.broker];
+        throw err;
+      }).then(function(_broker) {
+        broker = _broker;
+        return broker;
+      });
   }
 });

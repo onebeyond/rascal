@@ -91,8 +91,10 @@ describe('Broker', function() {
   });
 
   afterEach(function(done) {
-    if (broker) return broker.nuke(done);
-    done();
+    amqputils.disconnect(function() {
+      if (broker) return broker.nuke(done);
+      done();
+    });
   });
 
   it('should assert vhosts', function(done) {
@@ -279,7 +281,7 @@ describe('Broker', function() {
       broker.connect('/', function(err, connection) {
         assert.ifError(err);
         assert.ok(connection._rascal_id);
-        done();
+        connection.close(done);
       });
     });
   });

@@ -68,8 +68,10 @@ describe('Publications', function() {
   });
 
   afterEach(function(done) {
-    if (broker) return broker.nuke(done);
-    done();
+    amqputils.disconnect(function() {
+      if (broker) return broker.nuke(done);
+      done();
+    });
   });
 
   it('should report unknown publications', function(done) {
