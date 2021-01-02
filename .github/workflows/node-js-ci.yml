@@ -27,6 +27,12 @@ jobs:
   code-climate:
     needs: build
     runs-on: ubuntu-latest
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management-alpine
+        ports:
+        - 5672:5672
+        - 15672:15672
     steps:
     - uses: actions/checkout@v2
     - uses: actions/setup-node@v2
