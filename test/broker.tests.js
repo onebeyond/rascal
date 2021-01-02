@@ -10,9 +10,6 @@ var random = require('random-readable');
 
 describe('Broker', function() {
 
-  this.timeout(6000);
-  this.slow(1000);
-
   var broker;
   var amqputils;
   var namespace;
@@ -20,7 +17,7 @@ describe('Broker', function() {
   var publications;
   var subscriptions;
 
-  beforeEach(function(done) {
+  beforeEach(function(test, done) {
 
     namespace = uuid();
 
@@ -90,14 +87,14 @@ describe('Broker', function() {
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function(test, done) {
     amqputils.disconnect(function() {
       if (broker) return broker.nuke(done);
       done();
     });
   });
 
-  it('should assert vhosts', function(done) {
+  it('should assert vhosts', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -109,7 +106,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should fail to assert vhost when unable to connect to management plugin', function(done) {
+  it('should fail to assert vhost when unable to connect to management plugin', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -123,7 +120,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should fail when checking vhosts that dont exist', function(done) {
+  it('should fail when checking vhosts that dont exist', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].check = true;
@@ -136,7 +133,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should fail to check vhost when unable to connect to management plugin', function(done) {
+  it('should fail to check vhost when unable to connect to management plugin', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].check = true;
@@ -150,7 +147,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should succeed when checking vhosts that do exist', function(done) {
+  it('should succeed when checking vhosts that do exist', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -163,7 +160,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should delete vhosts', function(done) {
+  it('should delete vhosts', function(test, done) {
     var vhostName = uuid();
     var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -184,7 +181,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should provide fully qualified name', function(done) {
+  it('should provide fully qualified name', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -193,7 +190,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should not modify configuration', function(done) {
+  it('should not modify configuration', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     var json = JSON.stringify(config, null, 2);
     createBroker(config, function(err, broker) {
@@ -203,7 +200,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should nuke', function(done) {
+  it('should nuke', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -214,7 +211,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should cancel subscriptions', function(done) {
+  it('should cancel subscriptions', function(test, done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
@@ -245,7 +242,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should defer returning from unsubscribeAll until underlying channels have been closed', function(done) {
+  it('should defer returning from unsubscribeAll until underlying channels have been closed', function(test, done) {
     var config = _.defaultsDeep({
       vhosts: vhosts,
       publications: publications,
@@ -274,7 +271,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should connect', function(done) {
+  it('should connect', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -286,7 +283,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should bounce vhosts', function(done) {
+  it('should bounce vhosts', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -294,7 +291,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should purge vhosts', function(done) {
+  it('should purge vhosts', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -310,15 +307,13 @@ describe('Broker', function() {
     });
   });
 
-  it('should emit busy/ready events', function(done) {
+  it('should emit busy/ready events', function(test, done) {
     /*
     This test needs to publish messages faster than the channel can cope with in order to
     trigger a 'busy' event. It may fail on fast systems.
     */
 
     if (process.env.CI) return done();
-
-    this.timeout(60000);
 
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
@@ -347,9 +342,9 @@ describe('Broker', function() {
         done();
       });
     });
-  });
+  }, { timeout: 60000 });
 
-  it('should subscribe to all subscriptions', function(done) {
+  it('should subscribe to all subscriptions', function(test, done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
@@ -368,7 +363,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should subscribe to all filtered subscriptions', function(done) {
+  it('should subscribe to all filtered subscriptions', function(test, done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
@@ -388,7 +383,7 @@ describe('Broker', function() {
     });
   });
 
-  it('should get vhost connections', function(done) {
+  it('should get vhost connections', function(test, done) {
     var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
@@ -406,4 +401,6 @@ describe('Broker', function() {
       next(err, broker);
     });
   }
-});
+}, { timeout: 6000 });
+
+

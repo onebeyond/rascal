@@ -1457,7 +1457,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should hoist referenced encryption profiles', function(done) {
+    it('should hoist referenced encryption profiles', function(test, done) {
       configure({
         vhosts: {
           v1: {
@@ -1704,7 +1704,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should hoist referenced encryption profiles', function(done) {
+    it('should hoist referenced encryption profiles', function(test, done) {
       configure({
         vhosts: {
           v1: {

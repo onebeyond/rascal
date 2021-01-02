@@ -25,9 +25,9 @@
     "eslint-config-imperative": "^3.0.0",
     "eslint-plugin-imperative": "^3.0.0",
     "husky": "^4.2.5",
-    "mocha": "^7.1.1",
     "nyc": "^15.1.0",
-    "random-readable": "^1.0.1"
+    "random-readable": "^1.0.1",
+    "zunit": "^3.0.0"
   },
   "peerDependencies": {
     "amqplib": ">=0.5.5"
@@ -36,7 +36,7 @@
     "node": ">=8.0.0"
   },
   "scripts": {
-    "test": "nyc --reporter text-summary mocha ./test",
+    "test": "nyc --reporter text-summary node test",
     "lint": "eslint .",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
     "coverage": "nyc report --reporter lcov --reporter html",
@@ -66,11 +66,5 @@
       "pre-commit": "npm run lint && npm run test",
       "pre-push": "npm run codeclimate"
     }
-  },
-  "mocha": {
-    "check-leaks": true,
-    "recursive": true,
-    "slow": 2000,
-    "timeout": 5000
   }
 }

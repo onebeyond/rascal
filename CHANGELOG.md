@@ -1,5 +1,14 @@
 # Change Log
 
+## 11.0.1
+- Replaced mocha with zunit
+
+## 11.0.0
+- Reworked tests to remove mocha --exit flag
+- Exposed partially initialied brokerAsPromised on the rejected error via a symbol
+- clear keep active interval on broker nuke
+- Updated enginer >= 8.0.0
+
 ## 10.2.6
 ### Updated
 - Dependencies

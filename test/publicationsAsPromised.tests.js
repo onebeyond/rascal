@@ -9,15 +9,12 @@ var AmqpUtils = require('./utils/amqputils');
 
 describe('Publications As Promised', function() {
 
-  this.timeout(2000);
-  this.slow(1000);
-
   var broker;
   var amqputils;
   var namespace;
   var vhosts;
 
-  beforeEach(function(done) {
+  beforeEach(function(test, done) {
 
     namespace = uuid();
 
@@ -63,7 +60,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function(test, done) {
     amqputils.disconnect(function() {
       if (broker) return broker.nuke().catch(done).then(done);
       done();
@@ -86,7 +83,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should report deprecated publications', function(done) {
+  it('should report deprecated publications', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -104,7 +101,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish text messages to normal exchanges', function(done) {
+  it('should publish text messages to normal exchanges', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -122,7 +119,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish text messages using confirm channels to exchanges', function(done) {
+  it('should publish text messages using confirm channels to exchanges', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -140,7 +137,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish text messages to queues', function(done) {
+  it('should publish text messages to queues', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -157,7 +154,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should decorate the message with a uuid', function(done) {
+  it('should decorate the message with a uuid', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -181,7 +178,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish to using confirm channels to queues', function(done) {
+  it('should publish to using confirm channels to queues', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -199,7 +196,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish json messages to normal exchanges', function(done) {
+  it('should publish json messages to normal exchanges', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -216,7 +213,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish messages with custom contentType to normal exchanges', function(done) {
+  it('should publish messages with custom contentType to normal exchanges', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -239,7 +236,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish buffer messages to normal exchanges', function(done) {
+  it('should publish buffer messages to normal exchanges', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -256,7 +253,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should allow publish overrides', function(done) {
+  it('should allow publish overrides', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -275,7 +272,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should report unrouted messages', function(done) {
+  it('should report unrouted messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -293,7 +290,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should forward messages to publications', function(done) {
+  it('should forward messages to publications', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -349,7 +346,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should forward messages to publications maintaining the original routing key when not overriden', function(done) {
+  it('should forward messages to publications maintaining the original routing key when not overriden', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -394,8 +391,6 @@ describe('Publications As Promised', function() {
 
   it('should publish lots of messages using normal channels', function() {
 
-    this.timeout(60000);
-
     return createBroker({
       vhosts: vhosts,
       publications: {
@@ -417,11 +412,9 @@ describe('Publications As Promised', function() {
         });
       }, Promise.resolve());
     });
-  });
+  }, { timeout: 60000 });
 
   it('should publish lots of messages using confirm channels', function() {
-
-    this.timeout(20000);
 
     return createBroker({
       vhosts: vhosts,
@@ -444,9 +437,9 @@ describe('Publications As Promised', function() {
         });
       }, Promise.resolve());
     });
-  });
+  }, { timeout: 20000 });
 
-  it('should symetrically encrypt messages', function(done) {
+  it('should symetrically encrypt messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -501,7 +494,7 @@ describe('Publications As Promised', function() {
   });
 
 
-  it('should capture publication stats for normal channels', function(done) {
+  it('should capture publication stats for normal channels', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -521,7 +514,7 @@ describe('Publications As Promised', function() {
   });
 
 
-  it('should capture publication stats for confirm channels', function(done) {
+  it('should capture publication stats for confirm channels', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -552,4 +545,4 @@ describe('Publications As Promised', function() {
         return broker;
       });
   }
-});
+}, { timeout: 2000 });

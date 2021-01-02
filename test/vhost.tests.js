@@ -9,13 +9,10 @@ var AmqpUtils = require('./utils/amqputils');
 
 describe('Vhost', function() {
 
-  this.timeout(2000);
-  this.slow(1000);
-
   var broker;
   var amqputils;
 
-  beforeEach(function(done) {
+  beforeEach(function(test, done) {
     amqplib.connect(function(err, connection) {
       if (err) return done(err);
       amqputils = AmqpUtils.init(connection);
@@ -23,14 +20,14 @@ describe('Vhost', function() {
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function(test, done) {
     amqputils.disconnect(function() {
       if (broker) return broker.nuke(done);
       done();
     });
   });
 
-  it('should timeout connections', function(done) {
+  it('should timeout connections', function(test, done) {
     var namespace = uuid();
     createBroker({
       vhosts: {
@@ -50,7 +47,7 @@ describe('Vhost', function() {
     });
   });
 
-  it('should create exchanges', function(done) {
+  it('should create exchanges', function(test, done) {
     var namespace = uuid();
     createBroker({
       vhosts: {
@@ -68,7 +65,7 @@ describe('Vhost', function() {
     });
   });
 
-  it('should create queues', function(done) {
+  it('should create queues', function(test, done) {
     var namespace = uuid();
     createBroker({
       vhosts: {
@@ -86,7 +83,7 @@ describe('Vhost', function() {
     });
   });
 
-  it('should fail when checking a missing exchange', function(done) {
+  it('should fail when checking a missing exchange', function(test, done) {
 
     createBroker({
       vhosts: {
@@ -106,7 +103,7 @@ describe('Vhost', function() {
     });
   });
 
-  it('should fail when checking a missing queue', function(done) {
+  it('should fail when checking a missing queue', function(test, done) {
 
     createBroker({
       vhosts: {
@@ -126,7 +123,7 @@ describe('Vhost', function() {
     });
   });
 
-  it('should create bindings', function(done) {
+  it('should create bindings', function(test, done) {
 
     var namespace = uuid();
 
@@ -176,4 +173,4 @@ describe('Vhost', function() {
       next(err, broker);
     });
   }
-});
+}, { timeout: 2000 });

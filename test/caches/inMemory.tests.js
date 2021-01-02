@@ -10,7 +10,7 @@ describe('In Memory Counter', function() {
     counter = inMemory({ size: 3 });
   });
 
-  it('should return increment and get entries', function(done) {
+  it('should return increment and get entries', function(test, done) {
     var results = {};
     async.eachSeries(['one', 'two', 'one'], function(key, cb) {
       counter.incrementAndGet(key, function(err, value) {
@@ -26,7 +26,7 @@ describe('In Memory Counter', function() {
     });
   });
 
-  it('should limit the counter size', function(done) {
+  it('should limit the counter size', function(test, done) {
     var results = {};
     async.eachSeries(['one', 'two', 'three', 'four', 'one'], function(key, cb) {
       counter.incrementAndGet(key, function(err, value) {

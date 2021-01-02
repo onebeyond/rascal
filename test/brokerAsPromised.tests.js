@@ -5,11 +5,7 @@ var uuid = require('uuid').v4;
 var format = require('util').format;
 var BrokerAsPromised = require('..').BrokerAsPromised;
 
-
 describe('Broker As Promised', function() {
-
-  this.timeout(6000);
-  this.slow(1000);
 
   var broker;
   var namespace;
@@ -152,7 +148,7 @@ describe('Broker As Promised', function() {
     });
   });
 
-  it('should cancel subscriptions', function(done) {
+  it('should cancel subscriptions', function(test, done) {
     var config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
@@ -239,4 +235,4 @@ describe('Broker As Promised', function() {
         return broker;
       });
   }
-});
+}, { timeout: 6000 });

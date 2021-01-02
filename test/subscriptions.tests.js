@@ -9,9 +9,6 @@ var AmqpUtils = require('./utils/amqputils');
 
 describe('Subscriptions', function() {
 
-  this.timeout(5000);
-  this.slow(undefined);
-
   var broker;
   var amqputils;
   var namespace;
@@ -19,7 +16,7 @@ describe('Subscriptions', function() {
   var publications;
   var subscriptions;
 
-  beforeEach(function(done) {
+  beforeEach(function(test, done) {
     namespace = uuid();
     vhosts = {
       '/': {
@@ -110,14 +107,14 @@ describe('Subscriptions', function() {
     });
   });
 
-  afterEach(function(done) {
+  afterEach(function(test, done) {
     amqputils.disconnect(function() {
       if (broker) return broker.nuke(done);
       done();
     });
   });
 
-  it('should report unknown subscriptions', function(done) {
+  it('should report unknown subscriptions', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -132,7 +129,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to text/plain messages', function(done) {
+  it('should consume to text/plain messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -154,7 +151,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume messages before a listener is bound', function(done) {
+  it('should not consume messages before a listener is bound', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -177,7 +174,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to text/other messages', function(done) {
+  it('should consume to text/other messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -203,7 +200,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to whatever/whatever messages', function(done) {
+  it('should consume to whatever/whatever messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -229,7 +226,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to JSON messages', function(done) {
+  it('should consume to JSON messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -251,7 +248,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to Buffer messages', function(done) {
+  it('should consume to Buffer messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -273,7 +270,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume invalid messages when no invalid content/message listener is bound', function(done) {
+  it('should not consume invalid messages when no invalid content/message listener is bound', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -297,7 +294,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume an invalid messages messages when a listener is bound to invalid_content', function(done) {
+  it('should not consume an invalid messages messages when a listener is bound to invalid_content', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -322,7 +319,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume an invalid messages messages when a listener is bound to invalid_message', function(done) {
+  it('should not consume an invalid messages messages when a listener is bound to invalid_message', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -347,7 +344,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume an invalid message when a listener acks it', function(done) {
+  it('should consume an invalid message when a listener acks it', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -376,7 +373,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume an invalid message when a listener nacks it', function(done) {
+  it('should consume an invalid message when a listener nacks it', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -405,7 +402,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should force the content type when specified', function(done) {
+  it('should force the content type when specified', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -433,7 +430,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should filter subscriptions by routing key', function(done) {
+  it('should filter subscriptions by routing key', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -459,7 +456,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume auto acknowledged messages', function(done) {
+  it('should consume auto acknowledged messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -491,7 +488,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume unacknowledged messages', function(done) {
+  it('should not consume unacknowledged messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -515,7 +512,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume acknowledged messages', function(done) {
+  it('should consume acknowledged messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -542,7 +539,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume rejected messages by default', function(done) {
+  it('should consume rejected messages by default', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -569,7 +566,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should reject messages when requested', function(done) {
+  it('should reject messages when requested', function(test, done) {
     createBroker({
       vhosts: {
         '/': {
@@ -644,7 +641,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should requeue messages when requested', function(done) {
+  it('should requeue messages when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -671,7 +668,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should defer requeueing messages when requested', function(done) {
+  it('should defer requeueing messages when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -702,7 +699,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should count redeliveries', function(done) {
+  it('should count redeliveries', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -734,7 +731,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should notify when redeliveries limit is exceeded', function(done) {
+  it('should notify when redeliveries limit is exceeded', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -772,7 +769,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should notify when redeliveries error is exceeded', function(done) {
+  it('should notify when redeliveries error is exceeded', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -810,7 +807,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume a poison messages when no listener is bound', function(done) {
+  it('should consume a poison messages when no listener is bound', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -845,7 +842,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume a poision message when a listener acks it', function(done) {
+  it('should consume a poision message when a listener acks it', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -888,7 +885,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should republish messages to queue when requested', function(done) {
+  it('should republish messages to queue when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -915,7 +912,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should truncate error messages when republishing', function(done) {
+  it('should truncate error messages when republishing', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -941,7 +938,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should maintain original fields, properties and headers when republished', function(done) {
+  it('should maintain original fields, properties and headers when republished', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -972,7 +969,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should cap republishes when requested', function(done) {
+  it('should cap republishes when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -998,7 +995,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should defer republishing messages when requested', function(done) {
+  it('should defer republishing messages when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1025,7 +1022,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should immediately nack republished messages when requested', function(done) {
+  it('should immediately nack republished messages when requested', function(test, done) {
     createBroker({
       vhosts: {
         '/': {
@@ -1103,7 +1100,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should forward messages to publication when requested', function(done) {
+  it('should forward messages to publication when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1136,7 +1133,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should truncate error messages when forwarding', function(done) {
+  it('should truncate error messages when forwarding', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1166,7 +1163,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should override routing key when forwarding messages', function(done) {
+  it('should override routing key when forwarding messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1195,7 +1192,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should maintain original fields, properties and headers when forwarding messages', function(done) {
+  it('should maintain original fields, properties and headers when forwarding messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1235,7 +1232,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not maintain original routing headers when requested', function(done) {
+  it('should not maintain original routing headers when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1275,7 +1272,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should cap forwards when requested', function(done) {
+  it('should cap forwards when requested', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1303,7 +1300,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should error when forwarding messages to /dev/null', function(done) {
+  it('should error when forwarding messages to /dev/null', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1329,7 +1326,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should error on unknown recovery strategy', function(done) {
+  it('should error on unknown recovery strategy', function(test, done) {
 
     createBroker({
       vhosts: vhosts,
@@ -1356,7 +1353,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should chain recovery strategies', function(done) {
+  it('should chain recovery strategies', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1388,7 +1385,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not rollback message when shutting down broker after ack', function(done) {
+  it('should not rollback message when shutting down broker after ack', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1416,7 +1413,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not rollback message when shutting down broker after ack', function(done) {
+  it('should not rollback message when shutting down broker after ack', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1446,7 +1443,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should nack messages when all recovery strategies have been attempted', function(done) {
+  it('should nack messages when all recovery strategies have been attempted', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1474,7 +1471,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should limit concurrent messages using prefetch', function(done) {
+  it('should limit concurrent messages using prefetch', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1509,7 +1506,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should consume to messages from a replyTo queue', function(done) {
+  it('should consume to messages from a replyTo queue', function(test, done) {
     var replyTo = uuid();
     createBroker({
       vhosts: {
@@ -1553,7 +1550,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should emit channel errors', function(done) {
+  it('should emit channel errors', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1577,7 +1574,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should not consume messages after unsubscribing', function(done) {
+  it('should not consume messages after unsubscribing', function(test, done) {
 
     createBroker({
       vhosts: vhosts,
@@ -1611,7 +1608,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should tollerate repeated unsubscription', function(done) {
+  it('should tollerate repeated unsubscription', function(test, done) {
 
     createBroker({
       vhosts: vhosts,
@@ -1638,7 +1635,7 @@ describe('Subscriptions', function() {
   });
 
 
-  it('should not warn about emitter leaks', function(done) {
+  it('should not warn about emitter leaks', function(test, done) {
 
     var config = {
       vhosts: vhosts,
@@ -1668,7 +1665,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should attach the subscription vhost to message properties', function(done) {
+  it('should attach the subscription vhost to message properties', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1689,7 +1686,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should emit an error if trying to ack a message after unsubscribing', function(done) {
+  it('should emit an error if trying to ack a message after unsubscribing', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1716,7 +1713,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should emit an error if trying to nack a message after unsubscribing', function(done) {
+  it('should emit an error if trying to nack a message after unsubscribing', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1743,7 +1740,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should symetrically decrypt messages', function(done) {
+  it('should symetrically decrypt messages', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -1787,7 +1784,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should report invalid_content when missing encryption profile', function(done) {
+  it('should report invalid_content when missing encryption profile', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -1824,7 +1821,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should fail with invalid content when encryption errors', function(done) {
+  it('should fail with invalid content when encryption errors', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: {
@@ -1868,7 +1865,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should emit cancelled event when the broker cancels the consumer', function(done) {
+  it('should emit cancelled event when the broker cancels the consumer', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1898,7 +1895,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(done) {
+  it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1928,7 +1925,7 @@ describe('Subscriptions', function() {
     });
   });
 
-  it('should resubscribe following a broker cancellation', function(done) {
+  it('should resubscribe following a broker cancellation', function(test, done) {
     createBroker({
       vhosts: vhosts,
       publications: publications,
@@ -1973,4 +1970,4 @@ describe('Subscriptions', function() {
       next(err, broker);
     });
   }
-});
+}, { timeout: 5000 });

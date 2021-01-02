@@ -6,13 +6,11 @@ var Broker = require('..').Broker;
 
 describe('Shovel', function() {
 
-  this.slow(undefined);
-
   var broker;
   var namespace;
   var config;
 
-  beforeEach(function(done) {
+  beforeEach(function(test, done) {
 
     namespace = uuid();
     config = {
@@ -80,12 +78,12 @@ describe('Shovel', function() {
     done();
   });
 
-  afterEach(function(done) {
+  afterEach(function(test, done) {
     if (!broker) return done();
     broker.nuke(done);
   });
 
-  it('should transfer message from subscriber to publication', function(done) {
+  it('should transfer message from subscriber to publication', function(test, done) {
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'Test Message', assert.ifError);
