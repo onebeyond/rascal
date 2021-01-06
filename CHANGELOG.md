@@ -1,5 +1,8 @@
 # Change Log
 
+## [12.0.2]
+- Exclude various files (including the 12M cc-test-reporter binary) from the npm package.
+
 ## 12.0.1
 - Moved from travis to github actions
 - Fix broker waiting indefinitely when shutdown is called after losing a connection. See [#126](https://github.com/guidesmiths/rascal/issues/126)

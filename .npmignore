@@ -1,7 +1,12 @@
-node_modules
-coverage
 *.log
-.codeclimate
+.codeclimate.yml
 .idea
-.nyc_output
+.eslintignore
+.eslintrc
 .github
+.nyc_output
+_config.yml
+cc-test-reporter
+coverage
+node_modules
+test
