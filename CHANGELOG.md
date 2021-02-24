@@ -1,8 +1,9 @@
 # Change Log
 
-## 12.0.3 
+## 12.0.3
 - Fix https://github.com/guidesmiths/rascal/issues/141
 - Fix error message typos
+- Bump lodash
 
 ## 12.0.2
 - Exclude various files (including the 12M cc-test-reporter binary) from the npm package.
