@@ -22,7 +22,7 @@
 - Reworked tests to remove mocha --exit flag
 - Exposed partially initialied brokerAsPromised on the rejected error via a symbol
 - clear keep active interval on broker nuke
-- Updated enginer >= 8.0.0
+- Updated engine >= 8.0.0
 
 ## 10.2.6
 ### Updated
