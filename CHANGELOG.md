@@ -104,7 +104,7 @@
 
 ## 9.1.1
 ### Added
-- Expose clonsed subscription config on session
+- Expose cloned subscription config on session
 
 ## 9.1.0
 ### Added
