@@ -1254,7 +1254,7 @@ ackOrNack(err, { strategy: 'republish', immediateNack: true })
 If you ever want to resend the message to the same queue you will have to remove the ```properties.headers.rascal.<queue>.immediateNack``` header first.
 
 ##### Forward
-Instead of republishing the message to the same queue you can forward it to a Rascal publication. You should read the section entitled [Forwarding messages](Forwarding_messages) to understand the risks of this.
+Instead of republishing the message to the same queue you can forward it to a Rascal publication. You should read the section entitled [Forwarding messages](#Forwarding-messages) to understand the risks of this.
 ```js
 ackOrNack(err, { strategy: 'forward', publication: 'some_exchange'})
 ```
