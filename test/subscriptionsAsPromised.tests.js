@@ -122,7 +122,7 @@ describe('Subscriptions As Promised', () => {
     }).then((broker) => {
       broker.subscribe('does-not-exist').catch((err) => {
         assert.ok(err);
-        assert.equal(err.message, 'Unknown subscription: does-not-exist');
+        assert.strictEqual(err.message, 'Unknown subscription: does-not-exist');
         done();
       });
     });
@@ -138,8 +138,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'text/plain');
-            assert.equal(content, 'test message');
+            assert.strictEqual(message.properties.contentType, 'text/plain');
+            assert.strictEqual(content, 'test message');
             done();
           });
         });
@@ -158,7 +158,7 @@ describe('Subscriptions As Promised', () => {
           setTimeout(() => {
             subscription.on('message', (message, content) => {
               assert(message);
-              assert.equal(content, 'test message');
+              assert.strictEqual(content, 'test message');
               done();
             });
           }, 500);
@@ -181,8 +181,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'text/csv');
-            assert.equal(content, 'test message');
+            assert.strictEqual(message.properties.contentType, 'text/csv');
+            assert.strictEqual(content.toString(), 'test message');
             done();
           });
         });
@@ -204,8 +204,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'x-foo-bar/blah');
-            assert.equal(content, 'test message');
+            assert.strictEqual(message.properties.contentType, 'x-foo-bar/blah');
+            assert.strictEqual(content.toString(), 'test message');
             done();
           });
         });
@@ -223,8 +223,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'application/json');
-            assert.equal(content.message, 'test message');
+            assert.strictEqual(message.properties.contentType, 'application/json');
+            assert.strictEqual(content.message, 'test message');
             done();
           });
         });
@@ -242,8 +242,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, undefined);
-            assert.equal(content, 'test message');
+            assert.strictEqual(message.properties.contentType, undefined);
+            assert.strictEqual(content.toString(), 'test message');
             done();
           });
         });
@@ -384,8 +384,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'application/json');
-            assert.equal(content, '{"message":"test message"}');
+            assert.strictEqual(message.properties.contentType, 'application/json');
+            assert.strictEqual(content, '{"message":"test message"}');
             done();
           });
         });
@@ -810,9 +810,9 @@ describe('Subscriptions As Promised', () => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack({ message: 'republish me', code: 'red' }, { strategy: 'republish' });
-            assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 9);
-            assert.equal(message.properties.headers.rascal.error.message, 'republish me');
-            assert.equal(message.properties.headers.rascal.error.code, 'red');
+            assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 9);
+            assert.strictEqual(message.properties.headers.rascal.error.message, 'republish me');
+            assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
             done();
           });
         });
@@ -833,8 +833,8 @@ describe('Subscriptions As Promised', () => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'republish' });
-            assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 9);
-            assert.equal(message.properties.headers.rascal.error.message.length, 1024);
+            assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 9);
+            assert.strictEqual(message.properties.headers.rascal.error.message.length, 1024);
             done();
           });
         });
@@ -856,11 +856,11 @@ describe('Subscriptions As Promised', () => {
               assert.ok(message);
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { strategy: 'republish' });
-              assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 1);
-              assert.equal(message.properties.headers.foo, 'bar');
-              assert.equal(message.properties.messageId, messageId);
-              assert.equal(message.fields.routingKey, 'foo');
-              assert.equal(message.properties.deliveryMode, 2);
+              assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].republished, 1);
+              assert.strictEqual(message.properties.headers.foo, 'bar');
+              assert.strictEqual(message.properties.messageId, messageId);
+              assert.strictEqual(message.fields.routingKey, 'foo');
+              assert.strictEqual(message.properties.deliveryMode, 2);
               done();
             });
           });
@@ -886,7 +886,7 @@ describe('Subscriptions As Promised', () => {
       });
 
       setTimeout(() => {
-        assert.equal(count, 6);
+        assert.strictEqual(count, 6);
         done();
       }, 500);
 
@@ -972,7 +972,7 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           let count = 0;
           subscription.on('message', (message, content, ackOrNack) => {
-            assert.equal(++count, 1);
+            assert.strictEqual(++count, 1);
             assert.ok(message);
             ackOrNack(new Error('immediate nack'), {
               strategy: 'republish',
@@ -1010,11 +1010,11 @@ describe('Subscriptions As Promised', () => {
         subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
-          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
-          assert.equal(message.properties.headers.CC.length, 1);
-          assert.equal(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.bar');
-          assert.equal(message.properties.headers.rascal.error.message, 'forward me');
-          assert.equal(message.properties.headers.rascal.error.code, 'red');
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.CC.length, 1);
+          assert.strictEqual(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.bar');
+          assert.strictEqual(message.properties.headers.rascal.error.message, 'forward me');
+          assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
           done();
         });
       });
@@ -1040,8 +1040,8 @@ describe('Subscriptions As Promised', () => {
         subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
-          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
-          assert.equal(message.properties.headers.rascal.error.message.length, 1024);
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.rascal.error.message.length, 1024);
           done();
         });
       });
@@ -1067,7 +1067,7 @@ describe('Subscriptions As Promised', () => {
         subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
-          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
           done();
         });
       });
@@ -1100,10 +1100,10 @@ describe('Subscriptions As Promised', () => {
         subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
-          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
-          assert.equal(message.properties.headers.foo, 'bar');
-          assert.equal(message.properties.messageId, messageId);
-          assert.equal(message.fields.routingKey, 'foo');
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.foo, 'bar');
+          assert.strictEqual(message.properties.messageId, messageId);
+          assert.strictEqual(message.fields.routingKey, 'foo');
           done();
         });
       });
@@ -1136,10 +1136,10 @@ describe('Subscriptions As Promised', () => {
         subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
-          assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
-          assert.equal(message.properties.headers.foo, 'bar');
-          assert.equal(message.properties.messageId, messageId);
-          assert.equal(message.fields.routingKey, 'bar');
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.foo, 'bar');
+          assert.strictEqual(message.properties.messageId, messageId);
+          assert.strictEqual(message.fields.routingKey, 'bar');
           done();
         });
       });
@@ -1165,7 +1165,7 @@ describe('Subscriptions As Promised', () => {
       });
 
       setTimeout(() => {
-        assert.equal(count, 6);
+        assert.strictEqual(count, 6);
         done();
       }, 500);
 
@@ -1185,7 +1185,7 @@ describe('Subscriptions As Promised', () => {
               assert.ok(message);
               ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' }).catch((err) => {
                 assert.ok(err);
-                assert.equal('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
+                assert.strictEqual('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
                 done();
               });
             });
@@ -1208,7 +1208,7 @@ describe('Subscriptions As Promised', () => {
               assert.ok(message);
               ackOrNack(new Error('unknown'), { strategy: 'foo' }).catch((err) => {
                 assert.ok(err);
-                assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                assert.strictEqual('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
                 done();
               });
             });
@@ -1236,7 +1236,7 @@ describe('Subscriptions As Promised', () => {
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 6) return;
               setTimeout(() => {
-                assert.equal(messages[message.properties.messageId], 6);
+                assert.strictEqual(messages[message.properties.messageId], 6);
                 done();
               }, 500);
             });
@@ -1341,7 +1341,7 @@ describe('Subscriptions As Promised', () => {
             messages++;
             if (messages === 5) {
               setTimeout(() => {
-                assert.equal(messages, 5);
+                assert.strictEqual(messages, 5);
                 done();
               }, 500);
             }
@@ -1384,7 +1384,7 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(content, 'test message');
+            assert.strictEqual(content, 'test message');
             done();
           });
         });
@@ -1405,7 +1405,7 @@ describe('Subscriptions As Promised', () => {
             ackOrNack(); // trigger a channel error
           }).on('error', (err) => {
             assert.ok(err);
-            assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message);
+            assert.strictEqual('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message);
             done();
           });
         });
@@ -1503,7 +1503,7 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message) => {
             assert(message.properties);
-            assert.equal(message.properties.headers.rascal.originalVhost, '/');
+            assert.strictEqual(message.properties.headers.rascal.originalVhost, '/');
             done();
           });
         });
@@ -1523,7 +1523,7 @@ describe('Subscriptions As Promised', () => {
             subscription.cancel().then(() => {
               setTimeout(() => {
                 ackOrNack().catch((err) => {
-                  assert.equal(err.message, 'The channel has been closed. Unable to ack message');
+                  assert.strictEqual(err.message, 'The channel has been closed. Unable to ack message');
                   done();
                 });
               }, 200);
@@ -1546,7 +1546,7 @@ describe('Subscriptions As Promised', () => {
             subscription.cancel().then(() => {
               setTimeout(() => {
                 ackOrNack(new Error('Oh Noes!')).catch((err) => {
-                  assert.equal(err.message, 'The channel has been closed. Unable to nack message');
+                  assert.strictEqual(err.message, 'The channel has been closed. Unable to nack message');
                   done();
                 });
               }, 200);
@@ -1589,8 +1589,8 @@ describe('Subscriptions As Promised', () => {
         broker.subscribe('s1').then((subscription) => {
           subscription.on('message', (message, content) => {
             assert(message);
-            assert.equal(message.properties.contentType, 'application/octet-stream');
-            assert.equal(content, 'test message');
+            assert.strictEqual(message.properties.contentType, 'application/octet-stream');
+            assert.strictEqual(content, 'test message');
             done();
           });
         });
@@ -1624,7 +1624,7 @@ describe('Subscriptions As Promised', () => {
           subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
           }).on('invalid_content', (err) => {
-            assert.equal(err.message, 'Unknown encryption profile: not-well-known');
+            assert.strictEqual(err.message, 'Unknown encryption profile: not-well-known');
             done();
           });
         });
@@ -1665,7 +1665,7 @@ describe('Subscriptions As Promised', () => {
           subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
           }).on('invalid_content', (err) => {
-            assert.equal(err.message, 'Invalid key length');
+            assert.strictEqual(err.message, 'Invalid key length');
             done();
           });
         });
@@ -1717,7 +1717,7 @@ describe('Subscriptions As Promised', () => {
               assert.ok(message);
               ackOrNack(new Error('unknown'), { strategy: 'foo' }, (err) => {
                 assert.ok(err);
-                assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                assert.strictEqual('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
                 done();
               });
             });

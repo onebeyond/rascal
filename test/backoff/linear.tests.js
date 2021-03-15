@@ -5,16 +5,16 @@ describe('Linear Backoff', () => {
 
   it('should backoff by 1 seconds by default', () => {
     const backoff = linear();
-    assert.equal(backoff.next(), 1000);
-    assert.equal(backoff.next(), 1000);
-    assert.equal(backoff.next(), 1000);
+    assert.strictEqual(backoff.next(), 1000);
+    assert.strictEqual(backoff.next(), 1000);
+    assert.strictEqual(backoff.next(), 1000);
   });
 
   it('should backoff by the specified value', () => {
     const backoff = linear({ min: 2000 });
-    assert.equal(backoff.next(), 2000);
-    assert.equal(backoff.next(), 2000);
-    assert.equal(backoff.next(), 2000);
+    assert.strictEqual(backoff.next(), 2000);
+    assert.strictEqual(backoff.next(), 2000);
+    assert.strictEqual(backoff.next(), 2000);
   });
 
   it('should backoff by within a range', () => {

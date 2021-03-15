@@ -79,7 +79,7 @@ function init(connection) {
     getMessage(queue, namespace, (err, message) => {
       assert.ifError(err);
       assert.ok(message, 'Message was not present');
-      assert.equal(message.content.toString(), expected);
+      assert.strictEqual(message.content.toString(), expected);
       next();
     });
   }

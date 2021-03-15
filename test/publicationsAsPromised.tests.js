@@ -78,7 +78,7 @@ describe('Publications As Promised', () => {
     }).then((broker) => {
       return broker.publish('does-not-exist', 'test message').catch((err) => {
         assert.ok(err);
-        assert.equal(err.message, 'Unknown publication: does-not-exist');
+        assert.strictEqual(err.message, 'Unknown publication: does-not-exist');
       });
     });
   });
@@ -170,7 +170,7 @@ describe('Publications As Promised', () => {
           amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message);
-            assert.equal(messageId, message.properties.messageId);
+            assert.strictEqual(messageId, message.properties.messageId);
             done();
           });
         });
@@ -227,8 +227,8 @@ describe('Publications As Promised', () => {
           amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message, 'Message was not present');
-            assert.equal(message.properties.contentType, 'application/vnd+custom.contentType.v1');
-            assert.equal(message.content.toString(), JSON.stringify({ message: 'test message' }));
+            assert.strictEqual(message.properties.contentType, 'application/vnd+custom.contentType.v1');
+            assert.strictEqual(message.content.toString(), JSON.stringify({ message: 'test message' }));
             done();
           });
         });
@@ -323,14 +323,14 @@ describe('Publications As Promised', () => {
               amqputils.getMessage('q2', namespace, (err, message) => {
                 assert.ifError(err);
                 assert.ok(message);
-                assert.equal(message.fields.routingKey, 'rk2');
-                assert.equal(message.properties.messageId, messageId);
-                assert.equal(message.properties.contentType, 'text/plain');
-                assert.equal(message.content.toString(), 'test message');
+                assert.strictEqual(message.fields.routingKey, 'rk2');
+                assert.strictEqual(message.properties.messageId, messageId);
+                assert.strictEqual(message.properties.contentType, 'text/plain');
+                assert.strictEqual(message.content.toString(), 'test message');
                 assert.ok(/\w+-\w+-\w+-\w+-\w+:q1/.test(message.properties.headers.rascal.originalQueue), format('%s failed to match expected pattern', message.properties.headers.rascal.originalQueue));
-                assert.equal(message.properties.headers.rascal.restoreRoutingHeaders, false);
-                assert.equal(message.properties.headers.rascal.originalRoutingKey, 'rk1');
-                assert.equal(message.properties.headers.rascal.originalExchange, namespace + ':e1');
+                assert.strictEqual(message.properties.headers.rascal.restoreRoutingHeaders, false);
+                assert.strictEqual(message.properties.headers.rascal.originalRoutingKey, 'rk1');
+                assert.strictEqual(message.properties.headers.rascal.originalExchange, namespace + ':e1');
                 done();
               });
             });
@@ -377,7 +377,7 @@ describe('Publications As Promised', () => {
               amqputils.getMessage('q2', namespace, (err, message) => {
                 assert.ifError(err);
                 assert.ok(message);
-                assert.equal(message.fields.routingKey, 'rk1');
+                assert.strictEqual(message.fields.routingKey, 'rk1');
                 done();
               });
             });
@@ -460,11 +460,11 @@ describe('Publications As Promised', () => {
           amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message);
-            assert.equal(messageId, message.properties.messageId);
-            assert.equal('well-known', message.properties.headers.rascal.encryption.name);
-            assert.equal(32, message.properties.headers.rascal.encryption.iv.length);
-            assert.equal('text/plain', message.properties.headers.rascal.encryption.originalContentType);
-            assert.equal('application/octet-stream', message.properties.contentType);
+            assert.strictEqual(messageId, message.properties.messageId);
+            assert.strictEqual('well-known', message.properties.headers.rascal.encryption.name);
+            assert.strictEqual(32, message.properties.headers.rascal.encryption.iv.length);
+            assert.strictEqual('text/plain', message.properties.headers.rascal.encryption.originalContentType);
+            assert.strictEqual('application/octet-stream', message.properties.contentType);
             done();
           });
         });
@@ -488,7 +488,7 @@ describe('Publications As Promised', () => {
       },
     }).then((broker) => {
       return broker.publish('p1', 'test message').catch((err) => {
-        assert.equal(err.message, 'Invalid key length');
+        assert.strictEqual(err.message, 'Invalid key length');
       });
     });
   });
@@ -505,7 +505,7 @@ describe('Publications As Promised', () => {
     }).then((broker) => {
       broker.publish('p1', { message: 'test message' }).then((publication) => {
         publication.on('success', () => {
-          assert.equal(typeof publication.stats.duration, 'number');
+          assert.strictEqual(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
         });
@@ -526,7 +526,7 @@ describe('Publications As Promised', () => {
     }).then((broker) => {
       broker.publish('p1', 'test message').then((publication) => {
         publication.on('success', () => {
-          assert.equal(typeof publication.stats.duration, 'number');
+          assert.strictEqual(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
         });

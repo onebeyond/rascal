@@ -5,16 +5,16 @@ describe('Exponential Backoff', () => {
 
   it('should backoff by 1 seconds by default', () => {
     const backoff = exponential({ randomise: false });
-    assert.equal(backoff.next(), 1000);
-    assert.equal(backoff.next(), 2000);
-    assert.equal(backoff.next(), 4000);
+    assert.strictEqual(backoff.next(), 1000);
+    assert.strictEqual(backoff.next(), 2000);
+    assert.strictEqual(backoff.next(), 4000);
   });
 
   it('should backoff by the specified value', () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: false });
-    assert.equal(backoff.next(), 2000);
-    assert.equal(backoff.next(), 6000);
-    assert.equal(backoff.next(), 18000);
+    assert.strictEqual(backoff.next(), 2000);
+    assert.strictEqual(backoff.next(), 6000);
+    assert.strictEqual(backoff.next(), 18000);
   });
 
   it('should backoff between the specified values', () => {

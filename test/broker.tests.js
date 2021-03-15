@@ -128,7 +128,7 @@ describe('Broker', () => {
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
     createBroker(config, (err) => {
       assert.ok(err);
-      assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
+      assert.strictEqual(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
       done();
     });
   });
@@ -174,7 +174,7 @@ describe('Broker', () => {
         config.vhosts[vhostName].check = true;
         createBroker(config, (err) => {
           assert.ok(err);
-          assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
+          assert.strictEqual(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
           done();
         });
       });
@@ -185,7 +185,7 @@ describe('Broker', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, (err, broker) => {
       assert.ifError(err);
-      assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
+      assert.strictEqual(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
       done();
     });
   });
@@ -195,7 +195,7 @@ describe('Broker', () => {
     const json = JSON.stringify(config, null, 2);
     createBroker(config, (err) => {
       assert.ifError(err);
-      assert.equal(json, JSON.stringify(config, null, 2));
+      assert.strictEqual(json, JSON.stringify(config, null, 2));
       done();
     });
   });
@@ -333,7 +333,7 @@ describe('Broker', () => {
 
       broker.once('busy', () => {
         busyOn = Date.now();
-        assert.equal(readyOn, undefined);
+        assert.strictEqual(readyOn, undefined);
         stream.pause();
       });
 
@@ -355,10 +355,10 @@ describe('Broker', () => {
       assert.ifError(err);
       broker.subscribeAll((err, subscriptions) => {
         assert.ifError(err);
-        assert.equal(subscriptions.length, 2);
-        assert.equal(subscriptions[0].constructor.name, 'SubscriberSession');
-        assert.equal(subscriptions[0].name, 's1');
-        assert.equal(subscriptions[1].name, '/q1');
+        assert.strictEqual(subscriptions.length, 2);
+        assert.strictEqual(subscriptions[0].constructor.name, 'SubscriberSession');
+        assert.strictEqual(subscriptions[0].name, 's1');
+        assert.strictEqual(subscriptions[1].name, '/q1');
         done();
       });
     });
@@ -376,9 +376,9 @@ describe('Broker', () => {
         return !subscriptionConfig.autoCreated;
       }, (err, subscriptions) => {
         assert.ifError(err);
-        assert.equal(subscriptions.length, 1);
-        assert.equal(subscriptions[0].constructor.name, 'SubscriberSession');
-        assert.equal(subscriptions[0].name, 's1');
+        assert.strictEqual(subscriptions.length, 1);
+        assert.strictEqual(subscriptions[0].constructor.name, 'SubscriberSession');
+        assert.strictEqual(subscriptions[0].name, 's1');
         done();
       });
     });
@@ -389,9 +389,9 @@ describe('Broker', () => {
     createBroker(config, (err, broker) => {
       assert.ifError(err);
       const connections = broker.getConnections();
-      assert.equal(connections.length, 1);
-      assert.equal(connections[0].vhost, '/');
-      assert.equal(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);
+      assert.strictEqual(connections.length, 1);
+      assert.strictEqual(connections[0].vhost, '/');
+      assert.strictEqual(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);
       done();
     });
   });

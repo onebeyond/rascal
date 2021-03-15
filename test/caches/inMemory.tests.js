@@ -20,8 +20,8 @@ describe('In Memory Counter', () => {
       });
     }, (err) => {
       assert.ifError(err);
-      assert.equal(results.one, 2);
-      assert.equal(results.two, 1);
+      assert.strictEqual(results.one, 2);
+      assert.strictEqual(results.two, 1);
       done();
     });
   });
@@ -36,7 +36,7 @@ describe('In Memory Counter', () => {
       });
     }, (err) => {
       assert.ifError(err);
-      assert.equal(results.one, 1);
+      assert.strictEqual(results.one, 1);
       done();
     });
   });
