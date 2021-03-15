@@ -963,7 +963,7 @@ describe('Configuration', function() {
           assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
           assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey));
         });
-      }),
+      });
 
       it('should configure multiple bindings from an array of binding keys', function() {
         configure({
@@ -1016,7 +1016,7 @@ describe('Configuration', function() {
           assert.equal(config.vhosts.v1.bindings['b1'].destination, 'q1');
           assert.equal(config.vhosts.v1.bindings['b1'].bindingKey, 'a');
         });
-      }),
+      });
 
       it('should support a mixed array of names / objects configuration', function() {
         configure({
