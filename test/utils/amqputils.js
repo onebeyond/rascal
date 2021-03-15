@@ -55,7 +55,7 @@ function init(connection) {
   function publishMessageToQueue(queue, namespace, message, options, next) {
     options.routingKey = namespace + ':' + queue;
     _publishMessage('', message, options, next);
-  };
+  }
 
   function _publishMessage(fqExchange, message, options, next) {
     connection.createChannel(function(err, channel) {

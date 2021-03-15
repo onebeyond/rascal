@@ -7,7 +7,6 @@
     "prefer-rest-params": "off",
     "prefer-arrow-callback": "off",
     "no-undef": "off",
-    "no-extra-semi": "off",
     "no-unused-vars": "off",
     "dot-notation": "off",
     "no-prototype-builtins": "off",
