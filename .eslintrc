@@ -9,7 +9,6 @@
     "no-undef": "off",
     "no-extra-semi": "off",
     "no-unused-vars": "off",
-    "no-useless-escape": "off",
     "dot-notation": "off",
     "no-prototype-builtins": "off",
     "no-use-before-define": "off"

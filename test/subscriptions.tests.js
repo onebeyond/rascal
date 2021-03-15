@@ -422,7 +422,7 @@ describe('Subscriptions', function() {
           subscription.on('message', function(message, content, ackOrNack) {
             assert(message);
             assert.equal(message.properties.contentType, 'application/json');
-            assert.equal(content, '{\"message\":\"test message\"}');
+            assert.equal(content, '{"message":"test message"}');
             done();
           });
         });
