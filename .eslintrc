@@ -8,6 +8,7 @@
     "import/no-nodejs-modules": "off",
     "prefer-rest-params": "off",
     "arrow-body-style": ["error", "always"],
+    "semi": ["error", "always"],
     "no-unused-vars": ["error", { "varsIgnorePattern": "debug" } ]
   }
 }
