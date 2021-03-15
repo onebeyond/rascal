@@ -26,7 +26,7 @@ describe('Broker As Promised', function() {
             },
           },
         },
-        namespace: namespace,
+        namespace,
         exchanges: {
           e1: {
             assert: true,
@@ -127,14 +127,14 @@ describe('Broker As Promised', function() {
   });
 
   it('should provide fully qualified name', function() {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
     });
   });
 
   it('should not modify configuration', function() {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     const json = JSON.stringify(config, null, 2);
     return createBroker(config).then(function() {
       assert.equal(json, JSON.stringify(config, null, 2));
@@ -142,7 +142,7 @@ describe('Broker As Promised', function() {
   });
 
   it('should nuke', function() {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       return broker.nuke();
     });
@@ -150,8 +150,8 @@ describe('Broker As Promised', function() {
 
   it('should cancel subscriptions', function(test, done) {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     createBroker(config).then(function(broker) {
@@ -172,7 +172,7 @@ describe('Broker As Promised', function() {
   });
 
   it('should connect', function() {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       return broker.connect('/').then(function(connection) {
         assert.ok(connection._rascal_id);
@@ -184,8 +184,8 @@ describe('Broker As Promised', function() {
 
   it('should subscribe to all subscriptions', function() {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     return createBroker(config).then(function(broker) {
@@ -200,8 +200,8 @@ describe('Broker As Promised', function() {
 
   it('should subscribe to all filtered subscriptions', function() {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     return createBroker(config).then(function(broker) {
@@ -216,7 +216,7 @@ describe('Broker As Promised', function() {
   });
 
   it('should get vhost connections', function() {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       const connections = broker.getConnections();
       assert.equal(connections.length, 1);

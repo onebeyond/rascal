@@ -38,7 +38,7 @@ describe('Vhost', function() {
               timeout: 100,
             },
           },
-          namespace: namespace,
+          namespace,
         },
       },
     }, function(err) {
@@ -52,7 +52,7 @@ describe('Vhost', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,
@@ -70,7 +70,7 @@ describe('Vhost', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           queues: {
             q1: {
               assert: true,
@@ -130,7 +130,7 @@ describe('Vhost', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,

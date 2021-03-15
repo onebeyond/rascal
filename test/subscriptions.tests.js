@@ -20,7 +20,7 @@ describe('Subscriptions', function() {
     namespace = uuid();
     vhosts = {
       '/': {
-        namespace: namespace,
+        namespace,
         exchanges: {
           e1: {
             assert: true,
@@ -116,9 +116,9 @@ describe('Subscriptions', function() {
 
   it('should report unknown subscriptions', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.subscribe('does-not-exist', function(err) {
@@ -131,9 +131,9 @@ describe('Subscriptions', function() {
 
   it('should consume to text/plain messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -153,9 +153,9 @@ describe('Subscriptions', function() {
 
   it('should not consume messages before a listener is bound', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -176,9 +176,9 @@ describe('Subscriptions', function() {
 
   it('should consume to text/other messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', {
@@ -202,9 +202,9 @@ describe('Subscriptions', function() {
 
   it('should consume to whatever/whatever messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', {
@@ -228,9 +228,9 @@ describe('Subscriptions', function() {
 
   it('should consume to JSON messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err) {
@@ -250,9 +250,9 @@ describe('Subscriptions', function() {
 
   it('should consume to Buffer messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', Buffer.from('test message'), function(err) {
@@ -272,9 +272,9 @@ describe('Subscriptions', function() {
 
   it('should not consume invalid messages when no invalid content/message listener is bound', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -296,9 +296,9 @@ describe('Subscriptions', function() {
 
   it('should not consume an invalid messages messages when a listener is bound to invalid_content', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -321,9 +321,9 @@ describe('Subscriptions', function() {
 
   it('should not consume an invalid messages messages when a listener is bound to invalid_message', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -346,9 +346,9 @@ describe('Subscriptions', function() {
 
   it('should consume an invalid message when a listener acks it', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -375,9 +375,9 @@ describe('Subscriptions', function() {
 
   it('should consume an invalid message when a listener nacks it', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
@@ -404,8 +404,8 @@ describe('Subscriptions', function() {
 
   it('should force the content type when specified', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -432,7 +432,7 @@ describe('Subscriptions', function() {
 
   it('should filter subscriptions by routing key', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           vhost: '/',
@@ -440,7 +440,7 @@ describe('Subscriptions', function() {
           routingKey: 'bar',
         },
       },
-      subscriptions: subscriptions,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -458,8 +458,8 @@ describe('Subscriptions', function() {
 
   it('should consume auto acknowledged messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -490,9 +490,9 @@ describe('Subscriptions', function() {
 
   it('should not consume unacknowledged messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -514,9 +514,9 @@ describe('Subscriptions', function() {
 
   it('should consume acknowledged messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -541,9 +541,9 @@ describe('Subscriptions', function() {
 
   it('should consume rejected messages by default', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -570,7 +570,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,
@@ -643,9 +643,9 @@ describe('Subscriptions', function() {
 
   it('should requeue messages when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -670,9 +670,9 @@ describe('Subscriptions', function() {
 
   it('should defer requeueing messages when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -701,8 +701,8 @@ describe('Subscriptions', function() {
 
   it('should count redeliveries', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -733,8 +733,8 @@ describe('Subscriptions', function() {
 
   it('should notify when redeliveries limit is exceeded', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -771,8 +771,8 @@ describe('Subscriptions', function() {
 
   it('should notify when redeliveries error is exceeded', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -809,8 +809,8 @@ describe('Subscriptions', function() {
 
   it('should consume a poison messages when no listener is bound', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -844,8 +844,8 @@ describe('Subscriptions', function() {
 
   it('should consume a poision message when a listener acks it', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -887,9 +887,9 @@ describe('Subscriptions', function() {
 
   it('should republish messages to queue when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -914,9 +914,9 @@ describe('Subscriptions', function() {
 
   it('should truncate error messages when republishing', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -940,9 +940,9 @@ describe('Subscriptions', function() {
 
   it('should maintain original fields, properties and headers when republished', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }, function(err, publication) {
@@ -971,9 +971,9 @@ describe('Subscriptions', function() {
 
   it('should cap republishes when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -997,9 +997,9 @@ describe('Subscriptions', function() {
 
   it('should defer republishing messages when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1026,7 +1026,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,
@@ -1102,9 +1102,9 @@ describe('Subscriptions', function() {
 
   it('should forward messages to publication when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1135,9 +1135,9 @@ describe('Subscriptions', function() {
 
   it('should truncate error messages when forwarding', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1165,9 +1165,9 @@ describe('Subscriptions', function() {
 
   it('should override routing key when forwarding messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1194,9 +1194,9 @@ describe('Subscriptions', function() {
 
   it('should maintain original fields, properties and headers when forwarding messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -1234,9 +1234,9 @@ describe('Subscriptions', function() {
 
   it('should not maintain original routing headers when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
 
@@ -1274,9 +1274,9 @@ describe('Subscriptions', function() {
 
   it('should cap forwards when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', assert.ifError);
@@ -1302,9 +1302,9 @@ describe('Subscriptions', function() {
 
   it('should error when forwarding messages to /dev/null', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -1329,9 +1329,9 @@ describe('Subscriptions', function() {
   it('should error on unknown recovery strategy', function(test, done) {
 
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
@@ -1355,9 +1355,9 @@ describe('Subscriptions', function() {
 
   it('should chain recovery strategies', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1387,9 +1387,9 @@ describe('Subscriptions', function() {
 
   it('should not rollback message when shutting down broker after ack', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1415,9 +1415,9 @@ describe('Subscriptions', function() {
 
   it('should not rollback message when shutting down broker after ack', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1445,9 +1445,9 @@ describe('Subscriptions', function() {
 
   it('should nack messages when all recovery strategies have been attempted', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1473,8 +1473,8 @@ describe('Subscriptions', function() {
 
   it('should limit concurrent messages using prefetch', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -1511,7 +1511,7 @@ describe('Subscriptions', function() {
     createBroker({
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,
@@ -1520,7 +1520,7 @@ describe('Subscriptions', function() {
           queues: {
             q1: {
               assert: true,
-              replyTo: replyTo,
+              replyTo,
             },
           },
           bindings: {
@@ -1552,9 +1552,9 @@ describe('Subscriptions', function() {
 
   it('should emit channel errors', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1577,8 +1577,8 @@ describe('Subscriptions', function() {
   it('should not consume messages after unsubscribing', function(test, done) {
 
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -1611,8 +1611,8 @@ describe('Subscriptions', function() {
   it('should tollerate repeated unsubscription', function(test, done) {
 
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -1638,8 +1638,8 @@ describe('Subscriptions', function() {
   it('should not warn about emitter leaks', function(test, done) {
 
     const config = {
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {},
     };
 
@@ -1667,9 +1667,9 @@ describe('Subscriptions', function() {
 
   it('should attach the subscription vhost to message properties', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err) {
@@ -1688,8 +1688,8 @@ describe('Subscriptions', function() {
 
   it('should emit an error if trying to ack a message after unsubscribing', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
     }, function(err, broker) {
       assert.ifError(err);
@@ -1715,8 +1715,8 @@ describe('Subscriptions', function() {
 
   it('should emit an error if trying to nack a message after unsubscribing', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
     }, function(err, broker) {
       assert.ifError(err);
@@ -1742,7 +1742,7 @@ describe('Subscriptions', function() {
 
   it('should symetrically decrypt messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -1786,7 +1786,7 @@ describe('Subscriptions', function() {
 
   it('should report invalid_content when missing encryption profile', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -1823,7 +1823,7 @@ describe('Subscriptions', function() {
 
   it('should fail with invalid content when encryption errors', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -1867,8 +1867,8 @@ describe('Subscriptions', function() {
 
   it('should emit cancelled event when the broker cancels the consumer', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -1897,8 +1897,8 @@ describe('Subscriptions', function() {
 
   it('should emit an error event when the broker cancels the consumer and there is no cancelled handler', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',
@@ -1927,8 +1927,8 @@ describe('Subscriptions', function() {
 
   it('should resubscribe following a broker cancellation', function(test, done) {
     createBroker({
-      vhosts: vhosts,
-      publications: publications,
+      vhosts,
+      publications,
       subscriptions: {
         s1: {
           vhost: '/',

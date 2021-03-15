@@ -30,7 +30,7 @@ describe('Broker', function() {
             },
           },
         },
-        namespace: namespace,
+        namespace,
         exchanges: {
           e1: {
             assert: true,
@@ -182,7 +182,7 @@ describe('Broker', function() {
   });
 
   it('should provide fully qualified name', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
@@ -191,7 +191,7 @@ describe('Broker', function() {
   });
 
   it('should not modify configuration', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     const json = JSON.stringify(config, null, 2);
     createBroker(config, function(err) {
       assert.ifError(err);
@@ -201,7 +201,7 @@ describe('Broker', function() {
   });
 
   it('should nuke', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.nuke(function(err) {
@@ -213,8 +213,8 @@ describe('Broker', function() {
 
   it('should cancel subscriptions', function(test, done) {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     createBroker(config, function(err, broker) {
@@ -244,9 +244,9 @@ describe('Broker', function() {
 
   it('should defer returning from unsubscribeAll until underlying channels have been closed', function(test, done) {
     const config = _.defaultsDeep({
-      vhosts: vhosts,
-      publications: publications,
-      subscriptions: subscriptions,
+      vhosts,
+      publications,
+      subscriptions,
     }, testConfig);
 
     config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
@@ -273,7 +273,7 @@ describe('Broker', function() {
   });
 
   it('should connect', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.connect('/', function(err, connection) {
@@ -285,7 +285,7 @@ describe('Broker', function() {
   });
 
   it('should bounce vhosts', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.bounce(done);
@@ -293,7 +293,7 @@ describe('Broker', function() {
   });
 
   it('should purge vhosts', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       broker.publish('/q1', 'test message', function(err) {
@@ -316,7 +316,7 @@ describe('Broker', function() {
 
     if (process.env.CI) return done();
 
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
 
@@ -347,8 +347,8 @@ describe('Broker', function() {
 
   it('should subscribe to all subscriptions', function(test, done) {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     createBroker(config, function(err, broker) {
@@ -366,8 +366,8 @@ describe('Broker', function() {
 
   it('should subscribe to all filtered subscriptions', function(test, done) {
     const config = _.defaultsDeep({
-      vhosts: vhosts, publications: publications,
-      subscriptions: subscriptions,
+      vhosts, publications,
+      subscriptions,
     }, testConfig);
 
     createBroker(config, function(err, broker) {
@@ -385,7 +385,7 @@ describe('Broker', function() {
   });
 
   it('should get vhost connections', function(test, done) {
-    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts }, testConfig);
     createBroker(config, function(err, broker) {
       assert.ifError(err);
       const connections = broker.getConnections();

@@ -16,7 +16,7 @@ describe('Shovel', function() {
     config = {
       vhosts: {
         '/': {
-          namespace: namespace,
+          namespace,
           exchanges: {
             e1: {
               assert: true,

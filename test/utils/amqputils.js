@@ -2,7 +2,7 @@ const assert = require('assert');
 const _ = require('lodash');
 
 module.exports = {
-  init: init,
+  init,
 };
 
 function init(connection) {
@@ -93,13 +93,13 @@ function init(connection) {
   }
 
   return {
-    disconnect: disconnect,
+    disconnect,
     checkExchange: _.curry(checkExchange),
-    createQueue: createQueue,
+    createQueue,
     checkQueue: _.curry(checkQueue),
-    deleteQueue: deleteQueue,
+    deleteQueue,
     publishMessage: _.curry(publishMessage),
-    publishMessageToQueue: publishMessageToQueue,
+    publishMessageToQueue,
     getMessage: _.curry(getMessage),
     assertMessage: _.curry(assertMessage),
     assertMessageAbsent: _.curry(assertMessageAbsent),

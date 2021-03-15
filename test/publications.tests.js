@@ -21,7 +21,7 @@ describe('Publications', function() {
 
     vhosts = {
       '/': {
-        namespace: namespace,
+        namespace,
         exchanges: {
           e1: {
             assert: true,
@@ -73,7 +73,7 @@ describe('Publications', function() {
 
   it('should report unknown publications', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -91,7 +91,7 @@ describe('Publications', function() {
 
   it('should report deprecated publications', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -111,7 +111,7 @@ describe('Publications', function() {
 
   it('should publish text messages to normal exchanges', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -131,7 +131,7 @@ describe('Publications', function() {
 
   it('should publish text messages using confirm channels to exchanges', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -151,7 +151,7 @@ describe('Publications', function() {
 
   it('should publish text messages to queues', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -170,7 +170,7 @@ describe('Publications', function() {
 
   it('should publish text messages to queues via the default exchange', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
     }, function(err, broker) {
       assert.ifError(err);
       broker.publish('/', 'test message', broker.qualify('/', 'q3'), function(err, publication) {
@@ -184,7 +184,7 @@ describe('Publications', function() {
 
   it('should decorate the message with a uuid', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -210,7 +210,7 @@ describe('Publications', function() {
 
   it('should honour messageId when specified', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -236,7 +236,7 @@ describe('Publications', function() {
 
   it('should decorate error events with messageId', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -272,7 +272,7 @@ describe('Publications', function() {
 
   it('should publish to using confirm channels to queues', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -292,7 +292,7 @@ describe('Publications', function() {
 
   it('should publish json messages to normal exchanges', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -311,7 +311,7 @@ describe('Publications', function() {
 
   it('should publish messages with custom contentType to normal exchanges', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -336,7 +336,7 @@ describe('Publications', function() {
 
   it('should publish buffer messages to normal exchanges', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -355,7 +355,7 @@ describe('Publications', function() {
 
   it('should allow publish overrides', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -376,7 +376,7 @@ describe('Publications', function() {
 
   it('should report unrouted messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'xx',
@@ -396,7 +396,7 @@ describe('Publications', function() {
 
   it('should forward messages to publications', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -456,7 +456,7 @@ describe('Publications', function() {
 
   it('should instruct subscriber to restore routing headers when requested', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -504,7 +504,7 @@ describe('Publications', function() {
 
   it('should forward messages to publications maintaining the original routing key when not overriden', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -553,7 +553,7 @@ describe('Publications', function() {
   it('should publish lots of messages using normal channels', function(test, done) {
 
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -580,7 +580,7 @@ describe('Publications', function() {
   it('should publish lots of messages using confirm channels', function(test, done) {
 
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -606,7 +606,7 @@ describe('Publications', function() {
 
   it('should symetrically encrypt messages', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -641,7 +641,7 @@ describe('Publications', function() {
 
   it('should report encryption errors', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           queue: 'q1',
@@ -665,7 +665,7 @@ describe('Publications', function() {
 
   it('should capture publication stats for normal channels', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',
@@ -687,7 +687,7 @@ describe('Publications', function() {
 
   it('should capture publication stats for confirm channels', function(test, done) {
     createBroker({
-      vhosts: vhosts,
+      vhosts,
       publications: {
         p1: {
           exchange: 'e1',

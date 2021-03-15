@@ -6,16 +6,16 @@ const BrokerAsPromised = require('./lib/amqp/BrokerAsPromised');
 
 module.exports = (function() {
   return {
-    Broker: Broker,
-    BrokerAsPromised: BrokerAsPromised,
+    Broker,
+    BrokerAsPromised,
     createBroker: Broker.create,
     createBrokerAsPromised: BrokerAsPromised.create,
-    defaultConfig: defaultConfig,
-    testConfig: testConfig,
-    withDefaultConfig: function(config) {
+    defaultConfig,
+    testConfig,
+    withDefaultConfig(config) {
       return _.defaultsDeep({}, config, defaultConfig);
     },
-    withTestConfig: function(config) {
+    withTestConfig(config) {
       return _.defaultsDeep({}, config, testConfig);
     },
     counters: require('./lib/counters'),
