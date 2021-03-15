@@ -13,7 +13,6 @@
     "dot-notation": "off",
     "no-unused-expressions": "off",
     "no-prototype-builtins": "off",
-    "no-lonely-if": "off",
     "no-use-before-define": "off"
   }
 }
