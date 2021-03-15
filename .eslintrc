@@ -1,8 +1,25 @@
 {
-  "extends": "imperative",
+  "extends": "esnext",
   "rules": {
-    "comma-dangle": ["error", "always-multiline"],
-    "indent": ["error", 2, { "ignoredNodes": ["ConditionalExpression"] }],
-    "semi": ["error", "always"]
+    "import/no-commonjs": "off",
+    "import/no-nodejs-modules": "off",
+    "object-shorthand": "off",
+    "prefer-rest-params": "off",
+    "prefer-arrow-callback": "off",
+    "no-undef": "off",
+    "no-extra-semi": "off",
+    "no-unused-vars": "off",
+    "no-var": "off",
+    "no-useless-escape": "off",
+    "dot-notation": "off",
+    "no-unused-expressions": "off",
+    "no-prototype-builtins": "off",
+    "no-lonely-if": "off",
+    "no-unneeded-ternary": "off",
+    "operator-assignment": "off",
+    "no-use-before-define": "off",
+    "prefer-spread": "off",
+    "no-empty-function": "off"
+
   }
 }

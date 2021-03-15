@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.0.0
+- Switched to eslint-config-esnext and updated style
+
 ## 12.0.4
 - Bump dev dependencies
 - Upgraded to husky 5
