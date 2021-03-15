@@ -1,12 +1,14 @@
 {
   "extends": "esnext",
+  "env": {
+    "node": true
+  },
   "rules": {
     "import/no-commonjs": "off",
     "import/no-nodejs-modules": "off",
     "object-shorthand": "off",
     "prefer-rest-params": "off",
     "prefer-arrow-callback": "off",
-    "no-undef": "off",
     "no-unused-vars": ["error", { "varsIgnorePattern": "debug" } ],
     "no-prototype-builtins": "off"
   }

@@ -42,7 +42,7 @@ describe('Exponential Backoff', function() {
     }
     assert(results[0] >= 2000 && results[0] <= 6000, results[0]);
     assert(results[1] >= 6000 && results[1] <= 18000, results[1]);
-    for (i = 2; i < 700; i++) {
+    for (let i = 2; i < 700; i++) {
       assert(results[i] === 18000, results[i]);
     }
   });
