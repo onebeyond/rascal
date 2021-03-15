@@ -9,7 +9,6 @@
     "object-shorthand": "off",
     "prefer-rest-params": "off",
     "prefer-arrow-callback": "off",
-    "no-unused-vars": ["error", { "varsIgnorePattern": "debug" } ],
-    "no-prototype-builtins": "off"
+    "no-unused-vars": ["error", { "varsIgnorePattern": "debug" } ]
   }
 }
