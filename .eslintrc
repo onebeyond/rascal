@@ -15,7 +15,6 @@
     "no-prototype-builtins": "off",
     "no-lonely-if": "off",
     "no-unneeded-ternary": "off",
-    "operator-assignment": "off",
     "no-use-before-define": "off"
   }
 }
