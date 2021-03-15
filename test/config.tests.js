@@ -1012,9 +1012,9 @@ describe('Configuration', function() {
           },
         }, function(err, config) {
           assert.ifError(err);
-          assert.equal(config.vhosts.v1.bindings['b1'].source, 'e1');
-          assert.equal(config.vhosts.v1.bindings['b1'].destination, 'q1');
-          assert.equal(config.vhosts.v1.bindings['b1'].bindingKey, 'a');
+          assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
+          assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
+          assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'a');
         });
       });
 
