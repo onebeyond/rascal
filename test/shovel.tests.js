@@ -1,14 +1,14 @@
-var assert = require('assert');
-var _ = require('lodash');
-var testConfig = require('../lib/config/tests');
-var uuid = require('uuid').v4;
-var Broker = require('..').Broker;
+const assert = require('assert');
+const _ = require('lodash');
+const testConfig = require('../lib/config/tests');
+const uuid = require('uuid').v4;
+const Broker = require('..').Broker;
 
 describe('Shovel', function() {
 
-  var broker;
-  var namespace;
-  var config;
+  let broker;
+  let namespace;
+  let config;
 
   beforeEach(function(test, done) {
 

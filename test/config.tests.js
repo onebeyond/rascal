@@ -1,8 +1,8 @@
-var assert = require('assert');
-var format = require('util').format;
-var _ = require('lodash');
-var configure = require('../lib/config/configure');
-var url = require('url');
+const assert = require('assert');
+const format = require('util').format;
+const _ = require('lodash');
+const configure = require('../lib/config/configure');
+const url = require('url');
 
 describe('Configuration', function() {
 
@@ -173,15 +173,15 @@ describe('Configuration', function() {
           },
         }, function(err, config) {
           assert.ifError(err);
-          var connections = _.sortBy(config.vhosts.v1.connections, 'url');
+          const connections = _.sortBy(config.vhosts.v1.connections, 'url');
           assert.equal(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100');
           assert.equal(connections[1].url, 'protocol://user:password@beta:9000/vhost?heartbeat=10&channelMax=100');
         });
       });
 
       it('should randomise the order of connections, but maintain order across vhosts by host', function() {
-        var results = [];
-        for (var i = 0; i < 10; i++) {
+        const results = [];
+        for (let i = 0; i < 10; i++) {
           configure({
             vhosts: {
               v1: {

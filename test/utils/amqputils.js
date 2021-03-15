@@ -1,5 +1,5 @@
-var assert = require('assert');
-var _ = require('lodash');
+const assert = require('assert');
+const _ = require('lodash');
 
 module.exports = {
   init: init,

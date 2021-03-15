@@ -1,17 +1,17 @@
-var assert = require('assert');
-var async = require('async');
-var inMemory = require('../../lib/counters/inMemory');
+const assert = require('assert');
+const async = require('async');
+const inMemory = require('../../lib/counters/inMemory');
 
 describe('In Memory Counter', function() {
 
-  var counter;
+  let counter;
 
   beforeEach(function() {
     counter = inMemory({ size: 3 });
   });
 
   it('should return increment and get entries', function(test, done) {
-    var results = {};
+    const results = {};
     async.eachSeries(['one', 'two', 'one'], function(key, cb) {
       counter.incrementAndGet(key, function(err, value) {
         if (err) return cb(err);
@@ -27,7 +27,7 @@ describe('In Memory Counter', function() {
   });
 
   it('should limit the counter size', function(test, done) {
-    var results = {};
+    const results = {};
     async.eachSeries(['one', 'two', 'three', 'four', 'one'], function(key, cb) {
       counter.incrementAndGet(key, function(err, value) {
         if (err) return cb(err);

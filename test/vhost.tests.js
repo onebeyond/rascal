@@ -1,16 +1,16 @@
-var assert = require('assert');
-var _ = require('lodash');
-var amqplib = require('amqplib/callback_api');
-var testConfig = require('../lib/config/tests');
-var format = require('util').format;
-var uuid = require('uuid').v4;
-var Broker = require('..').Broker;
-var AmqpUtils = require('./utils/amqputils');
+const assert = require('assert');
+const _ = require('lodash');
+const amqplib = require('amqplib/callback_api');
+const testConfig = require('../lib/config/tests');
+const format = require('util').format;
+const uuid = require('uuid').v4;
+const Broker = require('..').Broker;
+const AmqpUtils = require('./utils/amqputils');
 
 describe('Vhost', function() {
 
-  var broker;
-  var amqputils;
+  let broker;
+  let amqputils;
 
   beforeEach(function(test, done) {
     amqplib.connect(function(err, connection) {
@@ -28,7 +28,7 @@ describe('Vhost', function() {
   });
 
   it('should timeout connections', function(test, done) {
-    var namespace = uuid();
+    const namespace = uuid();
     createBroker({
       vhosts: {
         '/': {
@@ -48,7 +48,7 @@ describe('Vhost', function() {
   });
 
   it('should create exchanges', function(test, done) {
-    var namespace = uuid();
+    const namespace = uuid();
     createBroker({
       vhosts: {
         '/': {
@@ -66,7 +66,7 @@ describe('Vhost', function() {
   });
 
   it('should create queues', function(test, done) {
-    var namespace = uuid();
+    const namespace = uuid();
     createBroker({
       vhosts: {
         '/': {
@@ -125,7 +125,7 @@ describe('Vhost', function() {
 
   it('should create bindings', function(test, done) {
 
-    var namespace = uuid();
+    const namespace = uuid();
 
     createBroker({
       vhosts: {

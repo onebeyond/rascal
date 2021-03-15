@@ -1,5 +1,5 @@
-var assert = require('assert');
-var validate = require('../lib/config/validate');
+const assert = require('assert');
+const validate = require('../lib/config/validate');
 
 describe('Validation', function() {
 

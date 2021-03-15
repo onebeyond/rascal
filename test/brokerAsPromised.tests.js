@@ -1,17 +1,17 @@
-var assert = require('assert');
-var _ = require('lodash');
-var testConfig = require('../lib/config/tests');
-var uuid = require('uuid').v4;
-var format = require('util').format;
-var BrokerAsPromised = require('..').BrokerAsPromised;
+const assert = require('assert');
+const _ = require('lodash');
+const testConfig = require('../lib/config/tests');
+const uuid = require('uuid').v4;
+const format = require('util').format;
+const BrokerAsPromised = require('..').BrokerAsPromised;
 
 describe('Broker As Promised', function() {
 
-  var broker;
-  var namespace;
-  var vhosts;
-  var publications;
-  var subscriptions;
+  let broker;
+  let namespace;
+  let vhosts;
+  let publications;
+  let subscriptions;
 
   beforeEach(function() {
 
@@ -78,20 +78,20 @@ describe('Broker As Promised', function() {
   });
 
   it('should assert vhosts', function() {
-    var vhostName = uuid();
-    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    const vhostName = uuid();
+    const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
 
-    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
     return createBroker(config);
   });
 
   it('should fail when checking vhosts that dont exist', function() {
-    var vhostName = uuid();
-    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    const vhostName = uuid();
+    const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].check = true;
 
-    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
     return createBroker(config).catch(function(err) {
       assert.ok(err);
       assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
@@ -99,21 +99,21 @@ describe('Broker As Promised', function() {
   });
 
   it('should not fail when checking vhosts that do exist', function() {
-    var vhostName = uuid();
-    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    const vhostName = uuid();
+    const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
     customVhosts[vhostName].check = true;
 
-    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
     return createBroker(config);
   });
 
   it('should delete vhosts', function() {
-    var vhostName = uuid();
-    var customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+    const vhostName = uuid();
+    const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
 
-    var config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       return broker.nuke().then(function() {
         config.vhosts[vhostName].assert = false;
@@ -127,29 +127,29 @@ describe('Broker As Promised', function() {
   });
 
   it('should provide fully qualified name', function() {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
     });
   });
 
   it('should not modify configuration', function() {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
-    var json = JSON.stringify(config, null, 2);
+    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const json = JSON.stringify(config, null, 2);
     return createBroker(config).then(function(broker) {
       assert.equal(json, JSON.stringify(config, null, 2));
     });
   });
 
   it('should nuke', function() {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       return broker.nuke();
     });
   });
 
   it('should cancel subscriptions', function(test, done) {
-    var config = _.defaultsDeep({
+    const config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
     }, testConfig);
@@ -172,7 +172,7 @@ describe('Broker As Promised', function() {
   });
 
   it('should connect', function() {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
       return broker.connect('/').then(function(connection) {
         assert.ok(connection._rascal_id);
@@ -183,7 +183,7 @@ describe('Broker As Promised', function() {
 
 
   it('should subscribe to all subscriptions', function() {
-    var config = _.defaultsDeep({
+    const config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
     }, testConfig);
@@ -199,7 +199,7 @@ describe('Broker As Promised', function() {
   });
 
   it('should subscribe to all filtered subscriptions', function() {
-    var config = _.defaultsDeep({
+    const config = _.defaultsDeep({
       vhosts: vhosts, publications: publications,
       subscriptions: subscriptions,
     }, testConfig);
@@ -216,9 +216,9 @@ describe('Broker As Promised', function() {
   });
 
   it('should get vhost connections', function() {
-    var config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
+    const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     return createBroker(config).then(function(broker) {
-      var connections = broker.getConnections();
+      const connections = broker.getConnections();
       assert.equal(connections.length, 1);
       assert.equal(connections[0].vhost, '/');
       assert.equal(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);

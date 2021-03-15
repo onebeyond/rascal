@@ -1,5 +1,5 @@
-var assert = require('assert');
-var configure = require('../lib/config/configure');
+const assert = require('assert');
+const configure = require('../lib/config/configure');
 
 describe('Defaults', function() {
 

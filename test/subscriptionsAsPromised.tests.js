@@ -1,19 +1,19 @@
-var assert = require('assert');
-var _ = require('lodash').runInContext();
-var amqplib = require('amqplib/callback_api');
-var testConfig = require('../lib/config/tests');
-var uuid = require('uuid').v4;
-var BrokerAsPromised = require('..').BrokerAsPromised;
-var AmqpUtils = require('./utils/amqputils');
+const assert = require('assert');
+const _ = require('lodash').runInContext();
+const amqplib = require('amqplib/callback_api');
+const testConfig = require('../lib/config/tests');
+const uuid = require('uuid').v4;
+const BrokerAsPromised = require('..').BrokerAsPromised;
+const AmqpUtils = require('./utils/amqputils');
 
 describe('Subscriptions As Promised', function() {
 
-  var broker;
-  var amqputils;
-  var namespace;
-  var vhosts;
-  var publications;
-  var subscriptions;
+  let broker;
+  let amqputils;
+  let namespace;
+  let vhosts;
+  let publications;
+  let subscriptions;
 
   beforeEach(function(test, done) {
 
@@ -588,7 +588,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -612,8 +612,8 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var numberOfMessages = 0;
-        var startTime = new Date().getTime();
+        let numberOfMessages = 0;
+        const startTime = new Date().getTime();
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -623,7 +623,7 @@ describe('Subscriptions As Promised', function() {
               defer: 100,
               requeue: true,
             });
-            var stopTime = new Date().getTime();
+            const stopTime = new Date().getTime();
             assert.ok((stopTime - startTime) >= 900, 'Retry was not deferred');
             done();
           });
@@ -647,7 +647,7 @@ describe('Subscriptions As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var errors = 0;
+        let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel().then(done);
@@ -677,7 +677,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var errors = 0;
+        let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             throw new Error('oh no');
@@ -711,7 +711,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var errors = 0;
+        let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             throw new Error('oh no');
@@ -776,7 +776,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          var errors = 0;
+          let errors = 0;
           subscription.on('message', function(message, content, ackOrNack) {
             throw new Error('oh no');
           }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
@@ -804,7 +804,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -827,7 +827,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -850,7 +850,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }).then(function(publication) {
         publication.on('success', function(messageId) {
-          var messages = {};
+          const messages = {};
           broker.subscribe('s1').then(function(subscription) {
             subscription.on('message', function(message, content, ackOrNack) {
               assert.ok(message);
@@ -877,7 +877,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message');
 
-      var count = 0;
+      let count = 0;
       broker.subscribe('s1').then(function(subscription) {
         subscription.on('message', function(message, content, ackOrNack) {
           count++;
@@ -901,14 +901,14 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
 
-        var numberOfMessages = 0;
-        var startTime = new Date().getTime();
+        let numberOfMessages = 0;
+        const startTime = new Date().getTime();
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
             numberOfMessages++;
             if (numberOfMessages < 10) return ackOrNack(new Error('republish'), { strategy: 'republish', defer: 100 });
-            var stopTime = new Date().getTime();
+            const stopTime = new Date().getTime();
             assert.ok((stopTime - startTime) >= 900, 'Republish was not deferred');
             done();
           });
@@ -970,7 +970,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
 
         broker.subscribe('s1').then(function(subscription) {
-          var count = 0;
+          let count = 0;
           subscription.on('message', function(message, content, ackOrNack) {
             assert.equal(++count, 1);
             assert.ok(message);
@@ -1081,7 +1081,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
 
-      var messageId;
+      let messageId;
 
       broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then(function(publication) {
         publication.on('success', function(_messageId) {
@@ -1117,7 +1117,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
 
-      var messageId;
+      let messageId;
 
       broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then(function(publication) {
         publication.on('success', function(_messageId) {
@@ -1154,7 +1154,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message');
 
-      var count = 0;
+      let count = 0;
 
       broker.subscribe('s1').then(function(subscription) {
         subscription.on('message', function(message, content, ackOrNack) {
@@ -1225,7 +1225,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -1253,7 +1253,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -1276,7 +1276,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -1301,7 +1301,7 @@ describe('Subscriptions As Promised', function() {
       subscriptions: subscriptions,
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
-        var messages = {};
+        const messages = {};
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert.ok(message);
@@ -1329,12 +1329,12 @@ describe('Subscriptions As Promised', function() {
         },
       },
     }).then(function(broker) {
-      var promises = new Array(10).fill().map(function() {
+      const promises = new Array(10).fill().map(function() {
         return broker.publish('p1', 'test message');
       });
 
       Promise.all(promises).then(function() {
-        var messages = 0;
+        let messages = 0;
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function(message, content, ackOrNack) {
             assert(message);
@@ -1352,7 +1352,7 @@ describe('Subscriptions As Promised', function() {
   });
 
   it('should consume to messages from a replyTo queue', function(test, done) {
-    var replyTo = uuid();
+    const replyTo = uuid();
     createBroker({
       vhosts: {
         '/': {
@@ -1457,7 +1457,7 @@ describe('Subscriptions As Promised', function() {
       },
     }).then(function(broker) {
       return broker.subscribe('s1').then(function(subscription) {
-        var promises = new Array(3).fill().map(function() {
+        const promises = new Array(3).fill().map(function() {
           return subscription.cancel();
         });
         return Promise.all(promises);
@@ -1467,13 +1467,13 @@ describe('Subscriptions As Promised', function() {
 
   it('should not warn about emitter leaks', function() {
 
-    var config = {
+    const config = {
       vhosts: vhosts,
       publications: publications,
       subscriptions: {},
     };
 
-    var times = new Array(11).fill();
+    const times = new Array(11).fill();
 
     times.forEach(function(__, i) {
       config.subscriptions['s' + i] = {
@@ -1486,7 +1486,7 @@ describe('Subscriptions As Promised', function() {
     });
 
     return createBroker(config).then(function(broker) {
-      var promises = times.map(function(__, i) {
+      const promises = times.map(function(__, i) {
         return broker.subscribe('s' + i);
       });
       return Promise.all(promises);

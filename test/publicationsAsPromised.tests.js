@@ -1,18 +1,18 @@
-var assert = require('assert');
-var _ = require('lodash');
-var amqplib = require('amqplib/callback_api');
-var testConfig = require('../lib/config/tests');
-var format = require('util').format;
-var uuid = require('uuid').v4;
-var BrokerAsPromised = require('..').BrokerAsPromised;
-var AmqpUtils = require('./utils/amqputils');
+const assert = require('assert');
+const _ = require('lodash');
+const amqplib = require('amqplib/callback_api');
+const testConfig = require('../lib/config/tests');
+const format = require('util').format;
+const uuid = require('uuid').v4;
+const BrokerAsPromised = require('..').BrokerAsPromised;
+const AmqpUtils = require('./utils/amqputils');
 
 describe('Publications As Promised', function() {
 
-  var broker;
-  var amqputils;
-  var namespace;
-  var vhosts;
+  let broker;
+  let amqputils;
+  let namespace;
+  let vhosts;
 
   beforeEach(function(test, done) {
 
@@ -311,7 +311,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
 
-      var messageId;
+      let messageId;
 
       broker.subscribe('s1').then(function(subscription) {
 
