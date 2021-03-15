@@ -6,7 +6,7 @@ const uuid = require('uuid').v4;
 const BrokerAsPromised = require('..').BrokerAsPromised;
 const AmqpUtils = require('./utils/amqputils');
 
-describe('Subscriptions As Promised', function() {
+describe('Subscriptions As Promised', () => {
 
   let broker;
   let amqputils;
@@ -15,7 +15,7 @@ describe('Subscriptions As Promised', function() {
   let publications;
   let subscriptions;
 
-  beforeEach(function(test, done) {
+  beforeEach((test, done) => {
 
     namespace = uuid();
     vhosts = {
@@ -100,27 +100,27 @@ describe('Subscriptions As Promised', function() {
       },
     };
 
-    amqplib.connect(function(err, connection) {
+    amqplib.connect((err, connection) => {
       if (err) return done(err);
       amqputils = AmqpUtils.init(connection);
       done();
     });
   });
 
-  afterEach(function(test, done) {
-    amqputils.disconnect(function() {
+  afterEach((test, done) => {
+    amqputils.disconnect(() => {
       if (broker) return broker.nuke().catch(done).then(done);
       done();
     });
   });
 
-  it('should report unknown subscriptions', function(test, done) {
+  it('should report unknown subscriptions', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.subscribe('does-not-exist').catch(function(err) {
+    }).then((broker) => {
+      broker.subscribe('does-not-exist').catch((err) => {
         assert.ok(err);
         assert.equal(err.message, 'Unknown subscription: does-not-exist');
         done();
@@ -128,15 +128,15 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to text/plain messages', function(test, done) {
+  it('should consume to text/plain messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'text/plain');
             assert.equal(content, 'test message');
@@ -147,16 +147,16 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume messages before a listener is bound', function(test, done) {
+  it('should not consume messages before a listener is bound', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          setTimeout(function() {
-            subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          setTimeout(() => {
+            subscription.on('message', (message, content) => {
               assert(message);
               assert.equal(content, 'test message');
               done();
@@ -167,19 +167,19 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to text/other messages', function(test, done) {
+  it('should consume to text/other messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message', {
         options: {
           contentType: 'text/csv',
         },
-      }).then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+      }).then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'text/csv');
             assert.equal(content, 'test message');
@@ -190,19 +190,19 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to whatever/whatever messages', function(test, done) {
+  it('should consume to whatever/whatever messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message', {
         options: {
           contentType: 'x-foo-bar/blah',
         },
-      }).then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+      }).then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'x-foo-bar/blah');
             assert.equal(content, 'test message');
@@ -213,15 +213,15 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to JSON messages', function(test, done) {
+  it('should consume to JSON messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', { message: 'test message' }).then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', { message: 'test message' }).then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'application/json');
             assert.equal(content.message, 'test message');
@@ -232,15 +232,15 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to Buffer messages', function(test, done) {
+  it('should consume to Buffer messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', Buffer.from('test message')).then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', Buffer.from('test message')).then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, undefined);
             assert.equal(content, 'test message');
@@ -251,19 +251,19 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume invalid messages when no invalid content/message listener is bound', function(test, done) {
+  it('should not consume invalid messages when no invalid content/message listener is bound', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+    }).then((broker) => {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, (err) => {
         assert.ifError(err);
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('error', function() {
-            broker.shutdown().then(function() {
+          }).on('error', () => {
+            broker.shutdown().then(() => {
               amqputils.assertMessageAbsent('q1', namespace, done);
             });
           });
@@ -272,20 +272,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume an invalid messages messages when a listener is bound to invalid_content', function(test, done) {
+  it('should not consume an invalid messages messages when a listener is bound to invalid_content', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+    }).then((broker) => {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, (err) => {
         assert.ifError(err);
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err) {
+          }).on('invalid_content', (err) => {
             assert(err);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessage('q1', namespace, 'not json', done);
             });
           });
@@ -294,20 +294,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume an invalid messages messages when a listener is bound to invalid_message', function(test, done) {
+  it('should not consume an invalid messages messages when a listener is bound to invalid_message', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+    }).then((broker) => {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, (err) => {
         assert.ifError(err);
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_message', function(err) {
+          }).on('invalid_message', (err) => {
             assert(err);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessage('q1', namespace, 'not json', done);
             });
           });
@@ -316,22 +316,22 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume an invalid message when a listener acks it', function(test, done) {
+  it('should consume an invalid message when a listener acks it', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+    }).then((broker) => {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, (err) => {
         assert.ifError(err);
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err, message, ackOrNack) {
+          }).on('invalid_content', (err, message, ackOrNack) => {
             assert(err);
-            ackOrNack().then(function() {
-              setTimeout(function() {
-                broker.shutdown().then(function() {
+            ackOrNack().then(() => {
+              setTimeout(() => {
+                broker.shutdown().then(() => {
                   amqputils.assertMessageAbsent('q1', namespace, done);
                 });
               });
@@ -342,22 +342,22 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume an invalid message when a listener nacks it', function(test, done) {
+  it('should consume an invalid message when a listener nacks it', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, function(err) {
+    }).then((broker) => {
+      amqputils.publishMessage('e1', namespace, Buffer.from('not json'), { routingKey: 'foo', contentType: 'application/json' }, (err) => {
         assert.ifError(err);
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err, message, ackOrNack) {
+          }).on('invalid_content', (err, message, ackOrNack) => {
             assert(err);
-            ackOrNack(err).then(function() {
-              setTimeout(function() {
-                broker.shutdown().then(function() {
+            ackOrNack(err).then(() => {
+              setTimeout(() => {
+                broker.shutdown().then(() => {
                   amqputils.assertMessageAbsent('q1', namespace, done);
                 });
               });
@@ -368,7 +368,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should force the content type when specified', function(test, done) {
+  it('should force the content type when specified', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -379,10 +379,10 @@ describe('Subscriptions As Promised', function() {
           contentType: 'text/plain',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', { message: 'test message' }).then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', { message: 'test message' }).then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'application/json');
             assert.equal(content, '{"message":"test message"}');
@@ -393,7 +393,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should filter subscriptions by routing key', function(test, done) {
+  it('should filter subscriptions by routing key', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -404,10 +404,10 @@ describe('Subscriptions As Promised', function() {
         },
       },
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Should not have received any messages');
           });
         });
@@ -416,7 +416,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume auto acknowledged messages', function(test, done) {
+  it('should consume auto acknowledged messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -429,12 +429,12 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message) => {
             assert.ok(message);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessageAbsent('q1', namespace, done);
             });
           });
@@ -443,18 +443,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume unacknowledged messages', function(test, done) {
+  it('should not consume unacknowledged messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message) => {
             assert.ok(message);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
@@ -463,20 +463,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume acknowledged messages', function(test, done) {
+  it('should consume acknowledged messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             ackOrNack();
-            setTimeout(function() {
-              broker.shutdown().then(function() {
+            setTimeout(() => {
+              broker.shutdown().then(() => {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
             }, 100);
@@ -486,20 +486,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume rejected messages by default', function(test, done) {
+  it('should consume rejected messages by default', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             ackOrNack(new Error('reject'));
-            setTimeout(function() {
-              broker.shutdown().then(function() {
+            setTimeout(() => {
+              broker.shutdown().then(() => {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
             }, 100);
@@ -509,7 +509,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should reject messages when requested', function(test, done) {
+  it('should reject messages when requested', (test, done) => {
     createBroker({
       vhosts: {
         '/': {
@@ -560,18 +560,18 @@ describe('Subscriptions As Promised', function() {
           queue: 'q2',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             ackOrNack(new Error('reject'));
           });
         });
 
-        broker.subscribe('s2').then(function(subscription) {
-          subscription.on('message', function(message) {
+        broker.subscribe('s2').then((subscription) => {
+          subscription.on('message', (message) => {
             assert.ok(message);
             done();
           });
@@ -580,17 +580,17 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should requeue messages when requested', function(test, done) {
+  it('should requeue messages when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), {
@@ -604,18 +604,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should defer requeueing messages when requested', function(test, done) {
+  it('should defer requeueing messages when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         let numberOfMessages = 0;
         const startTime = new Date().getTime();
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             numberOfMessages++;
             if (numberOfMessages < 10) return ackOrNack(new Error('retry'), {
@@ -632,7 +632,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should count redeliveries', function(test, done) {
+  it('should count redeliveries', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -645,14 +645,14 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         let errors = 0;
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message) => {
             if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel().then(done);
             throw new Error('oh no');
-          }).on('error', function() {
+          }).on('error', () => {
             if (errors++ > 10) done(new Error('Redeliveries were not counted'));
           });
         });
@@ -660,7 +660,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should notify when redeliveries limit is exceeded', function(test, done) {
+  it('should notify when redeliveries limit is exceeded', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -674,19 +674,19 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         let errors = 0;
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             throw new Error('oh no');
-          }).on('redeliveries_exceeded', function(err) {
+          }).on('redeliveries_exceeded', (err) => {
             assert(err);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
-          }).on('error', function() {
+          }).on('error', () => {
             if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
           });
         });
@@ -694,7 +694,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should notify when redeliveries error is exceeded', function(test, done) {
+  it('should notify when redeliveries error is exceeded', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -708,19 +708,19 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         let errors = 0;
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             throw new Error('oh no');
-          }).on('redeliveries_error', function(err) {
+          }).on('redeliveries_error', (err) => {
             assert(err);
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
-          }).on('error', function() {
+          }).on('error', () => {
             if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
           });
         });
@@ -728,7 +728,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume a poison messages when no listener is bound', function(test, done) {
+  it('should consume a poison messages when no listener is bound', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -742,15 +742,15 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             throw new Error('oh no');
-          }).on('error', function(err) {
+          }).on('error', (err) => {
             if (!/Message .* has exceeded 5 redeliveries/.test(err.message)) return;
-            broker.shutdown().then(function() {
+            broker.shutdown().then(() => {
               amqputils.assertMessageAbsent('q1', namespace, done);
             });
           });
@@ -759,7 +759,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume a poison message when a listener acks it', function(test, done) {
+  it('should consume a poison message when a listener acks it', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -773,22 +773,22 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
           let errors = 0;
-          subscription.on('message', function() {
+          subscription.on('message', () => {
             throw new Error('oh no');
-          }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+          }).on('redeliveries_exceeded', (err, message, ackOrNack) => {
             assert(err);
-            ackOrNack().then(function() {
-              setTimeout(function() {
-                broker.shutdown().then(function() {
+            ackOrNack().then(() => {
+              setTimeout(() => {
+                broker.shutdown().then(() => {
                   amqputils.assertMessageAbsent('q1', namespace, done);
                 });
               });
             });
-          }).on('error', function() {
+          }).on('error', () => {
             if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
           });
         });
@@ -796,17 +796,17 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should republish messages to queue when requested', function(test, done) {
+  it('should republish messages to queue when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack({ message: 'republish me', code: 'red' }, { strategy: 'republish' });
@@ -820,16 +820,16 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should truncate error messages when republishing', function(test, done) {
+  it('should truncate error messages when republishing', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             if (messages[message.properties.messageId] < 10) return ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'republish' });
@@ -842,17 +842,17 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should maintain original fields, properties and headers when republished', function(test, done) {
+  it('should maintain original fields, properties and headers when republished', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }).then(function(publication) {
-        publication.on('success', function(messageId) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message', { options: { persistent: true, headers: { foo: 'bar' } } }).then((publication) => {
+        publication.on('success', (messageId) => {
           const messages = {};
-          broker.subscribe('s1').then(function(subscription) {
-            subscription.on('message', function(message, content, ackOrNack) {
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 2) return ackOrNack(new Error('republish'), { strategy: 'republish' });
@@ -869,23 +869,23 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should cap republishes when requested', function(test, done) {
+  it('should cap republishes when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message');
 
       let count = 0;
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           count++;
           ackOrNack(new Error('republish'), { strategy: 'republish', attempts: 5 });
         });
       });
 
-      setTimeout(function() {
+      setTimeout(() => {
         assert.equal(count, 6);
         done();
       }, 500);
@@ -893,18 +893,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should defer republishing messages when requested', function(test, done) {
+  it('should defer republishing messages when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
         let numberOfMessages = 0;
         const startTime = new Date().getTime();
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             numberOfMessages++;
             if (numberOfMessages < 10) return ackOrNack(new Error('republish'), { strategy: 'republish', defer: 100 });
@@ -917,7 +917,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should immediately nack republished messages when requested', function(test, done) {
+  it('should immediately nack republished messages when requested', (test, done) => {
     createBroker({
       vhosts: {
         '/': {
@@ -966,12 +966,12 @@ describe('Subscriptions As Promised', function() {
           queue: 'q2',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
 
-        broker.subscribe('s1').then(function(subscription) {
+        broker.subscribe('s1').then((subscription) => {
           let count = 0;
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.equal(++count, 1);
             assert.ok(message);
             ackOrNack(new Error('immediate nack'), {
@@ -981,8 +981,8 @@ describe('Subscriptions As Promised', function() {
           });
         });
 
-        broker.subscribe('s2').then(function(subscription) {
-          subscription.on('message', function(message) {
+        broker.subscribe('s2').then((subscription) => {
+          subscription.on('message', (message) => {
             assert.ok(message);
             done();
           });
@@ -991,23 +991,23 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should forward messages to publication when requested', function(test, done) {
+  it('should forward messages to publication when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message');
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack({ message: 'forward me', code: 'red' }, { strategy: 'forward', publication: 'p2' });
         });
       });
 
-      broker.subscribe('s2').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s2').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
           assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
@@ -1021,23 +1021,23 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should truncate error messages when forwarding', function(test, done) {
+  it('should truncate error messages when forwarding', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message');
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack(new Error(_.pad('x', 10000, 'x')), { strategy: 'forward', publication: 'p2' });
         });
       });
 
-      broker.subscribe('s2').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s2').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
           assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
@@ -1048,23 +1048,23 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should override routing key when forwarding messages', function(test, done) {
+  it('should override routing key when forwarding messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message');
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', options: { routingKey: 'baz' }} );
         });
       });
 
-      broker.subscribe('s3').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s3').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
           assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
@@ -1074,30 +1074,30 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should maintain original fields, properties and headers when forwarding messages', function(test, done) {
+  it('should maintain original fields, properties and headers when forwarding messages', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
 
       let messageId;
 
-      broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then(function(publication) {
-        publication.on('success', function(_messageId) {
+      broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then((publication) => {
+        publication.on('success', (_messageId) => {
           messageId = _messageId;
         });
       });
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2' });
         });
       });
 
-      broker.subscribe('s2').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s2').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
           assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
@@ -1110,30 +1110,30 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not maintain original routing headers when requested', function(test, done) {
+  it('should not maintain original routing headers when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
 
       let messageId;
 
-      broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then(function(publication) {
-        publication.on('success', function(_messageId) {
+      broker.publish('p1', 'test message', { options: { headers: { foo: 'bar' } } }).then((publication) => {
+        publication.on('success', (_messageId) => {
           messageId = _messageId;
         });
       });
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p2', restoreRoutingHeaders: false });
         });
       });
 
-      broker.subscribe('s2').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s2').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           ackOrNack();
           assert.equal(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
@@ -1146,25 +1146,25 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should cap forwards when requested', function(test, done) {
+  it('should cap forwards when requested', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
+    }).then((broker) => {
       broker.publish('p1', 'test message');
 
       let count = 0;
 
-      broker.subscribe('s1').then(function(subscription) {
-        subscription.on('message', function(message, content, ackOrNack) {
+      broker.subscribe('s1').then((subscription) => {
+        subscription.on('message', (message, content, ackOrNack) => {
           assert.ok(message);
           count++;
           ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p1', attempts: 5 });
         });
       });
 
-      setTimeout(function() {
+      setTimeout(() => {
         assert.equal(count, 6);
         done();
       }, 500);
@@ -1172,18 +1172,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should error when forwarding messages to /dev/null', function(test, done) {
+  it('should error when forwarding messages to /dev/null', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
-          broker.subscribe('s1').then(function(subscription) {
-            subscription.on('message', function(message, content, ackOrNack) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (messageId) => {
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
-              ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' }).catch(function(err) {
+              ackOrNack(new Error('forward'), { strategy: 'forward', publication: 'p3' }).catch((err) => {
                 assert.ok(err);
                 assert.equal('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
                 done();
@@ -1195,18 +1195,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should error on unknown recovery strategy', function(test, done) {
+  it('should error on unknown recovery strategy', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
-          broker.subscribe('s1').then(function(subscription) {
-            subscription.on('message', function(message, content, ackOrNack) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (messageId) => {
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
-              ackOrNack(new Error('unknown'), { strategy: 'foo' }).catch(function(err) {
+              ackOrNack(new Error('unknown'), { strategy: 'foo' }).catch((err) => {
                 assert.ok(err);
                 assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
                 done();
@@ -1218,24 +1218,24 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should chain recovery strategies', function(test, done) {
+  it('should chain recovery strategies', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             ackOrNack(new Error('retry'), [
               { strategy: 'republish', attempts: 5 },
               { strategy: 'ack' },
-            ]).then(function() {
+            ]).then(() => {
               messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
               if (messages[message.properties.messageId] < 6) return;
-              setTimeout(function() {
+              setTimeout(() => {
                 assert.equal(messages[message.properties.messageId], 6);
                 done();
               }, 500);
@@ -1246,20 +1246,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not rollback message when shutting down broker after ack', function(test, done) {
+  it('should not rollback message when shutting down broker after ack', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack().then(function() {
-              broker.shutdown().then(function() {
+            ackOrNack().then(() => {
+              broker.shutdown().then(() => {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
             });
@@ -1269,22 +1269,22 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not rollback message when shutting down broker after ack', function(test, done) {
+  it('should not rollback message when shutting down broker after ack', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
             ackOrNack(new Error('Oh Noes'), [
               { strategy: 'ack' },
-            ]).then(function() {
-              broker.shutdown().then(function() {
+            ]).then(() => {
+              broker.shutdown().then(() => {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
             });
@@ -1294,20 +1294,20 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should nack messages when all recovery strategies have been attempted', function(test, done) {
+  it('should nack messages when all recovery strategies have been attempted', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
         const messages = {};
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             assert.ok(message);
             messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
-            ackOrNack(new Error('retry'), []).then(function() {
-              broker.shutdown().then(function() {
+            ackOrNack(new Error('retry'), []).then(() => {
+              broker.shutdown().then(() => {
                 amqputils.assertMessageAbsent('q1', namespace, done);
               });
             });
@@ -1317,7 +1317,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should limit concurrent messages using prefetch', function(test, done) {
+  it('should limit concurrent messages using prefetch', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -1328,19 +1328,19 @@ describe('Subscriptions As Promised', function() {
           prefetch: 5,
         },
       },
-    }).then(function(broker) {
-      const promises = new Array(10).fill().map(function() {
+    }).then((broker) => {
+      const promises = new Array(10).fill().map(() => {
         return broker.publish('p1', 'test message');
       });
 
-      Promise.all(promises).then(function() {
+      Promise.all(promises).then(() => {
         let messages = 0;
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message) {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message) => {
             assert(message);
             messages++;
             if (messages === 5) {
-              setTimeout(function() {
+              setTimeout(() => {
                 assert.equal(messages, 5);
                 done();
               }, 500);
@@ -1351,7 +1351,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should consume to messages from a replyTo queue', function(test, done) {
+  it('should consume to messages from a replyTo queue', (test, done) => {
     const replyTo = uuid();
     createBroker({
       vhosts: {
@@ -1379,10 +1379,10 @@ describe('Subscriptions As Promised', function() {
       },
       publications: _.pick(publications, 'p1'),
       subscriptions: _.pick(subscriptions, 's1'),
-    }).then(function(broker) {
-      broker.publish('p1', 'test message', replyTo + '.foo.bar').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message', replyTo + '.foo.bar').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(content, 'test message');
             done();
@@ -1392,18 +1392,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should emit channel errors', function(test, done) {
+  it('should emit channel errors', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1', { retry: false }).then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1', { retry: false }).then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
             ackOrNack();
             ackOrNack(); // trigger a channel error
-          }).on('error', function(err) {
+          }).on('error', (err) => {
             assert.ok(err);
             assert.equal('Channel closed by server: 406 (PRECONDITION-FAILED) with message "PRECONDITION_FAILED - unknown delivery tag 1"', err.message);
             done();
@@ -1413,7 +1413,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not consume messages after unsubscribing', function(test, done) {
+  it('should not consume messages after unsubscribing', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -1426,15 +1426,15 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.subscribe('s1').then(function(subscription) {
+    }).then((broker) => {
+      broker.subscribe('s1').then((subscription) => {
 
-        subscription.on('message', function() {
+        subscription.on('message', () => {
           assert.ok(false, 'Should not receive messages after unsubscribing');
         });
 
-        subscription.cancel().then(function() {
-          broker.publish('p1', 'test message').then(function() {
+        subscription.cancel().then(() => {
+          broker.publish('p1', 'test message').then(() => {
             setTimeout(done, 500);
           });
         });
@@ -1442,7 +1442,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should tollerate repeated unsubscription', function() {
+  it('should tollerate repeated unsubscription', () => {
     return createBroker({
       vhosts,
       publications,
@@ -1455,9 +1455,9 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      return broker.subscribe('s1').then(function(subscription) {
-        const promises = new Array(3).fill().map(function() {
+    }).then((broker) => {
+      return broker.subscribe('s1').then((subscription) => {
+        const promises = new Array(3).fill().map(() => {
           return subscription.cancel();
         });
         return Promise.all(promises);
@@ -1465,7 +1465,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should not warn about emitter leaks', function() {
+  it('should not warn about emitter leaks', () => {
 
     const config = {
       vhosts,
@@ -1475,7 +1475,7 @@ describe('Subscriptions As Promised', function() {
 
     const times = new Array(11).fill();
 
-    times.forEach(function(__, i) {
+    times.forEach((__, i) => {
       config.subscriptions['s' + i] = {
         vhost: '/',
         queue: 'q1',
@@ -1485,23 +1485,23 @@ describe('Subscriptions As Promised', function() {
       };
     });
 
-    return createBroker(config).then(function(broker) {
-      const promises = times.map(function(__, i) {
+    return createBroker(config).then((broker) => {
+      const promises = times.map((__, i) => {
         return broker.subscribe('s' + i);
       });
       return Promise.all(promises);
     });
   });
 
-  it('should attach the subscription vhost to message properties', function(test, done) {
+  it('should attach the subscription vhost to message properties', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions,
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message) => {
             assert(message.properties);
             assert.equal(message.properties.headers.rascal.originalVhost, '/');
             done();
@@ -1511,18 +1511,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should emit an error if trying to ack a message after unsubscribing', function(test, done) {
+  it('should emit an error if trying to ack a message after unsubscribing', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
-            subscription.cancel().then(function() {
-              setTimeout(function() {
-                ackOrNack().catch(function(err) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
+            subscription.cancel().then(() => {
+              setTimeout(() => {
+                ackOrNack().catch((err) => {
                   assert.equal(err.message, 'The channel has been closed. Unable to ack message');
                   done();
                 });
@@ -1534,18 +1534,18 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should emit an error if trying to nack a message after unsubscribing', function(test, done) {
+  it('should emit an error if trying to nack a message after unsubscribing', (test, done) => {
     createBroker({
       vhosts,
       publications,
       subscriptions: _.defaultsDeep({}, subscriptions, { s1: { deferCloseChannel: 100 } }),
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
-            subscription.cancel().then(function() {
-              setTimeout(function() {
-                ackOrNack(new Error('Oh Noes!')).catch(function(err) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
+            subscription.cancel().then(() => {
+              setTimeout(() => {
+                ackOrNack(new Error('Oh Noes!')).catch((err) => {
                   assert.equal(err.message, 'The channel has been closed. Unable to nack message');
                   done();
                 });
@@ -1557,7 +1557,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should symetrically decrypt messages', function(test, done) {
+  it('should symetrically decrypt messages', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -1584,10 +1584,10 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content) => {
             assert(message);
             assert.equal(message.properties.contentType, 'application/octet-stream');
             assert.equal(content, 'test message');
@@ -1598,7 +1598,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should report invalid_content when missing encryption profile', function(test, done) {
+  it('should report invalid_content when missing encryption profile', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -1618,12 +1618,12 @@ describe('Subscriptions As Promised', function() {
           encryption: {},
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err) {
+          }).on('invalid_content', (err) => {
             assert.equal(err.message, 'Unknown encryption profile: not-well-known');
             done();
           });
@@ -1632,7 +1632,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should fail with invalid content when encryption errors', function(test, done) {
+  it('should fail with invalid content when encryption errors', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -1659,12 +1659,12 @@ describe('Subscriptions As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function() {
-        broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', () => {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err) {
+          }).on('invalid_content', (err) => {
             assert.equal(err.message, 'Invalid key length');
             done();
           });
@@ -1673,7 +1673,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should support ackOrNack using callbacks', function(test, done) {
+  it('should support ackOrNack using callbacks', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -1684,11 +1684,11 @@ describe('Subscriptions As Promised', function() {
           promisifyAckOrNack: false,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
-          broker.subscribe('s1').then(function(subscription) {
-            subscription.on('message', function(message, content, ackOrNack) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
               ackOrNack(done);
             });
@@ -1698,7 +1698,7 @@ describe('Subscriptions As Promised', function() {
     });
   });
 
-  it('should support handling recovery errors using callbacks', function(test, done) {
+  it('should support handling recovery errors using callbacks', (test, done) => {
     createBroker({
       vhosts,
       publications,
@@ -1709,13 +1709,13 @@ describe('Subscriptions As Promised', function() {
           promisifyAckOrNack: false,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
-          broker.subscribe('s1').then(function(subscription) {
-            subscription.on('message', function(message, content, ackOrNack) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (messageId) => {
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
-              ackOrNack(new Error('unknown'), { strategy: 'foo' }, function(err) {
+              ackOrNack(new Error('unknown'), { strategy: 'foo' }, (err) => {
                 assert.ok(err);
                 assert.equal('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
                 done();
@@ -1730,10 +1730,10 @@ describe('Subscriptions As Promised', function() {
   function createBroker(config) {
     config = _.defaultsDeep(config, testConfig, { defaults: { subscriptions: { promisifyAckOrNack: true } } });
     return BrokerAsPromised.create(config)
-      .catch(function(err) {
+      .catch((err) => {
         if (err.broker) broker = err[err.broker];
         throw err;
-      }).then(function(_broker) {
+      }).then((_broker) => {
         broker = _broker;
         return broker;
       });

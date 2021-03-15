@@ -4,13 +4,13 @@ const _ = require('lodash');
 const configure = require('../lib/config/configure');
 const url = require('url');
 
-describe('Configuration', function() {
+describe('Configuration', () => {
 
-  describe('Vhosts', function() {
+  describe('Vhosts', () => {
 
-    describe('Connection', function() {
+    describe('Connection', () => {
 
-      it('should configure the connection from an object', function() {
+      it('should configure the connection from an object', () => {
         configure({
           vhosts: {
             v1: {
@@ -29,26 +29,26 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100');
         });
       });
 
-      it('should configure the connection from a string', function() {
+      it('should configure the connection from a string', () => {
         configure({
           vhosts: {
             v1: {
               connection: "amqp://localhost",
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'amqp://localhost');
         });
       });
 
-      it('should ignore other connection properties when a url is specified', function() {
+      it('should ignore other connection properties when a url is specified', () => {
         configure({
           vhosts: {
             v1: {
@@ -68,13 +68,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].url, 'foo');
         });
       });
 
-      it('should decorate the connection config a vhost if not explicitly specified', function() {
+      it('should decorate the connection config a vhost if not explicitly specified', () => {
         configure({
           vhosts: {
             v1: {
@@ -92,13 +92,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100');
         });
       });
 
-      it('should set the pathname to empty string if the vhost is /', function() {
+      it('should set the pathname to empty string if the vhost is /', () => {
         configure({
           vhosts: {
             '/': {
@@ -116,13 +116,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100');
         });
       });
 
-      it('should decorate the connection config with a loggable url (a)', function() {
+      it('should decorate the connection config with a loggable url (a)', () => {
         configure({
           vhosts: {
             v1: {
@@ -141,13 +141,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
         });
       });
 
-      it('should generate connections from an array', function() {
+      it('should generate connections from an array', () => {
         configure({
           vhosts: {
             v1: {
@@ -171,7 +171,7 @@ describe('Configuration', function() {
               ],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           const connections = _.sortBy(config.vhosts.v1.connections, 'url');
           assert.equal(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100');
@@ -179,7 +179,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should randomise the order of connections, but maintain order across vhosts by host', function() {
+      it('should randomise the order of connections, but maintain order across vhosts by host', () => {
         const results = [];
         for (let i = 0; i < 10; i++) {
           configure({
@@ -263,7 +263,7 @@ describe('Configuration', function() {
                 ],
               },
             },
-          }, function(err, config) {
+          }, (err, config) => {
             assert.ifError(err);
             assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v2.connections[0].url).host);
             assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, url.parse(config.vhosts.v3.connections[0].url).host);
@@ -274,7 +274,7 @@ describe('Configuration', function() {
             assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v2.connections[3].url).host);
             assert.equal(url.parse(config.vhosts.v1.connections[3].url).host, url.parse(config.vhosts.v3.connections[3].url).host);
 
-            results.push(_.map(config.vhosts.v1.connections, function(connection) {
+            results.push(_.map(config.vhosts.v1.connections, (connection) => {
               return url.parse(connection.url).host;
             }).join(','));
           });
@@ -282,7 +282,7 @@ describe('Configuration', function() {
         assert.ok(_.uniq(results).length > 1);
       });
 
-      it('should honour the order of connections with fixed connection strategy', function() {
+      it('should honour the order of connections with fixed connection strategy', () => {
         configure({
           vhosts: {
             v1: {
@@ -367,7 +367,7 @@ describe('Configuration', function() {
               ],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(url.parse(config.vhosts.v1.connections[0].url).host, 'alpha:9000');
           assert.equal(url.parse(config.vhosts.v1.connections[1].url).host, 'alpha:9001');
@@ -387,7 +387,7 @@ describe('Configuration', function() {
       });
 
 
-      it('should decorate the connection config with a loggable url (b)', function() {
+      it('should decorate the connection config with a loggable url (b)', () => {
         configure({
           vhosts: {
             v1: {
@@ -396,13 +396,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
         });
       });
 
-      it('should configure the management connection from an object', function() {
+      it('should configure the management connection from an object', () => {
         configure({
           vhosts: {
             v1: {
@@ -430,13 +430,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].management.url, 'https://admin:adminpassword@hostname:9999');
         });
       });
 
-      it('should configure the management connection with connection credentials', function() {
+      it('should configure the management connection with connection credentials', () => {
         configure({
           vhosts: {
             v1: {
@@ -462,13 +462,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.connections[0].management.url, 'https://user:password@hostname:9999');
         });
       });
 
-      it('should generate a namespace when specified', function() {
+      it('should generate a namespace when specified', () => {
         configure({
           vhosts: {
             v1: {
@@ -478,7 +478,7 @@ describe('Configuration', function() {
               namespace: true,
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
 
           assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace));
@@ -488,9 +488,9 @@ describe('Configuration', function() {
       });
     });
 
-    describe('Exchanges', function() {
+    describe('Exchanges', () => {
 
-      it('should configure exchanges', function() {
+      it('should configure exchanges', () => {
         configure({
           vhosts: {
             v1: {
@@ -505,7 +505,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.assert, false);
           assert.equal(config.vhosts.v1.exchanges.e1.type, 'direct');
@@ -513,7 +513,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should add default exchange by default', function() {
+      it('should add default exchange by default', () => {
         configure({
           vhosts: {
             v1: {
@@ -528,13 +528,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges[''].name, '');
         });
       });
 
-      it('should not overwrite existing default exchange', function() {
+      it('should not overwrite existing default exchange', () => {
         configure({
           vhosts: {
             v1: {
@@ -552,13 +552,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges[''].type, 'not-overwritten');
         });
       });
 
-      it('should inflate exchanges with empty structure', function() {
+      it('should inflate exchanges with empty structure', () => {
         configure({
           vhosts: {
             v1: {
@@ -568,13 +568,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.exchanges.e1.options));
         });
       });
 
-      it('should decorate exchanges with name and fully qualified name', function() {
+      it('should decorate exchanges with name and fully qualified name', () => {
         configure({
           vhosts: {
             v1: {
@@ -584,14 +584,14 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
           assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1');
         });
       });
 
-      it('should prefix fully qualified name with specified namespace', function() {
+      it('should prefix fully qualified name with specified namespace', () => {
         configure({
           vhosts: {
             v1: {
@@ -602,21 +602,21 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
           assert.equal(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1');
         });
       });
 
-      it('should support array of names configuration', function() {
+      it('should support array of names configuration', () => {
         configure({
           vhosts: {
             v1: {
               exchanges: [ 'e1', 'e2' ],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.exchanges));
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
@@ -627,14 +627,14 @@ describe('Configuration', function() {
         });
       });
 
-      it('should support a mixed array of names / objects configuration', function() {
+      it('should support a mixed array of names / objects configuration', () => {
         configure({
           vhosts: {
             v1: {
               exchanges: [ 'e1', { name: 'e2' } ],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.exchanges));
           assert.equal(config.vhosts.v1.exchanges.e1.name, 'e1');
@@ -646,9 +646,9 @@ describe('Configuration', function() {
       });
     });
 
-    describe('Queues', function() {
+    describe('Queues', () => {
 
-      it('should configure queues', function() {
+      it('should configure queues', () => {
         configure({
           vhosts: {
             v1: {
@@ -663,7 +663,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.assert, false);
           assert.equal(config.vhosts.v1.queues.q1.type, 'direct');
@@ -671,7 +671,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should inflate queues with empty structure', function() {
+      it('should inflate queues with empty structure', () => {
         configure({
           vhosts: {
             v1: {
@@ -681,13 +681,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.queues.q1.options));
         });
       });
 
-      it('should decorate queues with name and fully qualified name', function() {
+      it('should decorate queues with name and fully qualified name', () => {
         configure({
           vhosts: {
             v1: {
@@ -697,14 +697,14 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
           assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1');
         });
       });
 
-      it('should prefix fully qualified name with specified namespace', function() {
+      it('should prefix fully qualified name with specified namespace', () => {
         configure({
           vhosts: {
             v1: {
@@ -715,14 +715,14 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
           assert.equal(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1');
         });
       });
 
-      it('should append uuid to replyTo queues', function() {
+      it('should append uuid to replyTo queues', () => {
         configure({
           vhosts: {
             v1: {
@@ -733,14 +733,14 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
           assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName));
         });
       });
 
-      it('should prefix dead letter exchange argument with specified namespace', function() {
+      it('should prefix dead letter exchange argument with specified namespace', () => {
         configure({
           vhosts: {
             v1: {
@@ -756,21 +756,21 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
           assert.equal(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1');
         });
       });
 
-      it('should support a mixed array of names / objects configuration', function() {
+      it('should support a mixed array of names / objects configuration', () => {
         configure({
           vhosts: {
             v1: {
               queues: ['q1', 'q2'],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.queues));
           assert.equal(config.vhosts.v1.queues.q1.name, 'q1');
@@ -782,9 +782,9 @@ describe('Configuration', function() {
       });
     });
 
-    describe('Bindings', function() {
+    describe('Bindings', () => {
 
-      it('should configure bindings', function() {
+      it('should configure bindings', () => {
         configure({
           vhosts: {
             v1: {
@@ -801,7 +801,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
           assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
@@ -809,7 +809,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should convert "source -> destination" from binding key', function() {
+      it('should convert "source -> destination" from binding key', () => {
         configure({
           vhosts: {
             v1: {
@@ -826,7 +826,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1');
           assert.equal(config.vhosts.v1.bindings['e1 -> q1'].destination, 'q1');
@@ -843,7 +843,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should convert "source[binding.key] -> destination" from binding key', function() {
+      it('should convert "source[binding.key] -> destination" from binding key', () => {
         configure({
           vhosts: {
             v1: {
@@ -858,7 +858,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['e1[a] -> q1'].bindingKey, 'a');
           assert.equal(config.vhosts.v1.bindings['e1[a.b] -> q1'].bindingKey, 'a.b');
@@ -867,7 +867,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should qualify bindings keys when specified', function() {
+      it('should qualify bindings keys when specified', () => {
         configure({
           vhosts: {
             v1: {
@@ -889,14 +889,14 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1');
           assert.equal(config.vhosts.v1.bindings['e1[q1] -> q1'].bindingKey, 'ns1:q1');
         });
       });
 
-      it('should inflate bindings with empty structure', function() {
+      it('should inflate bindings with empty structure', () => {
         configure({
           vhosts: {
             v1: {
@@ -911,13 +911,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert(_.isObject(config.vhosts.v1.bindings.b1.options));
         });
       });
 
-      it('should decorate bindings with name', function() {
+      it('should decorate bindings with name', () => {
         configure({
           vhosts: {
             v1: {
@@ -932,13 +932,13 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.name, 'b1');
         });
       });
 
-      it('should prefix bindingKey with replyTo uuid', function() {
+      it('should prefix bindingKey with replyTo uuid', () => {
         configure({
           vhosts: {
             v1: {
@@ -957,7 +957,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
           assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
@@ -965,7 +965,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should configure multiple bindings from an array of binding keys', function() {
+      it('should configure multiple bindings from an array of binding keys', () => {
         configure({
           vhosts: {
             v1: {
@@ -982,7 +982,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings['b1:a'].source, 'e1');
           assert.equal(config.vhosts.v1.bindings['b1:a'].destination, 'q1');
@@ -993,7 +993,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should configure single bindings from an array of binding keys', function() {
+      it('should configure single bindings from an array of binding keys', () => {
         configure({
           vhosts: {
             v1: {
@@ -1010,7 +1010,7 @@ describe('Configuration', function() {
               },
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.equal(config.vhosts.v1.bindings.b1.source, 'e1');
           assert.equal(config.vhosts.v1.bindings.b1.destination, 'q1');
@@ -1018,7 +1018,7 @@ describe('Configuration', function() {
         });
       });
 
-      it('should support a mixed array of names / objects configuration', function() {
+      it('should support a mixed array of names / objects configuration', () => {
         configure({
           vhosts: {
             v1: {
@@ -1032,7 +1032,7 @@ describe('Configuration', function() {
               ],
             },
           },
-        }, function(err, config) {
+        }, (err, config) => {
           assert.ifError(err);
           assert.ok(!_.isArray(config.vhosts.v1.bindings));
           assert.equal(config.vhosts.v1.bindings['e1 -> q1'].source, 'e1');
@@ -1045,9 +1045,9 @@ describe('Configuration', function() {
     });
   });
 
-  describe('Publications', function() {
+  describe('Publications', () => {
 
-    it('should configure exchange publications', function() {
+    it('should configure exchange publications', () => {
 
       configure({
         vhosts: {
@@ -1068,7 +1068,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
         assert.equal(config.publications.p1.exchange, 'e1');
@@ -1077,7 +1077,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should configure queue publications', function() {
+    it('should configure queue publications', () => {
 
       configure({
         vhosts: {
@@ -1097,7 +1097,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.publications.p1.vhost, 'v1');
         assert.equal(config.publications.p1.queue, 'q1');
@@ -1105,7 +1105,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should inflate publications with empty structure', function() {
+    it('should inflate publications with empty structure', () => {
 
       configure({
         vhosts: {
@@ -1122,13 +1122,13 @@ describe('Configuration', function() {
             exchange: 'e1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert(_.isObject(config.publications.p1.options));
       });
     });
 
-    it('should decorate publications with name and destination', function() {
+    it('should decorate publications with name and destination', () => {
 
       configure({
         vhosts: {
@@ -1153,7 +1153,7 @@ describe('Configuration', function() {
             queue: 'q1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.publications.p1.name, 'p1');
         assert.equal(config.publications.p1.destination, 'e1');
@@ -1162,7 +1162,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should replace destination its fully qualified names', function() {
+    it('should replace destination its fully qualified names', () => {
 
       configure({
         vhosts: {
@@ -1189,14 +1189,14 @@ describe('Configuration', function() {
             queue: 'q1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.publications.p1.destination, 'foo:e1');
         assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination));
       });
     });
 
-    it('should default the publication vhost to the vhost in the surrounding block', function() {
+    it('should default the publication vhost to the vhost in the surrounding block', () => {
       configure({
         vhosts: {
           v1: {
@@ -1208,7 +1208,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -1216,7 +1216,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should create a default publication for each exchange', function() {
+    it('should create a default publication for each exchange', () => {
       configure({
         vhosts: {
           '/': {
@@ -1226,7 +1226,7 @@ describe('Configuration', function() {
             exchanges: ['e1'],
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
 
@@ -1242,7 +1242,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override an explicit vhost publication with a default exchange publication', function() {
+    it('should not override an explicit vhost publication with a default exchange publication', () => {
       configure({
         vhosts: {
           v1: {
@@ -1255,7 +1255,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.e1.vhost, 'v1');
@@ -1264,7 +1264,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override an explicit root level exchange publication with a default exchange publication', function() {
+    it('should not override an explicit root level exchange publication with a default exchange publication', () => {
       configure({
         vhosts: {
           v1: {
@@ -1278,7 +1278,7 @@ describe('Configuration', function() {
             routingKey: 'r1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.e1.vhost, 'v1');
@@ -1287,7 +1287,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should create a default publication for each queue', function() {
+    it('should create a default publication for each queue', () => {
       configure({
         vhosts: {
           '/': {
@@ -1297,7 +1297,7 @@ describe('Configuration', function() {
             queues: ['q1'],
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
 
@@ -1313,7 +1313,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override an explicit vhost publication with a default queue publication', function() {
+    it('should not override an explicit vhost publication with a default queue publication', () => {
       configure({
         vhosts: {
           v1: {
@@ -1326,7 +1326,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.q1.vhost, 'v1');
@@ -1335,7 +1335,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override an explicit root level publication with a default queue publication', function() {
+    it('should not override an explicit root level publication with a default queue publication', () => {
       configure({
         vhosts: {
           v1: {
@@ -1349,7 +1349,7 @@ describe('Configuration', function() {
             routingKey: 'r1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.q1.vhost, 'v1');
@@ -1358,7 +1358,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should create a default subscription for each queue', function() {
+    it('should create a default subscription for each queue', () => {
       configure({
         vhosts: {
           '/': {
@@ -1368,7 +1368,7 @@ describe('Configuration', function() {
             queues: ['q1'],
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
 
@@ -1384,7 +1384,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override an explicit vhost subscription with a default queue subscription', function() {
+    it('should not override an explicit vhost subscription with a default queue subscription', () => {
       configure({
         vhosts: {
           v1: {
@@ -1397,7 +1397,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
         assert.equal(config.subscriptions.q1.vhost, 'v1');
@@ -1406,7 +1406,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should not override and explicit root level subscription with a default queue subscription', function() {
+    it('should not override and explicit root level subscription with a default queue subscription', () => {
       configure({
         vhosts: {
           v1: {
@@ -1420,7 +1420,7 @@ describe('Configuration', function() {
             contentType: 'text/plain',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
         assert.equal(config.subscriptions.q1.vhost, 'v1');
@@ -1429,7 +1429,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should should merge implicit vhost publications with explicit publications', function() {
+    it('should should merge implicit vhost publications with explicit publications', () => {
       configure({
         vhosts: {
           v1: {
@@ -1447,7 +1447,7 @@ describe('Configuration', function() {
             exchange: 'e2',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.publications);
         assert.equal(config.publications.p1.vhost, 'v1');
@@ -1457,7 +1457,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should hoist referenced encryption profiles', function(test, done) {
+    it('should hoist referenced encryption profiles', (test, done) => {
       configure({
         vhosts: {
           v1: {
@@ -1477,7 +1477,7 @@ describe('Configuration', function() {
             algorithm: 'algo',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.publications.p1.encryption.name, 'well-known');
         assert.equal(config.publications.p1.encryption.key, 'key');
@@ -1488,9 +1488,9 @@ describe('Configuration', function() {
     });
   });
 
-  describe('Subscriptions', function() {
+  describe('Subscriptions', () => {
 
-    it('should configure queue subscriptions', function() {
+    it('should configure queue subscriptions', () => {
 
       configure({
         vhosts: {
@@ -1511,7 +1511,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
         assert.equal(config.subscriptions.s1.queue, 'q1');
@@ -1520,7 +1520,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should inflate subscriptions with empty structure', function() {
+    it('should inflate subscriptions with empty structure', () => {
 
       configure({
         vhosts: {
@@ -1537,13 +1537,13 @@ describe('Configuration', function() {
             queue: 'q1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert(_.isObject(config.subscriptions.s1.options));
       });
     });
 
-    it('should decorate subscriptions with name and source', function() {
+    it('should decorate subscriptions with name and source', () => {
 
       configure({
         vhosts: {
@@ -1560,14 +1560,14 @@ describe('Configuration', function() {
             queue: 'q1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.name, 's1');
         assert.equal(config.subscriptions.s1.source, 'q1');
       });
     });
 
-    it('should report duplicate subscriptions', function() {
+    it('should report duplicate subscriptions', () => {
 
       configure({
         vhosts: {
@@ -1594,12 +1594,12 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.equal(err.message, 'Duplicate subscription: s1');
       });
     });
 
-    it('should report duplicate publications', function() {
+    it('should report duplicate publications', () => {
 
       configure({
         vhosts: {
@@ -1626,12 +1626,12 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.equal(err.message, 'Duplicate publication: p1');
       });
     });
 
-    it('should replace source with its fully qualified name', function() {
+    it('should replace source with its fully qualified name', () => {
       configure({
         vhosts: {
           v1: {
@@ -1649,14 +1649,14 @@ describe('Configuration', function() {
             queue: 'q1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.name, 's1');
         assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source));
       });
     });
 
-    it('should default the subscription vhost to the vhost in the surrounding block', function() {
+    it('should default the subscription vhost to the vhost in the surrounding block', () => {
       configure({
         vhosts: {
           v1: {
@@ -1668,7 +1668,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
@@ -1676,7 +1676,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should should merge implicit vhost subscriptions with explicit subscriptions', function() {
+    it('should should merge implicit vhost subscriptions with explicit subscriptions', () => {
       configure({
         vhosts: {
           v1: {
@@ -1694,7 +1694,7 @@ describe('Configuration', function() {
             vhost: 'v1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.ok(!config.vhosts.v1.subscriptions);
         assert.equal(config.subscriptions.s1.vhost, 'v1');
@@ -1704,7 +1704,7 @@ describe('Configuration', function() {
       });
     });
 
-    it('should hoist referenced encryption profiles', function(test, done) {
+    it('should hoist referenced encryption profiles', (test, done) => {
       configure({
         vhosts: {
           v1: {
@@ -1723,7 +1723,7 @@ describe('Configuration', function() {
             algorithm: 'algo',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.subscriptions.s1.encryption['well-known'].key, 'key');
         assert.equal(config.subscriptions.s1.encryption['well-known'].ivLength, 16);
@@ -1733,9 +1733,9 @@ describe('Configuration', function() {
     });
   });
 
-  describe('Shovels', function() {
+  describe('Shovels', () => {
 
-    it('should decorate subscriptions with name', function() {
+    it('should decorate subscriptions with name', () => {
 
       configure({
         shovels: {
@@ -1744,18 +1744,18 @@ describe('Configuration', function() {
             publication: 'p1',
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.shovels.x1.name, 'x1');
       });
     });
 
-    it('should convert "subscription -> publication" to shovel', function() {
+    it('should convert "subscription -> publication" to shovel', () => {
       configure({
         shovels: [
           's1 -> p1',
         ],
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.shovels['s1 -> p1'].subscription, 's1');
         assert.equal(config.shovels['s1 -> p1'].publication, 'p1');
@@ -1763,9 +1763,9 @@ describe('Configuration', function() {
     });
   });
 
-  describe('Redelivery Counters', function() {
+  describe('Redelivery Counters', () => {
 
-    it('should decorate counter with name and type', function() {
+    it('should decorate counter with name and type', () => {
 
       configure({
         redeliveries: {
@@ -1774,7 +1774,7 @@ describe('Configuration', function() {
             inMemory: {},
           },
         },
-      }, function(err, config) {
+      }, (err, config) => {
         assert.ifError(err);
         assert.equal(config.redeliveries.counters.stub.name, 'stub');
         assert.equal(config.redeliveries.counters.stub.type, 'stub');

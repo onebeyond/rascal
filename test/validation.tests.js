@@ -1,11 +1,11 @@
 const assert = require('assert');
 const validate = require('../lib/config/validate');
 
-describe('Validation', function() {
+describe('Validation', () => {
 
-  describe('Bindings', function() {
+  describe('Bindings', () => {
 
-    it('should mandate a source', function() {
+    it('should mandate a source', () => {
       validate({
         vhosts: {
           v1: {
@@ -15,13 +15,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a source', err.message);
       });
     });
 
-    it('should mandate a destination', function() {
+    it('should mandate a destination', () => {
       validate({
         vhosts: {
           v1: {
@@ -32,13 +32,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a destination', err.message);
       });
     });
 
-    it('should mandate a destination type', function() {
+    it('should mandate a destination type', () => {
       validate({
         vhosts: {
           v1: {
@@ -50,13 +50,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 is missing a destination type', err.message);
       });
     });
 
-    it('should report invalid destination types', function() {
+    it('should report invalid destination types', () => {
       validate({
         vhosts: {
           v1: {
@@ -69,13 +69,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 has an invalid destination type: foo', err.message);
       });
     });
 
-    it('should report unknown source exchanges (a)', function() {
+    it('should report unknown source exchanges (a)', () => {
       validate({
         vhosts: {
           v1: {
@@ -88,13 +88,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
       });
     });
 
-    it('should report unknown source exchanges (b)', function() {
+    it('should report unknown source exchanges (b)', () => {
       validate({
         vhosts: {
           v1: {
@@ -109,13 +109,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
       });
     });
 
-    it('should report unknown destination exchanges', function() {
+    it('should report unknown destination exchanges', () => {
       validate({
         vhosts: {
           v1: {
@@ -132,13 +132,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown exchange: e2', err.message);
       });
     });
 
-    it('should report unknown destination queues (a)', function() {
+    it('should report unknown destination queues (a)', () => {
       validate({
         vhosts: {
           v1: {
@@ -155,13 +155,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
       });
     });
 
-    it('should report unknown destination queues (b)', function() {
+    it('should report unknown destination queues (b)', () => {
       validate({
         vhosts: {
           v1: {
@@ -180,41 +180,41 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
       });
     });
   });
 
-  describe('Publications', function() {
+  describe('Publications', () => {
 
-    it('should mandate a vhost', function() {
+    it('should mandate a vhost', () => {
       validate({
         publications: {
           p1: {
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 is missing a vhost', err.message);
       });
     });
 
-    it('should mandate either an exchange or a queue (a)', function() {
+    it('should mandate either an exchange or a queue (a)', () => {
       validate({
         publications: {
           p1: {
             vhost: 'v1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 is missing an exchange or a queue', err.message);
       });
     });
 
-    it('should mandate either an exchange or a queue (b)', function() {
+    it('should mandate either an exchange or a queue (b)', () => {
       validate({
         publications: {
           p1: {
@@ -223,13 +223,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 has an exchange and a queue', err.message);
       });
     });
 
-    it('should mandate either an exchange or a queue (c)', function() {
+    it('should mandate either an exchange or a queue (c)', () => {
       validate({
         publications: {
           p1: {
@@ -238,13 +238,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 has an exchange and a queue', err.message);
       });
     });
 
-    it('should report unknown vhosts (a)', function() {
+    it('should report unknown vhosts (a)', () => {
       validate({
         publications: {
           p1: {
@@ -252,13 +252,13 @@ describe('Validation', function() {
             exchange: 'e1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown vhost: v1', err.message);
       });
     });
 
-    it('should report unknown vhosts (b)', function() {
+    it('should report unknown vhosts (b)', () => {
       validate({
         vhosts: {
         },
@@ -268,13 +268,13 @@ describe('Validation', function() {
             exchange: 'e1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown vhost: v1', err.message);
       });
     });
 
-    it('should report unknown exchanges (a)', function() {
+    it('should report unknown exchanges (a)', () => {
       validate({
         vhosts: {
           v1: {
@@ -286,13 +286,13 @@ describe('Validation', function() {
             exchange: 'e1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
       });
     });
 
-    it('should report unknown exchanges (b)', function() {
+    it('should report unknown exchanges (b)', () => {
       validate({
         vhosts: {
           v1: {
@@ -306,13 +306,13 @@ describe('Validation', function() {
             exchange: 'e1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
       });
     });
 
-    it('should report unknown queues (a)', function() {
+    it('should report unknown queues (a)', () => {
       validate({
         vhosts: {
           v1: {
@@ -324,13 +324,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
       });
     });
 
-    it('should report unknown queues (b)', function() {
+    it('should report unknown queues (b)', () => {
       validate({
         vhosts: {
           v1: {
@@ -344,41 +344,41 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
       });
     });
   });
 
-  describe('Subscriptions', function() {
+  describe('Subscriptions', () => {
 
-    it('should mandate a vhost', function() {
+    it('should mandate a vhost', () => {
       validate({
         subscriptions: {
           s1: {
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 is missing a vhost', err.message);
       });
     });
 
-    it('should mandate a queue', function() {
+    it('should mandate a queue', () => {
       validate({
         subscriptions: {
           s1: {
             vhost: 'v1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 is missing a queue', err.message);
       });
     });
 
-    it('should report unknown vhosts (a)', function() {
+    it('should report unknown vhosts (a)', () => {
       validate({
         subscriptions: {
           s1: {
@@ -386,13 +386,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown vhost: v1', err.message);
       });
     });
 
-    it('should report unknown vhosts (b)', function() {
+    it('should report unknown vhosts (b)', () => {
       validate({
         vhosts: {
         },
@@ -402,13 +402,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown vhost: v1', err.message);
       });
     });
 
-    it('should report unknown queues (a)', function() {
+    it('should report unknown queues (a)', () => {
       validate({
         vhosts: {
           v1: {
@@ -420,13 +420,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
       });
     });
 
-    it('should report unknown queues (b)', function() {
+    it('should report unknown queues (b)', () => {
       validate({
         vhosts: {
           v1: {
@@ -440,13 +440,13 @@ describe('Validation', function() {
             queue: 'q1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
       });
     });
 
-    it('should report unknown counters', function() {
+    it('should report unknown counters', () => {
       validate({
         vhosts: {
           v1: {
@@ -467,41 +467,41 @@ describe('Validation', function() {
         redeliveries: {
           counters: {},
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unknown counter: c1 in vhost: v1', err.message);
       });
     });
   });
 
-  describe('Shovels', function() {
+  describe('Shovels', () => {
 
-    it('should mandate a subscription', function() {
+    it('should mandate a subscription', () => {
       validate({
         shovels: {
           x1: {
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Shovel: x1 is missing a subscription', err.message);
       });
     });
 
-    it('should mandate a publication', function() {
+    it('should mandate a publication', () => {
       validate({
         shovels: {
           x1: {
             subscription: 's1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Shovel: x1 is missing a publication', err.message);
       });
     });
 
-    it('should report unknown subscriptions', function() {
+    it('should report unknown subscriptions', () => {
       validate({
         subscriptions: {
         },
@@ -513,13 +513,13 @@ describe('Validation', function() {
             publication: 'p1',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unknown subscription: s1', err.message);
       });
     });
 
-    it('should report unknown publications', function() {
+    it('should report unknown publications', () => {
       validate({
         vhosts: {
           v1: {
@@ -551,29 +551,29 @@ describe('Validation', function() {
             c1: {},
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unknown publication: p1', err.message);
       });
     });
   });
 
-  describe('Vocabulary', function() {
+  describe('Vocabulary', () => {
 
-    it('should report invalid vhost attribute', function() {
+    it('should report invalid vhost attribute', () => {
       validate({
         vhosts: {
           v1: {
             invalid: true,
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Vhost: v1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid publication channel pool attributes', function() {
+    it('should report invalid publication channel pool attributes', () => {
       validate({
         vhosts: {
           v1: {
@@ -582,26 +582,26 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication channel pool in vhost: v1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid connection strategies', function() {
+    it('should report invalid connection strategies', () => {
       validate({
         vhosts: {
           v1: {
             connectionStrategy: 'meh',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Vhost: v1 refers to an unknown connection strategy: meh', err.message);
       });
     });
 
-    it('should report invalid connection attributes', function() {
+    it('should report invalid connection attributes', () => {
       validate({
         vhosts: {
           v1: {
@@ -610,13 +610,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Vhost: v1 connection refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid exchange attributes', function() {
+    it('should report invalid exchange attributes', () => {
       validate({
         vhosts: {
           v1: {
@@ -627,13 +627,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Exchange: e1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid queues attributes', function() {
+    it('should report invalid queues attributes', () => {
       validate({
         vhosts: {
           v1: {
@@ -644,13 +644,13 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Queue: q1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid binding attributes', function() {
+    it('should report invalid binding attributes', () => {
       validate({
         vhosts: {
           v1: {
@@ -661,68 +661,68 @@ describe('Validation', function() {
             },
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Binding: b1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid publication attributes', function() {
+    it('should report invalid publication attributes', () => {
       validate({
         publications: {
           p1: {
             invalid: true,
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Publication: p1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid subscription attributes', function() {
+    it('should report invalid subscription attributes', () => {
       validate({
         subscriptions: {
           s1: {
             invalid: true,
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Subscription: s1 refers to an unsupported attribute: invalid', err.message);
       });
     });
 
-    it('should report invalid shovel attributes', function() {
+    it('should report invalid shovel attributes', () => {
       validate({
         shovels: {
           x1: {
             invalid: true,
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Shovel: x1 refers to an unsupported attribute: invalid', err.message);
       });
     });
   });
 
-  describe('Encryption', function() {
+  describe('Encryption', () => {
 
-    it('should mandate a key', function() {
+    it('should mandate a key', () => {
       validate({
         encryption: {
           'invalid': {
             name: 'name',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Encryption profile: invalid is missing a key', err.message);
       });
     });
 
-    it('should mandate an algorithm', function() {
+    it('should mandate an algorithm', () => {
       validate({
         encryption: {
           'invalid': {
@@ -730,13 +730,13 @@ describe('Validation', function() {
             key: 'key',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Encryption profile: invalid is missing an algorithm', err.message);
       });
     });
 
-    it('should mandate iv ivLength', function() {
+    it('should mandate iv ivLength', () => {
       validate({
         encryption: {
           'invalid': {
@@ -745,7 +745,7 @@ describe('Validation', function() {
             algorithm: 'rot13',
           },
         },
-      }, function(err) {
+      }, (err) => {
         assert.ok(err);
         assert.equal('Encryption profile: invalid is missing ivLength', err.message);
       });

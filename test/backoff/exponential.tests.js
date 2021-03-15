@@ -1,23 +1,23 @@
 const assert = require('assert');
 const exponential = require('../../lib/backoff/exponential');
 
-describe('Exponential Backoff', function() {
+describe('Exponential Backoff', () => {
 
-  it('should backoff by 1 seconds by default', function() {
+  it('should backoff by 1 seconds by default', () => {
     const backoff = exponential({ randomise: false });
     assert.equal(backoff.next(), 1000);
     assert.equal(backoff.next(), 2000);
     assert.equal(backoff.next(), 4000);
   });
 
-  it('should backoff by the specified value', function() {
+  it('should backoff by the specified value', () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: false });
     assert.equal(backoff.next(), 2000);
     assert.equal(backoff.next(), 6000);
     assert.equal(backoff.next(), 18000);
   });
 
-  it('should backoff between the specified values', function() {
+  it('should backoff between the specified values', () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: true });
     const results = [];
     for (let i = 0; i < 10; i++) {
@@ -33,7 +33,7 @@ describe('Exponential Backoff', function() {
     assert(results[6] >= 1458000 && results[6] <= 4374000, results[6]);
   });
 
-  it('should cap values', function() {
+  it('should cap values', () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: true, max: 18000 });
     const results = [];
     for (let i = 0; i < 700; i++) {
@@ -47,7 +47,7 @@ describe('Exponential Backoff', function() {
     }
   });
 
-  it('should reset values', function() {
+  it('should reset values', () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: true, max: 16000 });
     const results = [];
     for (let i = 0; i < 10; i++) {

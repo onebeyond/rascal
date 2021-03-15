@@ -5,7 +5,7 @@ const uuid = require('uuid').v4;
 const format = require('util').format;
 const BrokerAsPromised = require('..').BrokerAsPromised;
 
-describe('Broker As Promised', function() {
+describe('Broker As Promised', () => {
 
   let broker;
   let namespace;
@@ -13,7 +13,7 @@ describe('Broker As Promised', function() {
   let publications;
   let subscriptions;
 
-  beforeEach(function() {
+  beforeEach(() => {
 
     namespace = uuid();
 
@@ -73,11 +73,11 @@ describe('Broker As Promised', function() {
     };
   });
 
-  afterEach(function() {
+  afterEach(() => {
     if (broker) return broker.nuke();
   });
 
-  it('should assert vhosts', function() {
+  it('should assert vhosts', () => {
     const vhostName = uuid();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -86,19 +86,19 @@ describe('Broker As Promised', function() {
     return createBroker(config);
   });
 
-  it('should fail when checking vhosts that dont exist', function() {
+  it('should fail when checking vhosts that dont exist', () => {
     const vhostName = uuid();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].check = true;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    return createBroker(config).catch(function(err) {
+    return createBroker(config).catch((err) => {
       assert.ok(err);
       assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
     });
   });
 
-  it('should not fail when checking vhosts that do exist', function() {
+  it('should not fail when checking vhosts that do exist', () => {
     const vhostName = uuid();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
@@ -108,17 +108,17 @@ describe('Broker As Promised', function() {
     return createBroker(config);
   });
 
-  it('should delete vhosts', function() {
+  it('should delete vhosts', () => {
     const vhostName = uuid();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
     customVhosts[vhostName].assert = true;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    return createBroker(config).then(function(broker) {
-      return broker.nuke().then(function() {
+    return createBroker(config).then((broker) => {
+      return broker.nuke().then(() => {
         config.vhosts[vhostName].assert = false;
         config.vhosts[vhostName].check = true;
-        return createBroker(config).catch(function(err) {
+        return createBroker(config).catch((err) => {
           assert.ok(err);
           assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
         });
@@ -126,44 +126,44 @@ describe('Broker As Promised', function() {
     });
   });
 
-  it('should provide fully qualified name', function() {
+  it('should provide fully qualified name', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
-    return createBroker(config).then(function(broker) {
+    return createBroker(config).then((broker) => {
       assert.equal(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
     });
   });
 
-  it('should not modify configuration', function() {
+  it('should not modify configuration', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
     const json = JSON.stringify(config, null, 2);
-    return createBroker(config).then(function() {
+    return createBroker(config).then(() => {
       assert.equal(json, JSON.stringify(config, null, 2));
     });
   });
 
-  it('should nuke', function() {
+  it('should nuke', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
-    return createBroker(config).then(function(broker) {
+    return createBroker(config).then((broker) => {
       return broker.nuke();
     });
   });
 
-  it('should cancel subscriptions', function(test, done) {
+  it('should cancel subscriptions', (test, done) => {
     const config = _.defaultsDeep({
       vhosts, publications,
       subscriptions,
     }, testConfig);
 
-    createBroker(config).then(function(broker) {
+    createBroker(config).then((broker) => {
 
-      broker.subscribe('s1').then(function(subscription) {
+      broker.subscribe('s1').then((subscription) => {
 
-        subscription.on('message', function() {
+        subscription.on('message', () => {
           assert(false, 'No message should have been received');
         });
 
-        broker.unsubscribeAll().then(function() {
-          broker.publish('p1', 'test message').then(function() {
+        broker.unsubscribeAll().then(() => {
+          broker.publish('p1', 'test message').then(() => {
             setTimeout(done, 500);
           });
         });
@@ -171,10 +171,10 @@ describe('Broker As Promised', function() {
     });
   });
 
-  it('should connect', function() {
+  it('should connect', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
-    return createBroker(config).then(function(broker) {
-      return broker.connect('/').then(function(connection) {
+    return createBroker(config).then((broker) => {
+      return broker.connect('/').then((connection) => {
         assert.ok(connection._rascal_id);
         return connection.close();
       });
@@ -182,14 +182,14 @@ describe('Broker As Promised', function() {
   });
 
 
-  it('should subscribe to all subscriptions', function() {
+  it('should subscribe to all subscriptions', () => {
     const config = _.defaultsDeep({
       vhosts, publications,
       subscriptions,
     }, testConfig);
 
-    return createBroker(config).then(function(broker) {
-      return broker.subscribeAll().then(function(subscriptions) {
+    return createBroker(config).then((broker) => {
+      return broker.subscribeAll().then((subscriptions) => {
         assert.equal(subscriptions.length, 2);
         assert.equal(subscriptions[0].constructor.name, 'SubscriberSessionAsPromised');
         assert.equal(subscriptions[0].name, 's1');
@@ -198,16 +198,16 @@ describe('Broker As Promised', function() {
     });
   });
 
-  it('should subscribe to all filtered subscriptions', function() {
+  it('should subscribe to all filtered subscriptions', () => {
     const config = _.defaultsDeep({
       vhosts, publications,
       subscriptions,
     }, testConfig);
 
-    return createBroker(config).then(function(broker) {
-      return broker.subscribeAll(function(subscriptionConfig) {
+    return createBroker(config).then((broker) => {
+      return broker.subscribeAll((subscriptionConfig) => {
         return !subscriptionConfig.autoCreated;
-      }).then(function(subscriptions) {
+      }).then((subscriptions) => {
         assert.equal(subscriptions.length, 1);
         assert.equal(subscriptions[0].constructor.name, 'SubscriberSessionAsPromised');
         assert.equal(subscriptions[0].name, 's1');
@@ -215,9 +215,9 @@ describe('Broker As Promised', function() {
     });
   });
 
-  it('should get vhost connections', function() {
+  it('should get vhost connections', () => {
     const config = _.defaultsDeep({ vhosts }, testConfig);
-    return createBroker(config).then(function(broker) {
+    return createBroker(config).then((broker) => {
       const connections = broker.getConnections();
       assert.equal(connections.length, 1);
       assert.equal(connections[0].vhost, '/');
@@ -227,10 +227,10 @@ describe('Broker As Promised', function() {
 
   function createBroker(config) {
     return BrokerAsPromised.create(config)
-      .catch(function(err) {
+      .catch((err) => {
         if (err.broker) broker = err[err.broker];
         throw err;
-      }).then(function(_broker) {
+      }).then((_broker) => {
         broker = _broker;
         return broker;
       });

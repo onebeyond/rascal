@@ -4,13 +4,13 @@ const testConfig = require('../lib/config/tests');
 const uuid = require('uuid').v4;
 const Broker = require('..').Broker;
 
-describe('Shovel', function() {
+describe('Shovel', () => {
 
   let broker;
   let namespace;
   let config;
 
-  beforeEach(function(test, done) {
+  beforeEach((test, done) => {
 
     namespace = uuid();
     config = {
@@ -78,18 +78,18 @@ describe('Shovel', function() {
     done();
   });
 
-  afterEach(function(test, done) {
+  afterEach((test, done) => {
     if (!broker) return done();
     broker.nuke(done);
   });
 
-  it('should transfer message from subscriber to publication', function(test, done) {
-    createBroker(config, function(err, broker) {
+  it('should transfer message from subscriber to publication', (test, done) => {
+    createBroker(config, (err, broker) => {
       assert.ifError(err);
       broker.publish('p1', 'Test Message', assert.ifError);
-      broker.subscribe('s2', function(err, subscription) {
+      broker.subscribe('s2', (err, subscription) => {
         assert.ifError(err);
-        subscription.on('message', function() {
+        subscription.on('message', () => {
           done();
         });
       });
@@ -98,7 +98,7 @@ describe('Shovel', function() {
 
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
-    Broker.create(config, function(err, _broker) {
+    Broker.create(config, (err, _broker) => {
       broker = _broker;
       next(err, broker);
     });

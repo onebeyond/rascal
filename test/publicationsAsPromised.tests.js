@@ -7,14 +7,14 @@ const uuid = require('uuid').v4;
 const BrokerAsPromised = require('..').BrokerAsPromised;
 const AmqpUtils = require('./utils/amqputils');
 
-describe('Publications As Promised', function() {
+describe('Publications As Promised', () => {
 
   let broker;
   let amqputils;
   let namespace;
   let vhosts;
 
-  beforeEach(function(test, done) {
+  beforeEach((test, done) => {
 
     namespace = uuid();
 
@@ -53,21 +53,21 @@ describe('Publications As Promised', function() {
       },
     };
 
-    amqplib.connect(function(err, connection) {
+    amqplib.connect((err, connection) => {
       if (err) return done(err);
       amqputils = AmqpUtils.init(connection);
       done();
     });
   });
 
-  afterEach(function(test, done) {
-    amqputils.disconnect(function() {
+  afterEach((test, done) => {
+    amqputils.disconnect(() => {
       if (broker) return broker.nuke().catch(done).then(done);
       done();
     });
   });
 
-  it('should report unknown publications', function() {
+  it('should report unknown publications', () => {
     return createBroker({
       vhosts,
       publications: {
@@ -75,15 +75,15 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      return broker.publish('does-not-exist', 'test message').catch(function(err) {
+    }).then((broker) => {
+      return broker.publish('does-not-exist', 'test message').catch((err) => {
         assert.ok(err);
         assert.equal(err.message, 'Unknown publication: does-not-exist');
       });
     });
   });
 
-  it('should report deprecated publications', function(test, done) {
+  it('should report deprecated publications', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -92,16 +92,16 @@ describe('Publications As Promised', function() {
           deprecated: true,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should publish text messages to normal exchanges', function(test, done) {
+  it('should publish text messages to normal exchanges', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -110,16 +110,16 @@ describe('Publications As Promised', function() {
           confirm: false,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should publish text messages using confirm channels to exchanges', function(test, done) {
+  it('should publish text messages using confirm channels to exchanges', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -128,16 +128,16 @@ describe('Publications As Promised', function() {
           confirm: true,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should publish text messages to queues', function(test, done) {
+  it('should publish text messages to queues', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -145,16 +145,16 @@ describe('Publications As Promised', function() {
           queue: 'q1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should decorate the message with a uuid', function(test, done) {
+  it('should decorate the message with a uuid', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -162,12 +162,12 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (messageId) => {
           assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(messageId), format('%s failed to match expected pattern', messageId));
 
-          amqputils.getMessage('q1', namespace, function(err, message) {
+          amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message);
             assert.equal(messageId, message.properties.messageId);
@@ -178,7 +178,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish to using confirm channels to queues', function(test, done) {
+  it('should publish to using confirm channels to queues', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -187,16 +187,16 @@ describe('Publications As Promised', function() {
           confirm: true,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should publish json messages to normal exchanges', function(test, done) {
+  it('should publish json messages to normal exchanges', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -204,16 +204,16 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', { message: 'test message' }).then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', { message: 'test message' }).then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done);
         });
       });
     });
   });
 
-  it('should publish messages with custom contentType to normal exchanges', function(test, done) {
+  it('should publish messages with custom contentType to normal exchanges', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -221,10 +221,10 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }).then(function(publication) {
-        publication.on('success', function() {
-          amqputils.getMessage('q1', namespace, function(err, message) {
+    }).then((broker) => {
+      broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }).then((publication) => {
+        publication.on('success', () => {
+          amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message, 'Message was not present');
             assert.equal(message.properties.contentType, 'application/vnd+custom.contentType.v1');
@@ -236,7 +236,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish buffer messages to normal exchanges', function(test, done) {
+  it('should publish buffer messages to normal exchanges', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -244,16 +244,16 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', Buffer.from('test message')).then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', Buffer.from('test message')).then((publication) => {
+        publication.on('success', () => {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
     });
   });
 
-  it('should allow publish overrides', function(test, done) {
+  it('should allow publish overrides', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -261,10 +261,10 @@ describe('Publications As Promised', function() {
           queue: 'q1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message', { options: { expiration: 1 } }).then(function(publication) {
-        publication.on('success', function() {
-          setTimeout(function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message', { options: { expiration: 1 } }).then((publication) => {
+        publication.on('success', () => {
+          setTimeout(() => {
             amqputils.assertMessageAbsent('q1', namespace, done);
           }, 100);
         });
@@ -272,7 +272,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should report unrouted messages', function(test, done) {
+  it('should report unrouted messages', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -280,9 +280,9 @@ describe('Publications As Promised', function() {
           exchange: 'xx',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message', { options: { expiration: 1 } }).then(function(publication) {
-        publication.on('return', function(message) {
+    }).then((broker) => {
+      broker.publish('p1', 'test message', { options: { expiration: 1 } }).then((publication) => {
+        publication.on('return', (message) => {
           assert.ok(message);
           done();
         });
@@ -290,7 +290,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should forward messages to publications', function(test, done) {
+  it('should forward messages to publications', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -309,18 +309,18 @@ describe('Publications As Promised', function() {
           queue: 'q1',
         },
       },
-    }).then(function(broker) {
+    }).then((broker) => {
 
       let messageId;
 
-      broker.subscribe('s1').then(function(subscription) {
+      broker.subscribe('s1').then((subscription) => {
 
-        subscription.on('message', function(message, content, ackOrNack) {
-          broker.forward('p2', message).then(function(publication) {
-            publication.on('success', function() {
+        subscription.on('message', (message, content, ackOrNack) => {
+          broker.forward('p2', message).then((publication) => {
+            publication.on('success', () => {
               ackOrNack();
 
-              amqputils.getMessage('q2', namespace, function(err, message) {
+              amqputils.getMessage('q2', namespace, (err, message) => {
                 assert.ifError(err);
                 assert.ok(message);
                 assert.equal(message.fields.routingKey, 'rk2');
@@ -338,15 +338,15 @@ describe('Publications As Promised', function() {
         });
       });
 
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(_messageId) {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (_messageId) => {
           messageId = _messageId;
         });
       });
     });
   });
 
-  it('should forward messages to publications maintaining the original routing key when not overriden', function(test, done) {
+  it('should forward messages to publications maintaining the original routing key when not overriden', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -364,17 +364,17 @@ describe('Publications As Promised', function() {
           queue: 'q1',
         },
       },
-    }).then(function(broker) {
+    }).then((broker) => {
 
-      broker.subscribe('s1').then(function(subscription) {
+      broker.subscribe('s1').then((subscription) => {
 
-        subscription.on('message', function(message, content, ackOrNack) {
+        subscription.on('message', (message, content, ackOrNack) => {
 
-          broker.forward('p2', message).then(function(publication) {
-            publication.on('success', function() {
+          broker.forward('p2', message).then((publication) => {
+            publication.on('success', () => {
               ackOrNack();
 
-              amqputils.getMessage('q2', namespace, function(err, message) {
+              amqputils.getMessage('q2', namespace, (err, message) => {
                 assert.ifError(err);
                 assert.ok(message);
                 assert.equal(message.fields.routingKey, 'rk1');
@@ -389,7 +389,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should publish lots of messages using normal channels', function() {
+  it('should publish lots of messages using normal channels', () => {
 
     return createBroker({
       vhosts,
@@ -399,12 +399,12 @@ describe('Publications As Promised', function() {
           confirm: false,
         },
       },
-    }).then(function(broker) {
-      return new Array(1000).fill().reduce(function(p) {
-        return p.then(function() {
-          return broker.publish('p1', 'test message').then(function(publication) {
-            return new Promise(function(resolve) {
-              publication.on('success', function() {
+    }).then((broker) => {
+      return new Array(1000).fill().reduce((p) => {
+        return p.then(() => {
+          return broker.publish('p1', 'test message').then((publication) => {
+            return new Promise((resolve) => {
+              publication.on('success', () => {
                 resolve();
               });
             });
@@ -414,7 +414,7 @@ describe('Publications As Promised', function() {
     });
   }, { timeout: 60000 });
 
-  it('should publish lots of messages using confirm channels', function() {
+  it('should publish lots of messages using confirm channels', () => {
 
     return createBroker({
       vhosts,
@@ -424,12 +424,12 @@ describe('Publications As Promised', function() {
           confirm: true,
         },
       },
-    }).then(function(broker) {
-      return new Array(1000).fill().reduce(function(p) {
-        return p.then(function() {
-          return broker.publish('p1', 'test message').then(function(publication) {
-            return new Promise(function(resolve) {
-              publication.on('success', function() {
+    }).then((broker) => {
+      return new Array(1000).fill().reduce((p) => {
+        return p.then(() => {
+          return broker.publish('p1', 'test message').then((publication) => {
+            return new Promise((resolve) => {
+              publication.on('success', () => {
                 resolve();
               });
             });
@@ -439,7 +439,7 @@ describe('Publications As Promised', function() {
     });
   }, { timeout: 20000 });
 
-  it('should symetrically encrypt messages', function(test, done) {
+  it('should symetrically encrypt messages', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -453,11 +453,11 @@ describe('Publications As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
+    }).then((broker) => {
 
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
-          amqputils.getMessage('q1', namespace, function(err, message) {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', (messageId) => {
+          amqputils.getMessage('q1', namespace, (err, message) => {
             assert.ifError(err);
             assert.ok(message);
             assert.equal(messageId, message.properties.messageId);
@@ -472,7 +472,7 @@ describe('Publications As Promised', function() {
     });
   });
 
-  it('should report encryption errors', function() {
+  it('should report encryption errors', () => {
     return createBroker({
       vhosts,
       publications: {
@@ -486,15 +486,15 @@ describe('Publications As Promised', function() {
           },
         },
       },
-    }).then(function(broker) {
-      return broker.publish('p1', 'test message').catch(function(err) {
+    }).then((broker) => {
+      return broker.publish('p1', 'test message').catch((err) => {
         assert.equal(err.message, 'Invalid key length');
       });
     });
   });
 
 
-  it('should capture publication stats for normal channels', function(test, done) {
+  it('should capture publication stats for normal channels', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -502,9 +502,9 @@ describe('Publications As Promised', function() {
           exchange: 'e1',
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', { message: 'test message' }).then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', { message: 'test message' }).then((publication) => {
+        publication.on('success', () => {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
@@ -514,7 +514,7 @@ describe('Publications As Promised', function() {
   });
 
 
-  it('should capture publication stats for confirm channels', function(test, done) {
+  it('should capture publication stats for confirm channels', (test, done) => {
     createBroker({
       vhosts,
       publications: {
@@ -523,9 +523,9 @@ describe('Publications As Promised', function() {
           confirm: true,
         },
       },
-    }).then(function(broker) {
-      broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function() {
+    }).then((broker) => {
+      broker.publish('p1', 'test message').then((publication) => {
+        publication.on('success', () => {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
@@ -537,10 +537,10 @@ describe('Publications As Promised', function() {
   function createBroker(config) {
     config = _.defaultsDeep(config, testConfig);
     return BrokerAsPromised.create(config)
-      .catch(function(err) {
+      .catch((err) => {
         if (err.broker) broker = err[err.broker];
         throw err;
-      }).then(function(_broker) {
+      }).then((_broker) => {
         broker = _broker;
         return broker;
       });

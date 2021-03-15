@@ -12,9 +12,9 @@ function init(connection) {
   }
 
   function checkExchange(present, name, namespace, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkExchange(namespace + ':' + name, function(err) {
+      channel.checkExchange(namespace + ':' + name, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -22,9 +22,9 @@ function init(connection) {
   }
 
   function createQueue(name, namespace, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.assertQueue(namespace + ':' + name, {}, function(err) {
+      channel.assertQueue(namespace + ':' + name, {}, (err) => {
         assert.ifError(err);
         next();
       });
@@ -32,9 +32,9 @@ function init(connection) {
   }
 
   function checkQueue(present, name, namespace, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkQueue(namespace + ':' + name, function(err) {
+      channel.checkQueue(namespace + ':' + name, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -42,7 +42,7 @@ function init(connection) {
   }
 
   function deleteQueue(name, namespace, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
       channel.deleteQueue(namespace + ':' + name, next);
     });
@@ -58,7 +58,7 @@ function init(connection) {
   }
 
   function _publishMessage(fqExchange, message, options, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
       channel.publish(fqExchange, options.routingKey, Buffer.from(message), options);
       next && next();
@@ -66,9 +66,9 @@ function init(connection) {
   }
 
   function getMessage(queue, namespace, next) {
-    connection.createChannel(function(err, channel) {
+    connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.get(namespace + ':' + queue, { noAck: true }, function(err, message) {
+      channel.get(namespace + ':' + queue, { noAck: true }, (err, message) => {
         if (err) return next(err);
         next(null, message);
       });
@@ -76,7 +76,7 @@ function init(connection) {
   }
 
   function assertMessage(queue, namespace, expected, next) {
-    getMessage(queue, namespace, function(err, message) {
+    getMessage(queue, namespace, (err, message) => {
       assert.ifError(err);
       assert.ok(message, 'Message was not present');
       assert.equal(message.content.toString(), expected);
@@ -85,7 +85,7 @@ function init(connection) {
   }
 
   function assertMessageAbsent(queue, namespace, next) {
-    getMessage(queue, namespace, function(err, message) {
+    getMessage(queue, namespace, (err, message) => {
       assert.ifError(err);
       assert.ok(!message, 'Message was present');
       next();
