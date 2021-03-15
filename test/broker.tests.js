@@ -257,6 +257,7 @@ describe('Broker', function() {
       broker.subscribe('s1', function(err, subscription) {
         assert.ifError(err);
 
+        // eslint-disable-next-line no-empty-function
         subscription.on('message', function(message, content, ackOrNack) {
         });
 
@@ -402,5 +403,3 @@ describe('Broker', function() {
     });
   }
 }, { timeout: 6000 });
-
-

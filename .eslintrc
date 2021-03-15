@@ -17,7 +17,6 @@
     "no-unneeded-ternary": "off",
     "operator-assignment": "off",
     "no-use-before-define": "off",
-    "prefer-spread": "off",
-    "no-empty-function": "off"
+    "prefer-spread": "off"
   }
 }
