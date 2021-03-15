@@ -24,7 +24,7 @@
     "eslint": "^6.8.0",
     "eslint-config-imperative": "^3.0.0",
     "eslint-plugin-imperative": "^3.0.0",
-    "husky": "^4.2.5",
+    "husky": "^5.1.3",
     "nyc": "^15.1.0",
     "random-readable": "^1.0.1",
     "zunit": "^3.0.0"
@@ -39,7 +39,8 @@
     "test": "node test",
     "lint": "eslint .",
     "coverage": "nyc --report html --reporter lcov --reporter text-summary node test",
-    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management"
+    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
+    "prepare": "husky install"
   },
   "keywords": [
     "amqplib",
@@ -59,10 +60,5 @@
   },
   "homepage": "https://guidesmiths.github.io/rascal/",
   "author": "Stephen Cresswell",
-  "license": "ISC",
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint && npm run test"
-    }
-  }
+  "license": "ISC"
 }

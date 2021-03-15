@@ -2,6 +2,7 @@
 
 ## 12.0.4
 - Bump dev dependencies
+- Upgraded to husky 5
 
 ## 12.0.3
 - Fix https://github.com/guidesmiths/rascal/issues/141
