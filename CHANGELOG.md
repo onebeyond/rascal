@@ -1,5 +1,8 @@
 # Change Log
 
+## 12.0.4
+- Bump dev dependencies
+
 ## 12.0.3
 - Fix https://github.com/guidesmiths/rascal/issues/141
 - Fix error message typos

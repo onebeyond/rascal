@@ -18,7 +18,7 @@
     "xregexp": "^4.3.0"
   },
   "devDependencies": {
-    "amqplib": "^0.6.0",
+    "amqplib": "^0.7.1",
     "chalk": "^4.0.0",
     "chance": "^1.1.4",
     "eslint": "^6.8.0",
