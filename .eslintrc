@@ -14,7 +14,6 @@
     "no-unused-expressions": "off",
     "no-prototype-builtins": "off",
     "no-lonely-if": "off",
-    "no-unneeded-ternary": "off",
     "no-use-before-define": "off"
   }
 }
