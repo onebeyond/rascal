@@ -94,7 +94,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -112,7 +112,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -130,7 +130,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -147,7 +147,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -189,7 +189,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -206,7 +206,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', { message: 'test message' }).then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done);
         });
       });
@@ -223,7 +223,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }).then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.getMessage('q1', namespace, function(err, message) {
             assert.ifError(err);
             assert.ok(message, 'Message was not present');
@@ -246,7 +246,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', Buffer.from('test message')).then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -263,7 +263,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message', { options: { expiration: 1 } }).then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           setTimeout(function() {
             amqputils.assertMessageAbsent('q1', namespace, done);
           }, 100);
@@ -404,7 +404,7 @@ describe('Publications As Promised', function() {
         return p.then(function() {
           return broker.publish('p1', 'test message').then(function(publication) {
             return new Promise(function(resolve) {
-              publication.on('success', function(messageId) {
+              publication.on('success', function() {
                 resolve();
               });
             });
@@ -429,7 +429,7 @@ describe('Publications As Promised', function() {
         return p.then(function() {
           return broker.publish('p1', 'test message').then(function(publication) {
             return new Promise(function(resolve) {
-              publication.on('success', function(messageId) {
+              publication.on('success', function() {
                 resolve();
               });
             });
@@ -504,7 +504,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', { message: 'test message' }).then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
@@ -525,7 +525,7 @@ describe('Publications As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();

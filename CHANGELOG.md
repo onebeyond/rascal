@@ -2,6 +2,7 @@
 
 ## 13.0.0
 - Switched to eslint-config-esnext and updated style
+- Fix vhost management cluster support
 
 ## 12.0.4
 - Bump dev dependencies

@@ -136,7 +136,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'text/plain');
             assert.equal(content, 'test message');
@@ -156,7 +156,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
           setTimeout(function() {
-            subscription.on('message', function(message, content, ackOrNack) {
+            subscription.on('message', function(message, content) {
               assert(message);
               assert.equal(content, 'test message');
               done();
@@ -177,9 +177,9 @@ describe('Subscriptions As Promised', function() {
         options: {
           contentType: 'text/csv',
         },
-      }).then(function(publication) {
+      }).then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'text/csv');
             assert.equal(content, 'test message');
@@ -200,9 +200,9 @@ describe('Subscriptions As Promised', function() {
         options: {
           contentType: 'x-foo-bar/blah',
         },
-      }).then(function(publication) {
+      }).then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'x-foo-bar/blah');
             assert.equal(content, 'test message');
@@ -221,7 +221,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', { message: 'test message' }).then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'application/json');
             assert.equal(content.message, 'test message');
@@ -240,7 +240,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', Buffer.from('test message')).then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, undefined);
             assert.equal(content, 'test message');
@@ -283,7 +283,7 @@ describe('Subscriptions As Promised', function() {
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function() {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err, message, ackOrNack) {
+          }).on('invalid_content', function(err) {
             assert(err);
             broker.shutdown().then(function() {
               amqputils.assertMessage('q1', namespace, 'not json', done);
@@ -305,7 +305,7 @@ describe('Subscriptions As Promised', function() {
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function() {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_message', function(err, message, ackOrNack) {
+          }).on('invalid_message', function(err) {
             assert(err);
             broker.shutdown().then(function() {
               amqputils.assertMessage('q1', namespace, 'not json', done);
@@ -382,7 +382,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', { message: 'test message' }).then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'application/json');
             assert.equal(content, '{"message":"test message"}');
@@ -407,7 +407,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function() {
             assert.ok(false, 'Should not have received any messages');
           });
         });
@@ -432,7 +432,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert.ok(message);
             broker.shutdown().then(function() {
               amqputils.assertMessageAbsent('q1', namespace, done);
@@ -452,7 +452,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
 
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert.ok(message);
             broker.shutdown().then(function() {
               amqputils.assertMessage('q1', namespace, 'test message', done);
@@ -571,7 +571,7 @@ describe('Subscriptions As Promised', function() {
         });
 
         broker.subscribe('s2').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert.ok(message);
             done();
           });
@@ -649,7 +649,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
         let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             if (message.properties.headers.rascal.redeliveries >= 10) return subscription.cancel().then(done);
             throw new Error('oh no');
           }).on('error', function() {
@@ -679,9 +679,9 @@ describe('Subscriptions As Promised', function() {
 
         let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function() {
             throw new Error('oh no');
-          }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
+          }).on('redeliveries_exceeded', function(err) {
             assert(err);
             broker.shutdown().then(function() {
               amqputils.assertMessage('q1', namespace, 'test message', done);
@@ -713,9 +713,9 @@ describe('Subscriptions As Promised', function() {
 
         let errors = 0;
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function() {
             throw new Error('oh no');
-          }).on('redeliveries_error', function(err, message, ackOrNack) {
+          }).on('redeliveries_error', function(err) {
             assert(err);
             broker.shutdown().then(function() {
               amqputils.assertMessage('q1', namespace, 'test message', done);
@@ -746,7 +746,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
 
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function() {
             throw new Error('oh no');
           }).on('error', function(err) {
             if (!/Message .* has exceeded 5 redeliveries/.test(err.message)) return;
@@ -777,7 +777,7 @@ describe('Subscriptions As Promised', function() {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
           let errors = 0;
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function() {
             throw new Error('oh no');
           }).on('redeliveries_exceeded', function(err, message, ackOrNack) {
             assert(err);
@@ -982,7 +982,7 @@ describe('Subscriptions As Promised', function() {
         });
 
         broker.subscribe('s2').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert.ok(message);
             done();
           });
@@ -1336,7 +1336,7 @@ describe('Subscriptions As Promised', function() {
       Promise.all(promises).then(function() {
         let messages = 0;
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert(message);
             messages++;
             if (messages === 5) {
@@ -1382,7 +1382,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message', replyTo + '.foo.bar').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(content, 'test message');
             done();
@@ -1429,7 +1429,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.subscribe('s1').then(function(subscription) {
 
-        subscription.on('message', function(message, content, ackOrNack) {
+        subscription.on('message', function() {
           assert.ok(false, 'Should not receive messages after unsubscribing');
         });
 
@@ -1501,7 +1501,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message) {
             assert(message.properties);
             assert.equal(message.properties.headers.rascal.originalVhost, '/');
             done();
@@ -1587,7 +1587,7 @@ describe('Subscriptions As Promised', function() {
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function() {
         broker.subscribe('s1').then(function(subscription) {
-          subscription.on('message', function(message, content, ackOrNack) {
+          subscription.on('message', function(message, content) {
             assert(message);
             assert.equal(message.properties.contentType, 'application/octet-stream');
             assert.equal(content, 'test message');
@@ -1623,7 +1623,7 @@ describe('Subscriptions As Promised', function() {
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function() {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err, message, ackOrNack) {
+          }).on('invalid_content', function(err) {
             assert.equal(err.message, 'Unknown encryption profile: not-well-known');
             done();
           });
@@ -1664,7 +1664,7 @@ describe('Subscriptions As Promised', function() {
         broker.subscribe('s1').then(function(subscription) {
           subscription.on('message', function() {
             assert.ok(false, 'Message should not have been delivered');
-          }).on('invalid_content', function(err, message, ackOrNack) {
+          }).on('invalid_content', function(err) {
             assert.equal(err.message, 'Invalid key length');
             done();
           });
@@ -1686,7 +1686,7 @@ describe('Subscriptions As Promised', function() {
       },
     }).then(function(broker) {
       broker.publish('p1', 'test message').then(function(publication) {
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           broker.subscribe('s1').then(function(subscription) {
             subscription.on('message', function(message, content, ackOrNack) {
               assert.ok(message);

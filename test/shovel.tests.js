@@ -89,7 +89,7 @@ describe('Shovel', function() {
       broker.publish('p1', 'Test Message', assert.ifError);
       broker.subscribe('s2', function(err, subscription) {
         assert.ifError(err);
-        subscription.on('message', function(message, content) {
+        subscription.on('message', function() {
           done();
         });
       });

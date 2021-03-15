@@ -136,7 +136,7 @@ describe('Broker As Promised', function() {
   it('should not modify configuration', function() {
     const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     const json = JSON.stringify(config, null, 2);
-    return createBroker(config).then(function(broker) {
+    return createBroker(config).then(function() {
       assert.equal(json, JSON.stringify(config, null, 2));
     });
   });
@@ -158,7 +158,7 @@ describe('Broker As Promised', function() {
 
       broker.subscribe('s1').then(function(subscription) {
 
-        subscription.on('message', function(message, content, ackOrNack) {
+        subscription.on('message', function() {
           assert(false, 'No message should have been received');
         });
 

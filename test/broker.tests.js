@@ -100,7 +100,7 @@ describe('Broker', function() {
     customVhosts[vhostName].assert = true;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ifError(err);
       done();
     });
@@ -113,7 +113,7 @@ describe('Broker', function() {
     customVhosts[vhostName].connection.management.port = 65535;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ok(err);
       assert.ok(/Failed to assert vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
       done();
@@ -126,7 +126,7 @@ describe('Broker', function() {
     customVhosts[vhostName].check = true;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ok(err);
       assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
       done();
@@ -140,7 +140,7 @@ describe('Broker', function() {
     customVhosts[vhostName].connection.management.port = 65535;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ok(err);
       assert.ok(/Failed to check vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
       done();
@@ -154,7 +154,7 @@ describe('Broker', function() {
     customVhosts[vhostName].check = true;
 
     const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ifError(err);
       done();
     });
@@ -172,7 +172,7 @@ describe('Broker', function() {
         assert.ifError(err);
         config.vhosts[vhostName].assert = false;
         config.vhosts[vhostName].check = true;
-        createBroker(config, function(err, broker) {
+        createBroker(config, function(err) {
           assert.ok(err);
           assert.equal(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
           done();
@@ -193,7 +193,7 @@ describe('Broker', function() {
   it('should not modify configuration', function(test, done) {
     const config = _.defaultsDeep({ vhosts: vhosts }, testConfig);
     const json = JSON.stringify(config, null, 2);
-    createBroker(config, function(err, broker) {
+    createBroker(config, function(err) {
       assert.ifError(err);
       assert.equal(json, JSON.stringify(config, null, 2));
       done();
@@ -223,7 +223,7 @@ describe('Broker', function() {
       broker.subscribe('s1', function(err, subscription) {
         assert.ifError(err);
 
-        subscription.on('message', function(message, content, ackOrNack) {
+        subscription.on('message', function() {
           subscription.cancel(function(err) {
             done(err);
           });
@@ -258,7 +258,7 @@ describe('Broker', function() {
         assert.ifError(err);
 
         // eslint-disable-next-line no-empty-function
-        subscription.on('message', function(message, content, ackOrNack) {
+        subscription.on('message', function() {
         });
 
         const before = Date.now();

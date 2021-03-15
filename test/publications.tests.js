@@ -102,7 +102,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -122,7 +122,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -142,7 +142,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -161,7 +161,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -175,7 +175,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('/', 'test message', broker.qualify('/', 'q3'), function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q3', namespace, 'test message', done);
         });
       });
@@ -283,7 +283,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -302,7 +302,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done);
         });
       });
@@ -321,7 +321,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, { options: { contentType: 'application/vnd+custom.contentType.v1' } }, function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.getMessage('q1', namespace, function(err, message) {
             assert.ifError(err);
             assert.ok(message, 'Message was not present');
@@ -346,7 +346,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', Buffer.from('test message'), function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           amqputils.assertMessage('q1', namespace, 'test message', done);
         });
       });
@@ -365,7 +365,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', { options: { expiration: 1 } }, function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           setTimeout(function() {
             amqputils.assertMessageAbsent('q1', namespace, done);
           }, 100);
@@ -496,7 +496,7 @@ describe('Publications', function() {
         });
       });
 
-      broker.publish('p1', 'test message', function(err, publication) {
+      broker.publish('p1', 'test message', function(err) {
         assert.ifError(err);
       });
     });
@@ -544,7 +544,7 @@ describe('Publications', function() {
         });
       });
 
-      broker.publish('p1', 'test message', function(err, publication) {
+      broker.publish('p1', 'test message', function(err) {
         assert.ifError(err);
       });
     });
@@ -566,7 +566,7 @@ describe('Publications', function() {
       async.timesSeries(1000, function(n, cb) {
         broker.publish('p1', 'test message', function(err, publication) {
           assert.ifError(err);
-          publication.on('success', function(messageId) {
+          publication.on('success', function() {
             cb();
           });
         });
@@ -593,7 +593,7 @@ describe('Publications', function() {
       async.timesSeries(1000, function(n, cb) {
         broker.publish('p1', 'test message', function(err, publication) {
           assert.ifError(err);
-          publication.on('success', function(messageId) {
+          publication.on('success', function() {
             cb();
           });
         });
@@ -656,7 +656,7 @@ describe('Publications', function() {
     }, function(err, broker) {
       assert.ifError(err);
 
-      broker.publish('p1', 'test message', function(err, publication) {
+      broker.publish('p1', 'test message', function(err) {
         assert.equal(err.message, 'Invalid key length');
         done();
       });
@@ -675,7 +675,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', { message: 'test message' }, function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();
@@ -698,7 +698,7 @@ describe('Publications', function() {
       assert.ifError(err);
       broker.publish('p1', 'test message', function(err, publication) {
         assert.ifError(err);
-        publication.on('success', function(messageId) {
+        publication.on('success', function() {
           assert.equal(typeof publication.stats.duration, 'number');
           assert.ok(publication.stats.duration >= 0);
           done();

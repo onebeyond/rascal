@@ -1594,7 +1594,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, function(err) {
         assert.equal(err.message, 'Duplicate subscription: s1');
       });
     });
@@ -1626,7 +1626,7 @@ describe('Configuration', function() {
             },
           },
         },
-      }, function(err, config) {
+      }, function(err) {
         assert.equal(err.message, 'Duplicate publication: p1');
       });
     });

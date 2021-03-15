@@ -14,7 +14,7 @@ function init(connection) {
   function checkExchange(present, name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
-      channel.checkExchange(namespace + ':' + name, function(err, ok) {
+      channel.checkExchange(namespace + ':' + name, function(err) {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -24,7 +24,7 @@ function init(connection) {
   function createQueue(name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
-      channel.assertQueue(namespace + ':' + name, {}, function(err, ok) {
+      channel.assertQueue(namespace + ':' + name, {}, function(err) {
         assert.ifError(err);
         next();
       });
@@ -34,7 +34,7 @@ function init(connection) {
   function checkQueue(present, name, namespace, next) {
     connection.createChannel(function(err, channel) {
       assert.ifError(err);
-      channel.checkQueue(namespace + ':' + name, function(err, ok) {
+      channel.checkQueue(namespace + ':' + name, function(err) {
         present ? assert(!err) : assert(!!err);
         next();
       });
