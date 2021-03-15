@@ -8,7 +8,6 @@
     "prefer-arrow-callback": "off",
     "no-undef": "off",
     "no-unused-vars": "off",
-    "no-prototype-builtins": "off",
-    "no-use-before-define": "off"
+    "no-prototype-builtins": "off"
   }
 }
