@@ -10,12 +10,12 @@
     "forward-emitter": "^0.1.1",
     "generic-pool": "^3.7.1",
     "lodash": "^4.17.21",
-    "lru-cache": "^5.1.1",
+    "lru-cache": "^6.0.0",
     "safe-json-parse": "^4.0.0",
     "stashback": "^1.1.2",
-    "superagent": "^5.2.2",
-    "uuid": "^8.0.0",
-    "xregexp": "^4.3.0"
+    "superagent": "^6.1.0",
+    "uuid": "^8.3.2",
+    "xregexp": "^5.0.1"
   },
   "devDependencies": {
     "amqplib": "^0.7.1",
