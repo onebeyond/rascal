@@ -562,7 +562,7 @@ Define any further configuration in an options block
   }
 }
 ```
-Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
+Refer to the [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html) documentation for further exchange options.
 
 #### Queues
 
@@ -632,7 +632,7 @@ To define a queue with extentions add arguments to the options block
   }
 }
 ```
-Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further queue options.
+Refer to the [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html) documentation for further queue options.
 
 #### bindings
 You can bind exchanges to exchanges, or exchanges to queues.
@@ -810,7 +810,7 @@ try {
 
 One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
 
-Refer to the [amqplib](http://www.squaremobius.net/amqp.node/doc/channel_api.html) documentation for further exchange options.
+Refer to the [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html) documentation for further exchange options.
 
 **It's important to realise that even though publication emits a "success" event, this offers no guarantee that the message has been sent UNLESS you use a confirm channel**. Providing you use Rascal's defaults publications will always be confirmed.
 ```json
