@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.0.1
+- Improved readme
+- Update zUnit
+
 ## 13.0.0
 - Switched to eslint-config-esnext and updated style
 - Update production dependencies
