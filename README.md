@@ -1147,10 +1147,10 @@ If your app crashes before acknowledging a message, the message will be rolled b
     }
 },
 "redeliveries": {
-    "counter": {
+    "counters": {
         "<counter name>": {
             "type": "<counter type>",
-            "size": "1000",
+            "size": 1000,
         }
     }
 }
