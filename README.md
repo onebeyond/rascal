@@ -1203,7 +1203,7 @@ See [here](https://www.npmjs.com/package/rascal-redis-counter) for a redis backe
 #### Message Acknowledgement and Recovery Strategies
 For messages which are not auto-acknowledged (the default) calling ```ackOrNack()``` with no arguments will acknowledge it. Calling ```ackOrNack(err)``` will nack the message using Rascal's default recovery strategy (nack with requeue). Calling ```ackOrNack(err, recoveryOptions)``` will trigger the specified recovery strategy or strategies.
 
-When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument (irrespective of what other arguments you provide.
+When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument irrespective of what other arguments you provide.
 
 When using the promises API, ackOrNack will work as for the callback API unless you explicity set promisifyAckOrNack to true on the subscription. If you do enable this feature, be sure to catch rejections.
 
