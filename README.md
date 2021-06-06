@@ -9,6 +9,7 @@ Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/
 [![Code Style](https://img.shields.io/badge/code%20style-esnext-brightgreen.svg)](https://www.npmjs.com/package/eslint-config-esnext)
 [![Dependency Status](https://david-dm.org/guidesmiths/rascal.svg)](https://david-dm.org/guidesmiths/rascal)
 [![devDependencies Status](https://david-dm.org/guidesmiths/rascal/dev-status.svg)](https://david-dm.org/guidesmiths/rascal?type=dev)
+[![Discover zUnit](https://img.shields.io/badge/Discover-zUnit-brightgreen)](https://www.npmjs.com/package/zunit)
 
 ## About
 Rascal is a rich pub/sub wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
