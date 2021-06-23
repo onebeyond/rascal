@@ -1245,7 +1245,7 @@ Before using republish please consider the following:
 
 3. Rascal will republish original message using a confirm channel, if the publish fails, the original message will not be nacked (You should mitigate this by chaining recovery strategies).
 
-4. Publishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. This is problematic if you want to replublish to the queue you consumed the message from. Rascal can mitigate restoring the original values before the consumer receives the message.
+4. Republishing to a queue has the effect of clearing message.fields.exchange and setting message.fields.routingKey to the queue name. Rascal can paritally mitigate the by restoring the original values before the consumer receives the message, however if the message is subsequently rejected, this information will no longer be available on the broker's copy of the message and may cause problems for dead letter routing. If this causes a problem you may need to add another binding based on the queue name or specify a value for the x-dead-letter-routing-key argument when defining the queue.
 
 ##### Republish with immediate nack
 As mentioned previously, dead lettering invalid messages is a good strategy with one flaw - since there is no way to modify the message you cannot annotate it with failure details. A solution to this is to republish with attempts = 1 and then nacking it to a dead letter exchange. The problem with this approach is that invalid messages will always be processed twice. To workaround this set immediateNack to true in the recovery options. This will instruct Rascal to nack the message immediately instead of emitting the 'message' event.
