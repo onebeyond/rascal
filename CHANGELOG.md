@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.0.4
+- Fixed https://github.com/guidesmiths/rascal/issues/156
+
 ## 13.0.3
 - Bump dev deps
 
