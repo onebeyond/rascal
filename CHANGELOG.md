@@ -1,5 +1,9 @@
 # Change Log
 
+## 13.0.5
+- Set channel pool acquireTimeoutMillis in default configuration - thanks @matej-prokop
+- Add snyk package health badge
+
 ## 13.0.4
 - Fixed https://github.com/guidesmiths/rascal/issues/156
 
