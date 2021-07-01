@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.0.6
+- Fixed bug where Rascal attempted to remove a listener from a nulled connection and crashed.
+
 ## 13.0.5
 - Set channel pool acquireTimeoutMillis in default configuration - thanks @matej-prokop
 - Add snyk package health badge
