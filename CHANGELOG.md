@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.0.7
+- Fixed bug where Rascal could wait indefinitely for channels to be destroyed if shutdown was called following a heartbeat timeout. See https://github.com/guidesmiths/rascal/issues/158 for more details.
+
 ## 13.0.6
 - Fixed bug where Rascal attempted to remove a listener from a nulled connection and crashed.
 
