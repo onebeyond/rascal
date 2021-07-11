@@ -7,7 +7,9 @@ module.exports = {
         }
       },
       connection: {
-        heartbeat: 1,
+        options: {
+          heartbeat: 10
+        },
         socketOptions: {
           timeout: 1000
         }
