@@ -39,12 +39,15 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 * TDD support
 
 ## Concepts
-Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges Queues, Channels and Connections with with two new ones
+Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges, Queues, Channels and Connections with with two new ones
 
 1. Publications
 1. Subscriptions
 
 A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrivied from the broker and used to publish and consume messages.
+
+### Special Note
+RabbitMQ 3.8.0 introduced [quorum queues](https://www.rabbitmq.com/quorum-queues.html). Although quorum queues may not be suitable in all situations, they provide [poison message handling](https://www.rabbitmq.com/quorum-queues.html#poison-message-handling) without the need for an external [redelivery counter](https://github.com/guidesmiths/rascal#dealing-with-redeliveries) and offer better data safety in the event of a network partition. You can read more about them [here](https://www.cloudamqp.com/blog/reasons-you-should-switch-to-quorum-queues.html) and [here](https://blog.rabbitmq.com/posts/2020/06/quorum-queues-local-delivery).
 
 ## Examples
 
