@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.1.1
+- Moved setMaxListeners to createConnection task to suppress misleading 'Possible EventEmitter memory leak detected' warning. See https://github.com/guidesmiths/rascal/issues/164 for more details.
+
 ## 13.1.0
 - Fixed bug where Rascal could wait indefinitely for channels to be destroyed if shutdown was called following a heartbeat timeout. See https://github.com/guidesmiths/rascal/issues/158 for more details.
 
