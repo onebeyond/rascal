@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.1.2
+- Fixed various issues when queue names contained period characters. Reported in https://github.com/guidesmiths/rascal/issues/166
+
 ## 13.1.1
 - Moved setMaxListeners to createConnection task to suppress misleading 'Possible EventEmitter memory leak detected' warning. See https://github.com/guidesmiths/rascal/issues/164 for more details.
 
