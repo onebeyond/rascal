@@ -1256,6 +1256,40 @@ describe('Subscriptions', () => {
     });
   });
 
+  it('should forward messages from a queue with period characters in the name', (test, done) => {
+    createBroker({
+      vhosts,
+      publications,
+      subscriptions,
+    }, (err, broker) => {
+      assert.ifError(err);
+      broker.publish('p4', 'test message', assert.ifError);
+
+      broker.subscribe('s5', (err, subscription) => {
+        assert.ifError(err);
+        subscription.on('message', (message, content, ackOrNack) => {
+          assert.ok(message);
+          ackOrNack({ message: 'forward me', code: 'red' }, { strategy: 'forward', publication: 'p2' });
+        });
+      });
+
+      broker.subscribe('s2', (err, subscription) => {
+        assert.ifError(err);
+        subscription.on('message', (message, content, ackOrNack) => {
+          assert.ok(message);
+          ackOrNack();
+          assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q_10.10.10.10')].forwarded, 1);
+          assert.strictEqual(message.properties.headers.CC.length, 1);
+          assert.strictEqual(message.properties.headers.CC[0], broker.qualify('/', 'q_10.10.10.10') + '.bar');
+          assert.strictEqual(message.properties.headers.rascal.error.message, 'forward me');
+          assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
+          done();
+        });
+      });
+    });
+  });
+
+
   it('should truncate error messages when forwarding', (test, done) => {
     createBroker({
       vhosts,
