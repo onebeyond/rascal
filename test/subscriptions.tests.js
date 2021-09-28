@@ -1145,6 +1145,84 @@ describe('Subscriptions', () => {
     });
   });
 
+  it('should immediately nack republished messages delivered from a queue whose name contains periods', (test, done) => {
+    createBroker({
+      vhosts: {
+        '/': {
+          namespace,
+          exchanges: {
+            e1: {
+              assert: true,
+            },
+            e2: {
+              assert: true,
+            },
+          },
+          queues: {
+            'q_10.10.10.10': {
+              assert: true,
+              options: {
+                arguments: {
+                  'x-dead-letter-exchange': 'e2',
+                },
+              },
+            },
+            q2: {
+              assert: true,
+            },
+          },
+          bindings: {
+            b1: {
+              source: 'e1',
+              destination: 'q_10.10.10.10',
+            },
+            b2: {
+              source: 'e2',
+              destination: 'q2',
+            },
+          },
+        },
+      },
+      publications: _.pick(publications, 'p1'),
+      subscriptions: {
+        s1: {
+          vhost: '/',
+          queue: 'q_10.10.10.10',
+        },
+        s2: {
+          vhost: '/',
+          queue: 'q2',
+        },
+      },
+    }, (err, broker) => {
+      assert.ifError(err);
+      broker.publish('p1', 'test message', (err) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          let count = 0;
+          subscription.on('message', (message, content, ackOrNack) => {
+            assert.strictEqual(++count, 1);
+            assert.ok(message);
+            ackOrNack(new Error('immediate nack'), {
+              strategy: 'republish',
+              immediateNack: true,
+            });
+          });
+        });
+
+        broker.subscribe('s2', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message) => {
+            assert.ok(message);
+            done();
+          });
+        });
+      });
+    });
+  });
+
   it('should forward messages to publication when requested', (test, done) => {
     createBroker({
       vhosts,
