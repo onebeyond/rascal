@@ -42,6 +42,9 @@ describe('Subscriptions', () => {
           q3: {
             assert: true,
           },
+          'q_10.10.10.10': {
+            assert: true,
+          }
         },
         bindings: {
           b1: {
@@ -58,6 +61,11 @@ describe('Subscriptions', () => {
             source: 'e1',
             destination: 'q3',
             bindingKey: 'baz',
+          },
+          b4: {
+            source: 'e1',
+            destination: 'q_10.10.10.10',
+            bindingKey: 'buz',
           },
         },
       },
@@ -78,6 +86,11 @@ describe('Subscriptions', () => {
         vhost: '/',
         exchange: 'xx',
       },
+      p4: {
+        vhost: '/',
+        exchange: 'e1',
+        routingKey: 'buz',
+      }
     };
 
     subscriptions = {
@@ -97,6 +110,10 @@ describe('Subscriptions', () => {
         vhost: '/',
         queue: 'q1',
         deprecated: true,
+      },
+      s5: {
+        vhost: '/',
+        queue: 'q_10.10.10.10'
       },
     };
 
@@ -911,6 +928,34 @@ describe('Subscriptions', () => {
       });
     });
   });
+
+  it('should republish messages with periods in the queue name', (test, done) => {
+    createBroker({
+      vhosts,
+      publications,
+      subscriptions,
+    }, (err, broker) => {
+      assert.ifError(err);
+      broker.publish('p4', 'test message', (err) => {
+        assert.ifError(err);
+
+        const messages = {};
+        broker.subscribe('s5', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            assert.ok(message);
+            messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
+            if (messages[message.properties.messageId] < 10) return ackOrNack({ message: 'republish me', code: 'red' }, { strategy: 'republish' });
+            assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q_10.10.10.10')].republished, 9);
+            assert.strictEqual(message.properties.headers.rascal.error.message, 'republish me');
+            assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
+            done();
+          });
+        });
+      });
+    });
+  });
+
 
   it('should truncate error messages when republishing', (test, done) => {
     createBroker({
