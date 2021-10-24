@@ -1442,7 +1442,7 @@ describe(
               ackOrNack({ message: 'forward me', code: 'red' }, { strategy: 'forward', publication: '/xx' });
             });
             subscription.on('error', (err) => {
-              assert.match(err.message, /Message: .* was forwarded to publication: \/xx, but was returned/);
+              assert.ok(/Message: .* was forwarded to publication: \/xx, but was returned/.test(err.message), err.message);
             });
           });
 
