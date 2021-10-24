@@ -217,7 +217,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig,
+        testConfig
       );
 
       createBroker(config, (err, broker) => {
@@ -252,7 +252,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig,
+        testConfig
       );
 
       config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
@@ -350,7 +350,7 @@ describe(
           });
         });
       },
-      { timeout: 60000 },
+      { timeout: 60000 }
     );
 
     it('should subscribe to all subscriptions', (test, done) => {
@@ -360,7 +360,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig,
+        testConfig
       );
 
       createBroker(config, (err, broker) => {
@@ -383,7 +383,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig,
+        testConfig
       );
 
       createBroker(config, (err, broker) => {
@@ -398,7 +398,7 @@ describe(
             assert.strictEqual(subscriptions[0].constructor.name, 'SubscriberSession');
             assert.strictEqual(subscriptions[0].name, 's1');
             done();
-          },
+          }
         );
       });
     });
@@ -422,5 +422,5 @@ describe(
       });
     }
   },
-  { timeout: 6000 },
+  { timeout: 6000 }
 );

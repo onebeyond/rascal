@@ -1187,7 +1187,7 @@ broker.subscribeAll(
           console.error('Subscriber error', err);
         });
     });
-  },
+  }
 );
 ```
 

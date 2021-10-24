@@ -47,7 +47,7 @@ describe(
         (err) => {
           assert.ok(err.message.match('connect ETIMEDOUT'));
           done();
-        },
+        }
       );
     });
 
@@ -68,7 +68,7 @@ describe(
         },
         () => {
           amqputils.assertExchangePresent('e1', namespace, done);
-        },
+        }
       );
     });
 
@@ -89,7 +89,7 @@ describe(
         },
         () => {
           amqputils.assertQueuePresent('q1', namespace, done);
-        },
+        }
       );
     });
 
@@ -111,7 +111,7 @@ describe(
           assert.ok(err);
           assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        },
+        }
       );
     });
 
@@ -133,7 +133,7 @@ describe(
           assert.ok(err);
           assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        },
+        }
       );
     });
 
@@ -178,7 +178,7 @@ describe(
             assert.ifError(err);
             amqputils.assertMessage('q1', namespace, 'test message', done);
           });
-        },
+        }
       );
     });
 
@@ -190,5 +190,5 @@ describe(
       });
     }
   },
-  { timeout: 2000 },
+  { timeout: 2000 }
 );

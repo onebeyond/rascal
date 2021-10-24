@@ -228,7 +228,7 @@ describe(
             { message: 'test message' },
             {
               options: { contentType: 'application/vnd+custom.contentType.v1' },
-            },
+            }
           )
           .then((publication) => {
             publication.on('success', () => {
@@ -417,7 +417,7 @@ describe(
           }, Promise.resolve());
         });
       },
-      { timeout: 60000 },
+      { timeout: 60000 }
     );
 
     it(
@@ -445,7 +445,7 @@ describe(
           }, Promise.resolve());
         });
       },
-      { timeout: 20000 },
+      { timeout: 20000 }
     );
 
     it('should symetrically encrypt messages', (test, done) => {
@@ -553,5 +553,5 @@ describe(
         });
     }
   },
-  { timeout: 2000 },
+  { timeout: 2000 }
 );
