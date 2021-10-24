@@ -3,20 +3,18 @@ module.exports = {
     "/": {
       exchanges: ["demo_ex"],
       queues: ["demo_q"],
-      bindings: [
-        "demo_ex[a.b.c] -> demo_q"
-      ],
+      bindings: ["demo_ex[a.b.c] -> demo_q"],
       publications: {
         demo_pub: {
           exchange: "demo_ex",
-          routingKey: "a.b.c"
-        }
+          routingKey: "a.b.c",
+        },
       },
       subscriptions: {
         demo_sub: {
-          queue: "demo_q"
-        }
-      }
-    }
-  }
-}
+          queue: "demo_q",
+        },
+      },
+    },
+  },
+};

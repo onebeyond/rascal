@@ -1,12 +1,11 @@
-const assert = require('assert');
-const _ = require('lodash');
+const assert = require("assert");
+const _ = require("lodash");
 
 module.exports = {
   init,
 };
 
 function init(connection) {
-
   function disconnect(next) {
     connection.close(next);
   }
@@ -14,7 +13,7 @@ function init(connection) {
   function checkExchange(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkExchange(namespace + ':' + name, (err) => {
+      channel.checkExchange(namespace + ":" + name, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -24,7 +23,7 @@ function init(connection) {
   function createQueue(name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.assertQueue(namespace + ':' + name, {}, (err) => {
+      channel.assertQueue(namespace + ":" + name, {}, (err) => {
         assert.ifError(err);
         next();
       });
@@ -34,7 +33,7 @@ function init(connection) {
   function checkQueue(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkQueue(namespace + ':' + name, (err) => {
+      channel.checkQueue(namespace + ":" + name, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -44,23 +43,28 @@ function init(connection) {
   function deleteQueue(name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.deleteQueue(namespace + ':' + name, next);
+      channel.deleteQueue(namespace + ":" + name, next);
     });
   }
 
   function publishMessage(exchange, namespace, message, options, next) {
-    _publishMessage(namespace + ':' + exchange, message, options, next);
+    _publishMessage(namespace + ":" + exchange, message, options, next);
   }
 
   function publishMessageToQueue(queue, namespace, message, options, next) {
-    options.routingKey = namespace + ':' + queue;
-    _publishMessage('', message, options, next);
+    options.routingKey = namespace + ":" + queue;
+    _publishMessage("", message, options, next);
   }
 
   function _publishMessage(fqExchange, message, options, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.publish(fqExchange, options.routingKey, Buffer.from(message), options);
+      channel.publish(
+        fqExchange,
+        options.routingKey,
+        Buffer.from(message),
+        options
+      );
       next && next();
     });
   }
@@ -68,7 +72,7 @@ function init(connection) {
   function getMessage(queue, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.get(namespace + ':' + queue, { noAck: true }, (err, message) => {
+      channel.get(namespace + ":" + queue, { noAck: true }, (err, message) => {
         if (err) return next(err);
         next(null, message);
       });
@@ -78,7 +82,7 @@ function init(connection) {
   function assertMessage(queue, namespace, expected, next) {
     getMessage(queue, namespace, (err, message) => {
       assert.ifError(err);
-      assert.ok(message, 'Message was not present');
+      assert.ok(message, "Message was not present");
       assert.strictEqual(message.content.toString(), expected);
       next();
     });
@@ -87,7 +91,7 @@ function init(connection) {
   function assertMessageAbsent(queue, namespace, next) {
     getMessage(queue, namespace, (err, message) => {
       assert.ifError(err);
-      assert.ok(!message, 'Message was present');
+      assert.ok(!message, "Message was present");
       next();
     });
   }

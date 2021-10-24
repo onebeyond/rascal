@@ -10,5 +10,5 @@ checks:
     enabled: false
 ratings:
   paths:
-  - index.js
-  - lib/**
+    - index.js
+    - lib/**

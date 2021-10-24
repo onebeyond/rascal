@@ -1,14 +1,11 @@
 {
-  "extends": "esnext",
+  "extends": ["prettier"],
+  "plugins": ["prettier"],
   "env": {
     "node": true
   },
-  "rules": {
-    "import/no-commonjs": "off",
-    "import/no-nodejs-modules": "off",
-    "prefer-rest-params": "off",
-    "arrow-body-style": ["error", "always"],
-    "semi": ["error", "always"],
-    "no-unused-vars": ["error", { "varsIgnorePattern": "debug" } ]
-  }
+  "parserOptions": {
+    "ecmaVersion": "2015"
+  },
+  "rules": {}
 }

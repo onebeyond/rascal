@@ -21,10 +21,13 @@
     "amqplib": "^0.8.0",
     "chalk": "^4.0.0",
     "chance": "^1.1.4",
-    "eslint": "^6.8.0",
-    "eslint-config-esnext": "^4.1.0",
+    "eslint": "^7.32.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^4.0.0",
     "husky": "^6.0.0",
+    "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
+    "prettier": "2.4.1",
     "random-readable": "^1.0.1",
     "zunit": "^3.0.8"
   },
@@ -36,10 +39,15 @@
   },
   "scripts": {
     "test": "zUnit",
+    "prettier": "prettier --check .",
     "lint": "eslint .",
+    "lint-staged": "lint-staged",
     "coverage": "nyc --report html --reporter lcov --reporter text-summary zUnit",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
     "prepare": "husky install"
+  },
+  "lint-staged": {
+    "**/*": "prettier --write --ignore-unknown"
   },
   "keywords": [
     "amqplib",

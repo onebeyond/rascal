@@ -1,23 +1,22 @@
-const assert = require('assert');
-const exponential = require('../../lib/backoff/exponential');
+const assert = require("assert");
+const exponential = require("../../lib/backoff/exponential");
 
-describe('Exponential Backoff', () => {
-
-  it('should backoff by 1 seconds by default', () => {
+describe("Exponential Backoff", () => {
+  it("should backoff by 1 seconds by default", () => {
     const backoff = exponential({ randomise: false });
     assert.strictEqual(backoff.next(), 1000);
     assert.strictEqual(backoff.next(), 2000);
     assert.strictEqual(backoff.next(), 4000);
   });
 
-  it('should backoff by the specified value', () => {
+  it("should backoff by the specified value", () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: false });
     assert.strictEqual(backoff.next(), 2000);
     assert.strictEqual(backoff.next(), 6000);
     assert.strictEqual(backoff.next(), 18000);
   });
 
-  it('should backoff between the specified values', () => {
+  it("should backoff between the specified values", () => {
     const backoff = exponential({ min: 2000, factor: 3, randomise: true });
     const results = [];
     for (let i = 0; i < 10; i++) {
@@ -33,8 +32,13 @@ describe('Exponential Backoff', () => {
     assert(results[6] >= 1458000 && results[6] <= 4374000, results[6]);
   });
 
-  it('should cap values', () => {
-    const backoff = exponential({ min: 2000, factor: 3, randomise: true, max: 18000 });
+  it("should cap values", () => {
+    const backoff = exponential({
+      min: 2000,
+      factor: 3,
+      randomise: true,
+      max: 18000,
+    });
     const results = [];
     for (let i = 0; i < 700; i++) {
       const value = backoff.next();
@@ -47,8 +51,13 @@ describe('Exponential Backoff', () => {
     }
   });
 
-  it('should reset values', () => {
-    const backoff = exponential({ min: 2000, factor: 3, randomise: true, max: 16000 });
+  it("should reset values", () => {
+    const backoff = exponential({
+      min: 2000,
+      factor: 3,
+      randomise: true,
+      max: 16000,
+    });
     const results = [];
     for (let i = 0; i < 10; i++) {
       const value = backoff.next();
@@ -57,5 +66,4 @@ describe('Exponential Backoff', () => {
     backoff.reset();
     assert(results[0] >= 2000 && results[0] <= 6000, backoff.next());
   });
-
 });

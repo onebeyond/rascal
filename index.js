@@ -1,10 +1,10 @@
-const _ = require('lodash');
-const defaultConfig = require('./lib/config/defaults');
-const testConfig = require('./lib/config/tests');
-const Broker = require('./lib/amqp/Broker');
-const BrokerAsPromised = require('./lib/amqp/BrokerAsPromised');
+const _ = require("lodash");
+const defaultConfig = require("./lib/config/defaults");
+const testConfig = require("./lib/config/tests");
+const Broker = require("./lib/amqp/Broker");
+const BrokerAsPromised = require("./lib/amqp/BrokerAsPromised");
 
-module.exports = (function() {
+module.exports = (function () {
   return {
     Broker,
     BrokerAsPromised,
@@ -18,6 +18,6 @@ module.exports = (function() {
     withTestConfig(config) {
       return _.defaultsDeep({}, config, testConfig);
     },
-    counters: require('./lib/counters'),
+    counters: require("./lib/counters"),
   };
 })();
