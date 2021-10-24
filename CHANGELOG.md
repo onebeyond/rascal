@@ -4,6 +4,7 @@
 
 - Fixed potential for returned messages cause the forward error strategy to yield twice
 - Report returned messages from republish error strategy
+- Tweak prettier rules
 
 ## 13.1.3
 

@@ -1,22 +1,22 @@
-const assert = require("assert");
-const linear = require("../../lib/backoff/linear");
+const assert = require('assert');
+const linear = require('../../lib/backoff/linear');
 
-describe("Linear Backoff", () => {
-  it("should backoff by 1 seconds by default", () => {
+describe('Linear Backoff', () => {
+  it('should backoff by 1 seconds by default', () => {
     const backoff = linear();
     assert.strictEqual(backoff.next(), 1000);
     assert.strictEqual(backoff.next(), 1000);
     assert.strictEqual(backoff.next(), 1000);
   });
 
-  it("should backoff by the specified value", () => {
+  it('should backoff by the specified value', () => {
     const backoff = linear({ min: 2000 });
     assert.strictEqual(backoff.next(), 2000);
     assert.strictEqual(backoff.next(), 2000);
     assert.strictEqual(backoff.next(), 2000);
   });
 
-  it("should backoff by within a range", () => {
+  it('should backoff by within a range', () => {
     const backoff = linear({ min: 1000, max: 1002 });
     const results = [];
     for (let i = 0; i < 1000; i++) {

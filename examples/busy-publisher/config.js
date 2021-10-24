@@ -1,6 +1,6 @@
 module.exports = {
   vhosts: {
-    "/": {
+    '/': {
       publicationChannelPools: {
         confirmPool: {
           max: 10,
@@ -16,13 +16,13 @@ module.exports = {
           timeout: 1000,
         },
       },
-      exchanges: ["demo_ex"],
-      queues: ["demo_q"],
-      bindings: ["demo_ex[a.b.c] -> demo_q"],
+      exchanges: ['demo_ex'],
+      queues: ['demo_q'],
+      bindings: ['demo_ex[a.b.c] -> demo_q'],
       publications: {
         demo_pub: {
-          exchange: "demo_ex",
-          routingKey: "a.b.c",
+          exchange: 'demo_ex',
+          routingKey: 'a.b.c',
           confirm: false,
           options: {
             persistent: false,
@@ -31,7 +31,7 @@ module.exports = {
       },
       subscriptions: {
         demo_sub: {
-          queue: "demo_q",
+          queue: 'demo_q',
         },
       },
     },

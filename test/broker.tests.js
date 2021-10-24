@@ -1,15 +1,15 @@
-const assert = require("assert");
-const _ = require("lodash");
-const testConfig = require("../lib/config/tests");
-const uuid = require("uuid").v4;
-const format = require("util").format;
-const Broker = require("..").Broker;
-const amqplib = require("amqplib/callback_api");
-const AmqpUtils = require("./utils/amqputils");
-const random = require("random-readable");
+const assert = require('assert');
+const _ = require('lodash');
+const testConfig = require('../lib/config/tests');
+const uuid = require('uuid').v4;
+const format = require('util').format;
+const Broker = require('..').Broker;
+const amqplib = require('amqplib/callback_api');
+const AmqpUtils = require('./utils/amqputils');
+const random = require('random-readable');
 
 describe(
-  "Broker",
+  'Broker',
   () => {
     let broker;
     let amqputils;
@@ -22,7 +22,7 @@ describe(
       namespace = uuid();
 
       vhosts = {
-        "/": {
+        '/': {
           connection: {
             management: {
               options: {
@@ -43,22 +43,22 @@ describe(
           },
           subscriptions: {
             s1: {
-              queue: "q1",
+              queue: 'q1',
             },
           },
           publications: {
             p1: {
-              exchange: "e1",
+              exchange: 'e1',
             },
             p2: {
-              exchange: "e1",
+              exchange: 'e1',
               confirm: false,
             },
           },
           bindings: {
             b1: {
-              source: "e1",
-              destination: "q1",
+              source: 'e1',
+              destination: 'q1',
             },
           },
         },
@@ -66,16 +66,16 @@ describe(
 
       publications = {
         p1: {
-          vhost: "/",
-          exchange: "e1",
-          routingKey: "foo",
+          vhost: '/',
+          exchange: 'e1',
+          routingKey: 'foo',
         },
       };
 
       subscriptions = {
         s1: {
-          vhost: "/",
-          queue: "q1",
+          vhost: '/',
+          queue: 'q1',
         },
       };
 
@@ -93,9 +93,9 @@ describe(
       });
     });
 
-    it("should assert vhosts", (test, done) => {
+    it('should assert vhosts', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].assert = true;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
@@ -105,66 +105,50 @@ describe(
       });
     });
 
-    it("should fail to assert vhost when unable to connect to management plugin", (test, done) => {
+    it('should fail to assert vhost when unable to connect to management plugin', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].assert = true;
       customVhosts[vhostName].connection.management.port = 65535;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, (err) => {
         assert.ok(err);
-        assert.ok(
-          /Failed to assert vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(
-            err.message
-          ),
-          err.message
-        );
+        assert.ok(/Failed to assert vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
         done();
       });
     });
 
-    it("should fail when checking vhosts that dont exist", (test, done) => {
+    it('should fail when checking vhosts that dont exist', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].check = true;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, (err) => {
         assert.ok(err);
-        assert.strictEqual(
-          err.message,
-          format(
-            "Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404",
-            vhostName
-          )
-        );
+        assert.strictEqual(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
         done();
       });
     });
 
-    it("should fail to check vhost when unable to connect to management plugin", (test, done) => {
+    it('should fail to check vhost when unable to connect to management plugin', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].check = true;
       customVhosts[vhostName].connection.management.port = 65535;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, (err) => {
         assert.ok(err);
-        assert.ok(
-          /Failed to check vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(
-            err.message
-          ),
-          err.message
-        );
+        assert.ok(/Failed to check vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
         done();
       });
     });
 
-    it("should succeed when checking vhosts that do exist", (test, done) => {
+    it('should succeed when checking vhosts that do exist', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].assert = true;
       customVhosts[vhostName].check = true;
 
@@ -175,9 +159,9 @@ describe(
       });
     });
 
-    it("should delete vhosts", (test, done) => {
+    it('should delete vhosts', (test, done) => {
       const vhostName = uuid();
-      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)["/"]);
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].assert = true;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
@@ -189,32 +173,23 @@ describe(
           config.vhosts[vhostName].check = true;
           createBroker(config, (err) => {
             assert.ok(err);
-            assert.strictEqual(
-              err.message,
-              format(
-                "Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404",
-                vhostName
-              )
-            );
+            assert.strictEqual(err.message, format('Failed to check vhost: %s. http://guest:***@localhost:15672 returned status 404', vhostName));
             done();
           });
         });
       });
     });
 
-    it("should provide fully qualified name", (test, done) => {
+    it('should provide fully qualified name', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
-        assert.strictEqual(
-          namespace + ":q1",
-          broker.getFullyQualifiedName("/", "q1")
-        );
+        assert.strictEqual(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
         done();
       });
     });
 
-    it("should not modify configuration", (test, done) => {
+    it('should not modify configuration', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       const json = JSON.stringify(config, null, 2);
       createBroker(config, (err) => {
@@ -224,7 +199,7 @@ describe(
       });
     });
 
-    it("should nuke", (test, done) => {
+    it('should nuke', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
@@ -235,33 +210,33 @@ describe(
       });
     });
 
-    it("should cancel subscriptions", (test, done) => {
+    it('should cancel subscriptions', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       createBroker(config, (err, broker) => {
         assert.ifError(err);
 
-        broker.subscribe("s1", (err, subscription) => {
+        broker.subscribe('s1', (err, subscription) => {
           assert.ifError(err);
 
-          subscription.on("message", () => {
+          subscription.on('message', () => {
             subscription.cancel((err) => {
               done(err);
             });
-            assert(false, "No message should have been received");
+            assert(false, 'No message should have been received');
           });
 
           broker.unsubscribeAll((err) => {
             assert.ifError(err);
 
-            broker.publish("p1", "test message", (err) => {
+            broker.publish('p1', 'test message', (err) => {
               assert.ifError(err);
               setTimeout(done, 500);
             });
@@ -270,46 +245,43 @@ describe(
       });
     });
 
-    it("should defer returning from unsubscribeAll until underlying channels have been closed", (test, done) => {
+    it('should defer returning from unsubscribeAll until underlying channels have been closed', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
-      config.vhosts["/"].subscriptions.s1.deferCloseChannel = 200;
+      config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
 
       createBroker(config, (err, broker) => {
         assert.ifError(err);
 
-        broker.subscribe("s1", (err, subscription) => {
+        broker.subscribe('s1', (err, subscription) => {
           assert.ifError(err);
 
           // eslint-disable-next-line no-empty-function
-          subscription.on("message", () => {});
+          subscription.on('message', () => {});
 
           const before = Date.now();
           broker.unsubscribeAll((err) => {
             assert.ifError(err);
             const after = Date.now();
-            assert.ok(
-              after >= before + 200,
-              "Did not defer returning from unsubscibeAll"
-            );
+            assert.ok(after >= before + 200, 'Did not defer returning from unsubscibeAll');
             done();
           });
         });
       });
     });
 
-    it("should connect", (test, done) => {
+    it('should connect', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
-        broker.connect("/", (err, connection) => {
+        broker.connect('/', (err, connection) => {
           assert.ifError(err);
           assert.ok(connection._rascal_id);
           connection.close(done);
@@ -317,7 +289,7 @@ describe(
       });
     });
 
-    it("should bounce vhosts", (test, done) => {
+    it('should bounce vhosts', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
@@ -325,16 +297,16 @@ describe(
       });
     });
 
-    it("should purge vhosts", (test, done) => {
+    it('should purge vhosts', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
-        broker.publish("/q1", "test message", (err) => {
+        broker.publish('/q1', 'test message', (err) => {
           assert.ifError(err);
           setTimeout(() => {
             broker.purge((err) => {
               assert.ifError(err);
-              amqputils.assertMessageAbsent("q1", namespace, done);
+              amqputils.assertMessageAbsent('q1', namespace, done);
             });
           }, 200);
         });
@@ -342,7 +314,7 @@ describe(
     });
 
     it(
-      "should emit busy/ready events",
+      'should emit busy/ready events',
       (test, done) => {
         /*
     This test needs to publish messages faster than the channel can cope with in order to
@@ -358,37 +330,37 @@ describe(
           let busyOn;
           let readyOn;
 
-          const stream = random.createRandomStream().on("data", (data) => {
-            broker.publish("p2", data, (err, publication) => {
+          const stream = random.createRandomStream().on('data', (data) => {
+            broker.publish('p2', data, (err, publication) => {
               if (err) throw err;
-              publication.on("error", console.error);
+              publication.on('error', console.error);
             });
           });
 
-          broker.once("busy", () => {
+          broker.once('busy', () => {
             busyOn = Date.now();
             assert.strictEqual(readyOn, undefined);
             stream.pause();
           });
 
-          broker.once("ready", () => {
+          broker.once('ready', () => {
             readyOn = Date.now();
             assert.ok(busyOn <= readyOn);
             done();
           });
         });
       },
-      { timeout: 60000 }
+      { timeout: 60000 },
     );
 
-    it("should subscribe to all subscriptions", (test, done) => {
+    it('should subscribe to all subscriptions', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       createBroker(config, (err, broker) => {
@@ -396,25 +368,22 @@ describe(
         broker.subscribeAll((err, subscriptions) => {
           assert.ifError(err);
           assert.strictEqual(subscriptions.length, 2);
-          assert.strictEqual(
-            subscriptions[0].constructor.name,
-            "SubscriberSession"
-          );
-          assert.strictEqual(subscriptions[0].name, "s1");
-          assert.strictEqual(subscriptions[1].name, "/q1");
+          assert.strictEqual(subscriptions[0].constructor.name, 'SubscriberSession');
+          assert.strictEqual(subscriptions[0].name, 's1');
+          assert.strictEqual(subscriptions[1].name, '/q1');
           done();
         });
       });
     });
 
-    it("should subscribe to all filtered subscriptions", (test, done) => {
+    it('should subscribe to all filtered subscriptions', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       createBroker(config, (err, broker) => {
@@ -426,29 +395,22 @@ describe(
           (err, subscriptions) => {
             assert.ifError(err);
             assert.strictEqual(subscriptions.length, 1);
-            assert.strictEqual(
-              subscriptions[0].constructor.name,
-              "SubscriberSession"
-            );
-            assert.strictEqual(subscriptions[0].name, "s1");
+            assert.strictEqual(subscriptions[0].constructor.name, 'SubscriberSession');
+            assert.strictEqual(subscriptions[0].name, 's1');
             done();
-          }
+          },
         );
       });
     });
 
-    it("should get vhost connections", (test, done) => {
+    it('should get vhost connections', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
         const connections = broker.getConnections();
         assert.strictEqual(connections.length, 1);
-        assert.strictEqual(connections[0].vhost, "/");
-        assert.strictEqual(
-          connections[0].connectionUrl,
-          "amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100",
-          broker.getConnections()["/"]
-        );
+        assert.strictEqual(connections[0].vhost, '/');
+        assert.strictEqual(connections[0].connectionUrl, 'amqp://guest:***@localhost:5672?heartbeat=50&connection_timeout=10000&channelMax=100', broker.getConnections()['/']);
         done();
       });
     });
@@ -460,5 +422,5 @@ describe(
       });
     }
   },
-  { timeout: 6000 }
+  { timeout: 6000 },
 );

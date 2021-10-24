@@ -1,14 +1,14 @@
-const assert = require("assert");
-const _ = require("lodash");
-const amqplib = require("amqplib/callback_api");
-const testConfig = require("../lib/config/tests");
-const format = require("util").format;
-const uuid = require("uuid").v4;
-const Broker = require("..").Broker;
-const AmqpUtils = require("./utils/amqputils");
+const assert = require('assert');
+const _ = require('lodash');
+const amqplib = require('amqplib/callback_api');
+const testConfig = require('../lib/config/tests');
+const format = require('util').format;
+const uuid = require('uuid').v4;
+const Broker = require('..').Broker;
+const AmqpUtils = require('./utils/amqputils');
 
 describe(
-  "Vhost",
+  'Vhost',
   () => {
     let broker;
     let amqputils;
@@ -28,14 +28,14 @@ describe(
       });
     });
 
-    it("should timeout connections", (test, done) => {
+    it('should timeout connections', (test, done) => {
       const namespace = uuid();
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               connection: {
-                host: "10.255.255.1",
+                host: '10.255.255.1',
                 socketOptions: {
                   timeout: 100,
                 },
@@ -45,18 +45,18 @@ describe(
           },
         },
         (err) => {
-          assert.ok(err.message.match("connect ETIMEDOUT"));
+          assert.ok(err.message.match('connect ETIMEDOUT'));
           done();
-        }
+        },
       );
     });
 
-    it("should create exchanges", (test, done) => {
+    it('should create exchanges', (test, done) => {
       const namespace = uuid();
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               namespace,
               exchanges: {
                 e1: {
@@ -67,17 +67,17 @@ describe(
           },
         },
         () => {
-          amqputils.assertExchangePresent("e1", namespace, done);
-        }
+          amqputils.assertExchangePresent('e1', namespace, done);
+        },
       );
     });
 
-    it("should create queues", (test, done) => {
+    it('should create queues', (test, done) => {
       const namespace = uuid();
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               namespace,
               queues: {
                 q1: {
@@ -88,16 +88,16 @@ describe(
           },
         },
         () => {
-          amqputils.assertQueuePresent("q1", namespace, done);
-        }
+          amqputils.assertQueuePresent('q1', namespace, done);
+        },
       );
     });
 
-    it("should fail when checking a missing exchange", (test, done) => {
+    it('should fail when checking a missing exchange', (test, done) => {
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               exchanges: {
                 e1: {
                   assert: false,
@@ -109,20 +109,17 @@ describe(
         },
         (err) => {
           assert.ok(err);
-          assert.ok(
-            /NOT-FOUND/.test(err.message),
-            format("%s did not match the expected format", err.message)
-          );
+          assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        }
+        },
       );
     });
 
-    it("should fail when checking a missing queue", (test, done) => {
+    it('should fail when checking a missing queue', (test, done) => {
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               queues: {
                 q1: {
                   assert: false,
@@ -134,22 +131,19 @@ describe(
         },
         (err) => {
           assert.ok(err);
-          assert.ok(
-            /NOT-FOUND/.test(err.message),
-            format("%s did not match the expected format", err.message)
-          );
+          assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        }
+        },
       );
     });
 
-    it("should create bindings", (test, done) => {
+    it('should create bindings', (test, done) => {
       const namespace = uuid();
 
       createBroker(
         {
           vhosts: {
-            "/": {
+            '/': {
               namespace,
               exchanges: {
                 e1: {
@@ -166,13 +160,13 @@ describe(
               },
               bindings: {
                 b1: {
-                  source: "e1",
-                  destination: "e2",
-                  destinationType: "exchange",
+                  source: 'e1',
+                  destination: 'e2',
+                  destinationType: 'exchange',
                 },
                 b2: {
-                  source: "e1",
-                  destination: "q1",
+                  source: 'e1',
+                  destination: 'q1',
                 },
               },
             },
@@ -180,17 +174,11 @@ describe(
         },
         (err) => {
           assert.ifError(err);
-          amqputils.publishMessage(
-            "e1",
-            namespace,
-            "test message",
-            {},
-            (err) => {
-              assert.ifError(err);
-              amqputils.assertMessage("q1", namespace, "test message", done);
-            }
-          );
-        }
+          amqputils.publishMessage('e1', namespace, 'test message', {}, (err) => {
+            assert.ifError(err);
+            amqputils.assertMessage('q1', namespace, 'test message', done);
+          });
+        },
       );
     });
 
@@ -202,5 +190,5 @@ describe(
       });
     }
   },
-  { timeout: 2000 }
+  { timeout: 2000 },
 );

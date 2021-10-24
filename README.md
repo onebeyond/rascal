@@ -58,29 +58,26 @@ RabbitMQ 3.8.0 introduced [quorum queues](https://www.rabbitmq.com/quorum-queues
 ### Async/Await
 
 ```js
-const Broker = require("rascal").BrokerAsPromised;
-const config = require("./config");
+const Broker = require('rascal').BrokerAsPromised;
+const config = require('./config');
 
 (async () => {
   try {
     const broker = await Broker.create(config);
-    broker.on("error", console.error);
+    broker.on('error', console.error);
 
     // Publish a message
-    const publication = await broker.publish(
-      "demo_publication",
-      "Hello World!"
-    );
-    publication.on("error", console.error);
+    const publication = await broker.publish('demo_publication', 'Hello World!');
+    publication.on('error', console.error);
 
     // Consume a message
-    const subscription = await broker.subscribe("demo_subscription");
+    const subscription = await broker.subscribe('demo_subscription');
     subscription
-      .on("message", (message, content, ackOrNack) => {
+      .on('message', (message, content, ackOrNack) => {
         console.log(content);
         ackOrNack();
       })
-      .on("error", console.error);
+      .on('error', console.error);
   } catch (err) {
     console.error(err);
   }
@@ -90,29 +87,29 @@ const config = require("./config");
 ### Callbacks
 
 ```js
-const Broker = require("rascal").Broker;
-const config = require("./config");
+const Broker = require('rascal').Broker;
+const config = require('./config');
 
 Broker.create(config, (err, broker) => {
   if (err) throw err;
 
-  broker.on("error", console.error);
+  broker.on('error', console.error);
 
   // Publish a message
-  broker.publish("demo_publication", "Hello World!", (err, publication) => {
+  broker.publish('demo_publication', 'Hello World!', (err, publication) => {
     if (err) throw err;
-    publication.on("error", console.error);
+    publication.on('error', console.error);
   });
 
   // Consume a message
-  broker.subscribe("demo_subscription", (err, subscription) => {
+  broker.subscribe('demo_subscription', (err, subscription) => {
     if (err) throw err;
     subscription
-      .on("message", (message, content, ackOrNack) => {
+      .on('message', (message, content, ackOrNack) => {
         console.log(content);
         ackOrNack();
       })
-      .on("error", console.error);
+      .on('error', console.error);
   });
 });
 ```
@@ -135,8 +132,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 1. Immediately after obtaining a broker instance
 
    ```js
-   broker.on("error", (err, { vhost, connectionUrl }) => {
-     console.error("Broker error", err, vhost, connectionUrl);
+   broker.on('error', (err, { vhost, connectionUrl }) => {
+     console.error('Broker error', err, vhost, connectionUrl);
    });
    ```
 
@@ -145,13 +142,13 @@ The reason Rascal nacks the message is because the alternative is to rollback an
    ```js
    // Async/Await
    try {
-     const subscription = await broker.subscribe("s1");
+     const subscription = await broker.subscribe('s1');
      subscription
-       .on("message", (message, content, ackOrNack) => {
+       .on('message', (message, content, ackOrNack) => {
          // Do stuff with message
        })
-       .on("error", (err) => {
-         console.error("Subscriber error", err);
+       .on('error', (err) => {
+         console.error('Subscriber error', err);
        });
    } catch (err) {
      throw new Error(`Rascal config error: ${err.message}`);
@@ -160,14 +157,14 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
    ```js
    // Callbacks
-   broker.subscribe("s1", (err, subscription) => {
+   broker.subscribe('s1', (err, subscription) => {
      if (err) throw new Error(`Rascal config error: ${err.message}`);
      subscription
-       .on("message", (message, content, ackOrNack) => {
+       .on('message', (message, content, ackOrNack) => {
          // Do stuff with message
        })
-       .on("error", (err) => {
-         console.error("Subscriber error", err);
+       .on('error', (err) => {
+         console.error('Subscriber error', err);
        });
    });
    ```
@@ -177,9 +174,9 @@ The reason Rascal nacks the message is because the alternative is to rollback an
    ```js
    // Async/Await
    try {
-     const publication = await broker.publish("p1", "some text");
-     publication.on("error", (err, messageId) => {
-       console.error("Publisher error", err, messageId);
+     const publication = await broker.publish('p1', 'some text');
+     publication.on('error', (err, messageId) => {
+       console.error('Publisher error', err, messageId);
      });
    } catch (err) {
      throw new Error(`Rascal config error: ${err.message}`);
@@ -188,10 +185,10 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
    ```js
    // Callbacks
-   broker.publish("p1", "some text", (err, publication) => {
+   broker.publish('p1', 'some text', (err, publication) => {
      if (err) throw new Error(`Rascal config error: ${err.message}`);
-     publication.on("error", (err, messageId) => {
-       console.error("Publisher error", err, messageId);
+     publication.on('error', (err, messageId) => {
+       console.error('Publisher error', err, messageId);
      });
    });
    ```
@@ -201,9 +198,9 @@ The reason Rascal nacks the message is because the alternative is to rollback an
    ```js
    // Async/Await
    try {
-     const publication = await broker.forward("p1", message);
-     publication.on("error", (err, messageId) => {
-       console.error("Publisher error", err, messageId);
+     const publication = await broker.forward('p1', message);
+     publication.on('error', (err, messageId) => {
+       console.error('Publisher error', err, messageId);
      });
    } catch (err) {
      throw new Error(`Rascal config error: ${err.message}`);
@@ -212,10 +209,10 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 
    ```js
    // Callbacks
-   broker.forward("p1", message, (err, publication) => {
+   broker.forward('p1', message, (err, publication) => {
      if (err) throw new Error(`Rascal config error: ${err.message}`);
-     publication.on("error", (err, messageId) => {
-       console.error("Publisher error", err, messageId);
+     publication.on('error', (err, messageId) => {
+       console.error('Publisher error', err, messageId);
      });
    });
    ```
@@ -227,10 +224,8 @@ The reason Rascal nacks the message is because the alternative is to rollback an
 The broker emits the `vhost_initialised` event after recovering from a connection error. An object containing the vhost name and connection url (with obfuscated password) are passed to he event handler. e.g.
 
 ```js
-broker.on("vhost_initialised", ({ vhost, connectionUrl }) => {
-  console.log(
-    `Vhost: ${vhost} was initialised using connection: ${connectionUrl}`
-  );
+broker.on('vhost_initialised', ({ vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was initialised using connection: ${connectionUrl}`);
 });
 ```
 
@@ -239,15 +234,11 @@ broker.on("vhost_initialised", ({ vhost, connectionUrl }) => {
 RabbitMQ notifies clients of [blocked and unblocked](https://www.rabbitmq.com/connection-blocked.html) connections, which rascal forwards from the connection to the broker. e.g.
 
 ```js
-broker.on("blocked", (reason, { vhost, connectionUrl }) => {
-  console.log(
-    `Vhost: ${vhost} was blocked using connection: ${connectionUrl}. Reason: ${reason}`
-  );
+broker.on('blocked', (reason, { vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was blocked using connection: ${connectionUrl}. Reason: ${reason}`);
 });
-broker.on("unblocked", ({ vhost, connectionUrl }) => {
-  console.log(
-    `Vhost: ${vhost} was unblocked using connection: ${connectionUrl}.`
-  );
+broker.on('unblocked', ({ vhost, connectionUrl }) => {
+  console.log(`Vhost: ${vhost} was unblocked using connection: ${connectionUrl}.`);
 });
 ```
 
@@ -256,16 +247,16 @@ broker.on("unblocked", ({ vhost, connectionUrl }) => {
 Rascal is highly configurable, but ships with what we consider to be sensible defaults (optimised for reliability rather than speed) for production and test environments.
 
 ```js
-var rascal = require("rascal");
-var definitions = require("./your-config.json");
+var rascal = require('rascal');
+var definitions = require('./your-config.json');
 var config = rascal.withDefaultConfig(definitions);
 ```
 
 or
 
 ```js
-var rascal = require("rascal");
-var definitions = require("./your-test-config.json");
+var rascal = require('rascal');
+var definitions = require('./your-test-config.json');
 var config = rascal.withTestConfig(definitions);
 ```
 
@@ -416,11 +407,7 @@ If you specify an array of connections instead of a single connection object Ras
   "vhosts": {
     "v1": {
       "connectionStrategy": "random",
-      "connections": [
-        "amqp://guest:guest@broker1.example.com:5672/v1?heartbeat=10",
-        "amqp://guest:guest@broker2.example.com:5672/v1?heartbeat=10",
-        "amqp://guest:guest@broker3.example.com:5672/v1?heartbeat=10"
-      ]
+      "connections": ["amqp://guest:guest@broker1.example.com:5672/v1?heartbeat=10", "amqp://guest:guest@broker2.example.com:5672/v1?heartbeat=10", "amqp://guest:guest@broker3.example.com:5672/v1?heartbeat=10"]
     }
   }
 }
@@ -557,21 +544,15 @@ Unfortunately there is a [bug](https://github.com/coopernurse/node-pool/issues/1
 [amqplib flow control](https://www.squaremobius.net/amqp.node/channel_api.html#flowcontrol) dictates channels act like stream.Writable when Rascal calls `channel.publish` or `channel.sendToQueue`, returning false when the channel is saturated and true if it is not. While it is possible to ignore this and keep publishing messages, it is preferable to apply back pressure to the message source. You can do this by listening to the broker `busy` and `ready` events. Busy events are emitted when the number of outstanding channel requests reach the pool max size, and ready events emitted when the outstanding channel requests falls back down to zero. The pool details are passed to both event handlers so you can take selective action.
 
 ```js
-broker.on(
-  "busy",
-  ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
-    if (vhost === "events") return eventStream.pause();
-    console.warn(`vhost ${vhost} is busy`);
-  }
-);
+broker.on('busy', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
+  if (vhost === 'events') return eventStream.pause();
+  console.warn(`vhost ${vhost} is busy`);
+});
 
-broker.on(
-  "ready",
-  ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
-    if (vhost === "events") return eventStream.resume();
-    console.info(`vhost ${vhost} is ready`);
-  }
-);
+broker.on('ready', ({ vhost, mode, queue, size, available, borrowed, min, max }) => {
+  if (vhost === 'events') return eventStream.resume();
+  console.info(`vhost ${vhost} is ready`);
+});
 ```
 
 #### namespace
@@ -822,7 +803,7 @@ Now that you've bound your queues and exchanges, you need to start sending them 
 ```
 
 ```js
-broker.publish("p1", "some message");
+broker.publish('p1', 'some message');
 ```
 
 If you prefer to send messages to a queue
@@ -862,20 +843,20 @@ Rascal supports text, buffers and anything it can JSON.stringify. Rascal will au
 The `broker.publish` method is overloaded to accept a runtime routing key or options.
 
 ```js
-broker.publish("p1", "some message", callback);
-broker.publish("p1", "some message", "some.routing.key", callback);
-broker.publish("p1", "some message", {
-  routingKey: "some.routing.key",
-  options: { messageId: "foo", expiration: 5000 },
+broker.publish('p1', 'some message', callback);
+broker.publish('p1', 'some message', 'some.routing.key', callback);
+broker.publish('p1', 'some message', {
+  routingKey: 'some.routing.key',
+  options: { messageId: 'foo', expiration: 5000 },
 });
 ```
 
 ```js
-await broker.publish("p1", "some message");
-await broker.publish("p1", "some message", "some.routing.key");
-await broker.publish("p1", "some message", {
-  routingKey: "some.routing.key",
-  options: { messageId: "foo", expiration: 5000 },
+await broker.publish('p1', 'some message');
+await broker.publish('p1', 'some message', 'some.routing.key');
+await broker.publish('p1', 'some message', {
+  routingKey: 'some.routing.key',
+  options: { messageId: 'foo', expiration: 5000 },
 });
 ```
 
@@ -884,33 +865,33 @@ The callback parameters are err (indicating the publication could not be found) 
 If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
 
 ```js
-broker.publish("p1", "some message", (err, publication) => {
+broker.publish('p1', 'some message', (err, publication) => {
   if (err) throw err; // publication didn't exist
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("return", (message) => {
-      console.warn("Message was returned: ", message.properties.messageId);
+    .on('return', (message) => {
+      console.warn('Message was returned: ', message.properties.messageId);
     });
 });
 ```
 
 ```js
 try {
-  const publication = await broker.publish("p1", "some message");
+  const publication = await broker.publish('p1', 'some message');
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("return", (message) => {
-      console.warn("Message was returned: ", message.properties.messageId);
+    .on('return', (message) => {
+      console.warn('Message was returned: ', message.properties.messageId);
     });
 } catch (err) {
   // publication didn't exist
@@ -971,17 +952,17 @@ If you start experiencing publication timeouts you may find it useful to monitor
 Rascal uses a channel pool to publish messages. Access to the channel pool is synchronised via an in memory queue, which will be paused if the connection to the broker is temporarily lost. Consequently instead of erroring, publishes will be held until the connection is re-established. If you would rather abort under these circumstances, you can listen for the publication 'paused' event, and call `publication.abort()`. When the connection is re-established any aborted messages will be dropped instead of published.
 
 ```js
-broker.publish("p1", "some message", (err, publication) => {
+broker.publish('p1', 'some message', (err, publication) => {
   if (err) throw err; // publication didn't exist
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("paused", (messageId) => {
-      console.warn("Publication was paused. Aborting message: ", messageId);
+    .on('paused', (messageId) => {
+      console.warn('Publication was paused. Aborting message: ', messageId);
       publication.abort();
     });
 });
@@ -989,16 +970,16 @@ broker.publish("p1", "some message", (err, publication) => {
 
 ```js
 try {
-  const publication = await broker.publish("p1", "some message");
+  const publication = await broker.publish('p1', 'some message');
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("paused", (messageId) => {
-      console.warn("Publication was paused. Aborting message: ", messageId);
+    .on('paused', (messageId) => {
+      console.warn('Publication was paused. Aborting message: ', messageId);
       publication.abort();
     });
 } catch (err) {
@@ -1042,33 +1023,33 @@ Rascal will set the content type for encrypted messages to 'application/octet-st
 Sometimes you want to forward a message to a publication. This may be part of a shovel program for transferring messages between vhosts, or because you want to ensure a sequence in some workflow, but do not need to modify the original message. Rascal supports this via `broker.forward`. The syntax is similar to `broker.publish` except from you pass in the original message you want to be forwarded instead of the message payload. If the publication or overrides don't specify a routing key, the original forwarding key will be maintained. The message will also be CC'd with an additional routingkey of `<queue>.<routingKey>` which can be useful for some retry scenarios.
 
 ```js
-broker.forward("p1", message, overrides, (err, publication) => {
+broker.forward('p1', message, overrides, (err, publication) => {
   if (err) throw err; // publication didn't exist
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("return", (message) => {
-      console.warn("Message was returned: ", message.properties.messageId);
+    .on('return', (message) => {
+      console.warn('Message was returned: ', message.properties.messageId);
     });
 });
 ```
 
 ```js
 try {
-  const publication = await broker.forward("p1", message, overrides);
+  const publication = await broker.forward('p1', message, overrides);
   publication
-    .on("success", (messageId) => {
-      console.log("Message id was: ", messageId);
+    .on('success', (messageId) => {
+      console.log('Message id was: ', messageId);
     })
-    .on("error", (err, messageId) => {
-      console.error("Error was: ", err.message);
+    .on('error', (err, messageId) => {
+      console.error('Error was: ', err.message);
     })
-    .on("return", (message) => {
-      console.warn("Message was returned: ", message.properties.messageId);
+    .on('return', (message) => {
+      console.warn('Message was returned: ', message.properties.messageId);
     });
 } catch (err) {
   // publication didn't exist
@@ -1095,27 +1076,27 @@ The real fun begins with subscriptions
 ```
 
 ```js
-broker.subscribe("s1", (err, subscription) => {
+broker.subscribe('s1', (err, subscription) => {
   if (err) throw err; // subscription didn't exist
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     });
 });
 ```
 
 ```js
 try {
-  const subscription = await broker.subscribe("s1");
+  const subscription = await broker.subscribe('s1');
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     });
 } catch (err) {
   // subscription didn't exist
@@ -1143,7 +1124,7 @@ Rascal supports text, buffers and anything it can JSON.parse, providing the cont
 The `broker.subscribe` method also accepts an options parameter which will override options specified in config
 
 ```js
-broker.subscribe("s1", { prefetch: 10, retry: false }, callback);
+broker.subscribe('s1', { prefetch: 10, retry: false }, callback);
 ```
 
 ```js
@@ -1163,11 +1144,11 @@ broker.subscribeAll((err, subscriptions) => {
   if (err) throw err; // one or more subscriptions didn't exist
   subscriptions.forEach((subscription) => {
     subscription
-      .on("message", (message, content, ackOrNack) => {
+      .on('message', (message, content, ackOrNack) => {
         // Do stuff with message
       })
-      .on("error", (err) => {
-        console.error("Subscriber error", err);
+      .on('error', (err) => {
+        console.error('Subscriber error', err);
       });
   });
 });
@@ -1178,11 +1159,11 @@ try {
   const subscriptions = await broker.subscribeAll();
   subscriptions.forEach((subscription) => {
     subscription
-      .on("message", (message, content, ackOrNack) => {
+      .on('message', (message, content, ackOrNack) => {
         // Do stuff with message
       })
-      .on("error", (err) => {
-        console.error("Subscriber error", err);
+      .on('error', (err) => {
+        console.error('Subscriber error', err);
       });
   });
 } catch (err) {
@@ -1199,14 +1180,14 @@ broker.subscribeAll(
     if (err) throw err; // one or more subscriptions didn't exist
     subscriptions.forEach((subscription) => {
       subscription
-        .on("message", (message, content, ackOrNack) => {
+        .on('message', (message, content, ackOrNack) => {
           // Do stuff with message
         })
-        .on("error", (err) => {
-          console.error("Subscriber error", err);
+        .on('error', (err) => {
+          console.error('Subscriber error', err);
         });
     });
-  }
+  },
 );
 ```
 
@@ -1230,17 +1211,17 @@ try {
 If rascal can't parse the content (e.g. the message had a content type of 'application/json' but the content was not JSON), it will emit an 'invalid_content' event
 
 ```js
-broker.subscribe("s1", (err, subscription) => {
+broker.subscribe('s1', (err, subscription) => {
   if (err) throw err; // subscription didn't exist
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     })
-    .on("invalid_content", (err, message, ackOrNack) => {
-      console.error("Invalid content", err);
+    .on('invalid_content', (err, message, ackOrNack) => {
+      console.error('Invalid content', err);
       ackOrNack(err);
     });
 });
@@ -1248,16 +1229,16 @@ broker.subscribe("s1", (err, subscription) => {
 
 ```js
 try {
-  const subscription = await broker.subscribe("s1");
+  const subscription = await broker.subscribe('s1');
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     })
-    .on("invalid_content", (err, message, ackOrNack) => {
-      console.error("Invalid content", err);
+    .on('invalid_content', (err, message, ackOrNack) => {
+      console.error('Invalid content', err);
       ackOrNack(err);
     });
 } catch (err) {
@@ -1330,17 +1311,17 @@ If your app crashes before acknowledging a message, the message will be rolled b
 ```
 
 ```js
-broker.subscribe("s1", (err, subscription) => {
+broker.subscribe('s1', (err, subscription) => {
   if (err) throw err; // subscription didn't exist
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     })
-    .on("redeliveries_exceeded", (err, message, ackOrNack) => {
-      console.error("Redeliveries exceeded", err);
+    .on('redeliveries_exceeded', (err, message, ackOrNack) => {
+      console.error('Redeliveries exceeded', err);
       ackOrNack(err);
     });
 });
@@ -1348,16 +1329,16 @@ broker.subscribe("s1", (err, subscription) => {
 
 ```js
 try {
-  const subscription = await broker.subscribe("s1");
+  const subscription = await broker.subscribe('s1');
   subscription
-    .on("message", (message, content, ackOrNack) => {
+    .on('message', (message, content, ackOrNack) => {
       // Do stuff with message
     })
-    .on("error", (err) => {
-      console.error("Subscriber error", err);
+    .on('error', (err) => {
+      console.error('Subscriber error', err);
     })
-    .on("redeliveries_exceeded", (err, message, ackOrNack) => {
-      console.error("Redeliveries exceeded", err);
+    .on('redeliveries_exceeded', (err, message, ackOrNack) => {
+      console.error('Redeliveries exceeded', err);
       ackOrNack(err);
     });
 } catch (err) {
@@ -1392,7 +1373,7 @@ When using the promises API, ackOrNack will work as for the callback API unless 
 ##### Nack (Reject or Dead Letter)
 
 ```js
-ackOrNack(err, { strategy: "nack" });
+ackOrNack(err, { strategy: 'nack' });
 ```
 
 Nack causes the message to be discarded or routed to a dead letter exchange if configured.
@@ -1400,7 +1381,7 @@ Nack causes the message to be discarded or routed to a dead letter exchange if c
 ##### Nack with Requeue
 
 ```js
-ackOrNack(err, { strategy: "nack", defer: 1000, requeue: true });
+ackOrNack(err, { strategy: 'nack', defer: 1000, requeue: true });
 ```
 
 The defer option is not mandatory, but without it you are likely retry your message thousands of times a second. Even then requeueing is a inadequate strategy for error handling, since the message will be rolled back to the front of the queue and there is no simple way to detect how many times the message has been redelivered.
@@ -1410,7 +1391,7 @@ Dead lettering is a good option for invalid messages but with one major flaw - b
 ##### Republish
 
 ```js
-ackOrNack(err, { strategy: "republish", defer: 1000 });
+ackOrNack(err, { strategy: 'republish', defer: 1000 });
 ```
 
 An alternative to nacking to republish the message back to the queue it came from. This has the advantage that the message will be resent to the back of the queue, allowing other messages to be processed and potentially fixing errors relating to ordering.
@@ -1418,10 +1399,7 @@ An alternative to nacking to republish the message back to the queue it came fro
 Rascal keeps track of the number of republishes so you can limit the number of attempts. **Whenever you specify a number of attempts you should always chain a fallback strategy**, otherwise if the attempts are exceeded your message will be neither acked or nacked.
 
 ```js
-ackOrNack(err, [
-  { strategy: "republish", defer: 1000, attempts: 10 },
-  { strategy: "nack" },
-]);
+ackOrNack(err, [{ strategy: 'republish', defer: 1000, attempts: 10 }, { strategy: 'nack' }]);
 ```
 
 Rascal also annotates the message with detail of the error `message.properties.headers.rascal.<queue>.error` which can be useful if you eventually dead letter it.
@@ -1441,7 +1419,7 @@ Before using republish please consider the following:
 As mentioned previously, dead lettering invalid messages is a good strategy with one flaw - since there is no way to modify the message you cannot annotate it with failure details. A solution to this is to republish with attempts = 1 and then nacking it to a dead letter exchange. The problem with this approach is that invalid messages will always be processed twice. To workaround this set immediateNack to true in the recovery options. This will instruct Rascal to nack the message immediately instead of emitting the 'message' event.
 
 ```js
-ackOrNack(err, { strategy: "republish", immediateNack: true });
+ackOrNack(err, { strategy: 'republish', immediateNack: true });
 ```
 
 If you ever want to resend the message to the same queue you will have to remove the `properties.headers.rascal.<queue>.immediateNack` header first.
@@ -1451,7 +1429,7 @@ If you ever want to resend the message to the same queue you will have to remove
 Instead of republishing the message to the same queue you can forward it to a Rascal publication. You should read the section entitled [Forwarding messages](#Forwarding-messages) to understand the risks of this.
 
 ```js
-ackOrNack(err, { strategy: "forward", publication: "some_exchange" });
+ackOrNack(err, { strategy: 'forward', publication: 'some_exchange' });
 ```
 
 **Danger**
@@ -1462,12 +1440,12 @@ Furthermore if the message is forwarded but cannot be routed (e.g. due to an inc
 ```js
 ackOrNack(err, [
   {
-    strategy: "forward",
-    publication: "some_exchange",
+    strategy: 'forward',
+    publication: 'some_exchange',
     defer: 1000,
     attempts: 10,
   },
-  { strategy: "nack" },
+  { strategy: 'nack' },
 ]);
 ```
 
@@ -1476,11 +1454,11 @@ You can also override the publication options
 ```js
 ackOrNack(err, [
   {
-    strategy: "forward",
-    publication: "some_exchange",
-    options: { routingKey: "custom.routing.key" },
+    strategy: 'forward',
+    publication: 'some_exchange',
+    options: { routingKey: 'custom.routing.key' },
   },
-  { strategy: "nack" },
+  { strategy: 'nack' },
 ]);
 ```
 
@@ -1491,7 +1469,7 @@ One use of the forward recovery strategy is to send messages to a wait queue whi
 Acknowledges the message, guaranteeing that it will be discarded in the event you also have a dead letter exchange configured. Sometimes useful in automated tests or when chaining a sequence of other recovery strategies.
 
 ```js
-ackOrNack(err, { strategy: "ack" });
+ackOrNack(err, { strategy: 'ack' });
 ```
 
 #### Chaining Recovery Strategies
@@ -1501,18 +1479,18 @@ By chaining Rascal's recovery strategies and leveraging some of RabbitMQs lesser
 ```js
 ackOrNack(err, [
   {
-    strategy: "republish",
+    strategy: 'republish',
     defer: 1000,
     attempts: 10,
   },
   {
-    strategy: "nack",
+    strategy: 'nack',
   },
 ]);
 ```
 
 Far more sophisticated strategies are achievable...
-![Retry BackOff Fail](https://user-images.githubusercontent.com/229672/49589770-2359d080-f962-11e8-957e-8d5368561afd.png "Retry BackOff Fail")
+![Retry BackOff Fail](https://user-images.githubusercontent.com/229672/49589770-2359d080-f962-11e8-957e-8d5368561afd.png 'Retry BackOff Fail')
 
 1. Producer publishes a message with the routing key "a.b.c" to the "jobs" topic exchange
 2. The message is routed to the "incoming" queue. The "incoming" queue is configured with a dead letter exchange.
@@ -1537,24 +1515,24 @@ If an error occurs on the channel (which will happen if you accidentally acknowl
 
 ```js
 // Does not retry. This will cause an error to be emitted which unhandled will crash your process. See [Subscriber Events](#subscriber-events)
-broker.subscribe("s1", { prefetch: 10, retry: false }, callback);
+broker.subscribe('s1', { prefetch: 10, retry: false }, callback);
 
 // Retries without delay.
-broker.subscribe("s1", { prefetch: 10, retry: true }, callback);
+broker.subscribe('s1', { prefetch: 10, retry: true }, callback);
 
 // Retries after a one second interval.
-broker.subscribe("s1", { prefetch: 10, retry: { delay: 1000 } }, callback);
+broker.subscribe('s1', { prefetch: 10, retry: { delay: 1000 } }, callback);
 ```
 
 ```js
 // Does not retry. This will cause an error to be emitted which unhandled will crash your process. See [Subscriber Events](#subscriber-events)
-await broker.subscribe("s1", { prefetch: 10, retry: false });
+await broker.subscribe('s1', { prefetch: 10, retry: false });
 
 // Retries without delay.
-await broker.subscribe("s1", { prefetch: 10, retry: true });
+await broker.subscribe('s1', { prefetch: 10, retry: true });
 
 // Retries after a one second interval.
-await broker.subscribe("s1", { prefetch: 10, retry: { delay: 1000 } });
+await broker.subscribe('s1', { prefetch: 10, retry: { delay: 1000 } });
 ```
 
 #### Subscriber Events
@@ -1610,7 +1588,7 @@ Configuring each vhost, exchange, queue, binding, publication and subscription e
 You can cancel subscriptions as follows
 
 ```js
-broker.subscribe("s1", (err, subscription) => {
+broker.subscribe('s1', (err, subscription) => {
   if (err) throw err; // subscription didn't exist
   subscription.cancel((err) => {
     console.err(err);
@@ -1620,7 +1598,7 @@ broker.subscribe("s1", (err, subscription) => {
 
 ```js
 try {
-  const subscription = await broker.subscribe("s1");
+  const subscription = await broker.subscribe('s1');
   await subscription.cancel();
 } catch (err) {
   // subscription didn't exist or could not be cancelled
@@ -1705,7 +1683,7 @@ is equivalent to...
 Rascal is a rich pub/sub wrapper and as such hides much of the amqplib [channel api](https://www.squaremobius.net/amqp.node/channel_api.html#channel). If you need to access this you can programmatically establish a connection to a vhost as follows.
 
 ```js
-broker.connect("/", (err, connection) => {
+broker.connect('/', (err, connection) => {
   if (err) throw new Error(`Connection error: ${err.message}`);
   // profit
 });
@@ -1713,7 +1691,7 @@ broker.connect("/", (err, connection) => {
 
 ```js
 try {
-  const connection = broker.connect("/");
+  const connection = broker.connect('/');
   // profit
 } catch (err) {
   throw new Error(`Connection error: ${err.message}`);
