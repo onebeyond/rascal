@@ -21,7 +21,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run prettier --check .
-      - run: npm lint
+      - run: npm run lint
       - run: npm test
 
   code-climate:

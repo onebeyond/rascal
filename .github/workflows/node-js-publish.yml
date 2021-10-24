@@ -20,7 +20,7 @@ jobs:
           node-version: "14.x"
       - run: npm ci
       - run: npm run prettier --check .
-      - run: npm lint
+      - run: npm run lint
       - run: npm test
 
   publish-npm:
