@@ -1,5 +1,8 @@
 # Change Log
 
+## 13.1.3
+- Remove unnecessary eslint install from github
+
 ## 13.1.2
 - Fixed various issues when queue names contained period characters. Reported in https://github.com/guidesmiths/rascal/issues/166
 
