@@ -1,5 +1,10 @@
 # Change Log
 
+## 13.1.4
+
+- Fixed potential for returned messages cause the forward error strategy to yield twice
+- Report returned messages from republish error strategy
+
 ## 13.1.3
 
 - Fixed minor memory leak in recovery strategy loop
