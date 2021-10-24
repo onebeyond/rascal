@@ -245,7 +245,7 @@ describe(
       });
     });
 
-    it('should defer returning from unsubscribeAll until underlying channels have been closed', (test, done) => {
+    it('should not return from unsubscribeAll until underlying channels have been closed', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
@@ -255,7 +255,7 @@ describe(
         testConfig
       );
 
-      config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 200;
 
       createBroker(config, (err, broker) => {
         assert.ifError(err);
@@ -263,15 +263,19 @@ describe(
         broker.subscribe('s1', (err, subscription) => {
           assert.ifError(err);
 
-          // eslint-disable-next-line no-empty-function
-          subscription.on('message', () => {});
-
-          const before = Date.now();
-          broker.unsubscribeAll((err) => {
+          broker.publish('p1', 'test message', (err) => {
             assert.ifError(err);
-            const after = Date.now();
-            assert.ok(after >= before + 200, 'Did not defer returning from unsubscibeAll');
-            done();
+          });
+
+          // eslint-disable-next-line no-empty-function
+          subscription.on('message', () => {
+            const before = Date.now();
+            broker.unsubscribeAll((err) => {
+              assert.strictEqual(err.code, 'ETIMEDOUT');
+              const after = Date.now();
+              assert.ok(after >= before + 200, 'Did not defer returning from unsubscibeAll');
+              done();
+            });
           });
         });
       });

@@ -49,6 +49,12 @@ Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutoria
 
 A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrivied from the broker and used to publish and consume messages.
 
+### Breaking Changes in Rascal@15
+
+Rascal@15 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitary amount of time. If you application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.shutdown`, `broker.unsubscribeAll` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the aforementioned methods will yield an error with a code of `ETIMEDOUT` and message stating `Callback function "waitForUnacknowledgedMessages" timed out`.
+
+The correct way to handle this is to always call `ackOrNack` when receiving a message.
+
 ### Special Note
 
 RabbitMQ 3.8.0 introduced [quorum queues](https://www.rabbitmq.com/quorum-queues.html). Although quorum queues may not be suitable in all situations, they provide [poison message handling](https://www.rabbitmq.com/quorum-queues.html#poison-message-handling) without the need for an external [redelivery counter](https://github.com/guidesmiths/rascal#dealing-with-redeliveries) and offer better data safety in the event of a network partition. You can read more about them [here](https://www.cloudamqp.com/blog/reasons-you-should-switch-to-quorum-queues.html) and [here](https://blog.rabbitmq.com/posts/2020/06/quorum-queues-local-delivery).
@@ -122,7 +128,7 @@ There are three situations when Rascal will nack a message without requeue, lead
 
 1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener
 1. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has neither a 'redeliveries_error' nor a 'redeliveries_exceeded' listener
-1. When attempting to recover by [republishing](#republishing) or [forwarding](#forwarding), but the recovery operation fails.
+1. When attempting to recover by [republishing](#republishing), [forwarding](#forwarding), but the recovery operation fails.
 
 The reason Rascal nacks the message is because the alternatives are to leave the message unacknowledged indefinitely, or to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events, your messages should be safe.
 
@@ -1606,11 +1612,11 @@ try {
 }
 ```
 
-Cancelling a subscribion will stop consuming messages, but leave the channel open for a short while so your application can still ack/nack messages. By default the channel is left open for 10 seconds, but can be overridden through the `deferCloseChannel` subscription property.
+Cancelling a subscribion will stop consuming messages, but leave the channel open until any outstanding messages have been acknowledged, or the timeout specified by through the `closeTimeout` subscription property is exceeded.
 
 ## Shutdown
 
-You can shutdown the broker by calling `await broker.shutdown()` or `broker.shutdown(cb)`. Shutting down the broker will cancel all subscriptions, then wait a short amount of time for inflight messages to be acknowledged (configurable via the `deferCloseChannel` subscription property), before closing channels and disconnecting.
+You can shutdown the broker by calling `await broker.shutdown()` or `broker.shutdown(cb)`.
 
 ## Bonus Features
 
