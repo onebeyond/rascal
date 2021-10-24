@@ -2,6 +2,7 @@
 
 ## 13.1.3
 
+- Fixed minor memory leak in recovery strategy loop
 - Move to prettier
 - Remove unnecessary eslint install from github
 

@@ -4,7 +4,7 @@
   "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
   "main": "index.js",
   "dependencies": {
-    "async": "^3.2.0",
+    "async": "^3.2.1",
     "debug": "^4.1.1",
     "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
