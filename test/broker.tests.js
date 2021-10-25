@@ -210,6 +210,28 @@ describe(
       });
     });
 
+    it('should tolerate unsubscribe timeouts when nuking', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.nuke((err) => {
+              assert.ifError(err);
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
+      });
+    });
+
     it('should cancel subscriptions', (test, done) => {
       const config = _.defaultsDeep(
         {
@@ -298,6 +320,28 @@ describe(
       createBroker(config, (err, broker) => {
         assert.ifError(err);
         broker.bounce(done);
+      });
+    });
+
+    it('should tolerate unsubscribe timeouts when bouncing vhosts', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.bounce((err) => {
+              assert.ifError(err);
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
       });
     });
 
