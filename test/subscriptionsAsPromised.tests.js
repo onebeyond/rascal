@@ -293,11 +293,14 @@ describe(
               })
               .on('invalid_content', (err) => {
                 assert(err);
-                broker.shutdown().catch((err) => {
-                  assert.strictEqual(err.code, 'ETIMEDOUT');
+                broker.shutdown().then(() => {
                   amqputils.assertMessage('q1', namespace, 'not json', done);
                 });
               });
+          });
+
+          broker.on('error', (err) => {
+            assert.strictEqual(err.code, 'ETIMEDOUT');
           });
         });
       });
@@ -318,11 +321,14 @@ describe(
               })
               .on('invalid_message', (err) => {
                 assert(err);
-                broker.shutdown().catch((err) => {
-                  assert.strictEqual(err.code, 'ETIMEDOUT');
+                broker.shutdown().then(() => {
                   amqputils.assertMessage('q1', namespace, 'not json', done);
                 });
               });
+          });
+
+          broker.on('error', (err) => {
+            assert.strictEqual(err.code, 'ETIMEDOUT');
           });
         });
       });
@@ -469,12 +475,15 @@ describe(
           broker.subscribe('s1').then((subscription) => {
             subscription.on('message', (message) => {
               assert.ok(message);
-              broker.shutdown().catch((err) => {
-                assert.strictEqual(err.code, 'ETIMEDOUT');
+              broker.shutdown().then(() => {
                 amqputils.assertMessage('q1', namespace, 'test message', done);
               });
             });
           });
+        });
+
+        broker.on('error', (err) => {
+          assert.strictEqual(err.code, 'ETIMEDOUT');
         });
       });
     });
@@ -693,8 +702,7 @@ describe(
               })
               .on('redeliveries_exceeded', (err) => {
                 assert(err);
-                broker.shutdown().catch((err) => {
-                  assert.strictEqual(err.code, 'ETIMEDOUT');
+                broker.shutdown().then(() => {
                   amqputils.assertMessage('q1', namespace, 'test message', done);
                 });
               })
@@ -702,6 +710,10 @@ describe(
                 if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
               });
           });
+        });
+
+        broker.on('error', (err) => {
+          assert.strictEqual(err.code, 'ETIMEDOUT');
         });
       });
     });
@@ -730,8 +742,7 @@ describe(
               })
               .on('redeliveries_error', (err) => {
                 assert(err);
-                broker.shutdown().catch((err) => {
-                  assert.strictEqual(err.code, 'ETIMEDOUT');
+                broker.shutdown().then(() => {
                   amqputils.assertMessage('q1', namespace, 'test message', done);
                 });
               })
@@ -739,6 +750,10 @@ describe(
                 if (errors++ > 5) done(new Error('Redeliveries were exceeded'));
               });
           });
+        });
+
+        broker.on('error', (err) => {
+          assert.strictEqual(err.code, 'ETIMEDOUT');
         });
       });
     });

@@ -213,6 +213,9 @@ describe(
     it('should tolerate unsubscribe timeouts when nuking', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
       createBroker(config, (err, broker) => {
         assert.ifError(err);
 
@@ -221,6 +224,7 @@ describe(
           subscription.on('message', () => {
             broker.nuke((err) => {
               assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
               done();
             });
           });
@@ -228,6 +232,10 @@ describe(
 
         broker.publish('p1', 'test message', (err) => {
           assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
         });
       });
     });
@@ -315,6 +323,36 @@ describe(
       });
     });
 
+    it('should tolerate unsubscribe timeouts when shuting down', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.shutdown((err) => {
+              assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
+        });
+      });
+    });
+
     it('should bounce vhosts', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
@@ -323,9 +361,12 @@ describe(
       });
     });
 
-    it('should tolerate unsubscribe timeouts when bouncing vhosts', (test, done) => {
+    it('should tolerate unsubscribe timeouts when bouncing', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
       createBroker(config, (err, broker) => {
         assert.ifError(err);
 
@@ -334,6 +375,7 @@ describe(
           subscription.on('message', () => {
             broker.bounce((err) => {
               assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
               done();
             });
           });
@@ -341,6 +383,10 @@ describe(
 
         broker.publish('p1', 'test message', (err) => {
           assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
         });
       });
     });
