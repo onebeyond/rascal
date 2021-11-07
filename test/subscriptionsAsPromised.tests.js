@@ -1244,7 +1244,7 @@ describe(
                   publication: 'p3',
                 }).catch((err) => {
                   assert.ok(err);
-                  assert.strictEqual('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
+                  assert.strictEqual('Message: ' + messageId + ' was forwarded to publication: p3, but was returned', err.message);
                   done();
                 });
               });

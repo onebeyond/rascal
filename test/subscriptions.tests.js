@@ -29,6 +29,10 @@ describe(
             e2: {
               assert: true,
             },
+            dlx: {
+              assert: true,
+              type: 'fanout',
+            },
             xx: {
               assert: true,
             },
@@ -36,11 +40,19 @@ describe(
           queues: {
             q1: {
               assert: true,
+              options: {
+                arguments: {
+                  'x-dead-letter-exchange': 'dlx',
+                },
+              },
             },
             q2: {
               assert: true,
             },
             q3: {
+              assert: true,
+            },
+            dlq: {
               assert: true,
             },
             'q_10.10.10.10': {
@@ -67,6 +79,10 @@ describe(
               source: 'e1',
               destination: 'q_10.10.10.10',
               bindingKey: 'buz',
+            },
+            b5: {
+              source: 'dlx',
+              destination: 'dlq',
             },
           },
         },
@@ -1408,6 +1424,41 @@ describe(
       );
     });
 
+    it('should nack the original message if forwarding fails', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.publish('p1', 'test message', assert.ifError);
+
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.ok(message);
+              ackOrNack({ message: 'forward me', code: 'red' }, { strategy: 'forward', publication: '/xx' });
+            });
+            subscription.on('error', (err) => {
+              assert.ok(/Message: .* was forwarded to publication: \/xx, but was returned/.test(err.message), err.message);
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.ok(message);
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              done();
+            });
+          });
+        }
+      );
+    });
+
     it('should forward messages from a queue with period characters in the name', (test, done) => {
       createBroker(
         {
@@ -1667,7 +1718,7 @@ describe(
                   })
                   .on('error', (err) => {
                     assert.ok(err);
-                    assert.strictEqual('Message: ' + messageId + ' was forwared to publication: p3, but was returned', err.message);
+                    assert.strictEqual('Message: ' + messageId + ' was forwarded to publication: p3, but was returned', err.message);
                     done();
                   });
               });

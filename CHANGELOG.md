@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.0.0
+
+- Messages which cannot be recovered by the republish or forward strategies are nacked resulting in message loss unless a dead letter is configured.
+
 ## 13.1.4
 
 - Fixed potential for returned messages cause the forward error strategy to yield twice

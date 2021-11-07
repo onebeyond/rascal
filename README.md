@@ -116,12 +116,13 @@ See [here](https://github.com/guidesmiths/rascal/tree/master/examples) for more 
 
 ## Avoiding Potential Message Loss
 
-There are two situations when Rascal will nack a message without requeue, leading to potential data loss.
+There are three situations when Rascal will nack a message without requeue, leading to potential data loss.
 
 1. When it is unable to parse the message content and the subscriber has no 'invalid_content' listener
 1. When the subscriber's (optional) redelivery limit has been exceeded and the subscriber has neither a 'redeliveries_error' nor a 'redeliveries_exceeded' listener
+1. When attempting to recover by [republishing](#republishing) or [forwarding](#forwarding), but the recovery operation fails.
 
-The reason Rascal nacks the message is because the alternative is to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events, your messages should be safe.
+The reason Rascal nacks the message is because the alternatives are to leave the message unacknowledged indefinitely, or to rollback and retry the message in an infinite tight loop. This can DDOS your application and cause problems for your infrastructure. Providing you have correctly configured dead letter queues and/or listen to the "invalid_content" and "redeliveries_exceeded" subscriber events, your messages should be safe.
 
 ## Very Important Section About Event Handling
 
