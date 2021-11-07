@@ -1,5 +1,9 @@
 # Change Log
 
+## 15.0.0
+
+- Rather than waiting an arbitrary time for channels to close when cancelling a subscription, Rascal now waits until any outstanding messages have been acknowledged. By default, Rascal will wait indefinitely, but this behaviour can be overriden by specifying a subscription.closeTimeout. If the timeout is exceeded following a direct call to `broker.unsubscribeAll` or `subscription.cancel` then an error will be yielded. If the timeout is exceeded following an indirect call to `subscription.cancel` (e.g. by `broker.shutdown`) then an error will be emitted but the operation will be allowed to continue.
+
 ## 14.0.0
 
 - Messages which cannot be recovered by the republish or forward strategies are nacked resulting in message loss unless a dead letter is configured.

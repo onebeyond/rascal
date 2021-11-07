@@ -210,6 +210,36 @@ describe(
       });
     });
 
+    it('should tolerate unsubscribe timeouts when nuking', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.nuke((err) => {
+              assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
+        });
+      });
+    });
+
     it('should cancel subscriptions', (test, done) => {
       const config = _.defaultsDeep(
         {
@@ -245,7 +275,7 @@ describe(
       });
     });
 
-    it('should defer returning from unsubscribeAll until underlying channels have been closed', (test, done) => {
+    it('should not return from unsubscribeAll until underlying channels have been closed', (test, done) => {
       const config = _.defaultsDeep(
         {
           vhosts,
@@ -255,7 +285,7 @@ describe(
         testConfig
       );
 
-      config.vhosts['/'].subscriptions.s1.deferCloseChannel = 200;
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 200;
 
       createBroker(config, (err, broker) => {
         assert.ifError(err);
@@ -263,15 +293,19 @@ describe(
         broker.subscribe('s1', (err, subscription) => {
           assert.ifError(err);
 
-          // eslint-disable-next-line no-empty-function
-          subscription.on('message', () => {});
-
-          const before = Date.now();
-          broker.unsubscribeAll((err) => {
+          broker.publish('p1', 'test message', (err) => {
             assert.ifError(err);
-            const after = Date.now();
-            assert.ok(after >= before + 200, 'Did not defer returning from unsubscibeAll');
-            done();
+          });
+
+          // eslint-disable-next-line no-empty-function
+          subscription.on('message', () => {
+            const before = Date.now();
+            broker.unsubscribeAll((err) => {
+              assert.strictEqual(err.code, 'ETIMEDOUT');
+              const after = Date.now();
+              assert.ok(after >= before + 200, 'Did not defer returning from unsubscibeAll');
+              done();
+            });
           });
         });
       });
@@ -289,11 +323,71 @@ describe(
       });
     });
 
+    it('should tolerate unsubscribe timeouts when shuting down', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.shutdown((err) => {
+              assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
+        });
+      });
+    });
+
     it('should bounce vhosts', (test, done) => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
         broker.bounce(done);
+      });
+    });
+
+    it('should tolerate unsubscribe timeouts when bouncing', (test, done) => {
+      const config = _.defaultsDeep({ vhosts }, testConfig);
+      config.vhosts['/'].subscriptions.s1.closeTimeout = 100;
+
+      let timeoutErr;
+
+      createBroker(config, (err, broker) => {
+        assert.ifError(err);
+
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {
+            broker.bounce((err) => {
+              assert.ifError(err);
+              assert.strictEqual(timeoutErr.code, 'ETIMEDOUT');
+              done();
+            });
+          });
+        });
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+        });
+
+        broker.on('error', (err) => {
+          timeoutErr = err;
+        });
       });
     });
 
