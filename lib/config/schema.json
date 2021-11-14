@@ -1,0 +1,686 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema",
+  "type": "object",
+  "properties": {
+    "vhosts": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/vhost"
+        }
+      }
+    },
+    "publications": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/publication"
+        }
+      }
+    },
+    "subscriptions": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/subscription"
+        }
+      }
+    },
+    "redeliveries": {
+      "$ref": "#/definitions/redeliveries"
+    },
+    "encryption": {
+      "type": "object",
+      "patternProperties": {
+        ".*": {
+          "$ref": "#/definitions/encryption"
+        }
+      }
+    }
+  },
+  "definitions": {
+    "vhost": {
+      "type": "object",
+      "properties": {
+        "assert": {
+          "type": "boolean"
+        },
+        "check": {
+          "type": "boolean"
+        },
+        "connectionStrategy": {
+          "type": "string",
+          "enum": ["random", "fixed"]
+        },
+        "connection": {
+          "$ref": "#/definitions/connection"
+        },
+        "connections": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/connection"
+          }
+        },
+        "exchanges": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/exchange"
+                }
+              }
+            }
+          ]
+        },
+        "queues": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/queue"
+                }
+              }
+            }
+          ]
+        },
+        "bindings": {
+          "oneOf": [
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            {
+              "type": "object",
+              "patternProperties": {
+                ".*": {
+                  "$ref": "#/definitions/binding"
+                }
+              }
+            }
+          ]
+        },
+        "publications": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/publication"
+            }
+          }
+        },
+        "subscriptions": {
+          "type": "object",
+          "patternProperties": {
+            ".*": {
+              "$ref": "#/definitions/subscription"
+            }
+          }
+        },
+        "publicationChannelPools": {
+          "type": "object",
+          "properties": {
+            "regularPool": {
+              "$ref": "#/definitions/channelPool"
+            },
+            "confirmPool": {
+              "$ref": "#/definitions/channelPool"
+            }
+          }
+        }
+      }
+    },
+    "channelPool": {
+      "type": "object",
+      "properties": {
+        "autostart": {
+          "type": "boolean"
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "evictionRunIntervalMillis": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "idleTimeoutMillis": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rejectionDelayMillis": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "testOnBorrow": {
+          "type": "boolean"
+        },
+        "acquireTimeoutMillis": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "destroyTimeoutMillis": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "connection": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "options": {
+              "$ref": "#/definitions/connectOptions"
+            },
+            "socketOptions": {
+              "$ref": "#/definitions/socketOptions"
+            },
+            "retry": {
+              "$ref": "#/definitions/retry"
+            },
+            "management": {
+              "$ref": "#/definitions/management"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "enum": ["amqp", "amqps"]
+            },
+            "hostname": {
+              "type": "string"
+            },
+            "user": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "vhost": {
+              "type": "string"
+            },
+            "options": {
+              "$ref": "#/definitions/connectOptions"
+            },
+            "socketOptions": {
+              "type": "object"
+            },
+            "retry": {
+              "$ref": "#/definitions/retry"
+            },
+            "management": {
+              "$ref": "#/definitions/management"
+            }
+          }
+        }
+      ]
+    },
+    "connectOptions": {
+      "type": "object",
+      "properties": {
+        "frameMax": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "heartbeat": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "connection_timeout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "channelMax": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "socketOptions": {
+      "type": "object",
+      "properties": {
+        "timeout": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "management": {
+      "anyOf": [
+        {
+          "type": "object",
+          "properties": {
+            "url": {
+              "type": "string"
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "timeout": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "properties": {
+            "protocol": {
+              "type": "string",
+              "enum": ["http", "https"]
+            },
+            "hostname": {
+              "type": "string"
+            },
+            "user": {
+              "type": "string"
+            },
+            "password": {
+              "type": "string"
+            },
+            "port": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "options": {
+              "type": "object",
+              "properties": {
+                "timeout": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "exchange": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "assert": {
+          "type": "boolean"
+        },
+        "check": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "durable": {
+              "type": "boolean"
+            },
+            "internal": {
+              "type": "boolean"
+            },
+            "autoDelete": {
+              "type": "boolean"
+            },
+            "alternateExchange": {
+              "type": "string"
+            },
+            "expires": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "arguments": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "queue": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "assert": {
+          "type": "boolean"
+        },
+        "check": {
+          "type": "boolean"
+        },
+        "type": {
+          "type": "string"
+        },
+        "purge": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "exclusive": {
+              "type": "boolean"
+            },
+            "durable": {
+              "type": "boolean"
+            },
+            "autoDelete": {
+              "type": "boolean"
+            },
+            "messageTtl": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "expires": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "deadLetterExchange": {
+              "type": "string"
+            },
+            "deadLetterRoutingKey": {
+              "type": "string"
+            },
+            "maxLength": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "maxPriority": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "arguments": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "binding": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "destination": {
+          "type": "string"
+        },
+        "destinationType": {
+          "type": "string",
+          "enum": ["queue", "exchange"]
+        },
+        "bindingKey": {
+          "type": "string"
+        },
+        "bindingKeys": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "qualifyBindingKeys": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "object"
+        }
+      }
+    },
+    "publication": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "vhost": {
+          "type": "string"
+        },
+        "exchange": {
+          "type": "string"
+        },
+        "queue": {
+          "type": "string"
+        },
+        "routingKey": {
+          "type": "string"
+        },
+        "confirm": {
+          "type": "boolean"
+        },
+        "timeout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "encryption": {
+          "type": "string"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "expiration": {
+              "type": "string"
+            },
+            "userId": {
+              "type": "string"
+            },
+            "CC": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "BCC": {
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              ]
+            },
+            "priority": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "persistent": {
+              "type": "boolean"
+            },
+            "mandatory": {
+              "type": "boolean"
+            },
+            "contentType": {
+              "type": "string"
+            },
+            "contentEncoding": {
+              "type": "string"
+            },
+            "headers": {
+              "type": "object"
+            },
+            "replyTo": {
+              "type": "string"
+            },
+            "type": {
+              "type": "string"
+            },
+            "appId": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "subscription": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "vhost": {
+          "type": "string"
+        },
+        "queue": {
+          "type": "string"
+        },
+        "contentType": {
+          "type": "string"
+        },
+        "prefetch": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "retry": {
+          "$ref": "#/definitions/retry"
+        },
+        "redeliveries": {
+          "properties": {
+            "limit": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "timeout": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "counter": {
+              "type": "string"
+            }
+          }
+        },
+        "closeTimeout": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "encryption": {
+          "type": "string"
+        },
+        "promisifyAckOrNack": {
+          "type": "boolean"
+        },
+        "options": {
+          "type": "object",
+          "properties": {
+            "noAck": {
+              "type": "boolean"
+            },
+            "exclusive": {
+              "type": "boolean"
+            },
+            "priority": {
+              "type": "integer",
+              "minimum": 0
+            },
+            "arguments": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
+    "shovel": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "subscription": {
+          "type": "string"
+        },
+        "publication": {
+          "type": "string"
+        }
+      }
+    },
+    "retry": {
+      "type": "object",
+      "properties": {
+        "min": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "max": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "factor": {
+          "type": "number",
+          "minimum": 0
+        },
+        "strategy": {
+          "type": "string",
+          "enum": ["exponential", "linear"]
+        }
+      }
+    },
+    "redeliveries": {
+      "type": "object",
+      "properties": {
+        "counters": {
+          "type": "object"
+        }
+      }
+    },
+    "encryption": {
+      "type": "object",
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "algorithm": {
+          "type": "string"
+        },
+        "ivLength": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    }
+  }
+}

@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.2.0
+
+- Add json schema (lib/config/schema.json) - See https://github.com/guidesmiths/rascal/issues/168
+
 ## 14.1.0
 
 - Adds support for custom user agents - See https://github.com/guidesmiths/rascal/issues/170

@@ -273,10 +273,11 @@ The most common configuration options are
 - [publications](#publications)
 - [subscriptions](#subscriptions)
 
-A simple configuration is shown below.
+A simple configuration is shown below. You can reference Rascal's JSON schema from the config to enable validation and suggestions in compatible IDEs.
 
 ```json
 {
+  "$schema": "./node_modules/rascal/lib/config/schema.json",
   "vhosts": {
     "/": {
       "connection": {
