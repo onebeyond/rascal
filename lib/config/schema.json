@@ -31,11 +31,7 @@
     },
     "encryption": {
       "type": "object",
-      "patternProperties": {
-        ".*": {
-          "$ref": "#/definitions/encryption"
-        }
-      }
+      "$ref": "#/definitions/encryption"
     }
   },
   "definitions": {

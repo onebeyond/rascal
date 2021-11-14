@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.2.1
+
+- Fix schema bug
+
 ## 14.2.0
 
 - Add json schema (lib/config/schema.json) - See https://github.com/guidesmiths/rascal/issues/168
