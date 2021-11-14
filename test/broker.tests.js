@@ -7,6 +7,7 @@ const Broker = require('..').Broker;
 const amqplib = require('amqplib/callback_api');
 const AmqpUtils = require('./utils/amqputils');
 const random = require('random-readable');
+const superAgent = require('superagent-defaults');
 
 describe(
   'Broker',
@@ -177,6 +178,25 @@ describe(
             done();
           });
         });
+      });
+    });
+
+    it('should support custom http agent', (test, done) => {
+      let requestUrl;
+      const customAgent = superAgent().on('request', (req) => {
+        requestUrl = req.url;
+      });
+
+      const components = { agent: customAgent };
+      const vhostName = uuid();
+      const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
+      customVhosts[vhostName].assert = true;
+
+      const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
+      createBroker(config, components, (err) => {
+        assert.ifError(err);
+        assert.ok(/api\/vhosts\/.*/.test(requestUrl), requestUrl);
+        done();
       });
     });
 
@@ -509,8 +529,9 @@ describe(
       });
     });
 
-    function createBroker(config, next) {
-      Broker.create(config, (err, _broker) => {
+    function createBroker(config, components, next) {
+      if (arguments.length === 2) return createBroker(config, {}, arguments[1]);
+      Broker.create(config, components, (err, _broker) => {
         broker = _broker;
         next(err, broker);
       });

@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.1.0
+
+- Adds support for custom user agents - See https://github.com/guidesmiths/rascal/issues/170
+
 ## 14.0.1
 
 - Fixes https://github.com/guidesmiths/rascal/issues/178

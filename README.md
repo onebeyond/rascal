@@ -483,6 +483,15 @@ Rascal uses [superagent](https://github.com/visionmedia/superagent) under the ho
 }
 ```
 
+You can also supply your own agent via the broker components. Use this when you need to set [TLS options](https://visionmedia.github.io/superagent/#tls-options).
+
+```js
+const superagent = require('superagent-defaults');
+const agent = superagent().on('request', (req) => console.log(req.url));
+const components = { agent };
+const broker = await Broker.create(config, components);
+```
+
 #### assert
 
 When set to true, Rascal will create the vhost if one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker and for the management user to have necessary permissions.
