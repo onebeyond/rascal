@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.3.0
+
+- Clone config instead of freezing it so buffers will work - See https://github.com/guidesmiths/rascal/issues/92
+
 ## 14.2.1
 
 - Fix schema bug

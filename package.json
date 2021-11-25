@@ -6,7 +6,6 @@
   "dependencies": {
     "async": "^3.2.1",
     "debug": "^4.1.1",
-    "deep-freeze": "0.0.1",
     "forward-emitter": "^0.1.1",
     "generic-pool": "^3.7.1",
     "lodash": "^4.17.21",
