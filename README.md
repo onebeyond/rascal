@@ -49,7 +49,7 @@ A **publication** is a named configuration for publishing a message, including t
 
 ### Breaking Changes in Rascal@14
 
-Rascal@14 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitary amount of time. If you application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.unsubscribeAll`, `broker.bounce`, `broker.shutdown` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the `subscription.cancel` and `broker.unsubscribeAll` methods will yield an error, while the `broker.bounce`, `broker.shutdown` and `broker.nuke` methods will emit an error, but attempt to continue. In both cases the error will have a code of `ETIMEDOUT` and message stating `Callback function "waitForUnacknowledgedMessages" timed out`.
+Rascal@14 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitary amount of time. If your application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.unsubscribeAll`, `broker.bounce`, `broker.shutdown` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the `subscription.cancel` and `broker.unsubscribeAll` methods will yield an error, while the `broker.bounce`, `broker.shutdown` and `broker.nuke` methods will emit an error, but attempt to continue. In both cases the error will have a code of `ETIMEDOUT` and message stating `Callback function "waitForUnacknowledgedMessages" timed out`.
 
 ### Special Note
 
