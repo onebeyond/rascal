@@ -875,7 +875,7 @@ await broker.publish('p1', 'some message', {
 
 The callback parameters are err (indicating the publication could not be found) and publication. Listen to the publication's "success" event to obtain confirmation that the message was successfully published (when using confirm channels) and the "error" event to handle errors. The "return" event will be emitted when the message was successfully published but not routed. It is possible to access the messageId from all handlers, either via the supplied messageId or the returned message itself (see below)
 
-If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues)
+If you specify the "mandatory" option (or use Rascal's defaults) you can also listen for returned messages (i.e. messages that were not delivered to any queues). Before a message is returned, you will still get the "success" event, since the message was successfully published. A common mistake is to resolve a promise from the "success" event handler and reject from the "return" event handler, since the latter would have no effect.
 
 ```js
 broker.publish('p1', 'some message', (err, publication) => {
