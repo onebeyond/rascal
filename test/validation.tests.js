@@ -2,6 +2,20 @@ const assert = require('assert');
 const validate = require('../lib/config/validate');
 
 describe('Validation', () => {
+  describe('Vhosts', () => {
+    it('should report zero vhosts', () => {
+      validate(
+        {
+          vhosts: {},
+        },
+        (err) => {
+          assert.ok(err);
+          assert.strictEqual('No vhosts specified', err.message);
+        }
+      );
+    });
+  });
+
   describe('Bindings', () => {
     it('should mandate a source', () => {
       validate(
@@ -210,6 +224,9 @@ describe('Validation', () => {
     it('should mandate a vhost', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {},
           },
@@ -224,6 +241,9 @@ describe('Validation', () => {
     it('should mandate either an exchange or a queue (a)', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               vhost: 'v1',
@@ -240,6 +260,9 @@ describe('Validation', () => {
     it('should mandate either an exchange or a queue (b)', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               vhost: 'v1',
@@ -258,6 +281,9 @@ describe('Validation', () => {
     it('should mandate either an exchange or a queue (c)', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               vhost: 'v1',
@@ -276,6 +302,9 @@ describe('Validation', () => {
     it('should report unknown vhosts (a)', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               vhost: 'v1',
@@ -293,7 +322,9 @@ describe('Validation', () => {
     it('should report unknown vhosts (b)', () => {
       validate(
         {
-          vhosts: {},
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               vhost: 'v1',
@@ -397,6 +428,9 @@ describe('Validation', () => {
     it('should mandate a vhost', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {
             s1: {},
           },
@@ -411,6 +445,9 @@ describe('Validation', () => {
     it('should mandate a queue', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {
             s1: {
               vhost: 'v1',
@@ -427,6 +464,9 @@ describe('Validation', () => {
     it('should report unknown vhosts (a)', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {
             s1: {
               vhost: 'v1',
@@ -444,7 +484,9 @@ describe('Validation', () => {
     it('should report unknown vhosts (b)', () => {
       validate(
         {
-          vhosts: {},
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {
             s1: {
               vhost: 'v1',
@@ -536,6 +578,9 @@ describe('Validation', () => {
     it('should mandate a subscription', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           shovels: {
             x1: {},
           },
@@ -550,6 +595,9 @@ describe('Validation', () => {
     it('should mandate a publication', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           shovels: {
             x1: {
               subscription: 's1',
@@ -566,6 +614,9 @@ describe('Validation', () => {
     it('should report unknown subscriptions', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {},
           publications: {},
           shovels: {
@@ -754,6 +805,9 @@ describe('Validation', () => {
     it('should report invalid publication attributes', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           publications: {
             p1: {
               invalid: true,
@@ -770,6 +824,9 @@ describe('Validation', () => {
     it('should report invalid subscription attributes', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           subscriptions: {
             s1: {
               invalid: true,
@@ -786,6 +843,9 @@ describe('Validation', () => {
     it('should report invalid shovel attributes', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           shovels: {
             x1: {
               invalid: true,
@@ -804,6 +864,9 @@ describe('Validation', () => {
     it('should mandate a key', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           encryption: {
             invalid: {
               name: 'name',
@@ -820,6 +883,9 @@ describe('Validation', () => {
     it('should mandate an algorithm', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           encryption: {
             invalid: {
               name: 'name',
@@ -837,6 +903,9 @@ describe('Validation', () => {
     it('should mandate iv ivLength', () => {
       validate(
         {
+          vhosts: {
+            '/': {},
+          },
           encryption: {
             invalid: {
               name: 'name',
