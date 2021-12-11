@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.4.0
+
+- Report validation error when no vhosts are specified - See https://github.com/guidesmiths/rascal/issues/181
+
 ## 14.3.0
 
 - Clone config instead of freezing it so buffers will work - See https://github.com/guidesmiths/rascal/issues/92
