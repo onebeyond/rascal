@@ -696,7 +696,7 @@ Define any further configuration in an options block
 }
 ```
 
-To define a queue with extentions add arguments to the options block
+To define a queue with extensions such as `x-queue-type` add arguments to the options block, e.g.
 
 ```json
 {
