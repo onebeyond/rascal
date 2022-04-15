@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 14.4.1
 
 - Bump dependencies / fix audit warnings
 - Fix busy publisher example to consistenly use regular channels - See https://github.com/guidesmiths/rascal/issues/194
