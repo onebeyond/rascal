@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Bump dependencies / fix audit warnings
 - Fix busy publisher example to consistenly use regular channels - See https://github.com/guidesmiths/rascal/issues/194
 
 ## 14.4.0
