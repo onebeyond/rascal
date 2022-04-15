@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- Fix busy publisher example to consistenly use regular channels - See https://github.com/guidesmiths/rascal/issues/194
+
 ## 14.4.0
 
 - Report validation error when no vhosts are specified - See https://github.com/guidesmiths/rascal/issues/181

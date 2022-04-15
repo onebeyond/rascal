@@ -3,7 +3,7 @@
   "vhosts": {
     "/": {
       "publicationChannelPools": {
-        "confirmPool": {
+        "regularPool": {
           "max": 10,
           "min": 10,
           "evictionRunIntervalMillis": 1000,
