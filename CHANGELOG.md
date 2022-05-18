@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.4.2
+
+- Remove timeout for filling the channel pool since generic-pool already has this option.
+
 ## 14.4.1
 
 - Bump dependencies / fix audit warnings
