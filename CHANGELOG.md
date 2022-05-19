@@ -2,7 +2,7 @@
 
 ## 14.4.3
 
-- Bump superagent dependency
+- Bump dependencies (superagent, chance, zunit)
 
 ## 14.4.2
 
