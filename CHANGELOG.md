@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.4.3
+
+- Bump superagent dependency
+
 ## 14.4.2
 
 - Remove timeout for filling the channel pool since generic-pool already has this option.
