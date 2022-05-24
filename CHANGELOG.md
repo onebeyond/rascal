@@ -8,6 +8,7 @@
   - zUnit
   - debug
   - generic-pool
+  - lru-cache
 
 ## 14.4.2
 

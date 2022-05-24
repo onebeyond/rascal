@@ -9,7 +9,7 @@
     "forward-emitter": "^0.1.1",
     "generic-pool": "^3.8.2",
     "lodash": "^4.17.21",
-    "lru-cache": "^6.0.0",
+    "lru-cache": "^7.10.1",
     "safe-json-parse": "^4.0.0",
     "stashback": "^1.1.2",
     "superagent": "^7.1.3",
