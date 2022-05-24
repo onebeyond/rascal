@@ -7,6 +7,7 @@
   - chance
   - zUnit
   - debug
+  - generic-pool
 
 ## 14.4.2
 

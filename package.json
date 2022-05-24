@@ -7,7 +7,7 @@
     "async": "^3.2.3",
     "debug": "^4.3.4",
     "forward-emitter": "^0.1.1",
-    "generic-pool": "^3.7.1",
+    "generic-pool": "^3.8.2",
     "lodash": "^4.17.21",
     "lru-cache": "^6.0.0",
     "safe-json-parse": "^4.0.0",
