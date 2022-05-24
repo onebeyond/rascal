@@ -9,6 +9,7 @@
   - debug
   - generic-pool
   - lru-cache
+  - xregexp
 
 ## 14.4.2
 
