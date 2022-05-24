@@ -2,7 +2,11 @@
 
 ## 14.4.3
 
-- Bump dependencies (superagent, chance, zunit)
+- Bump dependencies
+  - superagent
+  - chance
+  - zUnit
+  - debug
 
 ## 14.4.2
 
