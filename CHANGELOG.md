@@ -10,6 +10,7 @@
   - generic-pool
   - lru-cache
   - xregexp
+  - stashback
 
 ## 14.4.2
 
