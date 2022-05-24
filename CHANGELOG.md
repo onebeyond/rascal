@@ -11,6 +11,8 @@
   - lru-cache
   - xregexp
   - stashback
+  - chalk
+  - amqplib
 
 ## 14.4.2
 
