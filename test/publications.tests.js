@@ -798,6 +798,82 @@ describe(
       );
     });
 
+    it('should publish large messages to exchanges when using confirm channels', (test, done) => {
+      Object.assign(vhosts['/'], {
+        publicationChannelPools: {
+          confirmPool: {
+            min: 1,
+            max: 1,
+          },
+        },
+      });
+      createBroker(
+        {
+          vhosts,
+          publications: {
+            p1: {
+              exchange: 'e1',
+              confirm: true,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          const msg = Buffer.alloc(20000000);
+          async.timesSeries(
+            2,
+            (n, cb) => {
+              broker.publish('p1', msg, (err, publication) => {
+                assert.ifError(err);
+                publication.on('success', () => {
+                  cb();
+                });
+              });
+            },
+            done
+          );
+        }
+      );
+    });
+
+    it('should publish large messages to queues when using confirm channels', (test, done) => {
+      Object.assign(vhosts['/'], {
+        publicationChannelPools: {
+          confirmPool: {
+            min: 1,
+            max: 1,
+          },
+        },
+      });
+      createBroker(
+        {
+          vhosts,
+          publications: {
+            p1: {
+              queue: 'q1',
+              confirm: true,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          const msg = Buffer.alloc(20000000);
+          async.timesSeries(
+            2,
+            (n, cb) => {
+              broker.publish('p1', msg, (err, publication) => {
+                assert.ifError(err);
+                publication.on('success', () => {
+                  cb();
+                });
+              });
+            },
+            done
+          );
+        }
+      );
+    });
+
     function createBroker(config, next) {
       config = _.defaultsDeep(config, testConfig);
       Broker.create(config, (err, _broker) => {
