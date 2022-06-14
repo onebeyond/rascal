@@ -80,7 +80,7 @@ describe('Configuration', () => {
         );
       });
 
-      it('should decorate the connection config a vhost if not explicitly specified', () => {
+      it('should decorate the connection config for a vhost if not explicitly specified', () => {
         configure(
           {
             vhosts: {
@@ -158,6 +158,22 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
+          }
+        );
+      });
+
+      it('should fully obscure the password in a loggable url (a)', () => {
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: 'amqp://user:badp@assword@hostname:9000/vhost?heartbeat=10&channelMax=100',
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'amqp://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
           }
         );
       });

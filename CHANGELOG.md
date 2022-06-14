@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.4.5
+
+- Fixed issue where a partial password could be logged in debug - See https://github.com/guidesmiths/rascal/issues/200 - thanks @matt1097
+
 ## 14.4.4
 
 - Fixed issue where channels were not returned to the pool after publishing a large messag - See https://github.com/guidesmiths/rascal/issues/199
