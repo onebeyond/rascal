@@ -40,7 +40,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 
 ## Concepts
 
-Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges, Queues, Channels and Connections with with two new ones
+Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html) of Brokers, Vhosts, Exchanges, Queues, Channels and Connections with two new ones
 
 1. Publications
 1. Subscriptions
