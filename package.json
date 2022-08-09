@@ -17,12 +17,13 @@
     "xregexp": "^5.1.0"
   },
   "devDependencies": {
-    "amqplib": "^0.9.1",
+    "amqplib": "^0.10.2",
     "chalk": "^4.1.2",
     "chance": "^1.1.8",
-    "eslint": "^7.32.0",
+    "eslint": "^8.21.0",
+    "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "husky": "^6.0.0",
     "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
@@ -40,14 +41,17 @@
   "scripts": {
     "test": "zUnit",
     "prettier": "prettier --check .",
+    "prettier:fix": "prettier --write .",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
     "lint-staged": "lint-staged",
     "coverage": "nyc --report html --reporter lcov --reporter text-summary zUnit",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
     "prepare": "husky install"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown"
+    "**/*": "prettier --write --ignore-unknown",
+    "**/*.js": "eslint --fix"
   },
   "keywords": [
     "amqplib",

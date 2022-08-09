@@ -1,5 +1,9 @@
 # Change Log
 
+## 14.4.6
+
+- Introduce eslint-config-airbnb-base
+
 ## 14.4.5
 
 - Fixed issue where a partial password could be logged in debug - See https://github.com/guidesmiths/rascal/issues/200 - thanks @matt1097

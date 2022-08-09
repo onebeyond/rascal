@@ -5,9 +5,9 @@ const uuid = require('uuid').v4;
 const format = require('util').format;
 const Broker = require('..').Broker;
 const amqplib = require('amqplib/callback_api');
-const AmqpUtils = require('./utils/amqputils');
 const random = require('random-readable');
 const superAgent = require('superagent-defaults');
+const AmqpUtils = require('./utils/amqputils');
 
 describe(
   'Broker',
@@ -447,7 +447,9 @@ describe(
           const stream = random.createRandomStream().on('data', (data) => {
             broker.publish('p2', data, (err, publication) => {
               if (err) throw err;
-              publication.on('error', console.error);
+              publication.on('error', (err) => {
+                throw err;
+              });
             });
           });
 

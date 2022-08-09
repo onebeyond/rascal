@@ -1,8 +1,8 @@
 const assert = require('assert');
 const format = require('util').format;
 const _ = require('lodash');
-const configure = require('../lib/config/configure');
 const url = require('url');
+const configure = require('../lib/config/configure');
 
 describe('Configuration', () => {
   describe('Vhosts', () => {
