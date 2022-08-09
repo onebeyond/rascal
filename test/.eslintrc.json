@@ -11,5 +11,8 @@
     "after": "readonly",
     "afterEach": "readonly",
     "include": "readonly"
-  }
+  },
+  "rules": {
+    "no-shadow": 0
+  }  
 }

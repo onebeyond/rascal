@@ -94,9 +94,9 @@ describe('Shovel', () => {
     });
   });
 
-  function createBroker(config, next) {
-    config = _.defaultsDeep(config, testConfig);
-    Broker.create(config, (err, _broker) => {
+  function createBroker(brokerConfig, next) {
+    brokerConfig = _.defaultsDeep(brokerConfig, testConfig);
+    Broker.create(brokerConfig, (err, _broker) => {
       broker = _broker;
       next(err, broker);
     });
