@@ -21,7 +21,6 @@
     "prefer-destructuring": 0,
     "prefer-exponentiation-operator": 0,
     "prefer-rest-params": 0,
-    "prefer-template": 0,
-    "symbol-description": 0
+    "prefer-template": 0
   }
 }
