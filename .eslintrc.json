@@ -20,7 +20,6 @@
     "no-unused-expressions": 0,
     "no-unused-vars": ["error", { "varsIgnorePattern": "^debug$", "argsIgnorePattern": "^_\\w+" }],
     "no-use-before-define": 0,
-    "one-var": 0,
     "prefer-destructuring": 0,
     "prefer-exponentiation-operator": 0,
     "prefer-rest-params": 0,
