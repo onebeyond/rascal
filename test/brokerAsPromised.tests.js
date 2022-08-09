@@ -128,7 +128,7 @@ describe(
     it('should provide fully qualified name', () => {
       const config = _.defaultsDeep({ vhosts }, testConfig);
       return createBroker(config).then((broker) => {
-        assert.strictEqual(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
+        assert.strictEqual(`${namespace}:q1`, broker.getFullyQualifiedName('/', 'q1'));
       });
     });
 

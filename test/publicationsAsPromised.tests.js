@@ -336,7 +336,7 @@ describe(
                   assert.ok(/\w+-\w+-\w+-\w+-\w+:q1/.test(message.properties.headers.rascal.originalQueue), format('%s failed to match expected pattern', message.properties.headers.rascal.originalQueue));
                   assert.strictEqual(message.properties.headers.rascal.restoreRoutingHeaders, false);
                   assert.strictEqual(message.properties.headers.rascal.originalRoutingKey, 'rk1');
-                  assert.strictEqual(message.properties.headers.rascal.originalExchange, namespace + ':e1');
+                  assert.strictEqual(message.properties.headers.rascal.originalExchange, `${namespace}:e1`);
                   done();
                 });
               });

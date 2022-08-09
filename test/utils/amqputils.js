@@ -13,7 +13,7 @@ function init(connection) {
   function checkExchange(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkExchange(namespace + ':' + name, (err) => {
+      channel.checkExchange(`${namespace}:${name}`, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -23,7 +23,7 @@ function init(connection) {
   function createQueue(name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.assertQueue(namespace + ':' + name, {}, (err) => {
+      channel.assertQueue(`${namespace}:${name}`, {}, (err) => {
         assert.ifError(err);
         next();
       });
@@ -33,7 +33,7 @@ function init(connection) {
   function checkQueue(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.checkQueue(namespace + ':' + name, (err) => {
+      channel.checkQueue(`${namespace}:${name}`, (err) => {
         present ? assert(!err) : assert(!!err);
         next();
       });
@@ -43,16 +43,16 @@ function init(connection) {
   function deleteQueue(name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.deleteQueue(namespace + ':' + name, next);
+      channel.deleteQueue(`${namespace}:${name}`, next);
     });
   }
 
   function publishMessage(exchange, namespace, message, options, next) {
-    _publishMessage(namespace + ':' + exchange, message, options, next);
+    _publishMessage(`${namespace}:${exchange}`, message, options, next);
   }
 
   function publishMessageToQueue(queue, namespace, message, options, next) {
-    options.routingKey = namespace + ':' + queue;
+    options.routingKey = `${namespace}:${queue}`;
     _publishMessage('', message, options, next);
   }
 
@@ -67,7 +67,7 @@ function init(connection) {
   function getMessage(queue, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.get(namespace + ':' + queue, { noAck: true }, (err, message) => {
+      channel.get(`${namespace}:${queue}`, { noAck: true }, (err, message) => {
         if (err) return next(err);
         next(null, message);
       });

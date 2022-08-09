@@ -204,7 +204,7 @@ describe(
       const config = _.defaultsDeep({ vhosts }, testConfig);
       createBroker(config, (err, broker) => {
         assert.ifError(err);
-        assert.strictEqual(namespace + ':q1', broker.getFullyQualifiedName('/', 'q1'));
+        assert.strictEqual(`${namespace}:q1`, broker.getFullyQualifiedName('/', 'q1'));
         done();
       });
     });

@@ -1050,7 +1050,7 @@ describe(
             ackOrNack();
             assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
             assert.strictEqual(message.properties.headers.CC.length, 1);
-            assert.strictEqual(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.bar');
+            assert.strictEqual(message.properties.headers.CC[0], `${broker.qualify('/', 'q1')}.bar`);
             assert.strictEqual(message.properties.headers.rascal.error.message, 'forward me');
             assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
             done();
@@ -1249,7 +1249,7 @@ describe(
                   publication: 'p3',
                 }).catch((err) => {
                   assert.ok(err);
-                  assert.strictEqual('Message: ' + messageId + ' was forwarded to publication: p3, but was returned', err.message);
+                  assert.strictEqual(`Message: ${messageId} was forwarded to publication: p3, but was returned`, err.message);
                   done();
                 });
               });
@@ -1272,7 +1272,7 @@ describe(
                 assert.ok(message);
                 ackOrNack(new Error('unknown'), { strategy: 'foo' }).catch((err) => {
                   assert.ok(err);
-                  assert.strictEqual('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                  assert.strictEqual(`Error recovering message: ${messageId}. No such strategy: foo.`, err.message);
                   done();
                 });
               });
@@ -1442,7 +1442,7 @@ describe(
         publications: _.pick(publications, 'p1'),
         subscriptions: _.pick(subscriptions, 's1'),
       }).then((broker) => {
-        broker.publish('p1', 'test message', replyTo + '.foo.bar').then(() => {
+        broker.publish('p1', 'test message', `${replyTo}.foo.bar`).then(() => {
           broker.subscribe('s1').then((subscription) => {
             subscription.on('message', (message, content, ackOrNack) => {
               ackOrNack();
@@ -1538,7 +1538,7 @@ describe(
       const times = new Array(11).fill();
 
       times.forEach((__, i) => {
-        config.subscriptions['s' + i] = {
+        config.subscriptions[`s${i}`] = {
           vhost: '/',
           queue: 'q1',
           options: {
@@ -1549,7 +1549,7 @@ describe(
 
       return createBroker(config).then((broker) => {
         const promises = times.map((__, i) => {
-          return broker.subscribe('s' + i);
+          return broker.subscribe(`s${i}`);
         });
         return Promise.all(promises);
       });
@@ -1791,7 +1791,7 @@ describe(
                 assert.ok(message);
                 ackOrNack(new Error('unknown'), { strategy: 'foo' }, (err) => {
                   assert.ok(err);
-                  assert.strictEqual('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                  assert.strictEqual(`Error recovering message: ${messageId}. No such strategy: foo.`, err.message);
                   done();
                 });
               });

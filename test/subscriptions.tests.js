@@ -1424,7 +1424,7 @@ describe(
               ackOrNack();
               assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q1')].forwarded, 1);
               assert.strictEqual(message.properties.headers.CC.length, 1);
-              assert.strictEqual(message.properties.headers.CC[0], broker.qualify('/', 'q1') + '.bar');
+              assert.strictEqual(message.properties.headers.CC[0], `${broker.qualify('/', 'q1')}.bar`);
               assert.strictEqual(message.properties.headers.rascal.error.message, 'forward me');
               assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
               done();
@@ -1495,7 +1495,7 @@ describe(
               ackOrNack();
               assert.strictEqual(message.properties.headers.rascal.recovery[broker.qualify('/', 'q_10.10.10.10')].forwarded, 1);
               assert.strictEqual(message.properties.headers.CC.length, 1);
-              assert.strictEqual(message.properties.headers.CC[0], broker.qualify('/', 'q_10.10.10.10') + '.bar');
+              assert.strictEqual(message.properties.headers.CC[0], `${broker.qualify('/', 'q_10.10.10.10')}.bar`);
               assert.strictEqual(message.properties.headers.rascal.error.message, 'forward me');
               assert.strictEqual(message.properties.headers.rascal.error.code, 'red');
               done();
@@ -1728,7 +1728,7 @@ describe(
                   })
                   .on('error', (err) => {
                     assert.ok(err);
-                    assert.strictEqual('Message: ' + messageId + ' was forwarded to publication: p3, but was returned', err.message);
+                    assert.strictEqual(`Message: ${messageId} was forwarded to publication: p3, but was returned`, err.message);
                     done();
                   });
               });
@@ -1759,7 +1759,7 @@ describe(
                   })
                   .on('error', (err) => {
                     assert.ok(err);
-                    assert.strictEqual('Error recovering message: ' + messageId + '. No such strategy: foo.', err.message);
+                    assert.strictEqual(`Error recovering message: ${messageId}. No such strategy: foo.`, err.message);
                     done();
                   });
               });
@@ -1971,7 +1971,7 @@ describe(
         },
         (err, broker) => {
           assert.ifError(err);
-          broker.publish('p1', 'test message', replyTo + '.foo.bar', (err) => {
+          broker.publish('p1', 'test message', `${replyTo}.foo.bar`, (err) => {
             assert.ifError(err);
             broker.subscribe('s1', (err, subscription) => {
               assert.ifError(err);
@@ -2091,7 +2091,7 @@ describe(
       };
 
       _.times(11, (i) => {
-        config.subscriptions['s' + i] = {
+        config.subscriptions[`s${i}`] = {
           vhost: '/',
           queue: 'q1',
           options: {
@@ -2104,7 +2104,7 @@ describe(
         assert.ifError(err);
 
         _.times(11, (i) => {
-          broker.subscribe('s' + i, (err) => {
+          broker.subscribe(`s${i}`, (err) => {
             assert.ifError(err);
             if (i === 10) done();
           });
