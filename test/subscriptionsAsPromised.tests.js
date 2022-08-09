@@ -1393,7 +1393,7 @@ describe(
         });
 
         Promise.all(promises).then(() => {
-          let messages = [];
+          const messages = [];
           broker.subscribe('s1').then((subscription) => {
             subscription.on('message', (message, content, ackOrNack) => {
               assert(message);

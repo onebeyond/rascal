@@ -1916,7 +1916,7 @@ describe(
             },
             (err) => {
               assert.ifError(err);
-              let messages = [];
+              const messages = [];
               broker.subscribe('s1', (err, subscription) => {
                 assert.ifError(err);
                 subscription.on('message', (message, content, ackOrNack) => {
