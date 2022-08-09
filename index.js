@@ -3,6 +3,7 @@ const defaultConfig = require('./lib/config/defaults');
 const testConfig = require('./lib/config/tests');
 const Broker = require('./lib/amqp/Broker');
 const BrokerAsPromised = require('./lib/amqp/BrokerAsPromised');
+const counters = require('./lib/counters');
 
 module.exports = (function () {
   return {
@@ -18,6 +19,6 @@ module.exports = (function () {
     withTestConfig(config) {
       return _.defaultsDeep({}, config, testConfig);
     },
-    counters: require('./lib/counters'),
+    counters,
   };
 })();
