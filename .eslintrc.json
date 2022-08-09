@@ -18,7 +18,7 @@
     "no-shadow": 0,
     "no-underscore-dangle": 0,    
     "no-unused-expressions": 0,
-    "no-unused-vars": 0,
+    "no-unused-vars": ["error", { "varsIgnorePattern": "^debug$", "argsIgnorePattern": "^_\\w+" }],
     "no-use-before-define": 0,
     "one-var": 0,
     "prefer-const": 0,
