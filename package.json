@@ -4,7 +4,7 @@
   "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
   "main": "index.js",
   "dependencies": {
-    "async": "^3.2.3",
+    "async": "^3.2.4",
     "debug": "^4.3.4",
     "forward-emitter": "^0.1.1",
     "generic-pool": "^3.8.2",
@@ -24,7 +24,7 @@
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.26.0",
-    "husky": "^6.0.0",
+    "husky": "^8.0.1",
     "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
     "prettier": "^2.4.1",
