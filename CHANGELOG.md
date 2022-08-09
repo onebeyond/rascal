@@ -1,7 +1,8 @@
 # Change Log
 
-## 14.4.6
+## 15.0.0
 
+- Drop support for Node 10
 - Introduce eslint-config-airbnb-base
 
 ## 14.4.5
