@@ -2,9 +2,9 @@ const assert = require('assert');
 const _ = require('lodash');
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
-const testConfig = require('../lib/config/tests');
 const format = require('util').format;
 const uuid = require('uuid').v4;
+const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 const AmqpUtils = require('./utils/amqputils');
 

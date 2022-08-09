@@ -1,8 +1,8 @@
 const assert = require('assert');
 const _ = require('lodash').runInContext();
+const uuid = require('uuid').v4;
 const amqplib = require('amqplib/callback_api');
 const testConfig = require('../lib/config/tests');
-const uuid = require('uuid').v4;
 const BrokerAsPromised = require('..').BrokerAsPromised;
 const AmqpUtils = require('./utils/amqputils');
 

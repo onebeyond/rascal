@@ -1,8 +1,8 @@
 const assert = require('assert');
 const _ = require('lodash');
-const testConfig = require('../lib/config/tests');
 const uuid = require('uuid').v4;
 const format = require('util').format;
+const testConfig = require('../lib/config/tests');
 const BrokerAsPromised = require('..').BrokerAsPromised;
 
 describe(

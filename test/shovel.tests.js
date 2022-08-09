@@ -1,7 +1,7 @@
 const assert = require('assert');
 const _ = require('lodash');
-const testConfig = require('../lib/config/tests');
 const uuid = require('uuid').v4;
+const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 
 describe('Shovel', () => {

@@ -1,12 +1,12 @@
 const assert = require('assert');
 const _ = require('lodash');
-const testConfig = require('../lib/config/tests');
 const uuid = require('uuid').v4;
 const format = require('util').format;
-const Broker = require('..').Broker;
-const amqplib = require('amqplib/callback_api');
 const random = require('random-readable');
 const superAgent = require('superagent-defaults');
+const amqplib = require('amqplib/callback_api');
+const testConfig = require('../lib/config/tests');
+const Broker = require('..').Broker;
 const AmqpUtils = require('./utils/amqputils');
 
 describe(
