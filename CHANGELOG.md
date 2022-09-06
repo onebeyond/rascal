@@ -1,5 +1,9 @@
 # Change Log
 
+## 15.0.1
+
+- Fix MaxListenersExceeded warning when there are more than 10 vhosts - See https://github.com/guidesmiths/rascal/issues/206
+
 ## 15.0.0
 
 - Drop support for Node 10
