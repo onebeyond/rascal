@@ -1,5 +1,10 @@
 # Change Log
 
+## 16.0.0
+
+- Stop prefixing binding keys with replyTo uuid
+- Add replyTo option to publications
+
 ## 15.0.1
 
 - Fix MaxListenersExceeded warning when there are more than 10 vhosts - See https://github.com/guidesmiths/rascal/issues/206

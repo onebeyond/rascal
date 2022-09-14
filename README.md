@@ -30,6 +30,7 @@ Rascal seeks to either solve these problems, make them easier to deal with or br
 - Transparent encryption / decryption
 - Automatic reconnection and resubscription
 - Advanced error handling including delayed, limited retries
+- RPC Support
 - Redelivery protection
 - Channel pooling
 - Flow control
@@ -679,6 +680,25 @@ Enable to purge the queue during initialisation. Useful when running automated t
 }
 ```
 
+##### replyTo
+
+Sometimes you want to publish a message, and have the consumer of the message send a reply to the same application instance that published the original message. This can be difficult if you application is deployed using multiple instances which share a common configuration. Quite often the solution is to make your application stateless so it doesn't matter which instance receives the reply. An altnernative is to mark the queue as a reply queue using the replyTo.
+
+```json
+{
+  "queues": {
+    "q1": {
+      "replyTo": true
+    }
+  },
+  "publications": {
+    "replyTo": "q1"
+  }
+}
+```
+
+When true, Rascal will append a uuid to the queue name so that it is unique for each instance of the application. Use this conjunction with the publication replyTo property, to automaticlaly set the replyTo property on outbound messages to the unique queue name. You may also want to make make the queue non durable and exclusive too (see below). 
+
 ##### options
 
 Define any further configuration in an options block
@@ -999,6 +1019,10 @@ try {
   // publication didn't exist
 }
 ```
+
+#### ReplyTo
+
+
 
 #### Encrypting messages
 

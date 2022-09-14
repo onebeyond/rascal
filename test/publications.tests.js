@@ -874,6 +874,40 @@ describe(
       );
     });
 
+    it('should set the replyTo property', (test, done) => {
+      const replyTo = uuid();
+      Object.assign(vhosts['/'].queues, {
+        rq: {
+          replyTo,
+        },
+      });
+      createBroker(
+        {
+          vhosts,
+          publications: {
+            p1: {
+              queue: 'q1',
+              replyTo: 'rq',
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.publish('p1', 'test message', (err, publication) => {
+            assert.ifError(err);
+            publication.on('success', () => {
+              amqputils.getMessage('q1', namespace, (err, message) => {
+                assert.ifError(err);
+                assert.ok(message);
+                assert.ok(new RegExp(`\\w+-\\w+-\\w+-\\w+-\\w+:rq:${replyTo}`).test(message.properties.replyTo), format('%s failed to match expected pattern', message.properties.replyTo));
+                done();
+              });
+            });
+          });
+        }
+      );
+    });
+
     function createBroker(config, next) {
       config = _.defaultsDeep(config, testConfig);
       Broker.create(config, (err, _broker) => {

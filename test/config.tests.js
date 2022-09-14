@@ -1630,6 +1630,56 @@ describe('Configuration', () => {
         }
       );
     });
+
+    it('should suffix referenced replyTo queue with uuid', () => {
+      configure(
+        {
+          vhosts: {
+            v1: {
+              exchanges: ['e1'],
+              queues: {
+                rq: {
+                  replyTo: true,
+                },
+              },
+              publications: {
+                p1: {
+                  exchange: 'e1',
+                  replyTo: 'rq',
+                },
+              },
+            },
+          },
+        },
+        (err, config) => {
+          assert.ifError(err);
+          assert.ok(!config.vhosts.v1.publications);
+          assert.ok(/rq:\w+-\w+-\w+-\w+-\w+/, config.publications.p1.replyTo);
+        }
+      );
+    });
+
+    it('should report unknown replyTo queues', () => {
+      configure(
+        {
+          vhosts: {
+            v1: {
+              exchanges: ['e1'],
+              queues: {},
+              publications: {
+                p1: {
+                  exchange: 'e1',
+                  replyTo: 'rq',
+                },
+              },
+            },
+          },
+        },
+        (err) => {
+          assert.strictEqual(err.message, 'Publication: p1 refers to an unknown reply queue: rq');
+        }
+      );
+    });
   });
 
   describe('Subscriptions', () => {

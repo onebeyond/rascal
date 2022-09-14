@@ -540,6 +540,35 @@ describe(
       });
     });
 
+    it('should set the replyTo property', (test, done) => {
+      const replyTo = uuid();
+      Object.assign(vhosts['/'].queues, {
+        rq: {
+          replyTo,
+        },
+      });
+      createBroker({
+        vhosts,
+        publications: {
+          p1: {
+            queue: 'q1',
+            replyTo: 'rq',
+          },
+        },
+      }).then((broker) => {
+        broker.publish('p1', 'test message').then((publication) => {
+          publication.on('success', () => {
+            amqputils.getMessage('q1', namespace, (err, message) => {
+              assert.ifError(err);
+              assert.ok(message);
+              assert.ok(new RegExp(`\\w+-\\w+-\\w+-\\w+-\\w+:rq:${replyTo}`).test(message.properties.replyTo), format('%s failed to match expected pattern', message.properties.replyTo));
+              done();
+            });
+          });
+        });
+      });
+    });
+
     function createBroker(config) {
       config = _.defaultsDeep(config, testConfig);
       return BrokerAsPromised.create(config)
