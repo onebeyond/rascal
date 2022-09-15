@@ -692,6 +692,7 @@ Sometimes you want to publish a message, and have the consumer of the message se
     }
   },
   "publications": {
+    "exchange": "e1",
     "replyTo": "q1"
   }
 }
