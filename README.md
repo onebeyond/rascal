@@ -1020,8 +1020,6 @@ try {
 }
 ```
 
-#### ReplyTo
-
 #### Encrypting messages
 
 Rascal can be configured to automatically encrypt outbound messages.
