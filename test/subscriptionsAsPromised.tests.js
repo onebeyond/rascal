@@ -1413,47 +1413,6 @@ describe(
       });
     });
 
-    it('should consume to messages from a replyTo queue', (test, done) => {
-      const replyTo = uuid();
-      createBroker({
-        vhosts: {
-          '/': {
-            namespace,
-            exchanges: {
-              e1: {
-                assert: true,
-              },
-            },
-            queues: {
-              q1: {
-                assert: true,
-                replyTo,
-              },
-            },
-            bindings: {
-              b1: {
-                source: 'e1',
-                destination: 'q1',
-                bindingKey: 'foo.#',
-              },
-            },
-          },
-        },
-        publications: _.pick(publications, 'p1'),
-        subscriptions: _.pick(subscriptions, 's1'),
-      }).then((broker) => {
-        broker.publish('p1', 'test message', `${replyTo}.foo.bar`).then(() => {
-          broker.subscribe('s1').then((subscription) => {
-            subscription.on('message', (message, content, ackOrNack) => {
-              ackOrNack();
-              assert.strictEqual(content, 'test message');
-              done();
-            });
-          });
-        });
-      });
-    });
-
     it('should emit channel errors', (test, done) => {
       createBroker({
         vhosts,

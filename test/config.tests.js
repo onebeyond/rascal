@@ -1039,36 +1039,6 @@ describe('Configuration', () => {
         );
       });
 
-      it('should prefix bindingKey with replyTo uuid', () => {
-        configure(
-          {
-            vhosts: {
-              v1: {
-                queues: {
-                  q1: {
-                    replyTo: true,
-                  },
-                },
-                bindings: {
-                  b1: {
-                    source: 'e1',
-                    destination: 'q1',
-                    destinationType: 'queue',
-                    bindingKey: 'foo.bar.#',
-                  },
-                },
-              },
-            },
-          },
-          (err, config) => {
-            assert.ifError(err);
-            assert.strictEqual(config.vhosts.v1.bindings.b1.source, 'e1');
-            assert.strictEqual(config.vhosts.v1.bindings.b1.destination, 'q1');
-            assert.ok(/\w+-\w+-\w+-\w+-\w+\.foo\.bar\.#/.test(config.vhosts.v1.bindings.b1.bindingKey), format('%s failed to match expected pattern', config.vhosts.v1.bindings.b1.bindingKey));
-          }
-        );
-      });
-
       it('should configure multiple bindings from an array of binding keys', () => {
         configure(
           {

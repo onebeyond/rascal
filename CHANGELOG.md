@@ -2,8 +2,8 @@
 
 ## 16.0.0
 
+- Automatically set replyTo message property when a publication references a replyTo queue
 - Stop prefixing binding keys with replyTo uuid
-- Add replyTo option to publications
 
 ## 15.0.1
 
