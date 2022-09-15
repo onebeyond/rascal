@@ -697,7 +697,7 @@ Sometimes you want to publish a message, and have the consumer of the message se
 }
 ```
 
-When true, Rascal will append a uuid to the queue name so that it is unique for each instance of the application. Use this conjunction with the publication replyTo property, to automaticlaly set the replyTo property on outbound messages to the unique queue name. You may also want to make make the queue non durable and exclusive too (see below). 
+When true, Rascal will append a uuid to the queue name so that it is unique for each instance of the application. Use this conjunction with the publication replyTo property, to automaticlaly set the replyTo property on outbound messages to the unique queue name. You may also want to make make the queue non durable and exclusive too (see below).
 
 ##### options
 
@@ -1021,8 +1021,6 @@ try {
 ```
 
 #### ReplyTo
-
-
 
 #### Encrypting messages
 
