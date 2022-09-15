@@ -30,13 +30,13 @@
     "prettier": "^2.4.1",
     "random-readable": "^1.0.1",
     "superagent-defaults": "^0.1.14",
-    "zunit": "^3.2.1"
+    "zunit": "^4.0.0"
   },
   "peerDependencies": {
     "amqplib": ">=0.5.5"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14"
   },
   "scripts": {
     "test": "zUnit",

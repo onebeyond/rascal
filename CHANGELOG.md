@@ -4,6 +4,7 @@
 
 - Automatically set replyTo message property when a publication references a replyTo queue
 - Stop prefixing binding keys with replyTo uuid
+- Drop support for Node 12
 
 ## 15.0.1
 
