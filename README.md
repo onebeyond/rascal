@@ -1712,6 +1712,10 @@ is equivalent to...
 }
 ```
 
+### Concurrency
+
+If you have a high number of exchanges, queues and bindings you may wish to initialise Rascal using multiple channels to improve startup time. Do this per vhost by setting the `concurrency` option to the number of channels you want to create and use.
+
 ### Connect
 
 Rascal is a rich pub/sub wrapper and as such hides much of the amqplib [channel api](https://www.squaremobius.net/amqp.node/channel_api.html#channel). If you need to access this you can programmatically establish a connection to a vhost as follows.

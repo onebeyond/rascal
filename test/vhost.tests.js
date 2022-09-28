@@ -1,4 +1,5 @@
 const assert = require('assert');
+const async = require('async');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
 const format = require('util').format;
@@ -66,11 +67,86 @@ describe(
             },
           },
         },
-        () => {
+        (err) => {
+          assert.ifError(err);
           amqputils.assertExchangePresent('e1', namespace, done);
         }
       );
     });
+
+    it(
+      'should create objects concurrently',
+      (test, done) => {
+        function createAllTheThings(concurrency, cb) {
+          const namespace = uuid();
+          const exchanges = new Array(100)
+            .fill()
+            .map((_, index) => `e${index + 1}`)
+            .reduce(
+              (acc, name) =>
+                Object.assign(acc, {
+                  [name]: {
+                    assert: true,
+                  },
+                }),
+              {}
+            );
+
+          const queues = new Array(100)
+            .fill()
+            .map((_, index) => `q${index + 1}`)
+            .reduce(
+              (acc, name) =>
+                Object.assign(acc, {
+                  [name]: {
+                    assert: true,
+                  },
+                }),
+              {}
+            );
+
+          const bindings = new Array(100).fill().map((_, index) => `e${index + 1}[a.b.c] -> q${index + 1}`);
+
+          const before = Date.now();
+          createBroker(
+            {
+              vhosts: {
+                '/': {
+                  concurrency,
+                  namespace,
+                  exchanges,
+                  queues,
+                  bindings,
+                },
+              },
+            },
+            (err) => {
+              assert.ifError(err);
+              const after = Date.now();
+              amqputils.assertExchangePresent('e100', namespace, (err) => {
+                if (err) return cb(err);
+                broker.nuke((err) => {
+                  cb(err, after - before);
+                });
+              });
+            }
+          );
+        }
+
+        const reps = 5;
+        const serialTest = (n, cb) => createAllTheThings(1, cb);
+        const concurrentTest = (n, cb) => createAllTheThings(10, cb);
+        async.series([(cb) => async.timesSeries(reps, serialTest, cb), (cb) => async.timesSeries(reps, concurrentTest, cb)], (err, results) => {
+          if (err) return done(err);
+          const [a, b] = results;
+          const averageA = a.reduce((a, b) => a + b, 0) / reps;
+          const averageB = b.reduce((a, b) => a + b, 0) / reps;
+          assert.ok(averageB < averageA / 2);
+          return done();
+        });
+      },
+      { timeout: 60000 }
+    );
 
     it('should create queues', (test, done) => {
       const namespace = uuid();
@@ -87,7 +163,8 @@ describe(
             },
           },
         },
-        () => {
+        (err) => {
+          assert.ifError(err);
           amqputils.assertQueuePresent('q1', namespace, done);
         }
       );

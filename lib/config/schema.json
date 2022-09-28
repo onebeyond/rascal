@@ -57,6 +57,10 @@
             "$ref": "#/definitions/connection"
           }
         },
+        "concurrency": {
+          "type": "integer",
+          "minimum": 1
+        },
         "exchanges": {
           "oneOf": [
             {

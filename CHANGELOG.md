@@ -1,5 +1,9 @@
 # Change Log
 
+## 16.1.0
+
+- Added concurrency option for managing RabbitMQ topology. Rascal will create and use upto this number of channels when asserting/checking/deleting/purging queues, exchanges and bindings.
+
 ## 16.0.0
 
 - Automatically set replyTo message property when a publication references a replyTo queue
