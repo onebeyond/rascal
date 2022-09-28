@@ -77,6 +77,10 @@ describe(
     it(
       'should create objects concurrently',
       (test, done) => {
+
+        // This test is too slow for CI
+        if (process.env.CI) return done();
+
         function createAllTheThings(concurrency, cb) {
           const namespace = uuid();
           const exchanges = new Array(100)
@@ -145,7 +149,7 @@ describe(
           return done();
         });
       },
-      { timeout: 600000 }
+      { timeout: 60000 }
     );
 
     it('should create queues', (test, done) => {
