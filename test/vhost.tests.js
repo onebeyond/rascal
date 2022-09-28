@@ -77,7 +77,6 @@ describe(
     it(
       'should create objects concurrently',
       (test, done) => {
-
         // This test is too slow for CI
         if (process.env.CI) return done();
 
