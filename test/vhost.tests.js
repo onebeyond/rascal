@@ -145,7 +145,7 @@ describe(
           return done();
         });
       },
-      { timeout: 120000 }
+      { timeout: 600000 }
     );
 
     it('should create queues', (test, done) => {
