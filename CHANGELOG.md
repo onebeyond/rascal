@@ -1,5 +1,10 @@
 # Change Log
 
+## 16.1.1
+
+- Updated README
+- Removed debug
+
 ## 16.1.0
 
 - Added concurrency option for managing RabbitMQ topology. Rascal will create and use upto this number of channels when asserting/checking/deleting/purging queues, exchanges and bindings.
