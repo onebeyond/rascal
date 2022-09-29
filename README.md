@@ -494,6 +494,20 @@ const components = { agent };
 const broker = await Broker.create(config, components);
 ```
 
+#### concurrency
+
+If you have a high number of exchanges, queues and bindings you may wish to initialise Rascal using multiple channels to improve startup time. Do this per vhost by setting the `concurrency` attribute to the number of channels you want to create and use.
+
+```json
+{
+  "vhosts": {
+    "v1": {
+      "concurrency": 10
+    }
+  }
+}
+```
+
 #### assert
 
 When set to true, Rascal will create the vhost if one doesn't exist using the RabbitMQ management API. This requires the [management plugin](https://www.rabbitmq.com/management.html) to be installed on the broker and for the management user to have necessary permissions.
@@ -1711,10 +1725,6 @@ is equivalent to...
   ]
 }
 ```
-
-### Concurrency
-
-If you have a high number of exchanges, queues and bindings you may wish to initialise Rascal using multiple channels to improve startup time. Do this per vhost by setting the `concurrency` option to the number of channels you want to create and use.
 
 ### Connect
 
