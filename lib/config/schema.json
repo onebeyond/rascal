@@ -619,6 +619,9 @@
             },
             "arguments": {
               "type": "object"
+            },
+            "consumerTag": {
+              "type": "string"
             }
           }
         }

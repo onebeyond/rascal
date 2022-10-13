@@ -1,5 +1,9 @@
 # Change Log
 
+## 16.1.2
+
+- Add consumer tag subscription option to JSON schema
+
 ## 16.1.1
 
 - Updated README
