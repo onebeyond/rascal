@@ -1,6 +1,6 @@
 {
   "name": "rascal",
-  "version": "16.1.1",
+  "version": "16.1.2",
   "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
   "main": "index.js",
   "dependencies": {
