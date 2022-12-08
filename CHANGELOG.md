@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- Disable indirect dependabot updates (they're almost pointless for modules since package-lock.json isn't published)
+
 ## 16.1.2
 
 - Add consumer tag subscription option to JSON schema
