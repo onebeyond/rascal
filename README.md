@@ -1181,7 +1181,7 @@ await subscription = broker.subscribe("s1", { prefetch: 10, retry: false })
 
 The arguments passed to the message event handler are `function(message, content, ackOrNack)`, where message is the raw message, the content (a buffer, text, or object) and an ackOrNack callback. This ackOrNack callback should only be used for messages which were not `{ "options": { "noAck": true } }` by the subscription configuration or the options passed to `broker.subscribe`. For more details on acking or nacking messages see [Message Acknowledgement and Recovery Strategies](#message-acknowledgement-and-recovery-strategies).
 
-> As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
+As with publications, you can nest subscriptions inside the vhost block. Rascal creates default subscriptions for every queue so providing you don't need to specify any additional options you don't need to include a subscriptions block at all.
 
 #### Subscribe All
 
@@ -1412,7 +1412,7 @@ See [here](https://www.npmjs.com/package/rascal-redis-counter) for a redis backe
 
 #### Message Acknowledgement and Recovery Strategies
 
-For messages which are not auto-acknowledged (the default) calling `ackOrNack()` with no arguments will acknowledge it. Calling `ackOrNack(err)` will nack the message using Rascal's default recovery strategy (nack with requeue). Calling `ackOrNack(err, recoveryOptions)` will trigger the specified recovery strategy or strategies.
+For messages which are not auto-acknowledged (the default) calling `ackOrNack()` with no arguments will acknowledge it. Calling `ackOrNack(err)` will nack the message using Rascal's default recovery strategy (nack with requeue). Calling `ackOrNack(err, recoveryOptions)` will trigger the specified recovery strategy or strategies. You can also acknowledge all outstanding messages on the channel by calling `ackOrNack(null, { all: true })`.
 
 When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument irrespective of what other arguments you provide.
 
@@ -1424,7 +1424,11 @@ When using the promises API, ackOrNack will work as for the callback API unless 
 ackOrNack(err, { strategy: 'nack' });
 ```
 
-Nack causes the message to be discarded or routed to a dead letter exchange if configured.
+Nack causes the message to be discarded or routed to a dead letter exchange if configured. You can also negatively acknowledge all outstanding messages on a channel as follows
+
+```js
+ackOrNac(err, { strategy: 'nack', all: true });
+```
 
 ##### Nack with Requeue
 

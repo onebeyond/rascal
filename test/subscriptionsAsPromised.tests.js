@@ -510,6 +510,34 @@ describe(
       });
     });
 
+    it('should consume all acknowledged messages', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions,
+      }).then((broker) => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          let count = 0;
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.ok(message);
+              if (++count < 10) return;
+              ackOrNack(null, { all: true });
+              setTimeout(() => {
+                broker.shutdown().then(() => {
+                  amqputils.assertMessageAbsent('q1', namespace, done);
+                });
+              }, 100);
+            });
+          });
+        });
+      });
+    });
+
     it('should consume rejected messages by default', (test, done) => {
       createBroker({
         vhosts,
@@ -521,6 +549,34 @@ describe(
             subscription.on('message', (message, content, ackOrNack) => {
               assert.ok(message);
               ackOrNack(new Error('reject'));
+              setTimeout(() => {
+                broker.shutdown().then(() => {
+                  amqputils.assertMessageAbsent('q1', namespace, done);
+                });
+              }, 100);
+            });
+          });
+        });
+      });
+    });
+
+    it('should consume all rejected messages when requested', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions,
+      }).then(() => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          broker.subscribe('s1').then((subscription) => {
+            let count = 0;
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.ok(message);
+              if (++count < 10) return;
+              ackOrNack(new Error('reject'), { strategy: 'nack', all: true });
               setTimeout(() => {
                 broker.shutdown().then(() => {
                   amqputils.assertMessageAbsent('q1', namespace, done);
@@ -617,6 +673,33 @@ describe(
               if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), { strategy: 'nack', requeue: true });
               ackOrNack();
               done();
+            });
+          });
+        });
+      });
+    });
+
+    it('should requeue all messages when requested', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions,
+      }).then((broker) => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          broker.subscribe('s1').then((subscription) => {
+            let count = 0;
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.ok(message);
+              if (++count < 10) return;
+              if (count === 10) return ackOrNack(new Error('reject'), { strategy: 'nack', all: true, requeue: true });
+
+              assert.ok(message.fields.redelivered);
+              ackOrNack();
+              if (count === 20) done();
             });
           });
         });

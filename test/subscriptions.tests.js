@@ -656,6 +656,43 @@ describe(
       );
     });
 
+    it('should consume all acknowledged messages', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+              let count = 0;
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert.ok(message);
+                  if (++count < 10) return;
+                  ackOrNack(null, { all: true });
+                  setTimeout(() => {
+                    broker.shutdown((err) => {
+                      assert.ifError(err);
+                      amqputils.assertMessageAbsent('q1', namespace, done);
+                    });
+                  }, 100);
+                });
+              });
+            }
+          );
+        }
+      );
+    });
+
     it('should consume rejected messages by default', (test, done) => {
       createBroker(
         {
@@ -682,6 +719,44 @@ describe(
               });
             });
           });
+        }
+      );
+    });
+
+    it('should consume all rejected messages when requested', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                let count = 0;
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert.ok(message);
+                  if (++count < 10) return;
+                  ackOrNack(new Error('reject'), { strategy: 'nack', all: true });
+                  setTimeout(() => {
+                    broker.shutdown((err) => {
+                      assert.ifError(err);
+                      amqputils.assertMessageAbsent('q1', namespace, done);
+                    });
+                  }, 100);
+                });
+              });
+            }
+          );
         }
       );
     });
@@ -789,6 +864,70 @@ describe(
               });
             });
           });
+        }
+      );
+    });
+
+    it('should requeue messages when requested', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.publish('p1', 'test message', (err) => {
+            assert.ifError(err);
+
+            const messages = {};
+            broker.subscribe('s1', (err, subscription) => {
+              assert.ifError(err);
+              subscription.on('message', (message, content, ackOrNack) => {
+                assert.ok(message);
+                messages[message.properties.messageId] = messages[message.properties.messageId] ? messages[message.properties.messageId] + 1 : 1;
+                if (messages[message.properties.messageId] < 10) return ackOrNack(new Error('retry'), { strategy: 'nack', requeue: true });
+                ackOrNack();
+                done();
+              });
+            });
+          });
+        }
+      );
+    });
+
+    it('should requeue all messages when requested', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                let count = 0;
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert.ok(message);
+                  if (++count < 10) return;
+                  if (count === 10) return ackOrNack(new Error('reject'), { strategy: 'nack', all: true, requeue: true });
+
+                  assert.ok(message.fields.redelivered);
+                  ackOrNack();
+                  if (count === 20) done();
+                });
+              });
+            }
+          );
         }
       );
     });

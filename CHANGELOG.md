@@ -3,6 +3,7 @@
 ## Unreleased
 
 - Disable indirect dependabot updates (they're almost pointless for modules since package-lock.json isn't published)
+- Support acknowledging / rejecting all outstanding messages
 
 ## 16.1.2
 
