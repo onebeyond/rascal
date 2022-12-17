@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 16.2.0
 
 - Disable indirect dependabot updates (they're almost pointless for modules since package-lock.json isn't published)
 - Support acknowledging / rejecting all outstanding messages
