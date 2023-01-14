@@ -71,7 +71,7 @@
   },
   "homepage": "https://guidesmiths.github.io/rascal/",
   "author": "Stephen Cresswell",
-  "license": "ISC",
+  "license": "MIT",
   "zUnit": {
     "pollute": true,
     "pattern": "^[\\w-]+.tests.js$"
