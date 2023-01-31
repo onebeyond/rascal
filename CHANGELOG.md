@@ -4,6 +4,7 @@
 
 - Simplify logic which determines whether ackOrNack should be a callback or a promise
 - Report repeated calls to ackOrNack
+- Bump deps
 
 ## 16.2.0
 
