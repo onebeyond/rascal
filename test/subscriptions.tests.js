@@ -191,6 +191,59 @@ describe(
       );
     });
 
+    it('should report repeated calls to ackOrNack via callback if specified', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.publish('p1', 'test message', (err) => {
+            assert.ifError(err);
+            broker.subscribe('s1', (err, subscription) => {
+              assert.ifError(err);
+              subscription.on('message', (message, content, ackOrNack) => {
+                ackOrNack();
+                ackOrNack((err) => {
+                  assert.strictEqual('ackOrNack should only be called once per message', err.message);
+                });
+                done();
+              });
+            });
+          });
+        }
+      );
+    });
+
+    it('should report repeated calls to ackOrNack via error event if no callback specified', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.publish('p1', 'test message', (err) => {
+            assert.ifError(err);
+            broker.subscribe('s1', (err, subscription) => {
+              assert.ifError(err);
+              subscription.on('message', (message, content, ackOrNack) => {
+                ackOrNack();
+                ackOrNack();
+              });
+              subscription.on('error', (err) => {
+                assert.strictEqual('ackOrNack should only be called once per message', err.message);
+                done();
+              });
+            });
+          });
+        }
+      );
+    });
+
     it('should not consume messages before a listener is bound', (test, done) => {
       createBroker(
         {
@@ -2094,6 +2147,7 @@ describe(
               subscription
                 .on('message', (message, content, ackOrNack) => {
                   ackOrNack();
+                  delete message.__rascal_acknowledged;
                   ackOrNack(); // trigger a channel error
                 })
                 .on('error', (err) => {
