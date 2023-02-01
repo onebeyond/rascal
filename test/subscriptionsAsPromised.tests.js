@@ -1507,6 +1507,7 @@ describe(
             subscription
               .on('message', (message, content, ackOrNack) => {
                 ackOrNack();
+                delete message.__rascal_acknowledged;
                 ackOrNack(); // trigger a channel error
               })
               .on('error', (err) => {

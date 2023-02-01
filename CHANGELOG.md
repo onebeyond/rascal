@@ -1,5 +1,11 @@
 # Change Log
 
+## 16.3.0 Unreleased
+
+- Simplify logic which determines whether ackOrNack should be a callback or a promise
+- Report repeated calls to ackOrNack
+- Bump deps
+
 ## 16.2.0
 
 - Disable indirect dependabot updates (they're almost pointless for modules since package-lock.json isn't published)
