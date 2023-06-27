@@ -46,11 +46,11 @@ Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutoria
 1. Publications
 1. Subscriptions
 
-A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrivied from the broker and used to publish and consume messages.
+A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrieved from the broker and used to publish and consume messages.
 
 ### Breaking Changes in Rascal@14
 
-Rascal@14 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitary amount of time. If your application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.unsubscribeAll`, `broker.bounce`, `broker.shutdown` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the `subscription.cancel` and `broker.unsubscribeAll` methods will yield an error via callback or rejection, while the `broker.bounce`, `broker.shutdown` and `broker.nuke` methods will emit an error event, but attempt to continue. In both cases the error will have a code of `ETIMEDOUT`.
+Rascal@14 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitrary amount of time. If your application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.unsubscribeAll`, `broker.bounce`, `broker.shutdown` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the `subscription.cancel` and `broker.unsubscribeAll` methods will yield an error via callback or rejection, while the `broker.bounce`, `broker.shutdown` and `broker.nuke` methods will emit an error event, but attempt to continue. In both cases the error will have a code of `ETIMEDOUT`.
 
 ### Special Note
 
@@ -225,7 +225,7 @@ The reason Rascal nacks the message is because the alternatives are to leave the
 
 #### vhost_initialised
 
-The broker emits the `vhost_initialised` event after recovering from a connection error. An object containing the vhost name and connection url (with obfuscated password) are passed to he event handler. e.g.
+The broker emits the `vhost_initialised` event after recovering from a connection error. An object containing the vhost name and connection url (with obfuscated password) are passed to the event handler. e.g.
 
 ```js
 broker.on('vhost_initialised', ({ vhost, connectionUrl }) => {
@@ -565,7 +565,7 @@ Rascal useds pools channels it uses for publishing messages. It creates two pool
 }
 ```
 
-Unfortunately there is a [bug](https://github.com/coopernurse/node-pool/issues/197#issuecomment-477862861) in generic-pool's implementation, which means that if the pool fails to create a channel, it can enter a tight loop, thrashing your CPU and potentially crashing your node process due to a memory leak. While we assess the long term use of pooling, we have put in a workaround. Errors will only be rejected after a configurable delay. This defaults to one second but can be overriden through the `rejectionDelayMillis` pool attribute. Special thanks to @willthrom for helping diagnose and fix this issue.
+Unfortunately there is a [bug](https://github.com/coopernurse/node-pool/issues/197#issuecomment-477862861) in generic-pool's implementation, which means that if the pool fails to create a channel, it can enter a tight loop, thrashing your CPU and potentially crashing your node process due to a memory leak. While we assess the long term use of pooling, we have put in a workaround. Errors will only be rejected after a configurable delay. This defaults to one second but can be overridden through the `rejectionDelayMillis` pool attribute. Special thanks to @willthrom for helping diagnose and fix this issue.
 
 #### Flow Control
 
@@ -626,7 +626,7 @@ If you don't want to create exchanges on initialisation, but still want to valid
 
 ##### type
 
-Declares the exchange type. Must be one of direct, topic, headers or fanout. The default configuration sets the exchange type to "topic" unless overriden.
+Declares the exchange type. Must be one of direct, topic, headers or fanout. The default configuration sets the exchange type to "topic" unless overridden.
 
 ##### options
 
@@ -696,7 +696,7 @@ Enable to purge the queue during initialisation. Useful when running automated t
 
 ##### replyTo
 
-Sometimes you want to publish a message, and have the consumer of the message send a reply to the same application instance that published the original message. This can be difficult if you application is deployed using multiple instances which share a common configuration. Quite often the solution is to make your application stateless so it doesn't matter which instance receives the reply. An altnernative is to mark the queue as a reply queue using the replyTo.
+Sometimes you want to publish a message, and have the consumer of the message send a reply to the same application instance that published the original message. This can be difficult if you application is deployed using multiple instances which share a common configuration. Quite often the solution is to make your application stateless so it doesn't matter which instance receives the reply. An alternative is to mark the queue as a reply queue using the replyTo.
 
 ```json
 {
@@ -712,7 +712,7 @@ Sometimes you want to publish a message, and have the consumer of the message se
 }
 ```
 
-When true, Rascal will append a uuid to the queue name so that it is unique for each instance of the application. Use this conjunction with the publication replyTo property, to automaticlaly set the replyTo property on outbound messages to the unique queue name. You may also want to make make the queue non durable and exclusive too (see below).
+When true, Rascal will append a uuid to the queue name so that it is unique for each instance of the application. Use this conjunction with the publication replyTo property, to automatically set the replyTo property on outbound messages to the unique queue name. You may also want to make the queue non durable and exclusive too (see below).
 
 ##### options
 
@@ -946,7 +946,7 @@ try {
 }
 ```
 
-One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in it's default configuration.
+One publish option you should be aware of is the "persistent". Unless persistent is true, your messages will be discarded when you restart Rabbit. Despite having an impact on performance Rascal sets this in its default configuration.
 
 Refer to the [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html) documentation for further exchange options.
 
@@ -978,7 +978,7 @@ See the "default-exchange" in the examples directory for a full working example.
 
 #### Timeouts
 
-When you publish a message using a confirm channel, amqplib will wait for an acknowledgement that the message was safely received by the broker, and in a clustered environment replicated to all nodes. If something goes wrong, the broker will not send the acknowledgement, amqplib will never execute the callback, and the associated flow of execution will never be resumed. Rascal guards against this by adding publication timeouts. If the timeout expires, then Rascal will close the channel and emit a error event from the publication, however there will still be an unavoidable memory leak as amqplib's callback will never be cleared up. The default timeout is 10 seconds but can be overriden in config. The setting is ignored for normal channels and can be disabled by specifying 0.
+When you publish a message using a confirm channel, amqplib will wait for an acknowledgement that the message was safely received by the broker, and in a clustered environment replicated to all nodes. If something goes wrong, the broker will not send the acknowledgement, amqplib will never execute the callback, and the associated flow of execution will never be resumed. Rascal guards against this by adding publication timeouts. If the timeout expires, then Rascal will close the channel and emit a error event from the publication, however there will still be an unavoidable memory leak as amqplib's callback will never be cleared up. The default timeout is 10 seconds but can be overridden in config. The setting is ignored for normal channels and can be disabled by specifying 0.
 
 ```json
 {
@@ -1106,7 +1106,7 @@ try {
 
 Prior to version 10.0.0, if you used Rascal to consume a forwarded message, the subscriber would automatically restore the original routing key and exchange to the message.fields before emitting it. This was added to support the delayed retry loop advanced recovery strategy, but should not have been applied to `broker.forward`. From version 10.0.0 this behaviour has been disabled for `broker.forward` but you can turn it back on by setting `restoreRoutingHeaders` to true in the overrides. You can also disable this behaviour in the `forward` and `republish` recovery strategies by setting `restoreRoutingHeaders` to false.
 
-**Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using `broker.foward`**
+**Since there is no native, transactional support for forwarding in amqplib, you are at risk of receiving duplicate messages when using `broker.forward`**
 
 ### Subscriptions
 
@@ -1153,7 +1153,7 @@ try {
 
 It's **very** important that you handle errors emitted by the subscriber. If not an underlying channel error will bubble up to the uncaught error handler and crash your node process.
 
-Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors. For Rascal 4.0.0 and beyond, subsciptions are lazily applied when you add the `message` handller. Because registering event handlers is synchronous, but setting up RabbitMQ consumers is asynchronous, we've also added the `subscribed` event in case you need to wait until the subscription has been successfully established.
+Prior to Rascal 4.0.0 it was also **very** important not to go async between getting the subscription and listening for the message or error events. If you did, you risked leaking messages and not handling errors. For Rascal 4.0.0 and beyond, subscriptions are lazily applied when you add the `message` handler. Because registering event handlers is synchronous, but setting up RabbitMQ consumers is asynchronous, we've also added the `subscribed` event in case you need to wait until the subscription has been successfully established.
 
 Rascal supports text, buffers and anything it can JSON.parse, providing the contentType message property is set correctly. Text messages should be set to "text/plain" and JSON messages to "application/json". Other content types will be returned as a Buffer. If the publisher doesn't set the contentType or you want to override it you can do so in the subscriber configuration.
 
@@ -1416,7 +1416,7 @@ For messages which are not auto-acknowledged (the default) calling `ackOrNack()`
 
 When using the callback API, you can call ackOrNack without a callback and errors will be emitted by the subscription. Alternatively you can specify a callback as the final argument irrespective of what other arguments you provide.
 
-When using the promises API, ackOrNack will work as for the callback API unless you explicity set promisifyAckOrNack to true on the subscription. If you do enable this feature, be sure to catch rejections.
+When using the promises API, ackOrNack will work as for the callback API unless you explicitly set `promisifyAckOrNack` to true on the subscription. If you do enable this feature, be sure to catch rejections.
 
 ##### Nack (Reject or Dead Letter)
 
@@ -1427,7 +1427,7 @@ ackOrNack(err, { strategy: 'nack' });
 Nack causes the message to be discarded or routed to a dead letter exchange if configured. You can also negatively acknowledge all outstanding messages on a channel as follows
 
 ```js
-ackOrNac(err, { strategy: 'nack', all: true });
+ackOrNack(err, { strategy: 'nack', all: true });
 ```
 
 ##### Nack with Requeue
@@ -1436,7 +1436,7 @@ ackOrNac(err, { strategy: 'nack', all: true });
 ackOrNack(err, { strategy: 'nack', defer: 1000, requeue: true });
 ```
 
-The defer option is not mandatory, but without it you are likely retry your message thousands of times a second. Even then requeueing is a inadequate strategy for error handling, since the message will be rolled back to the front of the queue and there is no simple way to detect how many times the message has been redelivered.
+The defer option is not mandatory, but without it you are likely retry your message thousands of times a second. Even then requeuing is an inadequate strategy for error handling, since the message will be rolled back to the front of the queue and there is no simple way to detect how many times the message has been redelivered.
 
 Dead lettering is a good option for invalid messages but with one major flaw - because the message cannot be modified it cannot be annotated with the error details. This makes it difficult to do anything useful with messages once dead lettered.
 
@@ -1485,7 +1485,7 @@ ackOrNack(err, { strategy: 'forward', publication: 'some_exchange' });
 ```
 
 **Danger**
-As with the Republish strategy, you can limit the number of foward attempts. Whenever you specify a number of attempts you should always chain a fallback strategy, otherwise if the attempts are exceeded your message will be neither acked or nacked.
+As with the Republish strategy, you can limit the number of forward attempts. Whenever you specify a number of attempts you should always chain a fallback strategy, otherwise if the attempts are exceeded your message will be neither acked or nacked.
 
 Furthermore if the message is forwarded but cannot be routed (e.g. due to an incorrect binding), the message will be returned **after** Rascal receives a 'success' event from amqplib. Consequently the message will have been ack'd. Any subsequent fallback strategy which attempts to ack or nack the message will fail, and so the message may lost. The subscription will emit an error event under such circumstances.
 
@@ -1526,7 +1526,7 @@ ackOrNack(err, { strategy: 'ack' });
 
 #### Chaining Recovery Strategies
 
-By chaining Rascal's recovery strategies and leveraging some of RabbitMQs lesser used features such as message you can achieve some quite sophisticated error handling. A simple combination of republish and nack (with dead letter) will enable you to retry the message a maximum number of times before dead letting it.
+By chaining Rascal's recovery strategies and leveraging some of RabbitMQ's lesser used features such as message you can achieve some quite sophisticated error handling. A simple combination of republish and nack (with dead letter) will enable you to retry the message a maximum number of times before dead letting it.
 
 ```js
 ackOrNack(err, [
@@ -1643,7 +1643,7 @@ You can cancel subscriptions as follows
 broker.subscribe('s1', (err, subscription) => {
   if (err) throw err; // subscription didn't exist
   subscription.cancel((err) => {
-    console.err(err);
+    console.error(err);
   });
 });
 ```
@@ -1657,7 +1657,7 @@ try {
 }
 ```
 
-Cancelling a subscribion will stop consuming messages, but leave the channel open until any outstanding messages have been acknowledged, or the timeout specified by through the `closeTimeout` subscription property is exceeded.
+Cancelling a subscription will stop consuming messages, but leave the channel open until any outstanding messages have been acknowledged, or the timeout specified by through the `closeTimeout` subscription property is exceeded.
 
 ## Shutdown
 
@@ -1793,7 +1793,7 @@ after(async () => {
 
 ### Bounce
 
-Bounce disconnects and reinistialises the broker.
+Bounce disconnects and reinitialises the broker.
 
 ```js
 beforeEach((done) => {
@@ -1809,7 +1809,7 @@ beforeEach(async () => {
 
 ### Shovels
 
-RabbitMQ enables you to transfer messages between brokers using the [Shovel plugin](https://www.rabbitmq.com/shovel.html). You can do something similar with rascal by connecting a subscription to a publication. Shovel relies on rascals 'forward' feature, so all the caveates about duplicate messages apply.
+RabbitMQ enables you to transfer messages between brokers using the [Shovel plugin](https://www.rabbitmq.com/shovel.html). You can do something similar with rascal by connecting a subscription to a publication. Shovel relies on rascals 'forward' feature, so all the caveats about duplicate messages apply.
 
 ```json
 {
