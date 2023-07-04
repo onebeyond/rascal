@@ -12,7 +12,6 @@
         }
       },
       "connection": {
-        "heartbeat": 5,
         "socketOptions": {
           "timeout": 1000
         }

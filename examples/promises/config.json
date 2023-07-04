@@ -3,7 +3,9 @@
   "vhosts": {
     "/": {
       "connection": {
-        "heartbeat": 1,
+        "options": {
+          "heartbeat": 5
+        },
         "socketOptions": {
           "timeout": 1000
         }
