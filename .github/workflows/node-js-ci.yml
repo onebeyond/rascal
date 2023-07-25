@@ -22,7 +22,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
       - run: npm run lint
-      - run: DEBUG='rascal:*' npm test
+      - run: npm test
 
   code-climate:
     needs: build
