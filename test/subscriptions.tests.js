@@ -2735,6 +2735,10 @@ describe(
       );
     });
 
+    it('should stall build', (test, done) => {
+      setTimeout(done, 1000);
+    });
+
     function createBroker(config, next) {
       config = _.defaultsDeep(config, testConfig);
       Broker.create(config, (err, _broker) => {
