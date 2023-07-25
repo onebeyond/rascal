@@ -2743,5 +2743,5 @@ describe(
       });
     }
   },
-  { timeout: 5000, exclusive: true },
+  { timeout: 5000 },
 );
