@@ -4,6 +4,7 @@
 
 - Updated the configuration processing as per https://github.com/guidesmiths/rascal/issues/219
 - Test on Node 20
+- Abandon dependabot (too noisy)
 
 ## 16.3.0
 
