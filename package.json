@@ -22,12 +22,10 @@
     "chance": "^1.1.8",
     "eslint": "^8.45.0",
     "eslint-config-airbnb-base": "^15.0.0",
-    "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-import": "^2.27.5",
     "husky": "^8.0.1",
     "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
-    "prettier": "^2.4.1",
     "random-readable": "^1.0.1",
     "superagent-defaults": "^0.1.14",
     "zunit": "^4.0.0"
@@ -40,8 +38,6 @@
   },
   "scripts": {
     "test": "zUnit",
-    "prettier": "prettier --check .",
-    "prettier:fix": "prettier --write .",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "lint-staged": "lint-staged",
@@ -50,7 +46,6 @@
     "prepare": "husky install"
   },
   "lint-staged": {
-    "**/*": "prettier --write --ignore-unknown",
     "**/*.js": "eslint --fix"
   },
   "keywords": [
