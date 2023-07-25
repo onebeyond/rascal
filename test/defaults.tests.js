@@ -69,7 +69,7 @@ describe('Defaults', () => {
           },
           (err, config) => {
             assert.ifError(err);
-            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://foo:bar@localhost:5672?heartbeat=10');
+            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://foo:bar@localhost:5672/v1?heartbeat=10');
           }
         );
       });

@@ -36,7 +36,7 @@ describe(
           vhosts: {
             '/': {
               connection: {
-                host: '10.255.255.1',
+                hostname: '10.255.255.1',
                 socketOptions: {
                   timeout: 100,
                 },

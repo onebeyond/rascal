@@ -1,6 +1,10 @@
 # Change Log
 
-## 16.3.0 Unreleased
+## 17.0.0
+
+- Updated the configuration processing as per https://github.com/guidesmiths/rascal/issues/219
+
+## 16.3.0
 
 - Simplify logic which determines whether ackOrNack should be a callback or a promise
 - Report repeated calls to ackOrNack

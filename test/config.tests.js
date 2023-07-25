@@ -51,13 +51,13 @@ describe('Configuration', () => {
         );
       });
 
-      it('should ignore other connection properties when a url is specified', () => {
+      it('should merge connection options when a url is specified', () => {
         configure(
           {
             vhosts: {
               v1: {
                 connection: {
-                  url: 'foo',
+                  url: 'amqp://localhost',
                   slashes: true,
                   protocol: 'protocol',
                   hostname: 'hostname',
@@ -75,7 +75,25 @@ describe('Configuration', () => {
           },
           (err, config) => {
             assert.ifError(err);
-            assert.strictEqual(config.vhosts.v1.connections[0].url, 'foo');
+            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://localhost?heartbeat=10&channelMax=100');
+          }
+        );
+      });
+
+      it('should report invalid urls', () => {
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: {
+                  url: 'invalid',
+                },
+              },
+            },
+          },
+          (err) => {
+            assert.ok(err);
+            assert.ok(/Invalid URL/.test(err.message), format('%s failed to match expected pattern', err.message));
           }
         );
       });
