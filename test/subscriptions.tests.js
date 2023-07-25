@@ -2733,7 +2733,7 @@ describe(
           });
         }
       );
-    });
+    }, { exclusive: true });
 
     function createBroker(config, next) {
       config = _.defaultsDeep(config, testConfig);
