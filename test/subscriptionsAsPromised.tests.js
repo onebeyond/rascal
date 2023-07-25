@@ -1496,6 +1496,122 @@ describe(
       });
     });
 
+    it('should limit concurrent messages using channel prefetch', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions: {
+          s1: {
+            vhost: '/',
+            queue: 'q1',
+            channelPrefetch: 5,
+          },
+        },
+      }).then((broker) => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          const messages = [];
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert(message);
+              messages.push(ackOrNack);
+              if (messages.length === 5) {
+                setTimeout(() => {
+                  assert.strictEqual(messages.length, 5);
+                  subscription.cancel().then(done);
+                  setTimeout(() => {
+                    messages.forEach((ackOrNack) => ackOrNack());
+                  }, 1);
+                }, 500);
+              }
+            });
+          });
+        });
+      });
+    });
+
+    it('should limit concurrent messages using dynamic channel prefetch while subscribing', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions: {
+          s1: {
+            vhost: '/',
+            queue: 'q1',
+            channelPrefetch: 1,
+          },
+        },
+      }).then((broker) => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          const messages = [];
+          broker.subscribe('s1').then((subscription) => {
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert(message);
+              messages.push(ackOrNack);
+              if (messages.length === 5) {
+                setTimeout(() => {
+                  assert.strictEqual(messages.length, 5);
+                  subscription.cancel().then(done);
+                  setTimeout(() => {
+                    messages.forEach((ackOrNack) => ackOrNack());
+                  }, 1);
+                }, 500);
+              }
+              subscription.setChannelPrefetch(5).catch((err) => {
+                assert.ifError(err);
+              });
+            });
+          });
+        });
+      });
+    });
+
+    it('should limit concurrent messages using dynamic channel prefetch before subscription starts', (test, done) => {
+      createBroker({
+        vhosts,
+        publications,
+        subscriptions: {
+          s1: {
+            vhost: '/',
+            queue: 'q1',
+            channelPrefetch: 1,
+          },
+        },
+      }).then((broker) => {
+        const promises = new Array(10).fill().map(() => {
+          return broker.publish('p1', 'test message');
+        });
+
+        Promise.all(promises).then(() => {
+          const messages = [];
+          broker.subscribe('s1').then((subscription) => {
+            subscription.setChannelPrefetch(5).then(() => {
+              subscription.on('message', (message, content, ackOrNack) => {
+                assert(message);
+                messages.push(ackOrNack);
+                if (messages.length === 5) {
+                  setTimeout(() => {
+                    assert.strictEqual(messages.length, 5);
+                    subscription.cancel().then(done);
+                    setTimeout(() => {
+                      messages.forEach((ackOrNack) => ackOrNack());
+                    }, 1);
+                  }, 500);
+                }
+              });
+            });
+          });
+        });
+      });
+    });
+
     it('should emit channel errors', (test, done) => {
       createBroker({
         vhosts,

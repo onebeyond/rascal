@@ -6,6 +6,7 @@
 - Test on Node 20
 - Abandon dependabot (too noisy)
 - Bump deps
+- Add support for channel level prefetch as per https://github.com/guidesmiths/rascal/issues/221
 
 ## 16.3.0
 

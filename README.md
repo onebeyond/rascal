@@ -1563,10 +1563,10 @@ Prefetch limits the number of unacknowledged messages a subscription can have ou
 
 #### channelPrefetch
 
-Channel prefetch is like prefetch but operates at a channel rather than a consumer level, however since Rascal uses a dedicated channel per subscriber there is rarely any point setting it. Moreover, a channel prefetch has a considerable overhead, especially in a clustered environment so can significantly impact performance. The only reason to set a channel prefetch is if you want to adjust the prefetch dynamically after the subscription has started, and without cancelling the subscription, e.g. 
+Channel prefetch is like prefetch but operates at a channel rather than a consumer level. Since Rascal uses a dedicated channel per subscriber there is rarely any point setting it. Moreover, a channel prefetch has a considerable overhead, especially in a clustered environment so can significantly impact performance. The only reason to set a channel prefetch is if you want to adjust the prefetch dynamically after the subscription has started, and without cancelling the subscription, e.g.
 
 ```js
-broker.subscribe('s1', { channelPrefetch: 10 }, (err, subscription) => {
+broker.subscribe('s1', { prefetch: 0, channelPrefetch: 5 }, (err, subscription) => {
   if (err) throw err;
   subscription.on('message', (message, content, ackOrNack) => {
     ackOrNack();
@@ -1574,12 +1574,12 @@ broker.subscribe('s1', { channelPrefetch: 10 }, (err, subscription) => {
     subscription.setChannelPrefetch(prefetch, (err) => {
       if (err) throw err;
     });
-  })
+  });
 });
 ```
 
 ```js
-const subscription = await broker.subscribe('s1', { channelPrefetch: 10 });
+const subscription = await broker.subscribe('s1', { prefetch: 0, channelPrefetch: 5 });
 subscription.on('message', (message, content, ackOrNack) => {
   ackOrNack();
   const prefetch = tunePrefetch();
@@ -1587,7 +1587,7 @@ subscription.on('message', (message, content, ackOrNack) => {
 });
 ```
 
-channel.setChannelPrefetch is asynchronous, but no reply 
+Don't forget to zero the regular consumer prefetch when specifying a channelPrefetch to prevent potential conflicts.
 
 #### retry
 
