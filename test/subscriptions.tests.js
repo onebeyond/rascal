@@ -2694,47 +2694,56 @@ describe(
       );
     });
 
-    // Checking if this is genuinely a problem test or if it's splash damage
-    // it('should resubscribe following a broker cancellation', (test, done) => {
-    //   createBroker(
-    //     {
-    //       vhosts,
-    //       publications,
-    //       subscriptions: {
-    //         s1: {
-    //           vhost: '/',
-    //           queue: 'q1',
-    //         },
-    //       },
-    //     },
-    //     (err, broker) => {
-    //       assert.ifError(err);
-    //       broker.subscribe('s1', (err, subscription) => {
-    //         assert.ifError(err);
-    //         subscription.on('message', (message, content, ackOrNack) => {
-    //           assert.strictEqual(content.toString(), 'ok');
-    //           ackOrNack();
-    //           subscription.cancel(done);
-    //         });
-    //         subscription.on('error', (err) => {
-    //           assert.ok(/Operation failed: BasicConsume; 404 \(NOT-FOUND\)/.test(err.message), err.message);
-    //         });
-    //         subscription.on('cancelled', (err) => {
-    //           assert.strictEqual(err.message, 'Subscription: s1 was cancelled by the broker');
-    //           amqputils.createQueue('q1', namespace, (err) => {
-    //             assert.ifError(err);
-    //             amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
-    //           });
-    //         });
-    //         subscription.on('subscribed', () => {
-    //           amqputils.deleteQueue('q1', namespace, (err) => {
-    //             assert.ifError(err);
-    //           });
-    //         });
-    //       });
-    //     },
-    //   );
-    // });
+    it('should resubscribe following a broker cancellation', (test, done) => {
+      /* eslint no-console: "off" */
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          console.log('Subscribing');
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              console.log('Got Message');
+              assert.strictEqual(content.toString(), 'ok');
+              console.log('Ack Message');
+              ackOrNack();
+              console.log('Cancelling Subscription');
+              subscription.cancel(done);
+            });
+            subscription.on('error', (err) => {
+              console.log('Subscription error', err);
+              assert.ok(/Operation failed: BasicConsume; 404 \(NOT-FOUND\)/.test(err.message), err.message);
+            });
+            subscription.on('cancelled', (err) => {
+              console.log('Subscription cancelled', err);
+              assert.strictEqual(err.message, 'Subscription: s1 was cancelled by the broker');
+              console.log('Creating queue');
+              amqputils.createQueue('q1', namespace, (err) => {
+                assert.ifError(err);
+                console.log('Publishing message');
+                amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
+              });
+            });
+            subscription.on('subscribed', () => {
+              console.log('Deleting queue');
+              amqputils.deleteQueue('q1', namespace, (err) => {
+                assert.ifError(err);
+              });
+            });
+          });
+        },
+      );
+    });
 
     function createBroker(config, next) {
       config = _.defaultsDeep(config, testConfig);
