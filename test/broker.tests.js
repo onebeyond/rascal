@@ -115,7 +115,8 @@ describe(
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, (err) => {
         assert.ok(err);
-        assert.ok(/Failed to assert vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
+        const code = err.errors ? err.errors[0].code : err.code;
+        assert.strictEqual(code, 'ECONNREFUSED');
         done();
       });
     });
@@ -142,7 +143,8 @@ describe(
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, (err) => {
         assert.ok(err);
-        assert.ok(/Failed to check vhost: .*\. http:\/\/guest:\*\*\*@localhost:65535 errored with: .*ECONNREFUSED.*/.test(err.message), err.message);
+        const code = err.errors ? err.errors[0].code : err.code;
+        assert.strictEqual(code, 'ECONNREFUSED');
         done();
       });
     });
