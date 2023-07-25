@@ -31,7 +31,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].url, 'protocol://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -47,7 +47,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://localhost');
-          }
+          },
         );
       });
 
@@ -76,7 +76,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://localhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -94,7 +94,7 @@ describe('Configuration', () => {
           (err) => {
             assert.ok(err);
             assert.ok(/Invalid URL/.test(err.message), format('%s failed to match expected pattern', err.message));
-          }
+          },
         );
       });
 
@@ -121,7 +121,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/v1?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -148,7 +148,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts['/'].connections[0].loggableUrl, 'protocol://user:***@hostname:9000?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -176,7 +176,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -192,7 +192,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'amqp://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -227,7 +227,7 @@ describe('Configuration', () => {
             const connections = _.sortBy(config.vhosts.v1.connections, 'url');
             assert.strictEqual(connections[0].url, 'protocol://user:password@alpha:9000/vhost?heartbeat=10&channelMax=100');
             assert.strictEqual(connections[1].url, 'protocol://user:password@beta:9000/vhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -331,9 +331,9 @@ describe('Configuration', () => {
               results.push(
                 _.map(config.vhosts.v1.connections, (connection) => {
                   return url.parse(connection.url).host;
-                }).join(',')
+                }).join(','),
               );
-            }
+            },
           );
         }
         assert.ok(_.uniq(results).length > 1);
@@ -442,7 +442,7 @@ describe('Configuration', () => {
             assert.strictEqual(url.parse(config.vhosts.v3.connections[1].url).host, 'alpha:9001');
             assert.strictEqual(url.parse(config.vhosts.v3.connections[2].url).host, 'beta:9000');
             assert.strictEqual(url.parse(config.vhosts.v3.connections[3].url).host, 'zeta:9000');
-          }
+          },
         );
       });
 
@@ -460,7 +460,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].loggableUrl, 'protocol://user:***@hostname:9000/vhost?heartbeat=10&channelMax=100');
-          }
+          },
         );
       });
 
@@ -497,7 +497,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'https://admin:adminpassword@hostname:9999');
-          }
+          },
         );
       });
 
@@ -532,7 +532,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'https://user:password@hostname:9999');
-          }
+          },
         );
       });
 
@@ -554,7 +554,7 @@ describe('Configuration', () => {
             assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace));
             assert.ok(/\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v2.namespace), format('%s failed to match expected pattern', config.vhosts.v1.namespace));
             assert.ok(config.vhosts.v1.namespace !== config.vhosts.v2.namespace);
-          }
+          },
         );
       });
     });
@@ -582,7 +582,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.exchanges.e1.assert, false);
             assert.strictEqual(config.vhosts.v1.exchanges.e1.type, 'direct');
             assert.strictEqual(config.vhosts.v1.exchanges.e1.options.durable, false);
-          }
+          },
         );
       });
 
@@ -606,7 +606,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.exchanges[''].name, '');
-          }
+          },
         );
       });
 
@@ -633,7 +633,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.exchanges[''].type, 'not-overwritten');
-          }
+          },
         );
       });
 
@@ -651,7 +651,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert(_.isObject(config.vhosts.v1.exchanges.e1.options));
-          }
+          },
         );
       });
 
@@ -670,7 +670,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.exchanges.e1.name, 'e1');
             assert.strictEqual(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'e1');
-          }
+          },
         );
       });
 
@@ -690,7 +690,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.exchanges.e1.name, 'e1');
             assert.strictEqual(config.vhosts.v1.exchanges.e1.fullyQualifiedName, 'foo:e1');
-          }
+          },
         );
       });
 
@@ -711,7 +711,7 @@ describe('Configuration', () => {
 
             assert.strictEqual(config.vhosts.v1.exchanges.e2.name, 'e2');
             assert.strictEqual(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2');
-          }
+          },
         );
       });
 
@@ -732,7 +732,7 @@ describe('Configuration', () => {
 
             assert.strictEqual(config.vhosts.v1.exchanges.e2.name, 'e2');
             assert.strictEqual(config.vhosts.v1.exchanges.e2.fullyQualifiedName, 'e2');
-          }
+          },
         );
       });
     });
@@ -760,7 +760,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.queues.q1.assert, false);
             assert.strictEqual(config.vhosts.v1.queues.q1.type, 'direct');
             assert.strictEqual(config.vhosts.v1.queues.q1.options.durable, false);
-          }
+          },
         );
       });
 
@@ -778,7 +778,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert(_.isObject(config.vhosts.v1.queues.q1.options));
-          }
+          },
         );
       });
 
@@ -797,7 +797,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.queues.q1.name, 'q1');
             assert.strictEqual(config.vhosts.v1.queues.q1.fullyQualifiedName, 'q1');
-          }
+          },
         );
       });
 
@@ -817,7 +817,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.queues.q1.name, 'q1');
             assert.strictEqual(config.vhosts.v1.queues.q1.fullyQualifiedName, 'foo:q1');
-          }
+          },
         );
       });
 
@@ -838,7 +838,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.queues.q1.name, 'q1');
             assert.ok(/q1:\w+-\w+-\w+-\w+-\w+/.test(config.vhosts.v1.queues.q1.fullyQualifiedName), format('%s failed to match expected pattern', config.vhosts.v1.queues.q1.fullyQualifiedName));
-          }
+          },
         );
       });
 
@@ -864,7 +864,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.queues.q1.name, 'q1');
             assert.strictEqual(config.vhosts.v1.queues.q1.options.arguments['x-dead-letter-exchange'], 'foo:q1');
-          }
+          },
         );
       });
 
@@ -885,7 +885,7 @@ describe('Configuration', () => {
 
             assert.strictEqual(config.vhosts.v1.queues.q2.name, 'q2');
             assert.strictEqual(config.vhosts.v1.queues.q2.fullyQualifiedName, 'q2');
-          }
+          },
         );
       });
     });
@@ -914,7 +914,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.bindings.b1.source, 'e1');
             assert.strictEqual(config.vhosts.v1.bindings.b1.destination, 'q1');
             assert.strictEqual(config.vhosts.v1.bindings.b1.bindingKey, '#');
-          }
+          },
         );
       });
 
@@ -950,7 +950,7 @@ describe('Configuration', () => {
 
             assert.strictEqual(config.vhosts.v1.bindings['e-1 -> q-1'].source, 'e-1');
             assert.strictEqual(config.vhosts.v1.bindings['e-1 -> q-1'].destination, 'q-1');
-          }
+          },
         );
       });
 
@@ -976,7 +976,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.bindings['e1[a.b] -> q1'].bindingKey, 'a.b');
             assert.strictEqual(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a'].bindingKey, 'a');
             assert.strictEqual(config.vhosts.v1.bindings['e1[a,a.b] -> q1:a.b'].bindingKey, 'a.b');
-          }
+          },
         );
       });
 
@@ -1007,7 +1007,7 @@ describe('Configuration', () => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.bindings.b1.bindingKey, 'ns1:q1');
             assert.strictEqual(config.vhosts.v1.bindings['e1[q1] -> q1'].bindingKey, 'ns1:q1');
-          }
+          },
         );
       });
 
@@ -1030,7 +1030,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert(_.isObject(config.vhosts.v1.bindings.b1.options));
-          }
+          },
         );
       });
 
@@ -1053,7 +1053,7 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.bindings.b1.name, 'b1');
-          }
+          },
         );
       });
 
@@ -1083,7 +1083,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.bindings['b1:b'].source, 'e1');
             assert.strictEqual(config.vhosts.v1.bindings['b1:b'].destination, 'q1');
             assert.strictEqual(config.vhosts.v1.bindings['b1:b'].bindingKey, 'b');
-          }
+          },
         );
       });
 
@@ -1110,7 +1110,7 @@ describe('Configuration', () => {
             assert.strictEqual(config.vhosts.v1.bindings.b1.source, 'e1');
             assert.strictEqual(config.vhosts.v1.bindings.b1.destination, 'q1');
             assert.strictEqual(config.vhosts.v1.bindings.b1.bindingKey, 'a');
-          }
+          },
         );
       });
 
@@ -1132,7 +1132,7 @@ describe('Configuration', () => {
 
             assert.strictEqual(config.vhosts.v1.bindings['e1 -> q2'].source, 'e1');
             assert.strictEqual(config.vhosts.v1.bindings['e1 -> q2'].destination, 'q2');
-          }
+          },
         );
       });
     });
@@ -1166,7 +1166,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.p1.exchange, 'e1');
           assert.strictEqual(config.publications.p1.routingKey, 'r1');
           assert.strictEqual(config.publications.p1.options.persistent, true);
-        }
+        },
       );
     });
 
@@ -1195,7 +1195,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.p1.vhost, 'v1');
           assert.strictEqual(config.publications.p1.queue, 'q1');
           assert.strictEqual(config.publications.p1.options.persistent, true);
-        }
+        },
       );
     });
 
@@ -1219,7 +1219,7 @@ describe('Configuration', () => {
         (err, config) => {
           assert.ifError(err);
           assert(_.isObject(config.publications.p1.options));
-        }
+        },
       );
     });
 
@@ -1253,7 +1253,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.p1.destination, 'e1');
           assert.strictEqual(config.publications.p2.name, 'p2');
           assert.strictEqual(config.publications.p2.destination, 'q1');
-        }
+        },
       );
     });
 
@@ -1288,7 +1288,7 @@ describe('Configuration', () => {
           assert.ifError(err);
           assert.strictEqual(config.publications.p1.destination, 'foo:e1');
           assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.publications.p2.destination), format('%s failed to match expected pattern', config.publications.p2.destination));
-        }
+        },
       );
     });
 
@@ -1311,7 +1311,7 @@ describe('Configuration', () => {
           assert.ok(!config.vhosts.v1.publications);
           assert.strictEqual(config.publications.p1.vhost, 'v1');
           assert.strictEqual(config.publications.p1.destination, 'e1');
-        }
+        },
       );
     });
 
@@ -1340,7 +1340,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications['v1/e1'].destination, 'e1');
           assert.strictEqual(config.publications['v1/e1'].autoCreated, true);
           assert.strictEqual(config.publications['v1/e1'].deprecated, undefined);
-        }
+        },
       );
     });
 
@@ -1365,7 +1365,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.e1.vhost, 'v1');
           assert.strictEqual(config.publications.e1.destination, 'e1');
           assert.strictEqual(config.publications.e1.routingKey, 'r1');
-        }
+        },
       );
     });
 
@@ -1391,7 +1391,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.e1.vhost, 'v1');
           assert.strictEqual(config.publications.e1.destination, 'e1');
           assert.strictEqual(config.publications.e1.routingKey, 'r1');
-        }
+        },
       );
     });
 
@@ -1420,7 +1420,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications['v1/q1'].destination, 'q1');
           assert.strictEqual(config.publications['v1/q1'].autoCreated, true);
           assert.strictEqual(config.publications['v1/q1'].deprecated, undefined);
-        }
+        },
       );
     });
 
@@ -1445,7 +1445,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.q1.vhost, 'v1');
           assert.strictEqual(config.publications.q1.destination, 'q1');
           assert.strictEqual(config.publications.q1.routingKey, 'r1');
-        }
+        },
       );
     });
 
@@ -1471,7 +1471,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.q1.vhost, 'v1');
           assert.strictEqual(config.publications.q1.destination, 'q1');
           assert.strictEqual(config.publications.q1.routingKey, 'r1');
-        }
+        },
       );
     });
 
@@ -1500,7 +1500,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions['v1/q1'].source, 'q1');
           assert.strictEqual(config.subscriptions['v1/q1'].autoCreated, true);
           assert.strictEqual(config.subscriptions['v1/q1'].deprecated, undefined);
-        }
+        },
       );
     });
 
@@ -1525,7 +1525,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions.q1.vhost, 'v1');
           assert.strictEqual(config.subscriptions.q1.source, 'q1');
           assert.strictEqual(config.subscriptions.q1.routingKey, 'r1');
-        }
+        },
       );
     });
 
@@ -1551,7 +1551,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions.q1.vhost, 'v1');
           assert.strictEqual(config.subscriptions.q1.source, 'q1');
           assert.strictEqual(config.subscriptions.q1.contentType, 'text/plain');
-        }
+        },
       );
     });
 
@@ -1582,7 +1582,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.p1.exchange, 'e1');
           assert.strictEqual(config.publications.p2.vhost, 'v1');
           assert.strictEqual(config.publications.p2.exchange, 'e2');
-        }
+        },
       );
     });
 
@@ -1615,7 +1615,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.publications.p1.encryption.ivLength, 16);
           assert.strictEqual(config.publications.p1.encryption.algorithm, 'algo');
           done();
-        }
+        },
       );
     });
 
@@ -1643,7 +1643,7 @@ describe('Configuration', () => {
           assert.ifError(err);
           assert.ok(!config.vhosts.v1.publications);
           assert.ok(/rq:\w+-\w+-\w+-\w+-\w+/, config.publications.p1.replyTo);
-        }
+        },
       );
     });
 
@@ -1665,7 +1665,7 @@ describe('Configuration', () => {
         },
         (err) => {
           assert.strictEqual(err.message, 'Publication: p1 refers to an unknown reply queue: rq');
-        }
+        },
       );
     });
   });
@@ -1698,7 +1698,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions.s1.queue, 'q1');
           assert.strictEqual(config.subscriptions.s1.confirm, true);
           assert.strictEqual(config.subscriptions.s1.retry.delay, 1000);
-        }
+        },
       );
     });
 
@@ -1722,7 +1722,7 @@ describe('Configuration', () => {
         (err, config) => {
           assert.ifError(err);
           assert(_.isObject(config.subscriptions.s1.options));
-        }
+        },
       );
     });
 
@@ -1747,7 +1747,7 @@ describe('Configuration', () => {
           assert.ifError(err);
           assert.strictEqual(config.subscriptions.s1.name, 's1');
           assert.strictEqual(config.subscriptions.s1.source, 'q1');
-        }
+        },
       );
     });
 
@@ -1779,7 +1779,7 @@ describe('Configuration', () => {
         },
         (err) => {
           assert.strictEqual(err.message, 'Duplicate subscription: s1');
-        }
+        },
       );
     });
 
@@ -1811,7 +1811,7 @@ describe('Configuration', () => {
         },
         (err) => {
           assert.strictEqual(err.message, 'Duplicate publication: p1');
-        }
+        },
       );
     });
 
@@ -1839,7 +1839,7 @@ describe('Configuration', () => {
           assert.ifError(err);
           assert.strictEqual(config.subscriptions.s1.name, 's1');
           assert.ok(/foo:q1:\w+-\w+-\w+-\w+-\w+/.test(config.subscriptions.s1.source), format('%s failed to match expected pattern', config.subscriptions.s1.source));
-        }
+        },
       );
     });
 
@@ -1862,7 +1862,7 @@ describe('Configuration', () => {
           assert.ok(!config.vhosts.v1.subscriptions);
           assert.strictEqual(config.subscriptions.s1.vhost, 'v1');
           assert.strictEqual(config.subscriptions.s1.queue, 'q1');
-        }
+        },
       );
     });
 
@@ -1893,7 +1893,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions.s1.queue, 'q1');
           assert.strictEqual(config.subscriptions.s2.vhost, 'v1');
           assert.strictEqual(config.subscriptions.s2.queue, 'q2');
-        }
+        },
       );
     });
 
@@ -1924,7 +1924,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.subscriptions.s1.encryption['well-known'].ivLength, 16);
           assert.strictEqual(config.subscriptions.s1.encryption['well-known'].algorithm, 'algo');
           done();
-        }
+        },
       );
     });
   });
@@ -1943,7 +1943,7 @@ describe('Configuration', () => {
         (err, config) => {
           assert.ifError(err);
           assert.strictEqual(config.shovels.x1.name, 'x1');
-        }
+        },
       );
     });
 
@@ -1956,7 +1956,7 @@ describe('Configuration', () => {
           assert.ifError(err);
           assert.strictEqual(config.shovels['s1 -> p1'].subscription, 's1');
           assert.strictEqual(config.shovels['s1 -> p1'].publication, 'p1');
-        }
+        },
       );
     });
   });
@@ -1978,7 +1978,7 @@ describe('Configuration', () => {
           assert.strictEqual(config.redeliveries.counters.stub.type, 'stub');
           assert.strictEqual(config.redeliveries.counters.inMemory.name, 'inMemory');
           assert.strictEqual(config.redeliveries.counters.inMemory.type, 'inMemory');
-        }
+        },
       );
     });
   });

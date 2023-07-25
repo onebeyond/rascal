@@ -11,7 +11,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('No vhosts specified', err.message);
-        }
+        },
       );
     });
   });
@@ -31,7 +31,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 is missing a source', err.message);
-        }
+        },
       );
     });
 
@@ -51,7 +51,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 is missing a destination', err.message);
-        }
+        },
       );
     });
 
@@ -72,7 +72,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 is missing a destination type', err.message);
-        }
+        },
       );
     });
 
@@ -94,7 +94,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 has an invalid destination type: foo', err.message);
-        }
+        },
       );
     });
 
@@ -116,7 +116,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
-        }
+        },
       );
     });
 
@@ -139,7 +139,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unknown exchange: e1', err.message);
-        }
+        },
       );
     });
 
@@ -164,7 +164,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unknown exchange: e2', err.message);
-        }
+        },
       );
     });
 
@@ -189,7 +189,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
-        }
+        },
       );
     });
 
@@ -215,7 +215,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unknown queue: q1', err.message);
-        }
+        },
       );
     });
   });
@@ -234,7 +234,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 is missing a vhost', err.message);
-        }
+        },
       );
     });
 
@@ -253,7 +253,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 is missing an exchange or a queue', err.message);
-        }
+        },
       );
     });
 
@@ -274,7 +274,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 has an exchange and a queue', err.message);
-        }
+        },
       );
     });
 
@@ -295,7 +295,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 has an exchange and a queue', err.message);
-        }
+        },
       );
     });
 
@@ -315,7 +315,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -335,7 +335,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -355,7 +355,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -377,7 +377,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown exchange: e1 in vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -397,7 +397,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -419,7 +419,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unknown queue: q1 in vhost: v1', err.message);
-        }
+        },
       );
     });
   });
@@ -438,7 +438,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 is missing a vhost', err.message);
-        }
+        },
       );
     });
 
@@ -457,7 +457,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 is missing a queue', err.message);
-        }
+        },
       );
     });
 
@@ -477,7 +477,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unknown vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -497,7 +497,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unknown vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -517,7 +517,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -539,7 +539,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unknown queue: q1 in vhost: v1', err.message);
-        }
+        },
       );
     });
 
@@ -569,7 +569,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unknown counter: c1 in vhost: v1', err.message);
-        }
+        },
       );
     });
   });
@@ -588,7 +588,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Shovel: x1 is missing a subscription', err.message);
-        }
+        },
       );
     });
 
@@ -607,7 +607,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Shovel: x1 is missing a publication', err.message);
-        }
+        },
       );
     });
 
@@ -629,7 +629,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Shovel: x1 refers to an unknown subscription: s1', err.message);
-        }
+        },
       );
     });
 
@@ -668,7 +668,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Shovel: x1 refers to an unknown publication: p1', err.message);
-        }
+        },
       );
     });
   });
@@ -686,7 +686,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Vhost: v1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -704,7 +704,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication channel pool in vhost: v1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -720,7 +720,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Vhost: v1 refers to an unknown connection strategy: meh', err.message);
-        }
+        },
       );
     });
 
@@ -738,7 +738,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Vhost: v1 connection refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -758,7 +758,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Exchange: e1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -778,7 +778,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Queue: q1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -798,7 +798,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Binding: b1 in vhost: v1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -817,7 +817,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Publication: p1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -836,7 +836,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Subscription: s1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
 
@@ -855,7 +855,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Shovel: x1 refers to an unsupported attribute: invalid', err.message);
-        }
+        },
       );
     });
   });
@@ -876,7 +876,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Encryption profile: invalid is missing a key', err.message);
-        }
+        },
       );
     });
 
@@ -896,7 +896,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Encryption profile: invalid is missing an algorithm', err.message);
-        }
+        },
       );
     });
 
@@ -917,7 +917,7 @@ describe('Validation', () => {
         (err) => {
           assert.ok(err);
           assert.strictEqual('Encryption profile: invalid is missing ivLength', err.message);
-        }
+        },
       );
     });
   });

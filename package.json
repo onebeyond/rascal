@@ -23,7 +23,7 @@
     "eslint": "^8.45.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "husky": "^8.0.1",
+    "husky": "^8.0.3",
     "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
     "random-readable": "^1.0.1",

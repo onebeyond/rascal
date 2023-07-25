@@ -48,7 +48,7 @@ describe(
         (err) => {
           assert.ok(err.message.match('connect ETIMEDOUT'));
           done();
-        }
+        },
       );
     });
 
@@ -70,7 +70,7 @@ describe(
         (err) => {
           assert.ifError(err);
           amqputils.assertExchangePresent('e1', namespace, done);
-        }
+        },
       );
     });
 
@@ -86,26 +86,24 @@ describe(
             .fill()
             .map((_, index) => `e${index + 1}`)
             .reduce(
-              (acc, name) =>
-                Object.assign(acc, {
-                  [name]: {
-                    assert: true,
-                  },
-                }),
-              {}
+              (acc, name) => Object.assign(acc, {
+                [name]: {
+                  assert: true,
+                },
+              }),
+              {},
             );
 
           const queues = new Array(100)
             .fill()
             .map((_, index) => `q${index + 1}`)
             .reduce(
-              (acc, name) =>
-                Object.assign(acc, {
-                  [name]: {
-                    assert: true,
-                  },
-                }),
-              {}
+              (acc, name) => Object.assign(acc, {
+                [name]: {
+                  assert: true,
+                },
+              }),
+              {},
             );
 
           const bindings = new Array(100).fill().map((_, index) => `e${index + 1}[a.b.c] -> q${index + 1}`);
@@ -132,7 +130,7 @@ describe(
                   cb(err, after - before);
                 });
               });
-            }
+            },
           );
         }
 
@@ -148,7 +146,7 @@ describe(
           return done();
         });
       },
-      { timeout: 60000 }
+      { timeout: 60000 },
     );
 
     it('should create queues', (test, done) => {
@@ -169,7 +167,7 @@ describe(
         (err) => {
           assert.ifError(err);
           amqputils.assertQueuePresent('q1', namespace, done);
-        }
+        },
       );
     });
 
@@ -191,7 +189,7 @@ describe(
           assert.ok(err);
           assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        }
+        },
       );
     });
 
@@ -213,7 +211,7 @@ describe(
           assert.ok(err);
           assert.ok(/NOT-FOUND/.test(err.message), format('%s did not match the expected format', err.message));
           done();
-        }
+        },
       );
     });
 
@@ -258,7 +256,7 @@ describe(
             assert.ifError(err);
             amqputils.assertMessage('q1', namespace, 'test message', done);
           });
-        }
+        },
       );
     });
 
@@ -270,5 +268,5 @@ describe(
       });
     }
   },
-  { timeout: 2000 }
+  { timeout: 2000 },
 );

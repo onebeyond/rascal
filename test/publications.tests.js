@@ -88,7 +88,7 @@ describe(
             assert.strictEqual(err.message, 'Unknown publication: does-not-exist');
             done();
           });
-        }
+        },
       );
     });
 
@@ -111,7 +111,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -134,7 +134,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -157,7 +157,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -179,7 +179,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -196,7 +196,7 @@ describe(
               amqputils.assertMessage('q3', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -225,7 +225,7 @@ describe(
               });
             });
           });
-        }
+        },
       );
     });
 
@@ -254,7 +254,7 @@ describe(
               });
             });
           });
-        }
+        },
       );
     });
 
@@ -293,7 +293,7 @@ describe(
               });
             });
           });
-        }
+        },
       );
     });
 
@@ -316,7 +316,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -338,7 +338,7 @@ describe(
               amqputils.assertMessage('q1', namespace, JSON.stringify({ message: 'test message' }), done);
             });
           });
-        }
+        },
       );
     });
 
@@ -371,9 +371,9 @@ describe(
                   done();
                 });
               });
-            }
+            },
           );
-        }
+        },
       );
     });
 
@@ -395,7 +395,7 @@ describe(
               amqputils.assertMessage('q1', namespace, 'test message', done);
             });
           });
-        }
+        },
       );
     });
 
@@ -419,7 +419,7 @@ describe(
               }, 100);
             });
           });
-        }
+        },
       );
     });
 
@@ -442,7 +442,7 @@ describe(
               done();
             });
           });
-        }
+        },
       );
     });
 
@@ -505,7 +505,7 @@ describe(
               messageId = _messageId;
             });
           });
-        }
+        },
       );
     });
 
@@ -556,7 +556,7 @@ describe(
           broker.publish('p1', 'test message', (err) => {
             assert.ifError(err);
           });
-        }
+        },
       );
     });
 
@@ -606,7 +606,7 @@ describe(
           broker.publish('p1', 'test message', (err) => {
             assert.ifError(err);
           });
-        }
+        },
       );
     });
 
@@ -639,12 +639,12 @@ describe(
               (err) => {
                 assert.ifError(err);
                 done();
-              }
+              },
             );
-          }
+          },
         );
       },
-      { timeout: 60000 }
+      { timeout: 60000 },
     );
 
     it(
@@ -676,12 +676,12 @@ describe(
               (err) => {
                 assert.ifError(err);
                 done();
-              }
+              },
             );
-          }
+          },
         );
       },
-      { timeout: 20000 }
+      { timeout: 20000 },
     );
 
     it('should symetrically encrypt messages', (test, done) => {
@@ -718,7 +718,7 @@ describe(
               });
             });
           });
-        }
+        },
       );
     });
 
@@ -745,7 +745,7 @@ describe(
             assert.strictEqual(err.message, 'Invalid key length');
             done();
           });
-        }
+        },
       );
     });
 
@@ -769,7 +769,7 @@ describe(
               done();
             });
           });
-        }
+        },
       );
     });
 
@@ -794,7 +794,7 @@ describe(
               done();
             });
           });
-        }
+        },
       );
     });
 
@@ -830,9 +830,9 @@ describe(
                 });
               });
             },
-            done
+            done,
           );
-        }
+        },
       );
     });
 
@@ -868,9 +868,9 @@ describe(
                 });
               });
             },
-            done
+            done,
           );
-        }
+        },
       );
     });
 
@@ -904,7 +904,7 @@ describe(
               });
             });
           });
-        }
+        },
       );
     });
 
@@ -916,5 +916,5 @@ describe(
       });
     }
   },
-  { timeout: 2000 }
+  { timeout: 2000 },
 );

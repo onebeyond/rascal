@@ -25,7 +25,7 @@ describe('In Memory Counter', () => {
         assert.strictEqual(results.one, 2);
         assert.strictEqual(results.two, 1);
         done();
-      }
+      },
     );
   });
 
@@ -44,7 +44,7 @@ describe('In Memory Counter', () => {
         assert.ifError(err);
         assert.strictEqual(results.one, 1);
         done();
-      }
+      },
     );
   });
 });

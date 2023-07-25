@@ -154,7 +154,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       createBroker(config).then((broker) => {
@@ -189,7 +189,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       return createBroker(config).then((broker) => {
@@ -209,7 +209,7 @@ describe(
           publications,
           subscriptions,
         },
-        testConfig
+        testConfig,
       );
 
       return createBroker(config).then((broker) => {
@@ -247,5 +247,5 @@ describe(
         });
     }
   },
-  { timeout: 6000 }
+  { timeout: 6000 },
 );
