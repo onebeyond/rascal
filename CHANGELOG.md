@@ -3,6 +3,7 @@
 ## 17.0.0
 
 - Updated the configuration processing as per https://github.com/guidesmiths/rascal/issues/219
+- Test on Node 20
 
 ## 16.3.0
 
