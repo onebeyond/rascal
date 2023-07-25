@@ -579,7 +579,7 @@
         "channelPrefetch": {
           "type": "integer",
           "minimum": 0
-        },        
+        },
         "retry": {
           "$ref": "#/definitions/retry"
         },
