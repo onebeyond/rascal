@@ -1559,7 +1559,35 @@ Steps 3 - 7 will repeat up to `attempts` times. If all attempts fail...
 
 #### prefetch
 
-Prefetch limits the number of unacknowledged messages your application can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
+Prefetch limits the number of unacknowledged messages a subscription can have outstanding. It's a great way to ensure that you don't overload your event loop or a downstream service. Rascal's default configuration sets the prefetch to 10 which may seem low, but we've managed to knock out firewalls, breach AWS thresholds and all sorts of other things by setting it to higher values.
+
+#### channelPrefetch
+
+Channel prefetch is like prefetch but operates at a channel rather than a consumer level, however since Rascal uses a dedicated channel per subscriber there is rarely any point setting it. Moreover, a channel prefetch has a considerable overhead, especially in a clustered environment so can significantly impact performance. The only reason to set a channel prefetch is if you want to adjust the prefetch dynamically after the subscription has started, and without cancelling the subscription, e.g. 
+
+```js
+broker.subscribe('s1', { channelPrefetch: 10 }, (err, subscription) => {
+  if (err) throw err;
+  subscription.on('message', (message, content, ackOrNack) => {
+    ackOrNack();
+    const prefetch = tunePrefetch();
+    subscription.setChannelPrefetch(prefetch, (err) => {
+      if (err) throw err;
+    });
+  })
+});
+```
+
+```js
+const subscription = await broker.subscribe('s1', { channelPrefetch: 10 });
+subscription.on('message', (message, content, ackOrNack) => {
+  ackOrNack();
+  const prefetch = tunePrefetch();
+  await subscription.setChannelPrefetch(prefetch);
+});
+```
+
+channel.setChannelPrefetch is asynchronous, but no reply 
 
 #### retry
 

@@ -2086,7 +2086,7 @@ describe(
       );
     });
 
-    it('should limit concurrent messages using prefetch', (test, done) => {
+    it('should limit concurrent messages using consumer prefetch', (test, done) => {
       createBroker(
         {
           vhosts,
@@ -2096,6 +2096,51 @@ describe(
               vhost: '/',
               queue: 'q1',
               prefetch: 5,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+              const messages = [];
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert(message);
+                  messages.push(ackOrNack);
+                  if (messages.length === 5) {
+                    setTimeout(() => {
+                      assert.strictEqual(messages.length, 5);
+                      subscription.cancel(done);
+                      setTimeout(() => {
+                        messages.forEach((ackOrNack) => ackOrNack());
+                      }, 1);
+                    }, 500);
+                  }
+                });
+              });
+            }
+          );
+        }
+      );
+    });
+
+    it('should limit concurrent messages using channel prefetch', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+              channelPrefetch: 5,
             },
           },
         },

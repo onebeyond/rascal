@@ -576,6 +576,10 @@
           "type": "integer",
           "minimum": 0
         },
+        "channelPrefetch": {
+          "type": "integer",
+          "minimum": 0
+        },        
         "retry": {
           "$ref": "#/definitions/retry"
         },
