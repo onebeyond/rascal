@@ -148,6 +148,47 @@ describe(
       });
     });
 
+    it('should resubscribe following a broker cancellation', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              assert.strictEqual(content.toString(), 'ok');
+              ackOrNack();
+              subscription.cancel(done);
+            });
+            subscription.on('error', (err) => {
+              assert.ok(/Operation failed: BasicConsume; 404 \(NOT-FOUND\)/.test(err.message), err.message);
+            });
+            subscription.on('cancelled', (err) => {
+              assert.strictEqual(err.message, 'Subscription: s1 was cancelled by the broker');
+              amqputils.createQueue('q1', namespace, (err) => {
+                assert.ifError(err);
+                amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
+              });
+            });
+            subscription.on('subscribed', () => {
+              amqputils.deleteQueue('q1', namespace, (err) => {
+                assert.ifError(err);
+              });
+            });
+          });
+        },
+      );
+    });
+
     it('should report unknown subscriptions', (test, done) => {
       createBroker(
         {
@@ -2131,6 +2172,148 @@ describe(
       );
     });
 
+    it('should limit concurrent messages using channel prefetch', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+              channelPrefetch: 5,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+              const messages = [];
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert(message);
+                  messages.push(ackOrNack);
+                  if (messages.length === 5) {
+                    setTimeout(() => {
+                      assert.strictEqual(messages.length, 5);
+                      subscription.cancel(done);
+                      setTimeout(() => {
+                        messages.forEach((ackOrNack) => ackOrNack());
+                      }, 1);
+                    }, 500);
+                  }
+                });
+              });
+            },
+          );
+        },
+      );
+    });
+
+    it('should limit concurrent messages using dynamic channel prefetch while subscribing', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+              channelPrefetch: 1,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+              const messages = [];
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                subscription.on('message', (message, content, ackOrNack) => {
+                  assert(message);
+                  messages.push(ackOrNack);
+                  if (messages.length === 5) {
+                    setTimeout(() => {
+                      assert.strictEqual(messages.length, 5);
+                      subscription.cancel(done);
+                      setTimeout(() => {
+                        messages.forEach((ackOrNack) => ackOrNack());
+                      }, 1);
+                    }, 500);
+                  }
+                  subscription.setChannelPrefetch(5, (err) => {
+                    assert.ifError(err);
+                  });
+                });
+              });
+            },
+          );
+        },
+      );
+    });
+
+    it('should limit concurrent messages using dynamic channel prefetch before subscription starts', (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions: {
+            s1: {
+              vhost: '/',
+              queue: 'q1',
+              channelPrefetch: 1,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          async.times(
+            10,
+            (index, next) => {
+              broker.publish('p1', 'test message', next);
+            },
+            (err) => {
+              assert.ifError(err);
+              const messages = [];
+              broker.subscribe('s1', (err, subscription) => {
+                assert.ifError(err);
+                subscription.setChannelPrefetch(5, (err) => {
+                  assert.ifError(err);
+
+                  subscription.on('message', (message, content, ackOrNack) => {
+                    assert(message);
+                    messages.push(ackOrNack);
+                    if (messages.length === 5) {
+                      setTimeout(() => {
+                        assert.strictEqual(messages.length, 5);
+                        subscription.cancel(done);
+                        setTimeout(() => {
+                          messages.forEach((ackOrNack) => ackOrNack());
+                        }, 1);
+                      }, 500);
+                    }
+                  });
+                });
+              });
+            },
+          );
+        },
+      );
+    });
+
     it('should emit channel errors', (test, done) => {
       createBroker(
         {
@@ -2548,189 +2731,6 @@ describe(
               });
             });
           });
-        },
-      );
-    });
-
-    it('should resubscribe following a broker cancellation', (test, done) => {
-      createBroker(
-        {
-          vhosts,
-          publications,
-          subscriptions: {
-            s1: {
-              vhost: '/',
-              queue: 'q1',
-            },
-          },
-        },
-        (err, broker) => {
-          assert.ifError(err);
-          broker.subscribe('s1', (err, subscription) => {
-            assert.ifError(err);
-            subscription.on('message', (message, content, ackOrNack) => {
-              assert.strictEqual(content.toString(), 'ok');
-              ackOrNack();
-              subscription.cancel(done);
-            });
-            subscription.on('error', (err) => {
-              assert.ok(/Operation failed: BasicConsume; 404 \(NOT-FOUND\)/.test(err.message), err.message);
-            });
-            subscription.on('cancelled', (err) => {
-              assert.strictEqual(err.message, 'Subscription: s1 was cancelled by the broker');
-              amqputils.createQueue('q1', namespace, (err) => {
-                assert.ifError(err);
-                amqputils.publishMessageToQueue('q1', namespace, 'ok', {});
-              });
-            });
-            subscription.on('subscribed', () => {
-              amqputils.deleteQueue('q1', namespace, (err) => {
-                assert.ifError(err);
-              });
-            });
-          });
-        },
-      );
-    });
-
-    it('should limit concurrent messages using channel prefetch', (test, done) => {
-      createBroker(
-        {
-          vhosts,
-          publications,
-          subscriptions: {
-            s1: {
-              vhost: '/',
-              queue: 'q1',
-              channelPrefetch: 5,
-            },
-          },
-        },
-        (err, broker) => {
-          assert.ifError(err);
-          async.times(
-            10,
-            (index, next) => {
-              broker.publish('p1', 'test message', next);
-            },
-            (err) => {
-              assert.ifError(err);
-              const messages = [];
-              broker.subscribe('s1', (err, subscription) => {
-                assert.ifError(err);
-                subscription.on('message', (message, content, ackOrNack) => {
-                  assert(message);
-                  messages.push(ackOrNack);
-                  if (messages.length === 5) {
-                    setTimeout(() => {
-                      assert.strictEqual(messages.length, 5);
-                      subscription.cancel(done);
-                      setTimeout(() => {
-                        messages.forEach((ackOrNack) => ackOrNack());
-                      }, 1);
-                    }, 500);
-                  }
-                });
-              });
-            },
-          );
-        },
-      );
-    });
-
-    it('should limit concurrent messages using dynamic channel prefetch while subscribing', (test, done) => {
-      createBroker(
-        {
-          vhosts,
-          publications,
-          subscriptions: {
-            s1: {
-              vhost: '/',
-              queue: 'q1',
-              channelPrefetch: 1,
-            },
-          },
-        },
-        (err, broker) => {
-          assert.ifError(err);
-          async.times(
-            10,
-            (index, next) => {
-              broker.publish('p1', 'test message', next);
-            },
-            (err) => {
-              assert.ifError(err);
-              const messages = [];
-              broker.subscribe('s1', (err, subscription) => {
-                assert.ifError(err);
-                subscription.on('message', (message, content, ackOrNack) => {
-                  assert(message);
-                  messages.push(ackOrNack);
-                  if (messages.length === 5) {
-                    setTimeout(() => {
-                      assert.strictEqual(messages.length, 5);
-                      subscription.cancel(done);
-                      setTimeout(() => {
-                        messages.forEach((ackOrNack) => ackOrNack());
-                      }, 1);
-                    }, 500);
-                  }
-                  subscription.setChannelPrefetch(5, (err) => {
-                    assert.ifError(err);
-                  });
-                });
-              });
-            },
-          );
-        },
-      );
-    });
-
-    it('should limit concurrent messages using dynamic channel prefetch before subscription starts', (test, done) => {
-      createBroker(
-        {
-          vhosts,
-          publications,
-          subscriptions: {
-            s1: {
-              vhost: '/',
-              queue: 'q1',
-              channelPrefetch: 1,
-            },
-          },
-        },
-        (err, broker) => {
-          assert.ifError(err);
-          async.times(
-            10,
-            (index, next) => {
-              broker.publish('p1', 'test message', next);
-            },
-            (err) => {
-              assert.ifError(err);
-              const messages = [];
-              broker.subscribe('s1', (err, subscription) => {
-                assert.ifError(err);
-                subscription.setChannelPrefetch(5, (err) => {
-                  assert.ifError(err);
-
-                  subscription.on('message', (message, content, ackOrNack) => {
-                    assert(message);
-                    messages.push(ackOrNack);
-                    if (messages.length === 5) {
-                      setTimeout(() => {
-                        assert.strictEqual(messages.length, 5);
-                        subscription.cancel(done);
-                        setTimeout(() => {
-                          messages.forEach((ackOrNack) => ackOrNack());
-                        }, 1);
-                      }, 500);
-                    }
-                  });
-                });
-              });
-            },
-          );
         },
       );
     });
