@@ -1,5 +1,9 @@
 # Change Log
 
+## 17.0.1
+
+- Rework the republish and forward recovery strategies to remove remote chance of repeat ack/nack
+
 ## 17.0.0
 
 - Updated the configuration processing as per https://github.com/guidesmiths/rascal/issues/219
