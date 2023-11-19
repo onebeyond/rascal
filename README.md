@@ -4,9 +4,9 @@ Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
 [![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
-[![Node.js CI](https://github.com/guidesmiths/rascal/workflows/Node.js%20CI/badge.svg)](https://github.com/guidesmiths/rascal/actions?query=workflow%3A%22Node.js+CI%22)
-[![Code Climate](https://codeclimate.com/github/guidesmiths/rascal/badges/gpa.svg)](https://codeclimate.com/github/guidesmiths/rascal)
-[![Test Coverage](https://codeclimate.com/github/guidesmiths/rascal/badges/coverage.svg)](https://codeclimate.com/github/guidesmiths/rascal/coverage)
+[![Node.js CI](https://github.com/onebeyond/rascal/workflows/Node.js%20CI/badge.svg)](https://github.com/onebeyond/rascal/actions?query=workflow%3A%22Node.js+CI%22)
+[![Code Climate](https://codeclimate.com/github/onebeyond/rascal/badges/gpa.svg)](https://codeclimate.com/github/onebeyond/rascal)
+[![Test Coverage](https://codeclimate.com/github/onebeyond/rascal/badges/coverage.svg)](https://codeclimate.com/github/onebeyond/rascal/coverage)
 [![rascal](https://snyk.io/advisor/npm-package/rascal/badge.svg)](https://snyk.io/advisor/npm-package/rascal)
 [![Discover zUnit](https://img.shields.io/badge/Discover-zUnit-brightgreen)](https://www.npmjs.com/package/zunit)
 
@@ -53,7 +53,7 @@ Rascal@14 waits for inflight messages to be acknowledged before closing subscrib
 
 ### Special Note
 
-RabbitMQ 3.8.0 introduced [quorum queues](https://www.rabbitmq.com/quorum-queues.html). Although quorum queues may not be suitable in all situations, they provide [poison message handling](https://www.rabbitmq.com/quorum-queues.html#poison-message-handling) without the need for an external [redelivery counter](https://github.com/guidesmiths/rascal#dealing-with-redeliveries) and offer better data safety in the event of a network partition. You can read more about them [here](https://www.cloudamqp.com/blog/reasons-you-should-switch-to-quorum-queues.html) and [here](https://blog.rabbitmq.com/posts/2020/06/quorum-queues-local-delivery).
+RabbitMQ 3.8.0 introduced [quorum queues](https://www.rabbitmq.com/quorum-queues.html). Although quorum queues may not be suitable in all situations, they provide [poison message handling](https://www.rabbitmq.com/quorum-queues.html#poison-message-handling) without the need for an external [redelivery counter](https://github.com/onebeyond/rascal#dealing-with-redeliveries) and offer better data safety in the event of a network partition. You can read more about them [here](https://www.cloudamqp.com/blog/reasons-you-should-switch-to-quorum-queues.html) and [here](https://blog.rabbitmq.com/posts/2020/06/quorum-queues-local-delivery).
 
 ## Examples
 
@@ -116,7 +116,7 @@ Broker.create(config, (err, broker) => {
 });
 ```
 
-See [here](https://github.com/guidesmiths/rascal/tree/master/examples) for more examples.
+See [here](https://github.com/onebeyond/rascal/tree/master/examples) for more examples.
 
 ## Avoiding Potential Message Loss
 
@@ -1401,7 +1401,7 @@ Rascal provides three counter implementations:
 2. inMemory - useful only for testing since if your node process crashes, the counter will be vaporised too
 3. inMemoryCluster - like the inMemory, but since the counter resides in the master it survives worker crashes.
 
-Of the three only inMemoryCluster is useful in production, and then only if you are using [clustering](https://nodejs.org/api/cluster.html). See the [advanced example](https://github.com/guidesmiths/rascal/tree/master/examples/advanced) for how to configure it.
+Of the three only inMemoryCluster is useful in production, and then only if you are using [clustering](https://nodejs.org/api/cluster.html). See the [advanced example](https://github.com/onebeyond/rascal/tree/master/examples/advanced) for how to configure it.
 
 #### Implementing your own counter
 

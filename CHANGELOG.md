@@ -1,16 +1,20 @@
 # Change Log
 
+## 17.0.2
+
+- Update guidesmiths references to onebeyond.
+
 ## 17.0.1
 
 - Rework the republish and forward recovery strategies to remove remote chance of repeat ack/nack
 
 ## 17.0.0
 
-- Updated the configuration processing as per https://github.com/guidesmiths/rascal/issues/219
+- Updated the configuration processing as per https://github.com/onebeyond/rascal/issues/219
 - Test on Node 20
 - Abandon dependabot (too noisy)
 - Bump deps
-- Add support for channel level prefetch as per https://github.com/guidesmiths/rascal/issues/221
+- Add support for channel level prefetch as per https://github.com/onebeyond/rascal/issues/221
 - Dropped prettier (it does nothing of the sort!)
 
 ## 16.3.0
@@ -45,7 +49,7 @@
 
 ## 15.0.1
 
-- Fix MaxListenersExceeded warning when there are more than 10 vhosts - See https://github.com/guidesmiths/rascal/issues/206
+- Fix MaxListenersExceeded warning when there are more than 10 vhosts - See https://github.com/onebeyond/rascal/issues/206
 
 ## 15.0.0
 
@@ -54,11 +58,11 @@
 
 ## 14.4.5
 
-- Fixed issue where a partial password could be logged in debug - See https://github.com/guidesmiths/rascal/issues/200 - thanks @matt1097
+- Fixed issue where a partial password could be logged in debug - See https://github.com/onebeyond/rascal/issues/200 - thanks @matt1097
 
 ## 14.4.4
 
-- Fixed issue where channels were not returned to the pool after publishing a large messag - See https://github.com/guidesmiths/rascal/issues/199
+- Fixed issue where channels were not returned to the pool after publishing a large messag - See https://github.com/onebeyond/rascal/issues/199
 
 ## 14.4.3
 
@@ -81,15 +85,15 @@
 ## 14.4.1
 
 - Bump dependencies / fix audit warnings
-- Fix busy publisher example to consistenly use regular channels - See https://github.com/guidesmiths/rascal/issues/194
+- Fix busy publisher example to consistenly use regular channels - See https://github.com/onebeyond/rascal/issues/194
 
 ## 14.4.0
 
-- Report validation error when no vhosts are specified - See https://github.com/guidesmiths/rascal/issues/181
+- Report validation error when no vhosts are specified - See https://github.com/onebeyond/rascal/issues/181
 
 ## 14.3.0
 
-- Clone config instead of freezing it so buffers will work - See https://github.com/guidesmiths/rascal/issues/92
+- Clone config instead of freezing it so buffers will work - See https://github.com/onebeyond/rascal/issues/92
 
 ## 14.2.1
 
@@ -97,15 +101,15 @@
 
 ## 14.2.0
 
-- Add json schema (lib/config/schema.json) - See https://github.com/guidesmiths/rascal/issues/168
+- Add json schema (lib/config/schema.json) - See https://github.com/onebeyond/rascal/issues/168
 
 ## 14.1.0
 
-- Adds support for custom user agents - See https://github.com/guidesmiths/rascal/issues/170
+- Adds support for custom user agents - See https://github.com/onebeyond/rascal/issues/170
 
 ## 14.0.1
 
-- Fixes https://github.com/guidesmiths/rascal/issues/178
+- Fixes https://github.com/onebeyond/rascal/issues/178
 
 ## 14.0.0
 
@@ -126,15 +130,15 @@
 
 ## 13.1.2
 
-- Fixed various issues when queue names contained period characters. Reported in https://github.com/guidesmiths/rascal/issues/166
+- Fixed various issues when queue names contained period characters. Reported in https://github.com/onebeyond/rascal/issues/166
 
 ## 13.1.1
 
-- Moved setMaxListeners to createConnection task to suppress misleading 'Possible EventEmitter memory leak detected' warning. See https://github.com/guidesmiths/rascal/issues/164 for more details.
+- Moved setMaxListeners to createConnection task to suppress misleading 'Possible EventEmitter memory leak detected' warning. See https://github.com/onebeyond/rascal/issues/164 for more details.
 
 ## 13.1.0
 
-- Fixed bug where Rascal could wait indefinitely for channels to be destroyed if shutdown was called following a heartbeat timeout. See https://github.com/guidesmiths/rascal/issues/158 for more details.
+- Fixed bug where Rascal could wait indefinitely for channels to be destroyed if shutdown was called following a heartbeat timeout. See https://github.com/onebeyond/rascal/issues/158 for more details.
 
 ## 13.0.6
 
@@ -147,7 +151,7 @@
 
 ## 13.0.4
 
-- Fixed https://github.com/guidesmiths/rascal/issues/156
+- Fixed https://github.com/onebeyond/rascal/issues/156
 
 ## 13.0.3
 
@@ -155,7 +159,7 @@
 
 ## 13.0.2
 
-- Fixed https://github.com/guidesmiths/rascal/issues/150
+- Fixed https://github.com/onebeyond/rascal/issues/150
 
 ## 13.0.1
 
@@ -175,7 +179,7 @@
 
 ## 12.0.3
 
-- Fix https://github.com/guidesmiths/rascal/issues/141
+- Fix https://github.com/onebeyond/rascal/issues/141
 - Fix error message typos
 - Bump lodash
 
@@ -186,7 +190,7 @@
 ## 12.0.1
 
 - Moved from travis to github actions
-- Fix broker waiting indefinitely when shutdown is called after losing a connection. See [#126](https://github.com/guidesmiths/rascal/issues/126)
+- Fix broker waiting indefinitely when shutdown is called after losing a connection. See [#126](https://github.com/onebeyond/rascal/issues/126)
 
 ## 12.0.0
 
@@ -214,29 +218,29 @@
 
 ### Updated
 
-- Improved readme as per issue [#111](https://github.com/guidesmiths/rascal/issues/111)
+- Improved readme as per issue [#111](https://github.com/onebeyond/rascal/issues/111)
 
 ### Fixed
 
-- Fixed issue [#123](https://github.com/guidesmiths/rascal/issues/123), where a race condition was causing channels to be closed twice. Thanks @cinnq346.
+- Fixed issue [#123](https://github.com/onebeyond/rascal/issues/123), where a race condition was causing channels to be closed twice. Thanks @cinnq346.
 
 ## 10.2.4
 
 ### Fixed
 
-- Fixed issue [#122](https://github.com/guidesmiths/rascal/issues/122), where error listeners were registered once, so repeated errors could bubble up and crash node
+- Fixed issue [#122](https://github.com/onebeyond/rascal/issues/122), where error listeners were registered once, so repeated errors could bubble up and crash node
 
 ## 10.2.3
 
 ### Fixed
 
-- Fixed second part of issue [#121](https://github.com/guidesmiths/rascal/issues/121), where the generic-pool could cause tight loops and memory leaks
+- Fixed second part of issue [#121](https://github.com/onebeyond/rascal/issues/121), where the generic-pool could cause tight loops and memory leaks
 
 ## 10.2.2
 
 ### Fixed
 
-- Fixed issue [#121](https://github.com/guidesmiths/rascal/issues/121), which caused rascals connection index to permanently increment rather than cycling back to 0. Consequently if all nodes in a cluster failed, Rascal could crash the application.
+- Fixed issue [#121](https://github.com/onebeyond/rascal/issues/121), which caused rascals connection index to permanently increment rather than cycling back to 0. Consequently if all nodes in a cluster failed, Rascal could crash the application.
 
 ## 10.2.1
 
@@ -265,7 +269,7 @@
 
 ### Updated
 
-- Set vhost max event listeners to inifinity (see https://github.com/guidesmiths/rascal/issues/99)
+- Set vhost max event listeners to inifinity (see https://github.com/onebeyond/rascal/issues/99)
 
 ## 10.0.0
 
@@ -289,13 +293,13 @@
 
 ### Updated
 
-- [Fixed #78](https://github.com/guidesmiths/rascal/issues/78) by using a baseline config, and only laying connection options via withDefaultConfig
+- [Fixed #78](https://github.com/onebeyond/rascal/issues/78) by using a baseline config, and only laying connection options via withDefaultConfig
 
 ## 9.2.0
 
 ### Added
 
-- [Fixed #93](https://github.com/guidesmiths/rascal/issues/93) through use of setInterval to keep node process active in the event of broker restart.
+- [Fixed #93](https://github.com/onebeyond/rascal/issues/93) through use of setInterval to keep node process active in the event of broker restart.
 
 ### Updated
 
@@ -347,8 +351,8 @@
 
 ### Updated
 
-- Fixed [#86](https://github.com/guidesmiths/rascal/issues/85)
-- Fixed [#84](https://github.com/guidesmiths/rascal/issues/84). Thanks @huikaihoo
+- Fixed [#86](https://github.com/onebeyond/rascal/issues/85)
+- Fixed [#84](https://github.com/onebeyond/rascal/issues/84). Thanks @huikaihoo
 
 ### Added
 
@@ -358,14 +362,14 @@
 
 ### Updated
 
-- emit error when publishFn err Channel closed as oer https://github.com/guidesmiths/rascal/pull/81. Thanks @zijin-m
+- emit error when publishFn err Channel closed as oer https://github.com/onebeyond/rascal/pull/81. Thanks @zijin-m
 
 ## 8.0.0
 
 ### Updated
 
 - Drop support for Node 6
-- Updated dependencies as per https://github.com/guidesmiths/rascal/pull/75. Thanks @ravihara
+- Updated dependencies as per https://github.com/onebeyond/rascal/pull/75. Thanks @ravihara
 
 ## 7.0.0
 
@@ -378,7 +382,7 @@
 
 ### Fixed
 
-- Fixed [#72](https://github.com/guidesmiths/rascal/issues/72) which meant published messages waiting for a channel would be lost on connection error
+- Fixed [#72](https://github.com/onebeyond/rascal/issues/72) which meant published messages waiting for a channel would be lost on connection error
 
 ## 6.0.2
 
@@ -392,7 +396,7 @@
 
 ## 6.0.0
 
-- Improved channel pool management (includes a breaking config change - see https://github.com/guidesmiths/rascal#channel-pooling).
+- Improved channel pool management (includes a breaking config change - see https://github.com/onebeyond/rascal#channel-pooling).
 
 ## 5.1.0
 
@@ -585,7 +589,7 @@
 ### Updated
 
 - Using lodash defaultsDeep instead of merge-defaults (fixes hoek vulnerability). The behaviour seems consistent but releasing as a breaking change as a precaution.
-- Unqualified default publications and subscriptions are no longer supported. See https://github.com/guidesmiths/rascal/issues/20
+- Unqualified default publications and subscriptions are no longer supported. See https://github.com/onebeyond/rascal/issues/20
 - Testing on node 10
 
 ## 2.12.2
@@ -726,7 +730,7 @@
 
 ### Fixed
 
-- confirmPoolSize option as per https://github.com/guidesmiths/rascal/pull/19
+- confirmPoolSize option as per https://github.com/onebeyond/rascal/pull/19
 
 ## 1.4.0
 
@@ -755,7 +759,7 @@
 
 ### Added
 
-- Workaround for https://github.com/guidesmiths/rascal/issues/17
+- Workaround for https://github.com/onebeyond/rascal/issues/17
 
 ## 1.1.0
 

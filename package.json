@@ -59,12 +59,12 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/guidesmiths/rascal.git"
+    "url": "https://github.com/onebeyond/rascal.git"
   },
   "bugs": {
-    "url": "https://github.com/guidesmiths/rascal/issues"
+    "url": "https://github.com/onebeyond/rascal/issues"
   },
-  "homepage": "https://guidesmiths.github.io/rascal/",
+  "homepage": "https://onebeyond.github.io/rascal/",
   "author": "Stephen Cresswell",
   "license": "MIT",
   "zUnit": {
