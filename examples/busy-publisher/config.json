@@ -28,11 +28,6 @@
             "persistent": false
           }
         }
-      },
-      "subscriptions": {
-        "demo_sub": {
-          "queue": "demo_q"
-        }
       }
     }
   }
