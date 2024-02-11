@@ -233,7 +233,7 @@ describe('Configuration', () => {
 
       it('should randomise the order of connections, but maintain order across vhosts by host', () => {
         const results = [];
-        for (let i = 0; i < 10; i++) {
+        for (let i = 0; i < 100; i++) {
           configure(
             {
               vhosts: {
@@ -336,7 +336,7 @@ describe('Configuration', () => {
             },
           );
         }
-        assert.ok(_.uniq(results).length > 1);
+        assert.ok(_.uniq(results).length > 10);
       });
 
       it('should honour the order of connections with fixed connection strategy', () => {

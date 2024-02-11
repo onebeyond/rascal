@@ -5,6 +5,7 @@
 - Update guidesmiths references to onebeyond.
 - Dedupe channel poole ready check
 - Remove unnecessary subscription config from busy publisher example
+- Fixed bug where hostname connection order was not properly randomised
 
 ## 17.0.1
 
