@@ -1,13 +1,10 @@
 # Change Log
 
-## 17.0.3
-
-- Dedupe channel poole ready check
-- Remove unnecessary subscription config from busy publisher example
-
 ## 17.0.2
 
 - Update guidesmiths references to onebeyond.
+- Dedupe channel poole ready check
+- Remove unnecessary subscription config from busy publisher example
 
 ## 17.0.1
 
