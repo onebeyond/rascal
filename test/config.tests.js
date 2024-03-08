@@ -80,6 +80,23 @@ describe('Configuration', () => {
         );
       });
 
+      it('should support encoded urls', () => {
+        // See https://www.rabbitmq.com/docs/uri-spec#appendix-a-examples
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: 'amqp://encoded%23user:encoded%23password@ho%61stname:9000/v%2fhost?heartbeat=10&channelMax=100',
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://encoded%23user:encoded%23password@hoastname:9000/v/host?heartbeat=10&channelMax=100');
+          },
+        );
+      });
+
       it('should report invalid urls', () => {
         configure(
           {
