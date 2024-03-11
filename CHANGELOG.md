@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 18.0.0
 
 - Fixes https://github.com/onebeyond/rascal/issues/227 by requiring special characters to be URL encoded.
 - Consolidated broker and management url configuration logic
