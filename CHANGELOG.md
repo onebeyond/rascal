@@ -1,5 +1,10 @@
 # Change Log
 
+## Unreleased
+
+- Fixes https://github.com/onebeyond/rascal/issues/227 by requiring special characters to be URL encoded.
+- Consolidated broker and management url configuration logic
+
 ## 17.0.2
 
 - Update guidesmiths references to onebeyond.

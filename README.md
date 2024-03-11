@@ -47,9 +47,9 @@ Rascal extends the existing [RabbitMQ Concepts](https://www.rabbitmq.com/tutoria
 
 A **publication** is a named configuration for publishing a message, including the destination queue or exchange, routing configuration, encryption profile and reliability guarantees, message options, etc. A **subscription** is a named configuration for consuming messages, including the source queue, encryption profile, content encoding, delivery options (e.g. acknowledgement handling and prefetch), etc. These must be [configured](#configuration) and supplied when creating the Rascal broker. After the broker has been created the subscriptions and publications can be retrieved from the broker and used to publish and consume messages.
 
-### Breaking Changes in Rascal@14
+### Breaking Changes
 
-Rascal@14 waits for inflight messages to be acknowledged before closing subscriber channels. Prior to this version Rascal just waited an arbitrary amount of time. If your application does not acknowledge a message for some reason (quite likely in tests) calling `subscription.cancel`, `broker.unsubscribeAll`, `broker.bounce`, `broker.shutdown` or `broker.nuke` will wait indefinitely. You can specify a `closeTimeout` in your subscription config, however if this is exceeded the `subscription.cancel` and `broker.unsubscribeAll` methods will yield an error via callback or rejection, while the `broker.bounce`, `broker.shutdown` and `broker.nuke` methods will emit an error event, but attempt to continue. In both cases the error will have a code of `ETIMEDOUT`.
+Please refer to the [Change Log](https://github.com/onebeyond/rascal/blob/master/CHANGELOG.md)
 
 ### Special Note
 
@@ -318,6 +318,7 @@ The simplest way to specify a connection is with a url
   }
 }
 ```
+As of Rascal v18.0.0 you must URL encode special characters appearing in the username, password and vhost, e.g. `amqp://guest:secr%23t@broker.example.com:5672/v1?heartbeat=10`
 
 Alternatively you can specify the individual connection details
 
@@ -344,6 +345,8 @@ Alternatively you can specify the individual connection details
   }
 }
 ```
+
+Special characters do not need to be encoded when specified in this form.
 
 Any attributes you add to the "options" sub document will be converted to query parameters. Any attributes you add in the "socketOptions" sub document will be passed directly to amqplib's connect method (which hands them off to `net` or `tls`. Providing you merge your configuration with the default configuration `rascal.withDefaultConfig(config)` you need only specify the attributes you want to override
 
@@ -459,7 +462,7 @@ The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal use
 }
 ```
 
-Rascal uses [superagent](https://github.com/visionmedia/superagent) under the hood. URL configuration is supported.
+Rascal uses [superagent](https://github.com/visionmedia/superagent) under the hood. URL configuration is also supported.
 
 ```json
 {

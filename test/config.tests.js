@@ -86,13 +86,42 @@ describe('Configuration', () => {
           {
             vhosts: {
               v1: {
-                connection: 'amqp://encoded%23user:encoded%23password@ho%61stname:9000/v%2fhost?heartbeat=10&channelMax=100',
+                connection: 'amqp://encoded%2523user:encoded%23password@h%6fstname:9000/v%2fhost?heart%26beat=10&channelMax=100%3F',
               },
             },
           },
           (err, config) => {
             assert.ifError(err);
-            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://encoded%23user:encoded%23password@hoastname:9000/v/host?heartbeat=10&channelMax=100');
+            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://encoded%2523user:encoded%23password@hostname:9000/v/host?heart%26beat=10&channelMax=100%3F');
+          },
+        );
+      });
+
+      it('should encode params', () => {
+        // See https://www.rabbitmq.com/docs/uri-spec#appendix-a-examples
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: {
+                  slashes: true,
+                  protocol: 'amqp',
+                  hostname: 'hostname',
+                  port: 9000,
+                  vhost: 'v/host',
+                  user: 'encoded%23user',
+                  password: 'encoded#password',
+                  options: {
+                    'heart&beat': 10,
+                    channelMax: '100?',
+                  },
+                },
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].url, 'amqp://encoded%2523user:encoded%23password@hostname:9000/v/host?heart%26beat=10&channelMax=100%3F');
           },
         );
       });
@@ -481,6 +510,62 @@ describe('Configuration', () => {
         );
       });
 
+      it('should configure the management url from the connection url', () => {
+        // See https://www.rabbitmq.com/docs/uri-spec#appendix-a-examples
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: 'amqp://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100',
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'http://user:password@hostname:15672');
+          },
+        );
+      });
+
+      it('should configure the management connection from the management url', () => {
+        // See https://www.rabbitmq.com/docs/uri-spec#appendix-a-examples
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: {
+                  url: 'amqp://user:password@hostname:9000/vhost?heartbeat=10&channelMax=100',
+                  management: 'https://user1:password1@hostname1:9001',
+                },
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'https://user1:password1@hostname1:9001');
+          },
+        );
+      });
+
+      it('should support encoded management urls', () => {
+        // See https://www.rabbitmq.com/docs/uri-spec#appendix-a-examples
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: {
+                  management: 'https://encoded%2523user:encoded%23password@h%6Fstname:9001',
+                },
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'https://encoded%2523user:encoded%23password@hostname:9001');
+          },
+        );
+      });
+
       it('should configure the management connection from an object', () => {
         configure(
           {
@@ -549,6 +634,24 @@ describe('Configuration', () => {
           (err, config) => {
             assert.ifError(err);
             assert.strictEqual(config.vhosts.v1.connections[0].management.url, 'https://user:password@hostname:9999');
+          },
+        );
+      });
+
+      it('should fully obscure the password in the management loggable url (a)', () => {
+        configure(
+          {
+            vhosts: {
+              v1: {
+                connection: {
+                  management: 'http://user:badp@assword@hostname',
+                },
+              },
+            },
+          },
+          (err, config) => {
+            assert.ifError(err);
+            assert.strictEqual(config.vhosts.v1.connections[0].management.loggableUrl, 'http://user:***@hostname');
           },
         );
       });
