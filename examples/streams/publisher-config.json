@@ -1,0 +1,37 @@
+{
+  "$schema": "../../lib/config/schema.json",
+  "vhosts": {
+    "/": {
+      "publicationChannelPools": {
+        "regularPool": {
+          "max": 10,
+          "min": 10,
+          "evictionRunIntervalMillis": 1000,
+          "idleTimeoutMillis": 5000,
+          "autostart": true
+        }
+      },
+      "connection": {
+        "socketOptions": {
+          "timeout": 1000
+        }
+      },
+      "queues": {
+        "demo_stream": {
+          "options": {
+            "arguments": {
+              "x-queue-type": "stream",
+              "x-max-length-bytes": 10485760
+            }
+          }
+        }
+      },
+      "publications": {
+        "demo_pub": {
+          "queue": "demo_stream",
+          "confirm": false
+        }
+      }
+    }
+  }
+}

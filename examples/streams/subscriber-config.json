@@ -1,0 +1,28 @@
+{
+  "$schema": "../../lib/config/schema.json",
+  "vhosts": {
+    "/": {
+      "connection": {
+        "socketOptions": {
+          "timeout": 1000
+        }
+      },
+      "queues": {
+        "demo_stream": {
+          "options": {
+            "arguments": {
+              "x-queue-type": "stream",
+              "x-max-length-bytes": 10485760
+            }
+          }
+        }
+      },
+      "subscriptions": {
+        "demo_sub": {
+          "queue": "demo_stream",
+          "prefetch": 250
+        }
+      }
+    }
+  }
+}

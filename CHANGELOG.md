@@ -1,5 +1,9 @@
 # Change Log
 
+## Unreleased
+
+- Add streams example
+
 ## 18.0.0
 
 - Fixes https://github.com/onebeyond/rascal/issues/227 by requiring special characters to be URL encoded.
