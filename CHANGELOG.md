@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- Removed console.log when the channel pool destroyed a channel
 - Add streams example
 
 ## 18.0.0
