@@ -793,7 +793,6 @@ You also need to think about how you will [track the consumer offset](https://ww
   const subscription = await broker.subscribe('/my-queue', overrides);
 
   subscription.on('message', async (message, content, ackOrNack) => {
-    if (message === null) return;
     const currentOffset = message.properties.headers['x-stream-offset'];
     try {
       await handleMessage(content);

@@ -18,7 +18,6 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config), (err, broker) => {
   broker.subscribe('demo_sub', overrides, (err, subscription) => {
     if (err) throw err;
     subscription.on('message', (message, content, ackOrNack) => {
-      if (message === null) return console.log('Received null message');
       console.log(`Received message: ${message.properties.headers['x-stream-offset']}`)
       ackOrNack();
     });
