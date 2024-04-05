@@ -753,6 +753,63 @@ To define a queue with extensions such as `x-queue-type` add arguments to the op
 
 Refer to the [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html) documentation for further queue options.
 
+#### streams
+
+Rascal supports [RabbitMQ Streams](https://www.rabbitmq.com/docs/streams) via x-queue-type argument, i.e.
+
+```json
+{
+  "queues": {
+    "q1": {
+      "options": {
+        "arguments": {
+          "x-queue-type": "stream"
+        }
+      }
+    }
+  }
+}
+```
+
+The [Stream Plugin](https://www.rabbitmq.com/docs/stream) and associated binary protocol extension are not supported.
+
+Streams are **not** a replacement for regular messaging - instead they are best suited for when you can tolerate occasional message loss and need for higher throughput, such as sampling web based analytics.
+
+When working with streams you need to think carefully about [data retention](https://www.rabbitmq.com/docs/streams#retention). Unless you specify retention configuration, messages will never be deleted and eventually you will run out of space. Conversely, if you automatically delete messages based on queue size or age, they may be lost without ever being read.
+
+You also need to think about how you will [track the consumer offset](https://www.rabbitmq.com/blog/2021/09/13/rabbitmq-streams-offset-tracking). Typically you will need to store this in a database after successfully processing the message and use it to tell the broker where to resume from after your application restarts. For example...
+
+```js
+  const initialOffset = (await loadOffset('/my-queue')) || 'first';
+
+  const overrides = {
+    options: {
+      arguments: {
+        'x-stream-offset': initialOffset
+      }
+    }
+  };
+
+  const subscription = await broker.subscribe('/my-queue', overrides);
+
+  subscription.on('message', async (message, content, ackOrNack) => {
+    if (message === null) return;
+    const currentOffset = message.properties.headers['x-stream-offset'];
+    try {
+      await handleMessage(content);
+      await updateOffset('/my-queue', currentOffset);
+      ackOrNack();
+    } catch (err) {
+      await handleError('/my-queue', currentOffset);
+      ackOrNack(err);
+    }
+  });
+```
+
+However, if your application is offline for too long, and messages are still being published to the stream, it may not be able to resume from where you left off, since those messages may have been deleted. Furthremore, if your application consumes  messages concurrently, you need to think about how you will recover should one fail. If you naively override the previouly saved offset, you may be replacing a higher/later offset with an lower/older one, causing in your application to restart from the wrong point. Finally, you also need to decide what to do if the message cannot be processed. You cannot simply replay the message since you are working with a stream, rather than a classic queue. You could cancel the subscription and resume from the current offset, but this will lead to duplicates if you have been consuming messages concurrently. Alternatively you could republish the failures to a dead letter queue and process them separately.
+
+For the above reasons, we only recommend considering streams when you genuinely need the extra throughput.
+
 #### bindings
 
 You can bind exchanges to exchanges, or exchanges to queues.
