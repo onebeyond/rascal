@@ -798,10 +798,10 @@ You also need to think about how you will [track the consumer offset](https://ww
     try {
       await handleMessage(content);
       await updateOffset('/my-queue', currentOffset);
-      ackOrNack();
     } catch (err) {
-      await handleError('/my-queue', currentOffset);
-      ackOrNack(err);
+      await handleError('/my-queue', currentOffset, err);
+    } finally {
+      ackOrNack(); // Streams do not support nack so do not pass the error argument
     }
   });
 ```
