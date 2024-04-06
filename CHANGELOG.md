@@ -1,6 +1,6 @@
 # Change Log
 
-## Unreleased
+## 18.0.1
 
 - Removed console.log when the channel pool destroyed a channel
 - Add streams example
