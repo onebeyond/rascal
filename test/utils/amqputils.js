@@ -1,5 +1,7 @@
 const assert = require('assert');
 const _ = require('lodash');
+const async = require('async');
+const superagent = require('superagent');
 
 module.exports = {
   init,
@@ -91,6 +93,54 @@ function init(connection) {
     });
   }
 
+  function waitForConnections(next) {
+    let connections = [];
+    let attempts = 0;
+    async.whilst(
+      (cb) => {
+        cb(null, attempts < 100 && connections.length === 0);
+      },
+      (cb) => {
+        setTimeout(() => {
+          attempts++;
+          fetchConnections((err, _connections) => {
+            if (err) return cb(err);
+            connections = _connections;
+            cb(null, connections);
+          });
+        }, 100);
+      },
+      next,
+    );
+  }
+
+  function fetchConnections(next) {
+    superagent
+      .get('http://localhost:15672/api/connections')
+      .auth('guest', 'guest')
+      .end((err, response) => {
+        if (err) return next(err);
+        next(null, response.body);
+      });
+  }
+
+  function closeConnections(connections, reason, next) {
+    async.each(connections, (connection, cb) => {
+      closeConnection(connection.name, reason, cb);
+    }, next);
+  }
+
+  function closeConnection(name, reason, next) {
+    superagent
+      .delete(`http://localhost:15672/api/connections/${name}`)
+      .auth('guest', 'guest')
+      .set('x-reason', reason)
+      .end((err) => {
+        if (err) return next(err);
+        next();
+      });
+  }
+
   return {
     disconnect,
     checkExchange: _.curry(checkExchange),
@@ -106,5 +156,7 @@ function init(connection) {
     assertExchangeAbsent: checkExchange.bind(null, false),
     assertQueuePresent: checkQueue.bind(null, true),
     assertQueueAbsent: checkQueue.bind(null, false),
+    closeConnections,
+    waitForConnections,
   };
 }

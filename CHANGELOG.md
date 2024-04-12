@@ -1,5 +1,12 @@
 # Change Log
 
+## 19.0.0
+- I am not aware of any breaking changes in this release, but emitting error events asynchronously could have subtle side effects, hence the major release
+- Deprecate session 'cancelled' event in favour of 'cancel' (both will work)
+- Refactor reconnection and resubscription code
+- Emit errors asynchronously to prevent them being caught by the amqplib main accept loop
+- Fix bug which throw an exception in the error handler when a close event was emitted with no error argument
+
 ## 18.0.1
 
 - Removed console.log when the channel pool destroyed a channel

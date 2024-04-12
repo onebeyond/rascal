@@ -130,7 +130,9 @@ The reason Rascal nacks the message is because the alternatives are to leave the
 
 ## Very Important Section About Event Handling
 
-[amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. There are four places where you should do this
+[amqplib](https://www.npmjs.com/package/amqplib) emits error events when a connection or channel encounters a problem. Rascal will listen for these and provided you use the default configuration will attempt automatic recovery (reconnection etc), however these events can indicate errors in your code, so it's also important to bring them to your attention. Rascal does this by re-emitting the error event, which means if you don't handle them, they will bubble up to the uncaught error handler and crash your application. It is insufficient to register a global uncaughtException handler - doing so without registering individual handlers will prevent your application from crashing, but also prevent Rascal from recovering.
+
+There are four places where you need to register error handlers.
 
 1. Immediately after obtaining a broker instance
 
@@ -1358,7 +1360,7 @@ If the message has not been auto-acknowledged you should ackOrNack it. **If you 
 
 The RabbitMQ broker may [cancel](https://www.rabbitmq.com/consumer-cancel.html) the consumer if the queue is deleted or the node on which the queue is located fails. [amqplib](https://www.squaremobius.net/amqp.node/channel_api.html#channel_consume) handles this by delivering a `null` message. When Rascal receives the null message it will
 
-1. Emit a `cancelled` event from the subscription.
+1. Emit a `cancel` event from the subscription.
 1. Emit an `error` event from the subscription if the `cancel` event was not handled
 1. Optionally attempt to resubscribe as per normal retry configuration. If the queue was deleted rather than being failed over, the queue will not automatically be re-created and retry attempts will fail indefinitely.
 
