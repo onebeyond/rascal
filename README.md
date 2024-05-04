@@ -489,7 +489,7 @@ Rascal uses [http.request](https://nodejs.org/api/http.html#httprequesturl-optio
 }
 ```
 
-You can also supply your own agent via the broker components. Use this when you need to set TLS options](https://nodejs.org/api/https.html#httpsrequesturl-options-callback).
+You can also supply your own agent via the broker components. Use this when you need to set [TLS options](https://nodejs.org/api/https.html#httpsrequesturl-options-callback).
 
 ```js
 const https = require('https');
