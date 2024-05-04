@@ -12,7 +12,6 @@
     "lru-cache": "^7.10.1",
     "safe-json-parse": "^4.0.0",
     "stashback": "^2.0.1",
-    "superagent": "^8.0.9",
     "uuid": "^8.3.2",
     "xregexp": "^5.1.0"
   },
@@ -27,7 +26,6 @@
     "lint-staged": "^11.2.4",
     "nyc": "^15.1.0",
     "random-readable": "^1.0.1",
-    "superagent-defaults": "^0.1.14",
     "zunit": "^4.0.0"
   },
   "peerDependencies": {

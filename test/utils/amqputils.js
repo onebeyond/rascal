@@ -1,7 +1,7 @@
+const http = require('http');
 const assert = require('assert');
 const _ = require('lodash');
 const async = require('async');
-const superagent = require('superagent');
 
 module.exports = {
   init,
@@ -115,13 +115,14 @@ function init(connection) {
   }
 
   function fetchConnections(next) {
-    superagent
-      .get('http://localhost:15672/api/connections')
-      .auth('guest', 'guest')
-      .end((err, response) => {
-        if (err) return next(err);
-        next(null, response.body);
+    http.get('http://guest:guest@localhost:15672/api/connections', (response) => {
+      let data = '';
+      response.on('data', (chunk) => {
+        data += chunk;
+      }).on('end', () => {
+        next(null, JSON.parse(data));
       });
+    }).on('error', next).end();
   }
 
   function closeConnections(connections, reason, next) {
@@ -131,14 +132,12 @@ function init(connection) {
   }
 
   function closeConnection(name, reason, next) {
-    superagent
-      .delete(`http://localhost:15672/api/connections/${name}`)
-      .auth('guest', 'guest')
-      .set('x-reason', reason)
-      .end((err) => {
-        if (err) return next(err);
-        next();
-      });
+    const headers = {
+      'x-reason': reason,
+    };
+    http.request(`http://guest:guest@localhost:15672/api/connections/${name}`, { method: 'delete', headers }, () => {
+      next();
+    }).on('error', next).end();
   }
 
   return {

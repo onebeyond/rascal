@@ -1,5 +1,8 @@
 # Change Log
 
+## 20.0.0
+- Replaced superagent with native node http client as per https://github.com/onebeyond/rascal/issues/234
+
 ## 19.0.0
 - I am not aware of any breaking changes in this release, but emitting error events asynchronously could have subtle side effects, hence the major release
 - Deprecate session 'cancelled' event in favour of 'cancel' (both will work)

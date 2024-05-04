@@ -1,9 +1,9 @@
+const http = require('http');
 const assert = require('assert');
 const _ = require('lodash');
 const uuid = require('uuid').v4;
 const format = require('util').format;
 const random = require('random-readable');
-const superAgent = require('superagent-defaults');
 const amqplib = require('amqplib/callback_api');
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
@@ -184,20 +184,19 @@ describe(
     });
 
     it('should support custom http agent', (test, done) => {
-      let requestUrl;
-      const customAgent = superAgent().on('request', (req) => {
-        requestUrl = req.url;
-      });
+      const agent = new http.Agent();
+      agent.createConnection = (options, cb) => {
+        cb(new Error('Custom Agent'));
+      };
 
-      const components = { agent: customAgent };
+      const components = { agent };
       const vhostName = uuid();
       const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
       customVhosts[vhostName].assert = true;
 
       const config = _.defaultsDeep({ vhosts: customVhosts }, testConfig);
       createBroker(config, components, (err) => {
-        assert.ifError(err);
-        assert.ok(/api\/vhosts\/.*/.test(requestUrl), requestUrl);
+        assert.strictEqual(err.message, 'Custom Agent');
         done();
       });
     });

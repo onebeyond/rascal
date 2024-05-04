@@ -464,7 +464,7 @@ The AMQP protocol doesn't support assertion or checking of vhosts, so Rascal use
 }
 ```
 
-Rascal uses [superagent](https://github.com/visionmedia/superagent) under the hood. URL configuration is also supported.
+Rascal uses [http.request](https://nodejs.org/api/http.html#httprequesturl-options-callback) under the hood. URL configuration is also supported.
 
 ```json
 {
@@ -489,11 +489,11 @@ Rascal uses [superagent](https://github.com/visionmedia/superagent) under the ho
 }
 ```
 
-You can also supply your own agent via the broker components. Use this when you need to set [TLS options](https://visionmedia.github.io/superagent/#tls-options).
+You can also supply your own agent via the broker components. Use this when you need to set TLS options](https://nodejs.org/api/https.html#httpsrequesturl-options-callback).
 
 ```js
-const superagent = require('superagent-defaults');
-const agent = superagent().on('request', (req) => console.log(req.url));
+const https = require('https');
+const agent = new https.Agent(options);
 const components = { agent };
 const broker = await Broker.create(config, components);
 ```
