@@ -1651,7 +1651,7 @@ describe('Subscriptions', () => {
               count++;
               if (count === 1) {
                 assert.ok(message);
-                ackOrNack(new Error('immediate nack'), {
+                ackOrNack(new Error(`Test Error ${count}`), {
                   strategy: 'republish',
                   immediateNack: true,
                 });
@@ -1739,7 +1739,7 @@ describe('Subscriptions', () => {
               count++;
               if (count <= 2) {
                 assert.ok(message);
-                ackOrNack(new Error(`immediate nack: ${count}`), {
+                ackOrNack(new Error(`Test Error ${count}`), {
                   strategy: 'republish',
                   immediateNack: true,
                 });
@@ -1762,7 +1762,7 @@ describe('Subscriptions', () => {
         });
       },
     );
-  }, { exclusive: true, timeout: 10000 });
+  });
 
   it('should forward messages to publication when requested', (test, done) => {
     createBroker(

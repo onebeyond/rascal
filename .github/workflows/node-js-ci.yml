@@ -13,7 +13,7 @@ jobs:
           - 15672:15672
     strategy:
       matrix:
-        node-version: [14.x]
+        node-version: [14.x, 16.x, 18.x, 20.x]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
@@ -30,7 +30,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       rabbitmq:
-        image: rabbitmq:3-management-alpine
+        image: rabbitmq:3.13.2-management-alpine
         ports:
           - 5672:5672
           - 15672:15672

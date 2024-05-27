@@ -1096,7 +1096,7 @@ describe('Subscriptions As Promised', () => {
           subscription.on('message', (message, content, ackOrNack) => {
             assert.strictEqual(++count, 1);
             assert.ok(message);
-            ackOrNack(new Error('immediate nack'), { strategy: 'republish', immediateNack: true });
+            ackOrNack(new Error(`Test Error ${count}`), { strategy: 'republish', immediateNack: true });
           });
         });
 
@@ -1167,7 +1167,7 @@ describe('Subscriptions As Promised', () => {
             count++;
             if (count === 1) {
               assert.ok(message);
-              ackOrNack(new Error('immediate nack'), {
+              ackOrNack(new Error(`Test Error ${count}`), {
                 strategy: 'republish',
                 immediateNack: true,
               });
