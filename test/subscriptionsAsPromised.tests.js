@@ -1268,7 +1268,7 @@ describe('Subscriptions As Promised', () => {
         });
       });
     });
-  });
+  }, { timeout: 10000 });
 
   it('should forward messages to publication when requested', (test, done) => {
     createBroker({

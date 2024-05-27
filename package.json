@@ -40,7 +40,7 @@
     "lint:fix": "eslint --fix .",
     "lint-staged": "lint-staged",
     "coverage": "nyc --report html --reporter lcov --reporter text-summary zUnit",
-    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management",
+    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3-management-alpine",
     "prepare": "husky install"
   },
   "lint-staged": {
