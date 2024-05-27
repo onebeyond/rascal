@@ -1739,7 +1739,7 @@ describe('Subscriptions', () => {
               count++;
               if (count <= 2) {
                 assert.ok(message);
-                ackOrNack(new Error('immediate nack'), {
+                ackOrNack(new Error(`immediate nack: ${count}`), {
                   strategy: 'republish',
                   immediateNack: true,
                 });
