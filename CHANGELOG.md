@@ -1,5 +1,8 @@
 # Change Log
 
+## 20.1.0
+- Ignore and remove immediateNack header based on the xDeath header. See https://github.com/onebeyond/rascal/issues/237
+
 ## 20.0.0
 - Replaced superagent with native node http client as per https://github.com/onebeyond/rascal/issues/234
 

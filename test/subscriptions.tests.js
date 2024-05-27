@@ -1588,6 +1588,182 @@ describe('Subscriptions', () => {
     );
   });
 
+  it('should ignore immediate nack when messages are replayed to the original queue from a dead letter queue', (test, done) => {
+    createBroker(
+      {
+        vhosts: {
+          '/': {
+            namespace,
+            exchanges: {
+              e1: {
+                assert: true,
+              },
+              e2: {
+                assert: true,
+              },
+            },
+            queues: {
+              q1: {
+                assert: true,
+                options: {
+                  arguments: {
+                    'x-dead-letter-exchange': 'e2',
+                  },
+                },
+              },
+              q2: {
+                assert: true,
+              },
+            },
+            bindings: {
+              b1: {
+                source: 'e1',
+                destination: 'q1',
+              },
+              b2: {
+                source: 'e2',
+                destination: 'q2',
+              },
+            },
+          },
+        },
+        publications: _.pick(publications, 'p1'),
+        subscriptions: {
+          s1: {
+            vhost: '/',
+            queue: 'q1',
+          },
+          s2: {
+            vhost: '/',
+            queue: 'q2',
+          },
+        },
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            let count = 0;
+            subscription.on('message', (message, content, ackOrNack) => {
+              count++;
+              if (count === 1) {
+                assert.ok(message);
+                ackOrNack(new Error('immediate nack'), {
+                  strategy: 'republish',
+                  immediateNack: true,
+                });
+              } else {
+                assert.strictEqual(count, 2);
+                assert.ok(message);
+                ackOrNack();
+                done();
+              }
+            });
+          });
+
+          broker.subscribe('s2', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              broker.forward('p1', message, () => {});
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should ignore immediate nack when messages are replayed to the original queue from a dead letter queue repeatedly', (test, done) => {
+    createBroker(
+      {
+        vhosts: {
+          '/': {
+            namespace,
+            exchanges: {
+              e1: {
+                assert: true,
+              },
+              e2: {
+                assert: true,
+              },
+            },
+            queues: {
+              q1: {
+                assert: true,
+                options: {
+                  arguments: {
+                    'x-dead-letter-exchange': 'e2',
+                  },
+                },
+              },
+              q2: {
+                assert: true,
+              },
+            },
+            bindings: {
+              b1: {
+                source: 'e1',
+                destination: 'q1',
+              },
+              b2: {
+                source: 'e2',
+                destination: 'q2',
+              },
+            },
+          },
+        },
+        publications: _.pick(publications, 'p1'),
+        subscriptions: {
+          s1: {
+            vhost: '/',
+            queue: 'q1',
+          },
+          s2: {
+            vhost: '/',
+            queue: 'q2',
+          },
+        },
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            let count = 0;
+            subscription.on('message', (message, content, ackOrNack) => {
+              count++;
+              if (count <= 2) {
+                assert.ok(message);
+                ackOrNack(new Error('immediate nack'), {
+                  strategy: 'republish',
+                  immediateNack: true,
+                });
+              } else {
+                assert.strictEqual(count, 3);
+                assert.ok(message);
+                ackOrNack();
+                done();
+              }
+            });
+          });
+
+          broker.subscribe('s2', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              broker.forward('p1', message, () => {});
+            });
+          });
+        });
+      },
+    );
+  });
+
   it('should forward messages to publication when requested', (test, done) => {
     createBroker(
       {

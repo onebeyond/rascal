@@ -1534,7 +1534,7 @@ As mentioned previously, dead lettering invalid messages is a good strategy with
 ackOrNack(err, { strategy: 'republish', immediateNack: true });
 ```
 
-If you ever want to resend the message to the same queue you will have to remove the `properties.headers.rascal.<queue>.immediateNack` header first.
+Prior to Rascal v20.1.0, if you wanted to resend the message to the original queue you had to remove the `properties.headers.rascal.<queue>.immediateNack` header first. From v20.1.0, Rascal will ignore and remove the immediateNack header if the message's xDeath header indicates that the message was dead lettered after it was republished with immediateNack.
 
 ##### Forward
 
