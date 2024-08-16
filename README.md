@@ -601,7 +601,7 @@ Running automated tests against shared queues and exchanges is problematic. Mess
 }
 ```
 
-If you specify `"namespace" :true` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, `"namespace": "foo"`. Namespaces are also if you want to use a single vhost locally but multiple vhosts in other environments.
+If you specify `"namespace" :true` Rascal will prefix the queues and exchanges it creates with a uuid. Alternatively you can specify your own namespace, `"namespace": "foo"`. Namespaces may also be helpful if you want to use a single vhost locally but multiple vhosts in other environments.
 
 #### Exchanges
 
