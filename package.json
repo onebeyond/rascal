@@ -1,7 +1,7 @@
 {
   "name": "rascal",
   "version": "20.1.0",
-  "description": "A config driven wrapper for amqplib supporting multi-host connections, automatic error recovery, redelivery flood protection, transparent encryption / decryption,  channel pooling and publication timeouts",
+  "description": "An advanced RabbitMQ / AMQP client built on amqplib",
   "main": "index.js",
   "dependencies": {
     "async": "^3.2.4",
@@ -47,13 +47,10 @@
     "**/*.js": "eslint --fix"
   },
   "keywords": [
-    "amqplib",
-    "amqp",
     "rabbitmq",
-    "callback",
-    "promise",
-    "await",
-    "async"
+    "rabbit",
+    "amqplib",
+    "amqp"
   ],
   "repository": {
     "type": "git",

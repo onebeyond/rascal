@@ -1,6 +1,6 @@
 # Rascal
 
-Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/amqplib).
+Rascal is an advanced RabbitMQ / AMQP client built on [amqplib](https://www.npmjs.com/package/amqplib).
 
 [![NPM version](https://img.shields.io/npm/v/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
 [![NPM downloads](https://img.shields.io/npm/dm/rascal.svg?style=flat-square)](https://www.npmjs.com/package/rascal)
@@ -12,7 +12,7 @@ Rascal is a rich pub/sub wrapper around [amqplib](https://www.npmjs.com/package/
 
 ## About
 
-Rascal is a rich pub/sub wrapper for the excellent [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
+Rascal is an advanced RabbitMQ / AMQP client built on [amqplib](https://www.npmjs.com/package/amqplib). One of the best things about amqplib is that it doesn't make assumptions about how you use it. Another is that it doesn't attempt to abstract away [AMQP Concepts](https://www.rabbitmq.com/tutorials/amqp-concepts.html). As a result the library offers a great deal of control and flexibility, but the onus is on you adopt appropriate patterns and configuration. You need to be aware that:
 
 - Messages are not persistent by default and will be lost if your broker restarts
 - Messages that crash your app will be infinitely retried
