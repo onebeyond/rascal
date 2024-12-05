@@ -1,4 +1,4 @@
-# Rascal
+# Rascal - A RabbitMQ / AMQP Client
 
 Rascal is an advanced RabbitMQ / AMQP client built on [amqplib](https://www.npmjs.com/package/amqplib).
 
