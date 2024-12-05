@@ -1,5 +1,8 @@
 # Change Log
 
+## 20.1.1
+- npm search algorithm has changed. Updating metadata accordingly.
+
 ## 20.1.0
 - Ignore and remove immediateNack header based on the xDeath header. See https://github.com/onebeyond/rascal/issues/237
 
