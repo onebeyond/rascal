@@ -22,8 +22,6 @@ jobs:
       - run: npm ci
       - run: npm run lint
       - run: npm test
-        env:
-          DEBUG: "rascal:*"
 
   code-climate:
     needs: build
