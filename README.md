@@ -8,7 +8,6 @@ Rascal is an advanced RabbitMQ / AMQP client built on [amqplib](https://www.npmj
 [![Code Climate](https://codeclimate.com/github/onebeyond/rascal/badges/gpa.svg)](https://codeclimate.com/github/onebeyond/rascal)
 [![Test Coverage](https://codeclimate.com/github/onebeyond/rascal/badges/coverage.svg)](https://codeclimate.com/github/onebeyond/rascal/coverage)
 [![rascal](https://snyk.io/advisor/npm-package/rascal/badge.svg)](https://snyk.io/advisor/npm-package/rascal)
-[![Discover zUnit](https://img.shields.io/badge/Discover-zUnit-brightgreen)](https://www.npmjs.com/package/zunit)
 
 ## About
 
