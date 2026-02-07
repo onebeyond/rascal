@@ -1,5 +1,8 @@
 # Change Log
 
+## 21.0.1: 
+- Bump node version used in publish build action.
+
 ## 21.0.0
 - **BREAKING**: Drop Node.js 14 support (EOL since April 2023). Minimum Node.js version is now 16.
 
