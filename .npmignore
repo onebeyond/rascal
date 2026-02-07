@@ -6,7 +6,6 @@
 .github
 .nyc_output
 _config.yml
-cc-test-reporter
 coverage
 node_modules
 test

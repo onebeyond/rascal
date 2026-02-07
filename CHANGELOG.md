@@ -1,5 +1,8 @@
 # Change Log
 
+## 20.1.2
+- Remove codeclimate (it's been sold) until we have time to replace get it working again.
+
 ## 20.1.1
 - npm search algorithm has changed. Updating metadata accordingly.
 
