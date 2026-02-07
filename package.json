@@ -1,6 +1,6 @@
 {
   "name": "rascal",
-  "version": "21.0.0",
+  "version": "21.0.1",
   "description": "An advanced RabbitMQ / AMQP client built on amqplib",
   "main": "index.js",
   "dependencies": {
