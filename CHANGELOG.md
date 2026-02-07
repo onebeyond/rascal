@@ -1,5 +1,8 @@
 # Change Log
 
+## 21.0.0
+- **BREAKING**: Drop Node.js 14 support (EOL since April 2023). Minimum Node.js version is now 16.
+
 ## 20.1.2
 - Remove codeclimate (it's been sold) until we have time to replace get it working again.
 
