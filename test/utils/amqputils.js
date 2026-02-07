@@ -134,6 +134,7 @@ function init(connection) {
   function closeConnection(name, reason, next) {
     const headers = {
       'x-reason': reason,
+      connection: 'close',
     };
     http.request(`http://guest:guest@localhost:15672/api/connections/${name}`, { method: 'delete', headers }, () => {
       next();
