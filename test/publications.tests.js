@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash');
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
@@ -902,6 +903,80 @@ describe('Publications', () => {
             });
           });
         });
+      },
+    );
+  });
+
+  it('should preserve the async context of concurrent publishers using normal channels', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications: {
+          p1: {
+            exchange: 'e1',
+            confirm: false,
+          },
+        },
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+
+        async.each(
+          ['request-1', 'request-2', 'request-3'],
+          (request, cb) => {
+            storage.run(request, () => {
+              broker.publish('p1', 'test message', (err, publication) => {
+                assert.ifError(err);
+                publication.on('success', () => {
+                  assert.strictEqual(storage.getStore(), request);
+                  cb();
+                });
+              });
+            });
+          },
+          (err) => {
+            assert.ifError(err);
+            done();
+          },
+        );
+      },
+    );
+  });
+
+  it('should preserve the async context of concurrent publishers using confirm channels', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications: {
+          p1: {
+            exchange: 'e1',
+            confirm: true,
+          },
+        },
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+
+        async.each(
+          ['request-1', 'request-2', 'request-3'],
+          (request, cb) => {
+            storage.run(request, () => {
+              broker.publish('p1', 'test message', (err, publication) => {
+                assert.ifError(err);
+                publication.on('success', () => {
+                  assert.strictEqual(storage.getStore(), request);
+                  cb();
+                });
+              });
+            });
+          },
+          (err) => {
+            assert.ifError(err);
+            done();
+          },
+        );
       },
     );
   });

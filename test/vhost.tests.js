@@ -1,10 +1,13 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const async = require('async');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
 const format = require('util').format;
 const uuid = require('uuid').v4;
 const testConfig = require('../lib/config/tests');
+const configure = require('../lib/config/configure');
+const Vhost = require('../lib/amqp/Vhost');
 const Broker = require('..').Broker;
 const AmqpUtils = require('./utils/amqputils');
 
@@ -277,11 +280,68 @@ describe('Vhost', () => {
     });
   }, { timeout: 10000 });
 
+  it('should preserve the async context of concurrent callers when borrowing normal channels', (test, done) => {
+    createVhost((err, vhost) => {
+      assert.ifError(err);
+      const storage = new AsyncLocalStorage();
+
+      async.each(
+        ['request-1', 'request-2', 'request-3'],
+        (request, cb) => {
+          storage.run(request, () => {
+            vhost.borrowChannel((err, channel) => {
+              assert.ifError(err);
+              assert.strictEqual(storage.getStore(), request);
+              vhost.returnChannel(channel);
+              cb();
+            });
+          });
+        },
+        (err) => {
+          assert.ifError(err);
+          vhost.shutdown(done);
+        },
+      );
+    });
+  });
+
+  it('should preserve the async context of concurrent callers when borrowing confirm channels', (test, done) => {
+    createVhost((err, vhost) => {
+      assert.ifError(err);
+      const storage = new AsyncLocalStorage();
+
+      async.each(
+        ['request-1', 'request-2', 'request-3'],
+        (request, cb) => {
+          storage.run(request, () => {
+            vhost.borrowConfirmChannel((err, channel) => {
+              assert.ifError(err);
+              assert.strictEqual(storage.getStore(), request);
+              vhost.returnConfirmChannel(channel);
+              cb();
+            });
+          });
+        },
+        (err) => {
+          assert.ifError(err);
+          vhost.shutdown(done);
+        },
+      );
+    });
+  });
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, (err, _broker) => {
       broker = _broker;
       next(err, broker);
+    });
+  }
+
+  function createVhost(next) {
+    configure(_.defaultsDeep({ vhosts: { '/': {} } }, testConfig), (err, config) => {
+      if (err) return next(err);
+      Vhost.create(config.vhosts['/'], {}, next);
     });
   }
 }, { timeout: 2000 });
