@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash');
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
@@ -898,6 +899,76 @@ describe('Publications', () => {
               assert.ifError(err);
               assert.ok(message);
               assert.ok(new RegExp(`\\w+-\\w+-\\w+-\\w+-\\w+:rq:${replyTo}`).test(message.properties.replyTo), format('%s failed to match expected pattern', message.properties.replyTo));
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  [true, false].forEach((confirm) => {
+    it(`should preserve the async context of concurrent publishers when confirm is ${confirm}`, (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications: {
+            p1: {
+              exchange: 'e1',
+              confirm,
+            },
+          },
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          const storage = new AsyncLocalStorage();
+          const publishers = ['publisher-1', 'publisher-2', 'publisher-3'];
+          const observed = {};
+
+          async.each(
+            publishers,
+            (publisher, cb) => {
+              storage.run(publisher, () => {
+                broker.publish('p1', 'test message', (err, publication) => {
+                  if (err) return cb(err);
+                  publication
+                    .on('success', () => {
+                      observed[publisher] = storage.getStore();
+                      cb();
+                    })
+                    .on('error', cb);
+                });
+              });
+            },
+            (err) => {
+              assert.ifError(err);
+              assert.deepStrictEqual(observed, { 'publisher-1': 'publisher-1', 'publisher-2': 'publisher-2', 'publisher-3': 'publisher-3' });
+              done();
+            },
+          );
+        },
+      );
+    });
+  });
+
+  it('should preserve the async context of the publisher when a message is returned', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications: {
+          p1: {
+            exchange: 'xx',
+          },
+        },
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        storage.run('publisher', () => {
+          broker.publish('p1', 'test message', (err, publication) => {
+            assert.ifError(err);
+            publication.on('return', () => {
+              assert.strictEqual(storage.getStore(), 'publisher');
               done();
             });
           });

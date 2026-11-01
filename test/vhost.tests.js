@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const async = require('async');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
@@ -6,10 +7,13 @@ const format = require('util').format;
 const uuid = require('uuid').v4;
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
+const Vhost = require('../lib/amqp/Vhost');
+const configure = require('../lib/config/configure');
 const AmqpUtils = require('./utils/amqputils');
 
 describe('Vhost', () => {
   let broker;
+  let vhost;
   let amqputils;
 
   beforeEach((test, done) => {
@@ -22,8 +26,17 @@ describe('Vhost', () => {
 
   afterEach((test, done) => {
     amqputils.disconnect(() => {
-      if (broker) return broker.nuke(done);
-      done();
+      async.series(
+        [
+          (cb) => (vhost ? vhost.shutdown(cb) : cb()),
+          (cb) => (broker ? broker.nuke(cb) : cb()),
+        ],
+        (err) => {
+          vhost = undefined;
+          broker = undefined;
+          done(err);
+        },
+      );
     });
   });
 
@@ -277,11 +290,56 @@ describe('Vhost', () => {
     });
   }, { timeout: 10000 });
 
+  [
+    { acquire: 'borrowChannel', release: 'returnChannel' },
+    { acquire: 'borrowConfirmChannel', release: 'returnConfirmChannel' },
+    { acquire: 'getChannel' },
+    { acquire: 'getConfirmChannel' },
+  ].forEach(({ acquire, release }) => {
+    it(`should preserve the async context of concurrent callers of ${acquire}`, (test, done) => {
+      createVhost((err, vhost) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        const callers = ['caller-1', 'caller-2', 'caller-3'];
+        const observed = {};
+
+        async.each(
+          callers,
+          (caller, cb) => {
+            storage.run(caller, () => {
+              vhost[acquire]((err, channel) => {
+                if (err) return cb(err);
+                observed[caller] = storage.getStore();
+                if (release) vhost[release](channel);
+                cb();
+              });
+            });
+          },
+          (err) => {
+            assert.ifError(err);
+            assert.deepStrictEqual(observed, { 'caller-1': 'caller-1', 'caller-2': 'caller-2', 'caller-3': 'caller-3' });
+            done();
+          },
+        );
+      });
+    });
+  });
+
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
     Broker.create(config, (err, _broker) => {
       broker = _broker;
       next(err, broker);
+    });
+  }
+
+  function createVhost(next) {
+    configure(_.defaultsDeep({ vhosts: { '/': { namespace: uuid() } } }, testConfig), (err, config) => {
+      if (err) return next(err);
+      Vhost.create(config.vhosts['/'], {}, (err, _vhost) => {
+        vhost = _vhost;
+        next(err, vhost);
+      });
     });
   }
 }, { timeout: 2000 });
