@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
 const uuid = require('uuid').v4;
 const amqplib = require('amqplib/callback_api');
@@ -2110,6 +2111,42 @@ describe('Subscriptions As Promised', () => {
                 assert.ok(err);
                 assert.strictEqual(`Error recovering message: ${messageId}. No such strategy: foo.`, err.message);
                 done();
+              });
+            });
+          });
+        });
+      });
+    });
+  });
+
+  it('should preserve the async context of the caller when acknowledging a message', (test, done) => {
+    createBroker({
+      vhosts,
+      publications,
+      subscriptions,
+    }).then((broker) => {
+      const storage = new AsyncLocalStorage();
+      const outcomes = {};
+
+      // The republished message may be redelivered before the republish promise resolves
+      const finish = () => {
+        if (!outcomes.republished || !outcomes.redelivered) return;
+        assert.strictEqual(outcomes.republished.context, 'consumer');
+        done();
+      };
+
+      broker.publish('p1', 'test message').then(() => {
+        broker.subscribe('s1').then((subscription) => {
+          subscription.on('message', (message, content, ackOrNack) => {
+            if (message.properties.headers.rascal.recovery) {
+              ackOrNack();
+              outcomes.redelivered = true;
+              return finish();
+            }
+            storage.run('consumer', () => {
+              ackOrNack(new Error('republish'), { strategy: 'republish' }).then(() => {
+                outcomes.republished = { context: storage.getStore() };
+                finish();
               });
             });
           });

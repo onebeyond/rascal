@@ -1,5 +1,8 @@
 # Change Log
 
+## 21.0.2
+- Preserve the caller's async context when invoking callbacks and emitting publication events, so tooling built on AsyncLocalStorage (e.g. APM tracers) attributes work to the correct caller. See https://github.com/onebeyond/rascal/issues/246
+
 ## 21.0.1: 
 - Bump node version used in publish build action.
 

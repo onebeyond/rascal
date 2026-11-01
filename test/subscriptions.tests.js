@@ -1,4 +1,5 @@
 const assert = require('assert');
+const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
@@ -2935,6 +2936,139 @@ describe('Subscriptions', () => {
           subscription.on('subscribed', () => {
             amqputils.deleteQueue('q1', namespace, (err) => {
               assert.ifError(err);
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should preserve the async context of concurrent subscribers', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        const observed = {};
+
+        async.each(
+          ['s1', 's2', 's3'],
+          (name, cb) => {
+            storage.run(name, () => {
+              broker.subscribe(name, (err, subscription) => {
+                if (err) return cb(err);
+                subscription
+                  .on('message', () => {})
+                  .on('subscribed', () => {
+                    observed[name] = storage.getStore();
+                    cb();
+                  })
+                  .on('error', cb);
+              });
+            });
+          },
+          (err) => {
+            assert.ifError(err);
+            assert.deepStrictEqual(observed, { s1: 's1', s2: 's2', s3: 's3' });
+            done();
+          },
+        );
+      },
+    );
+  });
+
+  it('should preserve the async context of the caller when cancelling a subscription', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {}).on('subscribed', () => {
+            storage.run('canceller', () => {
+              subscription.cancel((err) => {
+                assert.ifError(err);
+                assert.strictEqual(storage.getStore(), 'canceller');
+                done();
+              });
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should preserve the async context of the caller when setting the channel prefetch', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', () => {}).on('subscribed', () => {
+            storage.run('caller', () => {
+              subscription.setChannelPrefetch(5, (err) => {
+                assert.ifError(err);
+                assert.strictEqual(storage.getStore(), 'caller');
+                done();
+              });
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should preserve the async context of the caller when acknowledging a message', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const storage = new AsyncLocalStorage();
+        const outcomes = {};
+
+        // The republished message may be redelivered before the republish callback yields
+        const finish = () => {
+          if (!outcomes.republished || !outcomes.redelivered) return;
+          assert.strictEqual(outcomes.republished.context, 'consumer');
+          done();
+        };
+
+        broker.publish('p1', 'test message', (err) => {
+          assert.ifError(err);
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              if (message.properties.headers.rascal.recovery) {
+                ackOrNack();
+                outcomes.redelivered = true;
+                return finish();
+              }
+              storage.run('consumer', () => {
+                ackOrNack(new Error('republish'), { strategy: 'republish' }, (err) => {
+                  assert.ifError(err);
+                  outcomes.republished = { context: storage.getStore() };
+                  finish();
+                });
+              });
             });
           });
         });
