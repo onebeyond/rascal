@@ -26,17 +26,7 @@ describe('Vhost', () => {
 
   afterEach((test, done) => {
     amqputils.disconnect(() => {
-      async.series(
-        [
-          (cb) => (vhost ? vhost.shutdown(cb) : cb()),
-          (cb) => (broker ? broker.nuke(cb) : cb()),
-        ],
-        (err) => {
-          vhost = undefined;
-          broker = undefined;
-          done(err);
-        },
-      );
+      async.series([shutdownVhost, nukeBroker], done);
     });
   });
 
@@ -330,6 +320,22 @@ describe('Vhost', () => {
     Broker.create(config, (err, _broker) => {
       broker = _broker;
       next(err, broker);
+    });
+  }
+
+  function shutdownVhost(next) {
+    if (!vhost) return next();
+    vhost.shutdown((err) => {
+      vhost = undefined;
+      next(err);
+    });
+  }
+
+  function nukeBroker(next) {
+    if (!broker) return next();
+    broker.nuke((err) => {
+      broker = undefined;
+      next(err);
     });
   }
 
