@@ -7,7 +7,7 @@ const _ = require('lodash');
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
 const format = require('util').format;
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 const AmqpUtils = require('./utils/amqputils');
@@ -19,7 +19,7 @@ describe('Publications', () => {
   let vhosts;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
 
     vhosts = {
       '/': {
@@ -877,7 +877,7 @@ describe('Publications', () => {
   });
 
   it('should set the replyTo property', (test, done) => {
-    const replyTo = uuid();
+    const replyTo = randomUUID();
     Object.assign(vhosts['/'].queues, {
       rq: {
         replyTo,

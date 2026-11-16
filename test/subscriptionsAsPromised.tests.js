@@ -4,7 +4,7 @@ const {
 const assert = require('assert');
 const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const amqplib = require('amqplib/callback_api');
 const testConfig = require('../lib/config/tests');
 const BrokerAsPromised = require('..').BrokerAsPromised;
@@ -19,7 +19,7 @@ describe('Subscriptions As Promised', () => {
   let subscriptions;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
     vhosts = {
       '/': {
         namespace,

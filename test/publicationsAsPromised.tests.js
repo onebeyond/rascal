@@ -5,7 +5,7 @@ const assert = require('assert');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
 const format = require('util').format;
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const testConfig = require('../lib/config/tests');
 const BrokerAsPromised = require('..').BrokerAsPromised;
 const AmqpUtils = require('./utils/amqputils');
@@ -17,7 +17,7 @@ describe('Publications As Promised', () => {
   let vhosts;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
 
     vhosts = {
       '/': {
@@ -542,7 +542,7 @@ describe('Publications As Promised', () => {
   });
 
   it('should set the replyTo property', (test, done) => {
-    const replyTo = uuid();
+    const replyTo = randomUUID();
     Object.assign(vhosts['/'].queues, {
       rq: {
         replyTo,

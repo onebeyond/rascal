@@ -3,7 +3,7 @@ const {
 } = require('node:test');
 const assert = require('assert');
 const _ = require('lodash');
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const format = require('util').format;
 const testConfig = require('../lib/config/tests');
 const BrokerAsPromised = require('..').BrokerAsPromised;
@@ -16,7 +16,7 @@ describe('Broker As Promised', () => {
   let subscriptions;
 
   beforeEach(() => {
-    namespace = uuid();
+    namespace = randomUUID();
 
     vhosts = {
       '/': {
@@ -78,7 +78,7 @@ describe('Broker As Promised', () => {
   });
 
   it('should assert vhosts', () => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
 
@@ -87,7 +87,7 @@ describe('Broker As Promised', () => {
   });
 
   it('should fail when checking vhosts that dont exist', () => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].check = true;
 
@@ -99,7 +99,7 @@ describe('Broker As Promised', () => {
   });
 
   it('should not fail when checking vhosts that do exist', () => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
     customVhosts[vhostName].check = true;
@@ -109,7 +109,7 @@ describe('Broker As Promised', () => {
   });
 
   it('should delete vhosts', () => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
 

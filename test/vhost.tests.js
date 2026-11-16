@@ -7,7 +7,7 @@ const async = require('async');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
 const format = require('util').format;
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 const Vhost = require('../lib/amqp/Vhost');
@@ -34,7 +34,7 @@ describe('Vhost', () => {
   });
 
   it('should timeout connections', (test, done) => {
-    const namespace = uuid();
+    const namespace = randomUUID();
     createBroker(
       {
         vhosts: {
@@ -57,7 +57,7 @@ describe('Vhost', () => {
   });
 
   it('should create exchanges', (test, done) => {
-    const namespace = uuid();
+    const namespace = randomUUID();
     createBroker(
       {
         vhosts: {
@@ -83,7 +83,7 @@ describe('Vhost', () => {
     if (process.env.CI) return done();
 
     function createAllTheThings(concurrency, cb) {
-      const namespace = uuid();
+      const namespace = randomUUID();
       const exchanges = new Array(100)
         .fill()
         .map((_, index) => `e${index + 1}`)
@@ -150,7 +150,7 @@ describe('Vhost', () => {
   });
 
   it('should create queues', (test, done) => {
-    const namespace = uuid();
+    const namespace = randomUUID();
     createBroker(
       {
         vhosts: {
@@ -216,7 +216,7 @@ describe('Vhost', () => {
   });
 
   it('should create bindings', (test, done) => {
-    const namespace = uuid();
+    const namespace = randomUUID();
 
     createBroker(
       {
@@ -343,7 +343,7 @@ describe('Vhost', () => {
   }
 
   function createVhost(next) {
-    configure(_.defaultsDeep({ vhosts: { '/': { namespace: uuid() } } }, testConfig), (err, config) => {
+    configure(_.defaultsDeep({ vhosts: { '/': { namespace: randomUUID() } } }, testConfig), (err, config) => {
       if (err) return next(err);
       Vhost.create(config.vhosts['/'], {}, (err, _vhost) => {
         vhost = _vhost;

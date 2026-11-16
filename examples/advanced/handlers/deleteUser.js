@@ -1,11 +1,11 @@
-var chalk = require('chalk');
+var styleText = require('util').styleText;
 var format = require('util').format;
 
 module.exports = function (broker) {
   return function (user, cb) {
     // Pretend we'd really asynchronously deleted something
     setImmediate(function () {
-      console.log(chalk.cyan('Deleting user:'), user.username);
+      console.log(styleText('cyan', 'Deleting user:'), user.username);
 
       if (user.crash) throw new Error('Crashing on user: ' + user.username);
 
