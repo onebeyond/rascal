@@ -8,3 +8,4 @@ _config.yml
 coverage
 node_modules
 test
+lefthook.yml

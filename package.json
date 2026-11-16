@@ -22,8 +22,7 @@
     "eslint": "^8.45.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.27.5",
-    "husky": "^8.0.3",
-    "lint-staged": "^11.2.4",
+    "lefthook": "^2.2.2",
     "random-readable": "^1.0.1"
   },
   "peerDependencies": {
@@ -36,13 +35,9 @@
     "test": "node --test --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec 'test/**/*.tests.js'",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "lint-staged": "lint-staged",
     "coverage": "mkdir -p coverage && node --test --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --experimental-test-coverage --test-coverage-include='index.js' --test-coverage-include='lib/**' 'test/**/*.tests.js'",
     "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12.9-management-alpine",
-    "prepare": "husky install"
-  },
-  "lint-staged": {
-    "**/*.js": "eslint --fix"
+    "prepare": "lefthook install"
   },
   "keywords": [
     "rabbitmq",
