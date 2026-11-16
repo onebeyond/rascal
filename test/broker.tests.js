@@ -319,7 +319,6 @@ describe('Broker', () => {
           assert.ifError(err);
         });
 
-        // eslint-disable-next-line no-empty-function
         subscription.on('message', () => {
           const before = Date.now();
           broker.unsubscribeAll((err) => {

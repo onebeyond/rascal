@@ -3,7 +3,7 @@ pre-commit:
   jobs:
     - name: lint
       glob: "*.js"
-      run: npx eslint --fix {staged_files}
+      run: npx biome lint --error-on-warnings --write --no-errors-on-unmatched --files-ignore-unknown=true {staged_files}
       stage_fixed: true
     - name: test
       run: npm test

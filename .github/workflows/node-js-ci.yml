@@ -13,6 +13,11 @@ jobs:
         ports:
           - 5672:5672
           - 15672:15672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q check_port_connectivity"
+          --health-interval 5s
+          --health-timeout 10s
+          --health-retries 12
     strategy:
       fail-fast: false
       matrix:

@@ -1,11 +1,10 @@
 *.log
 .codeclimate.yml
 .idea
-.eslintignore
-.eslintrc
 .github
 _config.yml
 coverage
 node_modules
 test
 lefthook.yml
+biome.json
