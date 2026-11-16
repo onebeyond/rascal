@@ -1,5 +1,10 @@
 # Change Log
 
+## 22.0.0
+- **BREAKING**: Drop support for Node.js versions below 22. Minimum Node.js version is now 22.
+- **BREAKING**: `withTestConfig` now declares queues as durable with an `x-expires` of 10 minutes, instead of non-durable. RabbitMQ 4.3+ rejects non-durable, non-exclusive queues by default (the deprecated `transient_nonexcl_queues` feature). Test queues are still deleted when the broker is nuked; the expiry removes any left behind by aborted test runs once they have been unused for 10 minutes. If your tests set `namespace: false` and reuse queues already declared without `x-expires`, delete those queues once, otherwise RabbitMQ will reject the redeclaration with PRECONDITION_FAILED.
+- Tested against RabbitMQ 3 and 4.
+
 ## 21.0.3
 - Deliver a message whose x-death header is not a list of records. Previously reading the header threw before the handler was called, and the subscription resubscribed and received the message again. See https://github.com/onebeyond/rascal/pull/250
 - Ignore malformed values in the rascal header (the header itself, its error and recovery tables, the republished and forwarded counts, and the original routing key and exchange) and handle the message as if they had not been sent. Previously they could cause the message to be lost or the attempts limit never to be reached.
