@@ -1765,6 +1765,101 @@ describe('Subscriptions', () => {
     );
   });
 
+  it('should consume messages with an x-death header that is not a list of records', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { 'x-death': 10 } }, (err) => {
+          assert.ifError(err);
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should immediately nack republished messages when the x-death header is not a list of records', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { 'x-death': 10 } }, (err) => {
+          assert.ifError(err);
+
+          let count = 0;
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              count++;
+              ackOrNack(new Error('immediate nack'), {
+                strategy: 'republish',
+                immediateNack: true,
+              });
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              assert.strictEqual(count, 1);
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should immediately nack messages marked for immediate nack with an x-death record that has no count or time', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const recovery = { [broker.qualify('/', 'q1')]: { immediateNack: true, xDeath: {} } };
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { rascal: { recovery } } }, (err) => {
+          assert.ifError(err);
+
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', () => {
+              assert.ok(false, 'Message should not have been delivered');
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
   it('should forward messages to publication when requested', (test, done) => {
     createBroker(
       {
