@@ -1,0 +1,29 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": { "includes": ["**", "!examples"] },
+  "formatter": { "enabled": false },
+  "assist": { "enabled": false },
+  "linter": {
+    "rules": {
+      "preset": "none",
+      "correctness": {
+        "preset": "recommended",
+        "noUndeclaredVariables": "error",
+        "noUnusedFunctionParameters": "off",
+        "noUnusedVariables": {
+          "level": "error",
+          "options": { "ignore": { "variable": ["debug"] } }
+        }
+      },
+      "suspicious": {
+        "preset": "recommended",
+        "useIterableCallbackReturn": {
+          "level": "error",
+          "options": { "checkForEach": false }
+        }
+      },
+      "security": { "preset": "recommended" }
+    }
+  }
+}
