@@ -6,7 +6,7 @@ const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
 const async = require('async');
 const amqplib = require('amqplib/callback_api');
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 const AmqpUtils = require('./utils/amqputils');
@@ -20,7 +20,7 @@ describe('Subscriptions', () => {
   let subscriptions;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
     vhosts = {
       '/': {
         namespace,

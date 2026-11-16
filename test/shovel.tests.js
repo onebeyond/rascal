@@ -3,7 +3,7 @@ const {
 } = require('node:test');
 const assert = require('assert');
 const _ = require('lodash');
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const testConfig = require('../lib/config/tests');
 const Broker = require('..').Broker;
 
@@ -13,7 +13,7 @@ describe('Shovel', () => {
   let config;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
     config = {
       vhosts: {
         '/': {

@@ -4,7 +4,7 @@ const {
 const http = require('http');
 const assert = require('assert');
 const _ = require('lodash');
-const uuid = require('uuid').v4;
+const { randomUUID } = require('crypto');
 const format = require('util').format;
 const random = require('random-readable');
 const amqplib = require('amqplib/callback_api');
@@ -21,7 +21,7 @@ describe('Broker', () => {
   let subscriptions;
 
   beforeEach((test, done) => {
-    namespace = uuid();
+    namespace = randomUUID();
 
     vhosts = {
       '/': {
@@ -96,7 +96,7 @@ describe('Broker', () => {
   });
 
   it('should assert vhosts', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
 
@@ -108,7 +108,7 @@ describe('Broker', () => {
   });
 
   it('should fail to assert vhost when unable to connect to management plugin', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
     customVhosts[vhostName].connection.management.port = 65535;
@@ -123,7 +123,7 @@ describe('Broker', () => {
   });
 
   it('should fail when checking vhosts that dont exist', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].check = true;
 
@@ -136,7 +136,7 @@ describe('Broker', () => {
   });
 
   it('should fail to check vhost when unable to connect to management plugin', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].check = true;
     customVhosts[vhostName].connection.management.port = 65535;
@@ -151,7 +151,7 @@ describe('Broker', () => {
   });
 
   it('should succeed when checking vhosts that do exist', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
     customVhosts[vhostName].check = true;
@@ -164,7 +164,7 @@ describe('Broker', () => {
   });
 
   it('should delete vhosts', (test, done) => {
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
 
@@ -191,7 +191,7 @@ describe('Broker', () => {
     };
 
     const components = { agent };
-    const vhostName = uuid();
+    const vhostName = randomUUID();
     const customVhosts = _.set({}, vhostName, _.cloneDeep(vhosts)['/']);
     customVhosts[vhostName].assert = true;
 
