@@ -1,3 +1,4 @@
+const { describe, it } = require('node:test');
 const assert = require('assert');
 const _ = require('lodash');
 const { sanitise } = require('../lib/amqp/RascalHeaders');

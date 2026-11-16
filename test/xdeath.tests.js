@@ -1,3 +1,4 @@
+const { describe, it } = require('node:test');
 const assert = require('assert');
 const { EMPTY_X_DEATH, getCurrentXDeath, getPreviousXDeath } = require('../lib/amqp/XDeath');
 

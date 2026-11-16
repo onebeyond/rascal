@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const _ = require('lodash');
 const uuid = require('uuid').v4;
@@ -244,4 +247,4 @@ describe('Broker As Promised', () => {
         return broker;
       });
   }
-}, { timeout: 6000 });
+});

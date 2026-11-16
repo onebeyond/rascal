@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash');
@@ -611,6 +614,7 @@ describe('Publications', () => {
 
   it(
     'should publish lots of messages using normal channels',
+    { timeout: 60000 },
     (test, done) => {
       createBroker(
         {
@@ -643,11 +647,11 @@ describe('Publications', () => {
         },
       );
     },
-    { timeout: 60000 },
   );
 
   it(
     'should publish lots of messages using confirm channels',
+    { timeout: 20000 },
     (test, done) => {
       createBroker(
         {
@@ -680,7 +684,6 @@ describe('Publications', () => {
         },
       );
     },
-    { timeout: 20000 },
   );
 
   it('should symetrically encrypt messages', (test, done) => {
@@ -984,4 +987,4 @@ describe('Publications', () => {
       next(err, broker);
     });
   }
-}, { timeout: 2000 });
+});

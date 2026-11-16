@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const _ = require('lodash');
 const amqplib = require('amqplib/callback_api');
@@ -392,6 +395,7 @@ describe('Publications As Promised', () => {
 
   it(
     'should publish lots of messages using normal channels',
+    { timeout: 60000 },
     () => {
       return createBroker({
         vhosts,
@@ -415,11 +419,11 @@ describe('Publications As Promised', () => {
         }, Promise.resolve());
       });
     },
-    { timeout: 60000 },
   );
 
   it(
     'should publish lots of messages using confirm channels',
+    { timeout: 20000 },
     () => {
       return createBroker({
         vhosts,
@@ -443,7 +447,6 @@ describe('Publications As Promised', () => {
         }, Promise.resolve());
       });
     },
-    { timeout: 20000 },
   );
 
   it('should symetrically encrypt messages', (test, done) => {
@@ -579,4 +582,4 @@ describe('Publications As Promised', () => {
         return broker;
       });
   }
-}, { timeout: 2000 });
+});

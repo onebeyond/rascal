@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
