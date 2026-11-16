@@ -1,5 +1,10 @@
 # Change Log
 
+## 21.0.3
+- Deliver a message whose x-death header is not a list of records. Previously reading the header threw before the handler was called, and the subscription resubscribed and received the message again. See https://github.com/onebeyond/rascal/pull/250
+- Ignore malformed values in the rascal header (the header itself, its error and recovery tables, the republished and forwarded counts, and the original routing key and exchange) and handle the message as if they had not been sent. Previously they could cause the message to be lost or the attempts limit never to be reached.
+- Nack the original message and emit a subscription error when the republish or forward recovery strategy throws, for example because a header cannot be encoded. Previously this closed the connection or raised an uncaught exception.
+
 ## 21.0.2
 - Preserve the caller's async context when invoking callbacks and emitting publication events, so tooling built on AsyncLocalStorage (e.g. APM tracers) attributes work to the correct caller. See https://github.com/onebeyond/rascal/issues/246
 - Correct the engines field in package.json to require Node.js 16 or later, as announced in 21.0.0. See https://github.com/onebeyond/rascal/issues/248
