@@ -1396,6 +1396,43 @@ describe('Subscriptions', () => {
     );
   });
 
+  it('should nack the original message if republishing fails', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', assert.ifError);
+
+        let count = 0;
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            count++;
+            message.properties.headers.unpublishable = { '!': 'unknown' };
+            ackOrNack(new Error('republish me'), { strategy: 'republish' });
+          });
+          subscription.on('error', (err) => {
+            assert.strictEqual(err.message, 'Unknown type to encode: unknown');
+          });
+        });
+
+        broker.subscribe('/dlq', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            ackOrNack();
+            assert.strictEqual(content, 'test message');
+            assert.strictEqual(count, 1);
+            done();
+          });
+        });
+      },
+    );
+  });
+
   it('should defer republishing messages when requested', (test, done) => {
     createBroker(
       {
@@ -1758,6 +1795,101 @@ describe('Subscriptions', () => {
             subscription.on('message', (message, content, ackOrNack) => {
               ackOrNack();
               broker.forward('p1', message, () => {});
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should consume messages with an x-death header that is not a list of records', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { 'x-death': 10 } }, (err) => {
+          assert.ifError(err);
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should immediately nack republished messages when the x-death header is not a list of records', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { 'x-death': 10 } }, (err) => {
+          assert.ifError(err);
+
+          let count = 0;
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              count++;
+              ackOrNack(new Error('immediate nack'), {
+                strategy: 'republish',
+                immediateNack: true,
+              });
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              assert.strictEqual(count, 1);
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should immediately nack messages marked for immediate nack with an x-death record that has no count or time', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const recovery = { [broker.qualify('/', 'q1')]: { immediateNack: true, xDeath: {} } };
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { rascal: { recovery } } }, (err) => {
+          assert.ifError(err);
+
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', () => {
+              assert.ok(false, 'Message should not have been delivered');
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              done();
             });
           });
         });
@@ -2129,6 +2261,199 @@ describe('Subscriptions', () => {
                   assert.strictEqual(`Error recovering message: ${messageId}. No such strategy: foo.`, err.message);
                   done();
                 });
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should nack the original message if the republish strategy throws', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', assert.ifError);
+
+        let count = 0;
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            count++;
+            message.properties.headers.nested = nest(100000);
+            ackOrNack(new Error('recover me'), { strategy: 'republish' });
+          });
+          subscription.on('error', (err) => {
+            assert.strictEqual(err.message, 'Maximum call stack size exceeded');
+          });
+        });
+
+        broker.subscribe('/dlq', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            ackOrNack();
+            assert.strictEqual(content, 'test message');
+            assert.strictEqual(count, 1);
+            done();
+          });
+        });
+      },
+    );
+  });
+
+  it('should nack the original message if the forward strategy throws', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', assert.ifError);
+
+        let count = 0;
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            count++;
+            message.properties.headers.nested = nest(100000);
+            ackOrNack(new Error('recover me'), { strategy: 'forward', publication: 'p2' });
+          });
+          subscription.on('error', (err) => {
+            assert.strictEqual(err.message, 'Maximum call stack size exceeded');
+          });
+        });
+
+        broker.subscribe('/dlq', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            ackOrNack();
+            assert.strictEqual(content, 'test message');
+            assert.strictEqual(count, 1);
+            done();
+          });
+        });
+      },
+    );
+  });
+
+  const malformedRascalHeaders = {
+    'the rascal header is a number': () => 10,
+    'the rascal header is a string': () => 'text',
+    'the rascal header is a list': () => [1],
+    'the rascal header is a table with a key named !': () => tableWithExclamationMarkKey(),
+    'the rascal recovery header is a list': () => ({ recovery: [1] }),
+    'the rascal recovery header is a table with a key named !': () => ({ recovery: tableWithExclamationMarkKey() }),
+    'the rascal recovery header for the queue is a list': (queue) => ({ recovery: { [queue]: [1] } }),
+    'the rascal recovery header for the queue is a table with a key named !': (queue) => ({ recovery: { [queue]: tableWithExclamationMarkKey() } }),
+    'the rascal error header is a table with a key named !': () => ({ error: tableWithExclamationMarkKey() }),
+    'the republished count is negative': (queue) => ({ recovery: { [queue]: { republished: -1000000 } } }),
+    'the republished count is not a number': (queue) => ({ recovery: { [queue]: { republished: 'text' } } }),
+  };
+
+  Object.keys(malformedRascalHeaders).forEach((description) => {
+    it(`should cap republishes when ${description}`, (test, done) => {
+      createBroker(
+        {
+          vhosts,
+          publications,
+          subscriptions,
+        },
+        (err, broker) => {
+          assert.ifError(err);
+          const queue = broker.qualify('/', 'q1');
+          const rascal = malformedRascalHeaders[description](queue);
+          amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { rascal } }, (err) => {
+            assert.ifError(err);
+
+            let count = 0;
+            broker.subscribe('s1', (err, subscription) => {
+              assert.ifError(err);
+              subscription.on('message', (message, content, ackOrNack) => {
+                count++;
+                ackOrNack(new Error('republish me'), [{ strategy: 'republish', attempts: 2 }, { strategy: 'nack' }]);
+              });
+            });
+
+            broker.subscribe('/dlq', (err, subscription) => {
+              assert.ifError(err);
+              subscription.on('message', (message, content, ackOrNack) => {
+                ackOrNack();
+                assert.strictEqual(content, 'test message');
+                assert.strictEqual(count, 3);
+                assert.strictEqual(message.properties.headers.rascal.recovery[queue].republished, 2);
+                assert.strictEqual(message.properties.headers.rascal.error.message, 'republish me');
+                done();
+              });
+            });
+          });
+        },
+      );
+    });
+  });
+
+  it('should cap forwards when the forwarded count is negative', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const queue = broker.qualify('/', 'q1');
+        const rascal = { recovery: { [queue]: { forwarded: -1000000 } } };
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { rascal } }, (err) => {
+          assert.ifError(err);
+
+          let count = 0;
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              count++;
+              ackOrNack(new Error('forward me'), [{ strategy: 'forward', publication: 'p1', attempts: 2 }, { strategy: 'nack' }]);
+            });
+          });
+
+          broker.subscribe('/dlq', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(content, 'test message');
+              assert.strictEqual(count, 3);
+              assert.strictEqual(message.properties.headers.rascal.recovery[queue].forwarded, 2);
+              done();
+            });
+          });
+        });
+      },
+    );
+  });
+
+  it('should not restore an original routing key or exchange that is not a string', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        const rascal = { restoreRoutingHeaders: true, originalRoutingKey: 10, originalExchange: [1] };
+        amqputils.publishMessage('e1', namespace, 'test message', { routingKey: 'foo', contentType: 'text/plain', headers: { rascal } }, (err) => {
+          assert.ifError(err);
+          broker.subscribe('s1', (err, subscription) => {
+            assert.ifError(err);
+            subscription.on('message', (message, content, ackOrNack) => {
+              ackOrNack();
+              assert.strictEqual(message.fields.routingKey, 'foo');
+              assert.strictEqual(message.fields.exchange, broker.qualify('/', 'e1'));
+              done();
             });
           });
         });
@@ -3075,6 +3400,16 @@ describe('Subscriptions', () => {
       },
     );
   });
+
+  function nest(depth) {
+    let table = {};
+    for (let i = 0; i < depth; i++) table = { table };
+    return table;
+  }
+
+  function tableWithExclamationMarkKey() {
+    return { '!': 'object', value: { '!': 'unknown' } };
+  }
 
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
