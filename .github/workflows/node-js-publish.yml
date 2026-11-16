@@ -7,6 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: 1
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine

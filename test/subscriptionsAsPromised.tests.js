@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const { AsyncLocalStorage } = require('async_hooks');
 const _ = require('lodash').runInContext();
@@ -1191,7 +1194,7 @@ describe('Subscriptions As Promised', () => {
     });
   });
 
-  it('should ignore immediate nack when messages are replayed to the original queue from a dead letter queue repeatedly', (test, done) => {
+  it('should ignore immediate nack when messages are replayed to the original queue from a dead letter queue repeatedly', { timeout: 10000 }, (test, done) => {
     createBroker({
       vhosts: {
         '/': {
@@ -1269,7 +1272,7 @@ describe('Subscriptions As Promised', () => {
         });
       });
     });
-  }, { timeout: 10000 });
+  });
 
   it('should forward messages to publication when requested', (test, done) => {
     createBroker({
@@ -2169,4 +2172,4 @@ describe('Subscriptions As Promised', () => {
         return broker;
       });
   }
-}, { timeout: 5000 });
+});

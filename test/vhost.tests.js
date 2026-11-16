@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const assert = require('assert');
 const { AsyncLocalStorage } = require('async_hooks');
 const async = require('async');
@@ -75,7 +78,7 @@ describe('Vhost', () => {
     );
   });
 
-  it('should create objects concurrently', (test, done) => {
+  it('should create objects concurrently', { timeout: 60000 }, (test, done) => {
     // This test is too slow for CI
     if (process.env.CI) return done();
 
@@ -144,7 +147,7 @@ describe('Vhost', () => {
       assert.ok(averageB < averageA / 2);
       return done();
     });
-  }, { timeout: 60000 });
+  });
 
   it('should create queues', (test, done) => {
     const namespace = uuid();
@@ -257,7 +260,7 @@ describe('Vhost', () => {
     );
   });
 
-  it('should reconnect on error', (test, done) => {
+  it('should reconnect on error', { timeout: 10000 }, (test, done) => {
     createBroker({
       vhosts: {
         '/': {
@@ -278,7 +281,7 @@ describe('Vhost', () => {
         });
       });
     });
-  }, { timeout: 10000 });
+  });
 
   [
     { acquire: 'borrowChannel', release: 'returnChannel' },
@@ -348,4 +351,4 @@ describe('Vhost', () => {
       });
     });
   }
-}, { timeout: 2000 });
+});

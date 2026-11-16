@@ -1,3 +1,6 @@
+const {
+  describe, it, beforeEach, afterEach,
+} = require('node:test');
 const http = require('http');
 const assert = require('assert');
 const _ = require('lodash');
@@ -428,6 +431,7 @@ describe('Broker', () => {
 
   it(
     'should emit busy/ready events',
+    { timeout: 60000 },
     (test, done) => {
       /*
     This test needs to publish messages faster than the channel can cope with in order to
@@ -465,7 +469,6 @@ describe('Broker', () => {
         });
       });
     },
-    { timeout: 60000 },
   );
 
   it('should subscribe to all subscriptions', (test, done) => {
@@ -537,4 +540,4 @@ describe('Broker', () => {
       next(err, broker);
     });
   }
-}, { timeout: 6000 });
+});

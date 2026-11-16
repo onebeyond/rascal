@@ -4,7 +4,6 @@
 .eslintignore
 .eslintrc
 .github
-.nyc_output
 _config.yml
 coverage
 node_modules

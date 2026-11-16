@@ -1,3 +1,4 @@
+const { describe, it, beforeEach } = require('node:test');
 const assert = require('assert');
 const async = require('async');
 const inMemory = require('../../lib/counters/inMemory');

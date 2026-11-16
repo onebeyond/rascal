@@ -5,6 +5,8 @@ on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      FORCE_COLOR: 1
     services:
       rabbitmq:
         image: rabbitmq:3-management-alpine
@@ -12,8 +14,9 @@ jobs:
           - 5672:5672
           - 15672:15672
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [16.x, 18.x, 20.x, 22.x, 24.x]
+        node-version: [22.x, 24.x, 26.x]
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
