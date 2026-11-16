@@ -1396,6 +1396,43 @@ describe('Subscriptions', () => {
     );
   });
 
+  it('should nack the original message if republishing fails', (test, done) => {
+    createBroker(
+      {
+        vhosts,
+        publications,
+        subscriptions,
+      },
+      (err, broker) => {
+        assert.ifError(err);
+        broker.publish('p1', 'test message', assert.ifError);
+
+        let count = 0;
+        broker.subscribe('s1', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            count++;
+            message.properties.headers.unpublishable = { '!': 'unknown' };
+            ackOrNack(new Error('republish me'), { strategy: 'republish' });
+          });
+          subscription.on('error', (err) => {
+            assert.strictEqual(err.message, 'Unknown type to encode: unknown');
+          });
+        });
+
+        broker.subscribe('/dlq', (err, subscription) => {
+          assert.ifError(err);
+          subscription.on('message', (message, content, ackOrNack) => {
+            ackOrNack();
+            assert.strictEqual(content, 'test message');
+            assert.strictEqual(count, 1);
+            done();
+          });
+        });
+      },
+    );
+  });
+
   it('should defer republishing messages when requested', (test, done) => {
     createBroker(
       {
