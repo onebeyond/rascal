@@ -12,6 +12,12 @@ function init(connection) {
     connection.close(next);
   }
 
+  // RabbitMQ 4.3+ disables global (per-channel) QoS by default
+  function supportsGlobalQos() {
+    const [major, minor] = String(connection.connection.serverProperties.version).split('.').map(Number);
+    return major < 4 || (major === 4 && minor < 3);
+  }
+
   function checkExchange(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
@@ -136,13 +142,14 @@ function init(connection) {
       'x-reason': reason,
       connection: 'close',
     };
-    http.request(`http://guest:guest@localhost:15672/api/connections/${name}`, { method: 'delete', headers }, () => {
+    http.request(`http://guest:guest@localhost:15672/api/connections/${encodeURIComponent(name)}`, { method: 'delete', headers }, () => {
       next();
     }).on('error', next).end();
   }
 
   return {
     disconnect,
+    supportsGlobalQos,
     checkExchange: _.curry(checkExchange),
     createQueue,
     checkQueue: _.curry(checkQueue),

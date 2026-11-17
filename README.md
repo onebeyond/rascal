@@ -1645,6 +1645,8 @@ subscription.on('message', (message, content, ackOrNack) => {
 
 Don't forget to zero the regular consumer prefetch when specifying a channelPrefetch to prevent potential conflicts.
 
+**Note:** Global (per-channel) QoS prefetch is [deprecated and disabled by default starting with RabbitMQ 4.3](https://www.rabbitmq.com/docs/consumer-prefetch). On these versions, raising the channel prefetch with `setChannelPrefetch` after the subscription has started does not increase the number of messages delivered. To keep the previous behaviour, permit the deprecated feature in `rabbitmq.conf` with `deprecated_features.permit.global_qos = true`. Otherwise, use `prefetch` instead.
+
 #### retry
 
 If an error occurs on the channel (which will happen if you accidentally acknowledge a message twice), then it becomes unusable and no more messages will be delivered. Rascal listens to the channel's error even and assuming you are using its defaults will automatically attempt to resubscribe to a new channel after a one second delay. You can disable or customise this in your configuration or in the call to subscribe.

@@ -145,8 +145,10 @@ describe('Subscriptions', () => {
 
   afterEach((test, done) => {
     amqputils.disconnect(() => {
-      if (broker) return broker.nuke(done);
-      done();
+      if (!broker) return done();
+      // nuke emits an error if it cannot unsubscribe cleanly (e.g. a failed test left messages unacknowledged). Without a listener the throw aborts teardown, leaving the connection open.
+      broker.on('error', () => {});
+      broker.nuke(done);
     });
   });
 
@@ -2680,6 +2682,10 @@ describe('Subscriptions', () => {
   });
 
   it('should limit concurrent messages using dynamic channel prefetch while subscribing', (test, done) => {
+    if (!amqputils.supportsGlobalQos()) {
+      test.skip('Global QoS is disabled by default from RabbitMQ 4.3');
+      return done();
+    }
     createBroker(
       {
         vhosts,
