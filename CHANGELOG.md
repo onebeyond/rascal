@@ -7,6 +7,7 @@
 - Global (per-channel) QoS prefetch is deprecated and disabled by default starting with RabbitMQ 4.3, so raising the channel prefetch with `setChannelPrefetch` after a subscription has started no longer increases the number of messages delivered. See the `channelPrefetch` section of the README for how to permit the deprecated feature, or use `prefetch` instead.
 - Replace the uuid dependency with `crypto.randomUUID()`.
 - Update lru-cache to 11.
+- Remove the xregexp and safe-json-parse dependencies in favour of native named capture groups and `JSON.parse`.
 - Bump async, debug, generic-pool, lodash and xregexp.
 - Tested against RabbitMQ 3 and 4, and Node.js 22, 24 and 26.
 
@@ -16,6 +17,7 @@
 - Replace husky and lint-staged with lefthook. Existing clones need to run `npx lefthook install --reset-hooks-path` once, because husky set `core.hooksPath`.
 - Update the amqplib dev dependency to 2.4.0.
 - Replace chalk with `util.styleText` in the examples.
+- Remove the chance dev dependency, which only the advanced example used.
 - `npm run docker` now starts RabbitMQ 4.
 - Skip the dynamic channel prefetch test on RabbitMQ 4.3+, where global QoS is disabled by default.
 - Restore the large message regression tests for https://github.com/onebeyond/rascal/issues/199. Since amqplib 0.10.6 raised its default frame size, the messages no longer filled the channel write buffer, so the tests passed without exercising the fix. They now use 8192 byte frames and assert that publish returned false.
