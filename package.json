@@ -10,14 +10,11 @@
     "generic-pool": "^3.9.0",
     "lodash": "^4.18.1",
     "lru-cache": "^11.5.3",
-    "safe-json-parse": "^4.0.0",
-    "stashback": "^2.0.1",
-    "xregexp": "^5.1.3"
+    "stashback": "^2.0.1"
   },
   "devDependencies": {
     "@biomejs/biome": "2.6.8",
     "amqplib": "^2.4.0",
-    "chance": "^1.1.13",
     "lefthook": "^2.2.2",
     "random-readable": "^1.0.1"
   },

@@ -1,8 +1,6 @@
 var Rascal = require('../..');
 var config = require('./config');
 var _ = require('lodash');
-var Chance = require('Chance');
-var chance = new Chance();
 var format = require('util').format;
 
 Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function (err, broker) {
@@ -47,7 +45,7 @@ Rascal.Broker.create(Rascal.withDefaultConfig(config.rascal), function (err, bro
   // Simulate a web app handling user registrations
   setInterval(function () {
     var user = {
-      username: chance.first() + '_' + chance.last(),
+      username: 'user_' + randomInt(1000),
       crash: randomInt(10) === 10,
     };
     var events = { 1: 'created', 2: 'updated', 3: 'deleted' };
