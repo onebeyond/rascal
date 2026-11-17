@@ -28,11 +28,11 @@
     "node": ">=22"
   },
   "scripts": {
-    "test": "node --test --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec 'test/**/*.tests.js'",
+    "test": "node --test --test-force-exit --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec 'test/**/*.tests.js'",
     "lint": "biome lint --error-on-warnings .",
     "lint:fix": "biome lint --error-on-warnings --write .",
-    "coverage": "mkdir -p coverage && node --test --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --experimental-test-coverage --test-coverage-include='index.js' --test-coverage-include='lib/**' 'test/**/*.tests.js'",
-    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:3.12.9-management-alpine",
+    "coverage": "mkdir -p coverage && node --test --test-force-exit --experimental-test-isolation=none --test-timeout=120000 --test-reporter=spec --test-reporter-destination=stdout --test-reporter=lcov --test-reporter-destination=coverage/lcov.info --experimental-test-coverage --test-coverage-include='index.js' --test-coverage-include='lib/**' 'test/**/*.tests.js'",
+    "docker": "docker run -d --name rascal-rabbitmq -p 5672:5672 -p 15672:15672 rabbitmq:4-management-alpine",
     "prepare": "lefthook install"
   },
   "keywords": [

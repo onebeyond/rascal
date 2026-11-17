@@ -81,6 +81,8 @@ describe('Shovel', () => {
 
   afterEach((test, done) => {
     if (!broker) return done();
+    // nuke emits an error if it cannot unsubscribe cleanly (e.g. a failed test left messages unacknowledged). Without a listener the throw aborts teardown, leaving the connection open.
+    broker.on('error', () => {});
     broker.nuke(done);
   });
 

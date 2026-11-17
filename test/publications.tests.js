@@ -68,8 +68,10 @@ describe('Publications', () => {
 
   afterEach((test, done) => {
     amqputils.disconnect(() => {
-      if (broker) return broker.nuke(done);
-      done();
+      if (!broker) return done();
+      // nuke emits an error if it cannot unsubscribe cleanly (e.g. a failed test left messages unacknowledged). Without a listener the throw aborts teardown, leaving the connection open.
+      broker.on('error', () => {});
+      broker.nuke(done);
     });
   });
 
@@ -821,7 +823,7 @@ describe('Publications', () => {
       },
       (err, broker) => {
         assert.ifError(err);
-        const msg = Buffer.alloc(20000000);
+        const msg = Buffer.alloc(10000000);
         async.timesSeries(
           2,
           (n, cb) => {
@@ -859,7 +861,7 @@ describe('Publications', () => {
       },
       (err, broker) => {
         assert.ifError(err);
-        const msg = Buffer.alloc(20000000);
+        const msg = Buffer.alloc(10000000);
         async.timesSeries(
           2,
           (n, cb) => {

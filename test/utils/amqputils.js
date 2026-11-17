@@ -12,6 +12,12 @@ function init(connection) {
     connection.close(next);
   }
 
+  // RabbitMQ 4.3+ disables global (per-channel) QoS by default
+  function supportsGlobalQos() {
+    const [major, minor] = String(connection.connection.serverProperties.version).split('.').map(Number);
+    return major < 4 || (major === 4 && minor < 3);
+  }
+
   function checkExchange(present, name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
@@ -93,19 +99,21 @@ function init(connection) {
     });
   }
 
-  function waitForConnections(next) {
+  // The management API only refreshes its connection list every statistics interval (5s by default),
+  // so it can still list connections from earlier tests. Wait for the one with the given connection_name.
+  function waitForConnections(connectionName, next) {
     let connections = [];
     let attempts = 0;
     async.whilst(
       (cb) => {
-        cb(null, attempts < 100 && connections.length === 0);
+        cb(null, attempts < 200 && connections.length === 0);
       },
       (cb) => {
         setTimeout(() => {
           attempts++;
           fetchConnections((err, _connections) => {
             if (err) return cb(err);
-            connections = _connections;
+            connections = _connections.filter((connection) => connection.user_provided_name === connectionName);
             cb(null, connections);
           });
         }, 100);
@@ -136,13 +144,14 @@ function init(connection) {
       'x-reason': reason,
       connection: 'close',
     };
-    http.request(`http://guest:guest@localhost:15672/api/connections/${name}`, { method: 'delete', headers }, () => {
+    http.request(`http://guest:guest@localhost:15672/api/connections/${encodeURIComponent(name)}`, { method: 'delete', headers }, () => {
       next();
     }).on('error', next).end();
   }
 
   return {
     disconnect,
+    supportsGlobalQos,
     checkExchange: _.curry(checkExchange),
     createQueue,
     checkQueue: _.curry(checkQueue),

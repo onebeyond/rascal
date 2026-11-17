@@ -260,10 +260,16 @@ describe('Vhost', () => {
     );
   });
 
-  it('should reconnect on error', { timeout: 10000 }, (test, done) => {
+  it('should reconnect on error', { timeout: 20000 }, (test, done) => {
+    const connectionName = randomUUID();
     createBroker({
       vhosts: {
         '/': {
+          connection: {
+            socketOptions: {
+              clientProperties: { connection_name: connectionName },
+            },
+          },
           queues: ['q'],
         },
       },
@@ -275,7 +281,7 @@ describe('Vhost', () => {
         broker.on('connect', () => done());
       });
 
-      amqputils.waitForConnections((err, connections) => {
+      amqputils.waitForConnections(connectionName, (err, connections) => {
         amqputils.closeConnections(connections, 'VHOST TEST', (err) => {
           assert.ifError(err);
         });
@@ -336,6 +342,8 @@ describe('Vhost', () => {
 
   function nukeBroker(next) {
     if (!broker) return next();
+    // nuke emits an error if it cannot unsubscribe cleanly (e.g. a failed test left messages unacknowledged). Without a listener the throw aborts teardown, leaving the connection open.
+    broker.on('error', () => {});
     broker.nuke((err) => {
       broker = undefined;
       next(err);
