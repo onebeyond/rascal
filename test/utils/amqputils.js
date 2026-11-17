@@ -99,19 +99,21 @@ function init(connection) {
     });
   }
 
-  function waitForConnections(next) {
+  // The management API only refreshes its connection list every statistics interval (5s by default),
+  // so it can still list connections from earlier tests. Wait for the one with the given connection_name.
+  function waitForConnections(connectionName, next) {
     let connections = [];
     let attempts = 0;
     async.whilst(
       (cb) => {
-        cb(null, attempts < 100 && connections.length === 0);
+        cb(null, attempts < 200 && connections.length === 0);
       },
       (cb) => {
         setTimeout(() => {
           attempts++;
           fetchConnections((err, _connections) => {
             if (err) return cb(err);
-            connections = _connections;
+            connections = _connections.filter((connection) => connection.user_provided_name === connectionName);
             cb(null, connections);
           });
         }, 100);

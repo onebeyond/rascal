@@ -260,10 +260,16 @@ describe('Vhost', () => {
     );
   });
 
-  it('should reconnect on error', { timeout: 10000 }, (test, done) => {
+  it('should reconnect on error', { timeout: 20000 }, (test, done) => {
+    const connectionName = randomUUID();
     createBroker({
       vhosts: {
         '/': {
+          connection: {
+            socketOptions: {
+              clientProperties: { connection_name: connectionName },
+            },
+          },
           queues: ['q'],
         },
       },
@@ -275,7 +281,7 @@ describe('Vhost', () => {
         broker.on('connect', () => done());
       });
 
-      amqputils.waitForConnections((err, connections) => {
+      amqputils.waitForConnections(connectionName, (err, connections) => {
         amqputils.closeConnections(connections, 'VHOST TEST', (err) => {
           assert.ifError(err);
         });
