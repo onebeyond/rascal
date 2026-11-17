@@ -51,7 +51,7 @@ function init(connection) {
   function deleteQueue(name, namespace, next) {
     connection.createChannel((err, channel) => {
       assert.ifError(err);
-      channel.deleteQueue(`${namespace}:${name}`, next);
+      channel.deleteQueue(`${namespace}:${name}`, {}, next);
     });
   }
 
