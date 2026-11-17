@@ -17,6 +17,7 @@
 - Replace chalk with `util.styleText` in the examples.
 - `npm run docker` now starts RabbitMQ 4.
 - Skip the dynamic channel prefetch test on RabbitMQ 4.3+, where global QoS is disabled by default.
+- Restore the large message regression tests for https://github.com/onebeyond/rascal/issues/199. Since amqplib 0.10.6 raised its default frame size, the messages no longer filled the channel write buffer, so the tests passed without exercising the fix. They now use 8192 byte frames and assert that publish returned false.
 - Force the test run to exit once all tests have finished, and time out CI jobs after 15 minutes, so a test that leaves a connection open can no longer hang the build.
 
 ## 21.0.3

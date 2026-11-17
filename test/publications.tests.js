@@ -17,6 +17,8 @@ describe('Publications', () => {
   let amqputils;
   let namespace;
   let vhosts;
+  let connection;
+  let restorePublish;
 
   beforeEach((test, done) => {
     namespace = randomUUID();
@@ -59,14 +61,17 @@ describe('Publications', () => {
       },
     };
 
-    amqplib.connect((err, connection) => {
+    amqplib.connect((err, _connection) => {
       if (err) return done(err);
+      connection = _connection;
       amqputils = AmqpUtils.init(connection);
       done();
     });
   });
 
   afterEach((test, done) => {
+    if (restorePublish) restorePublish();
+    restorePublish = undefined;
     amqputils.disconnect(() => {
       if (!broker) return done();
       // nuke emits an error if it cannot unsubscribe cleanly (e.g. a failed test left messages unacknowledged). Without a listener the throw aborts teardown, leaving the connection open.
@@ -802,80 +807,61 @@ describe('Publications', () => {
     );
   });
 
-  it('should publish large messages to exchanges when using confirm channels', (test, done) => {
-    Object.assign(vhosts['/'], {
-      publicationChannelPools: {
-        confirmPool: {
-          min: 1,
-          max: 1,
-        },
-      },
-    });
-    createBroker(
-      {
-        vhosts,
-        publications: {
-          p1: {
-            exchange: 'e1',
-            confirm: true,
+  // Regression tests for https://github.com/onebeyond/rascal/issues/199. When amqplib's channel write buffer is full,
+  // publish returns false, and Rascal must still return the channel to the pool once it drains. With a pool of one
+  // channel, the second publish hangs if it does not. The buffer fills at about 2047 frames, so connect with RabbitMQ
+  // 4.1's minimum frame size of 8192 and publish messages just under RabbitMQ 4's default 16MiB max_message_size.
+  [
+    { destination: 'exchanges', publication: { exchange: 'e1' } },
+    { destination: 'queues', publication: { queue: 'q1' } },
+  ].forEach(({ destination, publication }) => {
+    it(`should publish large messages to ${destination} when using confirm channels`, (test, done) => {
+      Object.assign(vhosts['/'], {
+        connection: {
+          options: {
+            frameMax: 8192,
           },
         },
-      },
-      (err, broker) => {
+        publicationChannelPools: {
+          confirmPool: {
+            min: 1,
+            max: 1,
+          },
+        },
+      });
+      spyOnConfirmPublish((err, publishResults) => {
         assert.ifError(err);
-        const msg = Buffer.alloc(10000000);
-        async.timesSeries(
-          2,
-          (n, cb) => {
-            broker.publish('p1', msg, (err, publication) => {
-              assert.ifError(err);
-              publication.on('success', () => {
-                cb();
-              });
-            });
+        createBroker(
+          {
+            vhosts,
+            publications: {
+              p1: { ...publication, confirm: true },
+            },
           },
-          done,
+          (err, broker) => {
+            assert.ifError(err);
+            const msg = Buffer.alloc(16750000);
+            async.timesSeries(
+              2,
+              (n, cb) => {
+                broker.publish('p1', msg, (err, publication) => {
+                  assert.ifError(err);
+                  publication.on('success', () => {
+                    cb();
+                  });
+                });
+              },
+              (err) => {
+                if (err) return done(err);
+                // Without this, the test passes without filling the buffer if amqplib's buffer or frame sizes change
+                if (!publishResults.includes(false)) return done(new Error('Expected the channel write buffer to fill, so that publish returned false'));
+                done();
+              },
+            );
+          },
         );
-      },
-    );
-  });
-
-  it('should publish large messages to queues when using confirm channels', (test, done) => {
-    Object.assign(vhosts['/'], {
-      publicationChannelPools: {
-        confirmPool: {
-          min: 1,
-          max: 1,
-        },
-      },
+      });
     });
-    createBroker(
-      {
-        vhosts,
-        publications: {
-          p1: {
-            queue: 'q1',
-            confirm: true,
-          },
-        },
-      },
-      (err, broker) => {
-        assert.ifError(err);
-        const msg = Buffer.alloc(10000000);
-        async.timesSeries(
-          2,
-          (n, cb) => {
-            broker.publish('p1', msg, (err, publication) => {
-              assert.ifError(err);
-              publication.on('success', () => {
-                cb();
-              });
-            });
-          },
-          done,
-        );
-      },
-    );
   });
 
   it('should set the replyTo property', (test, done) => {
@@ -981,6 +967,26 @@ describe('Publications', () => {
       },
     );
   });
+
+  // Records the return value of every confirm channel publish. amqplib's exports map hides its channel classes, so take
+  // the prototype from a channel of our own. Restored in afterEach.
+  function spyOnConfirmPublish(next) {
+    connection.createConfirmChannel((err, channel) => {
+      if (err) return next(err);
+      const prototype = Object.getPrototypeOf(channel);
+      const publish = prototype.publish;
+      const results = [];
+      prototype.publish = function (...args) {
+        const ok = publish.apply(this, args);
+        results.push(ok);
+        return ok;
+      };
+      restorePublish = () => {
+        prototype.publish = publish;
+      };
+      channel.close(() => next(null, results));
+    });
+  }
 
   function createBroker(config, next) {
     config = _.defaultsDeep(config, testConfig);
